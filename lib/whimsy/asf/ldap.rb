@@ -181,7 +181,7 @@ module ASF
     def self.extract_cert(host=nil)
       host ||= hosts.sample[%r{//(.*?)(/|$)}, 1]
       host += ':636' unless host =~ %r{:\d+\z}
-      cmd = ['openssl', 's_client', '-connect', host, '-showcerts'] 
+      cmd = ['openssl', 's_client', '-connect', host, '-showcerts']
       puts cmd.join(' ')
       out, _, _ = Open3.capture3(*cmd)
       out.scan(/^-+BEGIN.*?\n-+END[^\n]+\n/m).last

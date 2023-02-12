@@ -38,7 +38,7 @@ module ParseMail
 
   def self.parse_dir(maildir, yamlfile)
     data = Hash.new
-    
+
     begin
       current = YamlFile.read(yamlfile)
     rescue Errno::ENOENT
@@ -108,7 +108,7 @@ module ParseMail
       end
     end
     yamlfile ||= File.join(MAIL_ROOT, list, "#{yyyymm}.yaml") # where to find the YAML summary
-    
+
     maildir = File.join(MAIL_ROOT, list, yyyymm) # where to find the mail files
     if Dir.exists? maildir
       log :INFO, "Processing #{maildir}"
@@ -119,7 +119,7 @@ module ParseMail
     if lastmonth
       log :INFO, "Updating previous month: #{lastmonth}"
       yamlfile = File.join(MAIL_ROOT, list, "#{lastmonth}.yaml") # where to find the YAML summary
-    
+
       maildir = File.join(MAIL_ROOT, list, lastmonth) # where to find the mail files
       if Dir.exists? maildir
         log :INFO, "Processing #{maildir}"
