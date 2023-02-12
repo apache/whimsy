@@ -42,7 +42,7 @@ Whimsy can be run on a client or in a local container for development use.
 * **Log files and debugging** are typically found in `/var/log/apache2/whimsy_error.log`
   and `/var/log/apache2/error_log`
 
-* **Development setup instructions** are in [DEVELOPMENT.md](DEVELOPMENT.md) and [MACOSX.md](MACOSX.md).
+* **Development setup instructions** are in [DEVELOPMENT.md](DEVELOPMENT.md) and [MACOS.md](MACOS.md).
 
 * **whimsy-asf Gem** is a set of the core lib/whimsy/asf model as a normal Gem: [asf.gemspec](asf.gemspec)
   

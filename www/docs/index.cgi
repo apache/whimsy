@@ -31,7 +31,7 @@ _html do
         'https://github.com/apache/whimsy/blob/master/DEVELOPMENT.md' => "Developer Overview / How-To",
         'https://github.com/apache/whimsy/blob/master/CONFIGURE.md' => "How To Configure Whimsy",
         'https://github.com/apache/whimsy/blob/master/DEPLOYMENT.md' => "Deploying Whimsy On Server",
-        'https://github.com/apache/whimsy/blob/master/MACOSX.md' => "Mac OSX Local Setup",
+        'https://github.com/apache/whimsy/blob/master/MACOS.md' => "macOS Local Setup",
         'https://github.com/apache/whimsy/blob/master/README.md' => "Whimsy Intro README",
         '/docs/api/' => "whimsy/asf and ASF:: module API docs",
         "https://github.com/rubys/wunderbar/" => "Wunderbar Module Docs"

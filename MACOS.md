@@ -1,20 +1,20 @@
-Installation on Mac OS/X
+Installation on macOS
 ========================
 
 Step by step instruction on getting a full Whimsy test environment up and
-running on Mac OS/X.  Not all steps are required for every tool, but steps
+running on macOS.  Not all steps are required for every tool, but steps
 common to many tools are included here, and additional steps required for
 specific tools are linked at the bottom of these instructions.
 See also the general [DEVELOPMENT.md](./DEVELOPMENT.md) configuration notes.
 
-:dizzy: **New!** For a simpler way to setup a Mac OSX machine, please 
+:dizzy: **New!** For a simpler way to setup a macOS machine, please 
 check out the [setupmymac script](./SETUPMYMAC.md), which automates 
 configuring and keeping updated a local Whimsy instance.
 
 Install Homebrew
 ----------------
 
-Homebrew is a package manager for OSX, which is used to install other tools.
+Homebrew is a package manager for macOS, which is used to install other tools.
 Follow the instructions from [brew.sh](https://brew.sh/). You might
 have to change shells if you are using csh. Bash and zsh work fine.  Be sure to
 read the Homebrew prerequisites; you may need part(s) of Apple's XCode.
@@ -36,7 +36,7 @@ $ brew update
 Upgrade Ruby (if needed)
 ------------------------
 
-Much of Whimsy is written in ruby.  Versions of OSX prior to 10.15 (Catalina)
+Much of Whimsy is written in ruby.  Versions of macOS prior to 10.15 (Catalina)
 include an outdated version of ruby.
 
 Verify your current ruby version:
@@ -127,7 +127,7 @@ git remote add asf https://gitbox.apache.org/repos/asf/whimsy.git
 ```
 
 Establish a link to this repository in a known location.  First instructions
-for Mac OSX version < 10.15 (Mojave, High Sierra, Sierra, ...):
+for macOS version < 10.15 (Mojave, High Sierra, Sierra, ...):
 
 ```
 cd whimsy
@@ -135,7 +135,7 @@ sudo mkdir /srv
 sudo ln -s `pwd` /srv/whimsy
 ```
 
-Alternate instructions for Mac OSX version >= 10.15 (Catalina):
+Alternate instructions for macOS version >= 10.15 (Catalina):
 
 ```
 sudo mkdir /var/whimsy
@@ -218,14 +218,14 @@ Notes:
    require this command to be run again.
  * Alternatives to running this command can be found in step 4 of
    [DEVELOPMENT.md](https://github.com/apache/whimsy/blob/master/DEVELOPMENT.md)
- * The `ldapsearch` command is the standard LDAP utility on MacOSX.
+ * The `ldapsearch` command is the standard LDAP utility on macOS.
 
 
 Start Apache httpd
 ------------------
 
 *Note* as an alternative to configuring and starting the version of httpd which
-is provided with MacOSX, you can install a separate version using Homebrew.
+is provided with macOS, you can install a separate version using Homebrew.
 Those instructions can be found in an [older version of these
 instructions](https://github.com/apache/whimsy/blob/cbe00a45eb949cec8a6798f1172c64166a56e518/MACOSX.md#clone-the-whimsy-code),
 specifically, the Install Homebrew, Install Apache httpd, Install passenger,

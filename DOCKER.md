@@ -1,7 +1,7 @@
 Docker execution instructions
 =============================
 
-:dizzy: **New!** For a simpler way to setup a Mac OSX machine, please
+:dizzy: **New!** For a simpler way to setup a macOS machine, please
 check out the [setupmymac script](./SETUPMYMAC.md), which automates
 configuring and keeping updated a local whimsy instance with Docker.
 
@@ -50,7 +50,7 @@ Installation instructions
 
 * Create an empty directory.  Note: while you _can_ use an existing clone of
   Whimsy (and in particular, you _may_ be able to use the `/srv` directories
-  defined by the [macOS](MACOSX.md) instructions), be aware of the following:
+  defined by the [macOS](MACOS.md) instructions), be aware of the following:
     * Files in the parent directory of the Whimsy clone may be created,
       overwritten, or deleted by this process.
     * The `svn` and `git` sub-directories cannot be links to another part of

@@ -1,4 +1,4 @@
-Automatically Setup Your Mac OSX Environment
+Automatically Setup Your macOS Environment
 ============================================
 
 If you have a MacBook you undoubtedly have never used LDAP on it, have a
@@ -80,5 +80,5 @@ Setupmymac notes
 * Dry run may not be accurate as running commands may change the state of the system, affecting what subsequent commands are necessary.
 
 If you want to know what is going on under the covers with the setupmymac
-scripts, visit either of the detailed step-by-step [macOS](./MACOSX.md) or [Docker](./DOCKER.md)
+scripts, visit either of the detailed step-by-step [macOS](./MACOS.md) or [Docker](./DOCKER.md)
 instructions.
