@@ -353,8 +353,9 @@ module ASF
         'fundraising-private@apache.org'
       when 'marketingandpublicity'
         'press@apache.org'
-      when 'tac'
-        'travel-assistance@apache.org'
+      # now using private@tac.apache.org
+      # when 'tac'
+      #   'travel-assistance@apache.org'
       when 'w3crelations'
         'w3c@apache.org'
       when 'concom'
