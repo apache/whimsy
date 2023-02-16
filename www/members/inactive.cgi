@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-PAGETITLE = "Member Meeting Activity Status" # Wvisible:meeting
+PAGETITLE = "Your Member Meeting Attendance Status and Update Tool" # Wvisible:meeting
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 
 require 'whimsy/asf'
@@ -35,6 +35,7 @@ _html do
     @user ||= $USER
     @meetingsMissed = (@meetingsMissed || 3).to_i
 
+    # Allow a non-participating member to post a request to go emeritus
     if _.post? and @status == 'go emeritus' and $USER == @user
       # stub out roster functions
       require 'mail'
@@ -58,12 +59,8 @@ _html do
       end
     end
 
-    # get static/dynamic tracker
-    begin
-      tracker = JSON.parse(IO.read(File.join(latest, 'non-participants.json')))
-    rescue Errno::ENOENT => err
-      tracker = ASF::MeetingUtil.tracker(@meetingsMissed)
-    end
+    # Get live data of members' attendance or current proxies submitted
+    tracker = ASF::MeetingUtil.tracker(@meetingsMissed)
 
     # determine user's name as found in members.txt
     name = ASF::Member.find_text_by_id(@user).to_s.split("\n").first
@@ -146,7 +143,7 @@ _html do
           else
             _p %{
               Based on this status, the following text will be placed before the membership as a vote
-              unless you either assign a proxy for the next meeting or voluntarily request a conversion
+              UNLESS you either assign a proxy for the next meeting or voluntarily request a conversion
               to emeritus status.
             }
           end
@@ -172,8 +169,9 @@ _html do
           _p_ %{
             If you haven't attended or voted in meetings recently, please consider participating, at
             least by proxy, in the upcoming membership meeting.  Assigning a proxy does NOT prevent
-            you from attending meetings or
-            automatically grant the assignee to the right to vote on your behalf.
+            you from attending meetings.  Normally, your proxy will just be at the meeting to 
+            mark your attendance.  You will still get any vote emails yourself.  Remember that 
+            voting at a meeting also counts for attendance.
           }
         end
       end
