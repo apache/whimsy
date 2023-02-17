@@ -214,7 +214,7 @@ def emit_post(cur_mtg_dir, meeting, _)
                     {quiet: true, user: $USER, password: $PASSWORD})
       Dir.chdir(tmpdir) do
         # write proxy form
-        filename = "proxies-received/#$USER.txt"
+        filename = "proxies-received/#{$USER}.txt"
         update_existing_form = File.exist? filename
         File.write(filename, proxyform)
         unless update_existing_form
@@ -226,7 +226,7 @@ def emit_post(cur_mtg_dir, meeting, _)
         list = Dir['proxies-received/*.txt'].map do |file|
           form = File.read(file)
 
-          id = file[/([-A-Za-z0-9]+)\.\w+$/, 1]
+          id = File.basename(file, '.txt') # assume filename is a valid id
           proxy = form[/hereby authorize ([\S].*) to act/, 1].
             gsub('_', ' ').strip
           # Ensure availid is not included in proxy name here
