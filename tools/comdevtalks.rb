@@ -69,7 +69,8 @@ def get_talks_submitters()
                     "\n\nIn this presentation Sharan shares her thoughts and experiences about being a Committer, " \
                     "life at the ASF (facility) and how not being able to code is still OK.\n",
       "audience" => "Community managers, developers, project managers involved with FOSS projects.",
-      "slides" => "http://events.linuxfoundation.org/sites/events/files/slides/Commited%20to%20Apache.pdf",
+      # 404 "slides" => "http://events.linuxfoundation.org/sites/events/files/slides/Commited%20to%20Apache.pdf",
+      "slides" => nil,
       "video" => "https://www.youtube.com/watch?v=vT-kxmoLs5k&index=25&list=PLbzoR-pLrL6pLDCyPxByWQwYTL-JrF5Rp",
       "topics" => ["community", "contributors"],
       "present_at" => ["http://apachecon.com/2017"],
@@ -89,7 +90,8 @@ def get_talks_submitters()
                     "zeppelin support, network APIs) to move the project from dev@ to user@, and the " \
                     "opportunities we see to increase usability and relevance still further.\n",
       "audience" => "Community managers, developers, project managers involved with FOSS projects.",
-      "slides" => "http://events.linuxfoundation.org/sites/events/files/slides/ApacheConNA2017-Blackmon.pdf",
+      # 404 "slides" => "http://events.linuxfoundation.org/sites/events/files/slides/ApacheConNA2017-Blackmon.pdf",
+      "slides" => nil,
       "video" => "https://www.youtube.com/watch?v=E9A54x6af8o&index=27&list=PLbzoR-pLrL6pLDCyPxByWQwYTL-JrF5Rp",
       "topics" => ["incubator", "apacheway"],
       "present_at" => ["http://apachecon.com/2017"],
