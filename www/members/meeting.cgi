@@ -94,7 +94,7 @@ _html do
         'https://www.apache.org/foundation/governance/meetings#how-member-votes-are-tallied' => 'New Members Elected By Majority',
         'https://www.apache.org/foundation/governance/meetings#how-votes-for-the-board-are-tallied' => 'Board Seats Are Elected By STV',
         '/members/whatif' => 'Explore Past Board STV Results',
-        '/members/non-participants' => 'Members Not Participating Recntly',
+        '/members/non-participants' => 'Members Not Participating Recently',
         '/members/inactive' => 'Inactive Member Feedback Form',
         ASF::MeetingUtil::RECORDS => 'Official Past Meeting Records',
         'https://lists.apache.org/list.html?members@apache.org' => 'Read members@ List Archives'
