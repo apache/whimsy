@@ -86,6 +86,7 @@ _html do
     _whimsy_body(
       title: PAGETITLE,
       related: {
+        'board-nominate.cgi' => "Add entries to board nomination file",
         'nominations' => 'New Member nominations cross-check',
         ASF::SVN.svnpath!('Meetings') => 'Official Meeting Agenda Directory'
       },

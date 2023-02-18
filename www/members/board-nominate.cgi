@@ -77,6 +77,7 @@ _html do
       title: PAGETITLE,
       subtitle: 'About This Script',
       related: {
+        'board-nominations.cgi' => "Board nominations cross-check - ensuring nominations get on the ballot, etc.",
         ASF::SVN.svnpath!('Meetings') => 'Official Meeting Agenda Directory'
       },
       helpblock: -> {
