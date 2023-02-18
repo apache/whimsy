@@ -9,7 +9,8 @@ module ASF
   class MemberFiles
 
     NOMINATED_MEMBERS = 'nominated-members.txt'
-
+    NOMINATED_BOARD = 'board_nominations.txt'
+  
     # get the latest meeting directory or nomination file
     def self.latest_meeting(name=nil)
       if name.nil? # we want the parent directory
@@ -74,7 +75,7 @@ module ASF
       end
     end
 
-    # create a nomination entry in the standard format
+    # create a member nomination entry in the standard format
     #
     def self.make_member_nomination(fields = {})
       availid = fields[:availid] or raise ArgumentError.new(":availid is required")
@@ -88,6 +89,27 @@ module ASF
         " #{availid} <#{publicname}>",
         '',
         "   Nominee email: #{availid}@apache.org",
+        "   Nominated by: #{nomby}@apache.org",
+        "   Seconded by: #{secby}",
+        '',
+        '   Nomination statement:',
+        ASFString.reflow(statement, 4, 80),
+        ''
+      ].compact.join("\n") + "\n"
+    end
+
+    # create a board nomination entry in the standard format
+    #
+    def self.make_board_nomination(fields = {})
+      availid = fields[:availid] or raise ArgumentError.new(":availid is required")
+      publicname = ASF::Person[availid]&.cn or raise ArgumentError.new(":availid #{availid} is invalid")
+      nomby = fields[:nomby] or raise ArgumentError.new(":nomby is required")
+      ASF::Person[nomby]&.dn or raise ArgumentError.new(":nomby is invalid")
+      secby = fields[:secby] || ''
+      statement = fields[:statement] or raise ArgumentError.new(":statement is required")
+      [
+        '',
+        "   #{publicname}",
         "   Nominated by: #{nomby}@apache.org",
         "   Seconded by: #{secby}",
         '',
@@ -119,12 +141,45 @@ module ASF
       [header, sections, ''].join("-----------------------------------------\n")
     end
 
+    # Sort the board_nominees, optionally adding new entries
+    def self.sort_board_nominees(contents, entries=nil)
+      sections = contents.split(%r{^-{10,}\n})
+      header = sections.shift(2)
+      sections.pop if sections.last.strip == ''
+      sections.append(*entries) if entries # add new entries if any
+      names = {}
+      # replace 'each' by 'sort_by!' to sort by last name
+      sections.each do |s|
+        # sort by last name; check for duplicates
+        m = s.match %r{\s+(.+)}
+        if m
+          name = m[1]
+          raise ArgumentError.new("Duplicate id: #{name}") if names.include? name
+          names[name] = 1
+          name.split.last
+        else
+          'ZZ'
+        end
+      end
+      # reconstitute the file
+      [header, sections, ''].join("---------------------------------------\n")
+    end
+
     # update the member nominees
     def self.update_member_nominees(env, wunderbar, entries=nil, msg=nil, opt={})
       nomfile = latest_meeting(NOMINATED_MEMBERS)
       opt[:diff] = true unless opt.include? :diff # default to true
       ASF::SVN.update(nomfile, msg || 'Updating nominated members', env, wunderbar, opt) do |_tmpdir, contents|
         sort_member_nominees(contents, entries)
+      end
+    end
+
+    # update the board nominees
+    def self.update_board_nominees(env, wunderbar, entries=nil, msg=nil, opt={})
+      nomfile = latest_meeting(NOMINATED_BOARD)
+      opt[:diff] = true unless opt.include? :diff # default to true
+      ASF::SVN.update(nomfile, msg || 'Updating board nominations', env, wunderbar, opt) do |_tmpdir, contents|
+        sort_board_nominees(contents, entries)
       end
     end
 
@@ -152,7 +207,7 @@ module ASF
     # Return hash of board nominees
     def self.board_nominees
       nominees = {}
-      ASF::MemberFiles.parse_file('board_nominations.txt') do |hdr, nominee|
+      ASF::MemberFiles.parse_file(NOMINATED_BOARD) do |hdr, nominee|
         # for board, the header currently looks like this:
         # <PUBLIC NAME>
         id = ASF::Person.find_by_name!(hdr) || hdr # default to full name

@@ -90,8 +90,9 @@ _html do
       related: {
         '/members/memberless-pmcs' => 'PMCs with no/few ASF Members',
         '/members/watch' => 'Watch list for potential Member candidates',
-        '/members/member_nominations' => 'Update list of nominated members',
+        '/members/member_nominations' => 'Add entries to list of nominated members',
         'board-nominations' => 'Board nominations cross-check',
+        'board-nominate.cgi' => "Add entries to board nomination file",
         ASF::SVN.svnpath!('Meetings') => 'Official Meeting Agenda Directory'
       },
       helpblock: -> {
