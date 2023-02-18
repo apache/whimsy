@@ -156,8 +156,8 @@
     "description": "ASF::ICLA: Tracks ICLAs and names; See also ASF::Person",
     "maintainer": "vp-whimsy",
     "sources": [
-      "private/foundation/officers/iclas.txt", 
-      "*reserved-ids.yml", 
+      "private/foundation/officers/iclas.txt",
+      "*reserved-ids.yml",
       "*historic/committers.json"
     ]
   },
@@ -165,7 +165,7 @@
     "description": "ASF::LDAP: See also ASF::Config, Person, Member, Group",
     "maintainer": "vp-whimsy",
     "sources": [
-      "ASF::LDAP::HOSTS", 
+      "ASF::LDAP::HOSTS",
       "apache/infrastructure-puppet/deployment/data/common.yaml"
     ]
   },

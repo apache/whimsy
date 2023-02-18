@@ -4,11 +4,11 @@ Deploying Production Whimsy.apache.org
 The production `whimsy.apache.org` server is managed by [Puppet](puppetnode), and
 is automatically updated whenever commits are made to the master branch
 of this repository.  Thus code changes here are reflected in the production
-server within a few minutes.  In the event of a major server crash, the 
+server within a few minutes.  In the event of a major server crash, the
 infra team simply re-deploys the whole VM from Puppet.
 
-**Committers:** please test changes to end-user critical scripts before 
-committing to master! 
+**Committers:** please test changes to end-user critical scripts before
+committing to master!
 
 To deploy a completely _new_ whimsy VM, see [Manual Steps](#manual-steps).
 
@@ -31,8 +31,8 @@ How Production Is Updated
   to define the 'whimsy-pubsub' service which runs [tools/pubsub.rb](tools/pubsub.rb)
 - pubsub.rb watches for any commits from the whimsy git repo at gitbox.apache.org
 - When it detects a change, it tells Puppet to update the VM as a whole
-- Puppet then updates various svn/git repositories, ensures required tools and setup 
-  is done if there are other changes to dependencies, and when needed restarts most 
+- Puppet then updates various svn/git repositories, ensures required tools and setup
+  is done if there are other changes to dependencies, and when needed restarts most
   services that might need a restart
 - Puppet also does a `rake update` to update various gem or ruby settings
 
@@ -42,9 +42,9 @@ Thus, in less than 5 minutes from any git push, the server is running the new co
 Production Configuration
 ==========
 
-The Whimsy VM runs Ubuntu 20.04 and is fully managed by Puppet using 
-the normal methods Apache infra uses for managing servers.  Note however 
-that management of Whimsy code and tools is a PMC responsibility.  
+The Whimsy VM runs Ubuntu 20.04 and is fully managed by Puppet using
+the normal methods Apache infra uses for managing servers.  Note however
+that management of Whimsy code and tools is a PMC responsibility.
 
 <a name="puppetnode"></a>
 The **puppet definition** is contained in the following files (these are private files and need a login):
@@ -54,7 +54,7 @@ The **puppet definition** is contained in the following files (these are private
  * https://github.com/apache/infrastructure-p6/tree/production/modules/vhosts_whimsy/lib/puppet/functions (macro functions used above)
 
  * https://github.com/apache/infrastructure-p6/blob/production/modules/whimsy_server/manifests/init.pp (Defines various tools and directories used in some tools)
- 
+
  * https://github.com/apache/infrastructure-p6/blob/production/modules/whimsy_server/manifests/cronjobs.pp (Cronjobs control when /public/*.json is built and code and mail updates)
 
  * https://github.com/apache/infrastructure-p6/blob/production/modules/whimsy_server/manifests/procmail.pp
@@ -63,10 +63,10 @@ Before pushing any changes here, understand the Apache Infra puppet workflow and
 
  * https://cwiki.apache.org/confluence/display/INFRA/Git+workflow+for+infrastructure-puppet+repo
    To understand the high-level workflow for puppet changes.
-   
+
  * https://github.com/apache/infrastructure-puppet-kitchen#readme
    * addition to [Make modules useable](https://github.com/apache/infrastructure-puppet-kitchen#make-modules-useable) step:
- 
+
             rm -rf zmanda_asf
             mkdir -p zmanda_asf/manifests
             echo "class zmanda_asf::client (){}" > zmanda_asf/manifests/client.pp
@@ -77,7 +77,7 @@ Before pushing any changes here, understand the Apache Infra puppet workflow and
 Manual Steps
 ------------
 
-The following additional steps are required to get a new Whimsy VM up 
+The following additional steps are required to get a new Whimsy VM up
 and running - these are only needed for a new deployment.
 
  * Ensure that the IP address is static, and has been added to the list of allowed mail relays
@@ -91,7 +91,7 @@ and running - these are only needed for a new deployment.
    * `sudo systemctl status board-agenda-websocket.service` - this should show the service is running and has been up for some while
    * `curl localhost:34234` - should produce 'curl: (52) Empty reply from server' or similar
    * if curl replies with something else, check that the service is still running (and has not just been restarted)
-   * if the syslog contains a message of the form: 
+   * if the syslog contains a message of the form:
      'Sep 24 13:09:07 whimsy-vm6 ruby[3435205]:   what():  Encryption not available on this event-machine'
      then it will be necessary to re-install the gem eventmachine
      If the service still does not start, try stopping and starting it:

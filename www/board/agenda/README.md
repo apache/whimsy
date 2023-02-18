@@ -421,7 +421,7 @@ Nothing is perfect.  Here are a few things to watch out for:
    which includes methods like `File.read` and `YAML.parse`.  On the client,
    Ruby code is translated to JavaScript which only has access to JavaScript
    libraries, which includes methods like `history.pushState` and
-   `JSON.stringify`.  
+   `JSON.stringify`.
 
    [Ruby2JS filters](https://github.com/rubys/ruby2js#filters) reduce this
    gap by converting many common Ruby methods calls to JavaScript equivalents

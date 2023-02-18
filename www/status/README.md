@@ -54,7 +54,7 @@ anchor id for the element for linking purposes).
 
 Internally, exceptions returned by a monitor are converted to a leaf node with
 a name of `exception`, a title containing the exception, and data consisting
-of a stack traceback. 
+of a stack traceback.
 
 Href
 ----
@@ -114,7 +114,7 @@ The Apache Software Foundation infrastructure team uses
 status.  A dozen+ servers around the world check status regularly,
 and will report failure results to the infrastructure
 [Slack](https://the-asf.slack.com/) channel.  _Important:_ The Infrastructure
-team ensures the underlying VM is up; the Whimsy PMC is responsible for 
+team ensures the underlying VM is up; the Whimsy PMC is responsible for
 the server software running inside the VM.
 
 There are currently two Nodeping checks:
