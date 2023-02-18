@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-PAGETITLE = "Active Members not participating in meetings" # Wvisible:meeting
+PAGETITLE = "Active Members not participating in recent meetings" # Wvisible:meeting
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 
 require 'whimsy/asf'
@@ -47,7 +47,7 @@ _html do
       },
       helpblock: -> {
         _form_ do
-          _span "List of members that have not participated, starting with the "
+          _span "List of members that have not participated recently, starting with the "
           _select name: 'meetingsMissed', onChange: 'this.form.submit()' do
             dates.reverse.each_with_index do |name, i|
               _option name, value: i+1, selected: (i+1 == @meetingsMissed.to_i)
