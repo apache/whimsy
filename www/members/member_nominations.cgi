@@ -20,6 +20,9 @@ def emit_form(title, prev_data)
       )
       _whimsy_forms_input(label: 'Nominated by', name: 'nomby', readonly: true, value: $USER
       )
+      _whimsy_forms_input(
+        label: 'Seconded by', name: 'secby', helptext: 'Optional comma-separated list of seconds'
+      )
       field = 'statement'
       _whimsy_forms_input(label: 'Nomination statement', name: field, rows: 10,
         value: prev_data[field], helptext: 'Reason for nomination'
@@ -56,6 +59,7 @@ def process_form(formdata: {}, wunderbar: {})
   entry = ASF::MemberFiles.make_member_nomination({
     availid: uid,
     nomby: $USER,
+    secby: formdata['secby'],
     statement: statement
   })
 
