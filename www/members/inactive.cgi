@@ -91,6 +91,15 @@ _html do
           will see the text of an issue that will be placed before the membership
           for a vote should they not take either of these two options.
         }
+        _p do
+          _b %{
+            N.B.
+            Attendance details for the June 2022 meeting were only added recently.
+            Unfortunately this was only discovered after an email was sent to members.
+            Apologies to those of you who received an email in error.
+          }
+  
+        end
       }
     ) do
 
