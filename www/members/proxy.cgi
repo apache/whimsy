@@ -150,6 +150,7 @@ def emit_form(cur_mtg_dir, meeting, volunteers, disabled)
               _ "IMPORTANT! Be sure to tell the person that you select as proxy above that you've assigned them to mark your attendance! They simply need to mark your proxy attendance when the meeting starts."
               _a 'Read full procedures for Member Meeting', href: 'https://www.apache.org/foundation/governance/members.html#meetings'
             end
+            _p 'Note that you cannot select a member who has provided a proxy'
             _div.button_group.text_center do
               if disabled
                 _button.btn.btn_primary 'Submit', :disabled
@@ -230,7 +231,8 @@ def emit_post(cur_mtg_dir, meeting, _)
           proxy = form[/hereby authorize ([\S].*) to act/, 1].
             gsub('_', ' ').strip
           # Ensure availid is not included in proxy name here
-          proxy = proxy[/([^(]+)/, 1].strip
+          proxy.sub!(%r{\([^)]+\)}, '')
+          proxy.strip!
           name = form[/signature: ([\S].*)/, 1].gsub(/[\/_]/, ' ').strip
 
           "   #{proxy.ljust(24)} #{name} (#{id})"
