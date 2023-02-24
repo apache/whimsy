@@ -18,7 +18,7 @@ ROSTER = '/roster/committer'
 MEETINGS = ASF::SVN['Meetings']
 MAIL_ROOT = '/srv/mail' # TODO: this should be config item
 # Only need these items
-Email = Struct.new(:subject, :date, :message_id, :from)
+Email = Struct.new(:subject, :date, :message_id, :from, :asciiname)
 
 # Encapsulate gathering data to improve error processing
 def setup_data
@@ -40,9 +40,10 @@ def setup_data
       next unless date.include? year
       next if subject =~ /Member nominations: a plea/ # not a nomination!
       next if subject.downcase == 'member nomination process'
-      next unless subject =~ /^\[?MEMBER(SHIP)? NOMI[MN]ATION\]?/i
+      next unless /^\[?MEMBER(SHIP)? NOMI[MN]ATION\]? *(?<name>.*)/i =~ subject
+      # N.B. the named capture only works if the RE is on the LHS
       messageid = value[:MessageId]
-      emails << Email.new(subject, Time.parse(date).utc, messageid, [value[:From]])
+      emails << Email.new(subject, Time.parse(date).utc, messageid, [value[:From]], ASF::Person.asciize(name.delete('.'), nil))
     end
   end
 
@@ -55,18 +56,23 @@ def setup_data
   ASF::Person.preload('cn',
     nominations.map {|nominee| ASF::Person.find(nominee[:id])})
 
+  # build up the matches once
+  nominations.each do |nominee|
+    nominee[:match] = create_match(nominee)
+  end
   return nominations, emails
 end
 
 # create the match RE from a nominee
 def create_match(nominee)
   names = []
-  pname = nominee[:name]
+  pname = ASF::Person.asciize(nominee[:name], nil) # don't change non-words
   names << pname
   names << pname.delete('.')
-  names << pname.sub(%r{ [A-Z]\.? }, ' ') # drop initial
+  names << pname.sub(%r{ [A-Z] }, ' ') # drop initial
+  names << pname.sub(/\bChristo(ph|f)er\b/, 'Chris') # Special
   personname = ASF::Person.find(nominee[:id]).public_name
-  names << personname if personname
+  names << ASF::Person.asciize(personname, nil) if personname
   list = names.uniq.map {|name| Regexp.escape(name)}.join('|')
   # N.B. \b does not match if it follows ')', so won't match John (Fred)
   # TODO: Work-round is to also look for EOS, but this needs to be improved
@@ -118,9 +124,7 @@ _html do
             _li! do
               person = ASF::Person.find(nominee[:id])
 
-              match = create_match(nominee)
-
-              if emails.any? {|mail| mail.subject.downcase =~ match || mail.subject.downcase.delete('.') =~ match}
+              if emails.any? {|mail| ASF::Person.asciize(mail.subject.downcase.delete('.'), nil) =~ nominee[:match]}
                 _a.present person.public_name || '??', href: "#{ROSTER}/#{nominee[:id]}"
               else
                 _a.missing person.public_name || '??', href: "#{ROSTER}/#{nominee[:id]}"
@@ -156,10 +160,7 @@ _html do
               href = MBOX + mail.date.strftime('%Y%m') + '.mbox/' +
               ERB::Util.url_encode('<' + mail.message_id + '>')
 
-              if nominations.any? do |nominee|
-                m = create_match(nominee)
-                mail.subject.downcase =~ m || mail.subject.downcase.delete('.') =~ m
-              end
+              if nominations.any? {|nominee| mail[:asciiname] =~ nominee[:match]}
                 _a.present mail.subject, href: href
               else
                 _a.missing mail.subject, href: href

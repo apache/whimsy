@@ -18,7 +18,7 @@ ROSTER = '/roster/committer'
 MEETINGS = ASF::SVN['Meetings']
 MAIL_ROOT = '/srv/mail' # TODO: this should be config item
 # Only need these items
-Email = Struct.new(:subject, :date, :message_id, :from)
+Email = Struct.new(:subject, :date, :message_id, :from, :asciiname)
 
 # Encapsulate gathering data to improve error processing
 def setup_data
@@ -38,9 +38,10 @@ def setup_data
       next unless subject
       date = value[:Date]
       next unless date.include? year
-      next unless subject =~ /^\[?BOARD NOMI[MN]ATION\]?/i
+      next unless /^\[?BOARD NOMI[MN]ATION\]? *(?<name>.*)/i =~ subject
+      # N.B. the named capture only works if the RE is on the LHS
       messageid = value[:MessageId]
-      emails << Email.new(subject, Time.parse(date).utc, messageid, [value[:From]])
+      emails << Email.new(subject, Time.parse(date).utc, messageid, [value[:From]], ASF::Person.asciize(name.delete('.'), nil))
     end
   end
 
@@ -53,23 +54,28 @@ def setup_data
   ASF::Person.preload('cn',
     nominations.map {|nominee| ASF::Person.find(nominee[:id])})
 
+  # build up the matches once
+  nominations.each do |nominee|
+    nominee[:match] = create_match(nominee)
+  end
   return nominations, emails
 end
 
 # create the match RE from a nominee
 def create_match(nominee)
   names = []
-  pname = nominee[:name]
+  pname = ASF::Person.asciize(nominee[:name], nil) # don't change non-words
   names << pname
-  names << pname.sub(%r{ [A-Z]\.? }, ' ') # drop initial
+  names << pname.delete('.')
+  names << pname.sub(%r{ [A-Z] }, ' ') # drop initial
+  names << pname.sub(/\bChristo(ph|f)er\b/, 'Chris') # Special
   personname = ASF::Person.find(nominee[:id]).public_name
-  names << personname if personname
-  list = names.uniq.map{|name| Regexp.escape(name)}.join('|')
+  names << ASF::Person.asciize(personname, nil) if personname
+  list = names.uniq.map {|name| Regexp.escape(name)}.join('|')
   # N.B. \b does not match if it follows ')', so won't match John (Fred)
   # TODO: Work-round is to also look for EOS, but this needs to be improved
   %r{\b(#{list})(\b|$)}i
 end
-
 
 # produce HTML output of reports, highlighting ones that have not (yet)
 # been posted
@@ -108,16 +114,14 @@ _html do
 
           _p.count "Count: #{nominations.count}"
 
-          _ul nominations.sort_by {|nominee| nominee[:name]} do |nominee|
+          _ul(nominations.sort_by {|nominee| nominee[:name]}) do |nominee|
             _li! do
               person = ASF::Person.find(nominee[:id])
 
-              match = create_match(nominee)
-
-              if emails.any? {|mail| mail.subject.downcase =~ match}
-                _a.present person.public_name, href: "#{ROSTER}/#{nominee[:id]}"
+              if emails.any? {|mail| ASF::Person.asciize(mail.subject.downcase.delete('.'), nil) =~ nominee[:match]}
+                _a.present person.public_name || '??', href: "#{ROSTER}/#{nominee[:id]}"
               else
-                _a.missing person.public_name, href: "#{ROSTER}/#{nominee[:id]}"
+                _a.missing person.public_name || '??', href: "#{ROSTER}/#{nominee[:id]}"
                 _ ' Nominated by: '
                 _ nominee[:nominator]
               end
@@ -149,7 +153,7 @@ _html do
               href = MBOX + mail.date.strftime('%Y%m') + '.mbox/' +
               ERB::Util.url_encode('<' + mail.message_id + '>')
 
-              if nominations.any? {|nominee| mail.subject =~ create_match(nominee)}
+              if nominations.any? {|nominee| mail[:asciiname] =~ nominee[:match]}
                 _a.present mail.subject, href: href
               else
                 _a.missing mail.subject, href: href
@@ -170,6 +174,6 @@ _json do
   _ reports do |mail| # TODO: reports is not defined
     _subject mail.subject
     _link MBOX + ERB::Util.url_encode('<' + mail.message_id + '>') # TODO looks wrong: does not agree with href above
-    _missing missing.any? {|title| mail.subject.downcase =~ /\b#{Regexp.escape(title)}\b/}
+    _missing(missing.any? {|title| mail.subject.downcase =~ /\b#{Regexp.escape(title)}\b/})
   end
 end
