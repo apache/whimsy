@@ -88,11 +88,12 @@ _html do
           of the nomination to the members list.
           There is currently no support for updating an existing entry.
         }
+        _p 'Nominations are now closed!'
       }
     ) do
 
       _div id: 'nomination-form' do
-        if _.post?
+        if false # _.post?
           submission = _whimsy_params2formdata(params)
           valid = validate_form(formdata: submission)
           if valid == 'OK'
