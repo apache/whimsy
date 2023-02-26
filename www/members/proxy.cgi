@@ -73,7 +73,7 @@ def emit_instructions(today, cur_mtg_dir, meeting)
     _p do
       _ 'Currently, we must have '
       _span.text_primary attend_irc
-      _ " Members attend the first half of the #{meeting} meeting and respond to Roll Call to reach quorum and continue the meeting."
+      _ " Members attend the #{meeting} meeting and respond to Roll Call to reach quorum and continue the meeting."
       _ " Calculation: Total voting members: #{num_members}, with one third for quorum: #{quorum_need}, minus previously submitted proxies: #{num_proxies}"
     end
   end
