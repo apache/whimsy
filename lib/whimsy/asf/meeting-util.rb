@@ -4,10 +4,12 @@
 $LOAD_PATH.unshift '/srv/whimsy/lib' if __FILE__ == $PROGRAM_NAME
 require 'whimsy/asf'
 require 'json'
+require 'date'
 
 module ASF
   class MeetingUtil
     RECORDS = ASF::SVN.svnurl!('Meetings')
+    VCAL_EVENTS_FILENAME = 'ASF-members-meeting.ics'
     MEETING_FILES = { # Filename in meeting dir, pathname to another deployed tool, or URL
       'README.txt' => 'README For Meeting Process And Roll Call',
       'nomination_of_board.txt' => 'How To Nominate Someone For Board',
@@ -22,7 +24,8 @@ module ASF
       'attend' => 'Official List Of Meeting Attendees (afterwards)',
       'voter-tally' => 'Official List Of Who Voted (afterwards)',
       'raw_board_votes.txt' => 'Official List Of Votes For Board (afterwards)',
-      'raw-irc-log' => 'ASFBot logs all postings on #asfmembers during meeting'
+      'raw-irc-log' => 'ASFBot logs all postings on #asfmembers during meeting (afterwards)',
+      VCAL_EVENTS_FILENAME => 'VCAL events file: ASF Members Meeting; Nominations close; Polls close'
     }
 
     # Calculate how many members required to attend first half for quorum
@@ -51,6 +54,7 @@ module ASF
       # split by ---- underlines, then by blank lines; pick second para and drop leading spaces
       lines.split(/^-----------/)[1].split(/\n\n/)[1].scan(/^\ +(\S.*$)/).flatten
     end
+
     # Get info about current users's proxying
     # @return "help text", ["id | name (proxy)", ...] if they are a proxy for other(s)
     # @return "You have already submitted a proxy form" to someone else
@@ -86,14 +90,17 @@ module ASF
     def self.get_latest_completed(mtg_root, sentinel='raw-irc-log')
       return Dir[File.join(mtg_root, '2*')].select {|d| File.exist? File.join(d, sentinel) }.max
     end
+
     # Get the latest available Meetings dir
     def self.get_latest(mtg_root)
       return Dir[File.join(mtg_root, '2*')].max
     end
+
     # Get the second latest available Meetings dir
     def self.get_previous(mtg_root)
       return Dir[File.join(mtg_root, '2*')].sort[-2]
     end
+
     # Read attendance.json file
     def self.get_attendance(mtg_root)
       return JSON.parse(IO.read(File.join(mtg_root, 'attendance.json')))
@@ -202,6 +209,11 @@ module ASF
       end
     end
 
+    # return the dir containing the latest meeting files
+    def self.latest_meeting_dir
+      MeetingUtil.get_latest(ASF::SVN['Meetings'])
+    end
+
     # return the current status of all inactive members
     def self.tracker(meetingsMissed)
       meetings = ASF::SVN['Meetings']
@@ -222,6 +234,31 @@ module ASF
           'last' => dates[-missed-1]
         }]
       }]
+    end
+
+    # get the times from the VCAL events file
+    # returns: nominations close, polls close, meeting starts as seconds since epoch
+    def self.get_invite_times
+      times = {}
+      File.readlines(File.join(latest_meeting_dir, VCAL_EVENTS_FILENAME)).slice_before(/^BEGIN:VEVENT/).drop(1).each do |ev|
+        uid = nil
+        dtstart = nil
+        ev.each do |line|
+          case line
+            when /^UID:(.+)/
+              uid = $1.chomp.sub(/-?\d{4}/, '')
+            when /^DTSTART;TZID=(.+):(.+)/
+              tz = $1
+              if tz == 'UTC'
+                dtstart = DateTime.iso8601($2.chomp).to_time.to_i
+              else
+                raise ArgumentError.new("Cannot parse #{line.chomp} in #{VCAL_EVENTS_FILENAME}")
+              end
+          end
+        end
+        times[uid] = dtstart
+      end
+      return [times['asf-members-nominations-close'], times['asf-members-polls-close'], times['asf-members']]
     end
   end
 end

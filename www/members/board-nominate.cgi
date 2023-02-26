@@ -9,6 +9,9 @@ require 'whimsy/asf'
 require 'whimsy/asf/forms'
 require 'whimsy/asf/member-files'
 require 'whimsy/asf/wunderbar_updates'
+require 'whimsy/asf/meeting-util'
+
+nomclosed = Time.now.to_i > ASF::MeetingUtil.get_invite_times.first
 
 def emit_form(title, prev_data)
   _whimsy_panel(title, style: 'panel-success') do
@@ -44,7 +47,6 @@ def validate_form(formdata: {})
   return "Already nominated: #{uid} by #{already[uid]['Nominated by']}" if already.include? uid
   return 'OK'
 end
-
 
 # Handle submission (checkout user's apacheid.json, write form data, checkin file)
 # @return true if we think it succeeded; false in all other cases
@@ -88,15 +90,24 @@ _html do
           of the nomination to the members list.
           There is currently no support for updating an existing entry.
         }
-        _p 'Nominations are now closed!'
       }
     ) do
 
+      if nomclosed
+        _h1 'Nominations are now closed!' 
+      end
+
       _div id: 'nomination-form' do
-        if false # _.post?
-          submission = _whimsy_params2formdata(params)
-          valid = validate_form(formdata: submission)
-          if valid == 'OK'
+        if _.post?
+          unless nomclosed
+            submission = _whimsy_params2formdata(params)
+            valid = validate_form(formdata: submission)
+          end
+          if nomclosed
+            _div.alert.alert_warning role: 'alert' do
+              _p "Nominations have closed"
+            end
+          elsif valid == 'OK'
             if process_form(formdata: submission, wunderbar: _)
               _p.lead "Thanks for Using This Form!"
             else
