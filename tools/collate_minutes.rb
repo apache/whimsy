@@ -294,12 +294,19 @@ seen={}
       end
     end
 
+    owners = nil
+    if title =~ /^Report from the VP of (.+)/
+      title = $1
+      if title =~ /^(.+?) +\[([^\]]+)\]/
+          title = $1
+          owners = $2
+      end
+    end 
     title.sub! /Special /, ''
     title.sub! /Requested /, ''
     title.sub! /(^| )Report To The Board( On)?( |$)/i, ''
     title.sub! /^Board Report for /, ''
     title.sub! /^Status [Rr]eport for (the )?/, ''
-    title.sub! /^Report from the VP of /, ''
     title.sub! /^Report from the /i, ''
     title.sub! /^Status report for the /i, ''
     title.sub! /^Apache /, ''
@@ -320,6 +327,7 @@ seen={}
     report = pending[attach] || OpenStruct.new
     report.meeting = date
     report.attach = attach
+    report.owners ||= owners if owners
     report.title = title.strip #.downcase
     report.text = text
 
