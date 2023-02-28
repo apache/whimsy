@@ -41,6 +41,8 @@ force = ARGV.delete '--force' # rerun regardless
 
 NOSTAMP = ARGV.delete '--nostamp' # don't add dynamic timestamp to pages (for debug compares)
 
+NOWARN_LAYOUT = ARGV.delete '--nowarn_layout' # don't layout change warning to pages (for debug compares)
+
 DUMP_AGENDA = ARGV.delete '--dump_agenda' # output agenda details
 
 STAMP = (NOSTAMP ? Time.new(1970) :  Time.now).strftime '%Y-%m-%d %H:%M'
@@ -295,13 +297,13 @@ seen={}
     end
 
     owners = nil
-    if title =~ /^Report from the VP of (.+)/
+    if title =~ /^Report from the(?: VP of)? (.+)/i
       title = $1
       if title =~ /^(.+?) +\[([^\]]+)\]/
           title = $1
           owners = $2
       end
-    end 
+    end
     title.sub! /Special /, ''
     title.sub! /Requested /, ''
     title.sub! /(^| )Report To The Board( On)?( |$)/i, ''
@@ -790,12 +792,14 @@ def layout(title = nil)
       beginning of every Board meeting; therefore, the list below does not
       normally contain details from the minutes of the most recent Board meeting.
       EOT
-      x.br
-      x.br
-      x.strong 'WARNING: these pages may omit some original contents of the minutes.'
-      x.br
-      x.text 'This is due to changes in the layout of the source minutes over the years.'
-      x.text 'Fixes are being worked on.'
+      unless NOWARN_LAYOUT
+        x.br
+        x.br
+        x.strong 'WARNING: these pages may omit some original contents of the minutes.'
+        x.br
+        x.text 'This is due to changes in the layout of the source minutes over the years.'
+        x.text 'Fixes are being worked on.'
+      end
     end
   }
 
