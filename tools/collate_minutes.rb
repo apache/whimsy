@@ -432,7 +432,8 @@ seen={}
   end
 
   # fill in comments from missing reports
-  ['Committee', 'Additional Officer'].each do |section|
+  # TODO: temporarily omit Additional Officer processing as it generates some incorrect ownership
+  ['Committee', '_Additional Officer_'].each do |section|
     reports = minutes[/^ \d\. #{section} Reports(\s*(\n|  .*\n)+)/,1]
     next unless reports
     reports.split(/^    (\w+)\./)[1..-1].each_slice(2) do |attach, comments|
@@ -441,6 +442,7 @@ seen={}
       next if comments.include? 'See Attachment'
       comments.sub! /.*\s+\n/, ''
       next if comments.empty?
+      # TODO: This does not work properly
       attach = ('A'..attach).count.to_s if section == 'Additional Officer'
 
       report = pending[attach] || OpenStruct.new
@@ -780,6 +782,12 @@ def layout(title = nil)
       beginning of every Board meeting; therefore, the list below does not
       normally contain details from the minutes of the most recent Board meeting.
       EOT
+      x.br
+      x.br
+      x.strong 'WARNING: these pages may omit some original contents of the minutes.'
+      x.br
+      x.text 'This is due to changes in the layout of the source minutes over the years.'
+      x.text 'Fixes are being worked on.'
     end
   }
 
