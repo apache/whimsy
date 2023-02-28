@@ -877,7 +877,7 @@ agenda.sort.each do |title, reports|
   end
 
   dest = File.join(SITE_MINUTES, link[title])
-  unless File.exist?(dest) and remove_date(File.read(dest)) == remove_date(page)
+  if force or !File.exist?(dest) or (remove_date(File.read(dest)) != remove_date(page))
     Wunderbar.info  "Writing #{link[title]}"
     open(dest, 'w') {|file| file.write page}
 #  else
