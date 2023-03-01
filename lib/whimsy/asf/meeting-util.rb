@@ -10,6 +10,8 @@ module ASF
   class MeetingUtil
     RECORDS = ASF::SVN.svnurl!('Meetings')
     VCAL_EVENTS_FILENAME = 'ASF-members-meeting.ics'
+    PROXIES_FILENAME = 'proxies'
+
     MEETING_FILES = { # Filename in meeting dir, pathname to another deployed tool, or URL
       'README.txt' => 'README For Meeting Process And Roll Call',
       'nomination_of_board.txt' => 'How To Nominate Someone For Board',
@@ -19,7 +21,7 @@ module ASF
       'agenda.txt' => 'Official Meeting Agenda',
       'board_ballot.txt' => 'Official Board Candidate Ballots',
       'nominated-members.txt' => 'Official New Member Nominees/Seconds',
-      'proxies' => 'Official List Of Meeting Proxies',
+      PROXIES_FILENAME => 'Official List Of Meeting Proxies',
       'record' => 'Official List Of Voting Members',
       'attend' => 'Official List Of Meeting Attendees (afterwards)',
       'voter-tally' => 'Official List Of Who Voted (afterwards)',
@@ -48,11 +50,52 @@ module ASF
       return num_members, quorum_need, num_proxies, attend_irc
     end
 
+    # parse the proxies file
+    def self.parseProxies(mtg_dir=nil)
+      mtg_dir ||= latest_meeting_dir
+      lines = IO.readlines(File.join(mtg_dir, PROXIES_FILENAME))
+      parts = lines.slice_before(%r{^(Volunteers|Assignments):}).drop(1)
+      volunteers = parts.shift.drop(3) # heading
+      assignments = parts.shift.drop(4)
+      return volunteers, assignments
+    end
+
     # get list of proxy volunteers
-    def self.getVolunteers(mtg_dir)
-      lines = IO.read(File.join(mtg_dir, 'proxies'))
-      # split by ---- underlines, then by blank lines; pick second para and drop leading spaces
-      lines.split(/^-----------/)[1].split(/\n\n/)[1].scan(/^\ +(\S.*$)/).flatten
+    def self.getVolunteers(mtg_dir=nil)
+      volunteers, _ = self.parseProxies(mtg_dir)
+      volunteers.each.filter_map {|line| l = line.strip; l if l.length > 0}
+    end
+
+    # get list of proxy assignments
+    # returns array of: [proxy, subject, subject id]
+    def self.getProxyAssignments(mtg_dir=nil)
+      _, assignments = self.parseProxies(mtg_dir)
+      hdr = assignments.shift
+      # work out the column layout
+      re = %r{^((\s+)<name>\s+)<name>}
+      if hdr.match re
+        total, offset = [$1.length, $2.length]
+      else
+        raise ArgumentError, "proxies: bad header '#{hdr}'"
+      end
+      assignments.map do |line|
+        proxy = line[offset..total-1].strip
+        if line[total..-1].strip.match %r{(.+) +\((.+)\)}
+          proxied = $1
+          uid = $2
+        else
+          raise ArgumentError, "proxies: bad assigment '#{line}'"
+        end
+        [proxy, proxied, uid]
+      end
+    end
+
+    # get list of proxy nominees
+    def self.getProxyNominees(mtg_dir=nil)
+      assignments = self.getProxyAssignments(mtg_dir)
+      assignments.map do |line|
+        line[0]
+      end.uniq
     end
 
     # Get info about current users's proxying
@@ -60,17 +103,17 @@ module ASF
     # @return "You have already submitted a proxy form" to someone else
     # @return nil otherwise
     def self.is_user_proxied(mtg_dir, id)
+      proxylist = self.getProxyAssignments(mtg_dir)
       user = ASF::Person.find(id)
-      lines = IO.read(File.join(mtg_dir, 'proxies'))
-      proxylist = lines.scan(/\s\s(.{25})(.*?)\((.*?)\)/) # [["Shane Curcuru    ", "David Fisher ", "wave"], ...]
       help = nil
       copypasta = [] # theiravailid | Their Name in Rolls (proxy)
+      max_uid_len = 16 # for alignment
       begin
-        proxylist.each do |arr|
-          if user.cn == arr[0].strip
-            copypasta << "#{arr[2].ljust(12)} | #{arr[1].strip} (proxy)"
-          elsif user.id == arr[2]
-            help = "NOTE: You have already submitted a proxy form for #{arr[0].strip} to mark your attendance (be sure they know to mark you at Roll Call)! "
+        proxylist.each do |proxy, subject, uid|
+          if user.cn == proxy
+            copypasta << "#{uid.ljust(max_uid_len)} | #{subject} (proxy)"
+          elsif user.id == uid
+            help = "NOTE: You have already submitted a proxy form for #{proxy} to mark your attendance (be sure they know to mark you at Roll Call)! "
           end
         end
       rescue StandardError => e
@@ -80,7 +123,7 @@ module ASF
         return help
       else
         (help ||= "") << "During the meeting, to mark your proxies' attendance, AFTER the 2. Roll Call is called, you may copy/paste the below lines to mark your and your proxies attendance."
-        copypasta.unshift("#{user.id.ljust(12)} | #{user.cn}")
+        copypasta.unshift("#{user.id.ljust(max_uid_len)} | #{user.cn}")
         return help, copypasta
       end
     end
