@@ -31,6 +31,12 @@ module ASF
     }
 
     # Calculate how many members required to attend first half for quorum
+    # Returns: num_members, quorum_need, num_proxies, attend_irc
+    # where:
+    # num_members = number of active members (taken from 'record' if possible, else members.txt)
+    # quorum_need = (num_members + 2) / 3
+    # num_proxies = number of files under 'proxies-received'
+    # attend_irc = quorum_need - num_proxies
     def self.calculate_quorum(mtg_dir)
       begin
         begin
