@@ -326,7 +326,7 @@ seen={}
     next if text.strip.empty? and title =~ /Intentionally (left )?Blank/i
     next if text.strip.empty? and title =~ /There is No/i
 
-    report = pending[attach] || OpenStruct.new
+    report = pending[attach] ||= OpenStruct.new
     report.meeting = date
     report.attach = attach
     report.owners ||= owners if owners
@@ -352,8 +352,6 @@ seen={}
     elsif title =~ /Written Consent of the Directors/
       report.attach = '@' + attach
     end
-
-    pending[attach] = report
 
     if title == 'Incubator' and text
       sections = text.split(/\nStatus [rR]eport (.*)\n=+\n/)
@@ -433,12 +431,11 @@ seen={}
     (.*?)\n                           # comments
     \s\s\s\s?\w                       # separator
   /mx).each do |owners,attach,comments|
-    report = pending[attach] || OpenStruct.new
+    report = pending[attach] ||= OpenStruct.new
     report.meeting = date
     report.attach = attach
     report.owners = owners
     report.comments = comments.strip
-    pending[attach] = report
   end
 
   # fill in comments from missing reports
@@ -455,12 +452,11 @@ seen={}
       # TODO: This does not work properly
       attach = ('A'..attach).count.to_s if section == 'Additional Officer'
 
-      report = pending[attach] || OpenStruct.new
+      report = pending[attach] ||= OpenStruct.new
       report.meeting = date
       report.attach = attach
       report.owners = owners
       report.comments = comments.strip
-      pending[attach] = report
     end
   end
 
