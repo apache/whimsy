@@ -444,10 +444,10 @@ seen={}
     reports = minutes[/^ \d\. #{section} Reports(\s*(\n|  .*\n)+)/,1]
     next unless reports
     reports.split(/^    (\w+)\./)[1..-1].each_slice(2) do |attach, comments|
-      next if attach.length > 2
+      next if attach.length > 2 # Why?
+      next if comments.include? 'See Attachment' # handled above
       owners = comments[/\[([^\n]+)\]/,1]
-      next if comments.include? 'See Attachment'
-      comments.sub! /.*\s+\n/, ''
+      comments.sub!(/.*\s+\n/, '')
       next if comments.empty?
       # TODO: This does not work properly
       attach = ('A'..attach).count.to_s if section == 'Additional Officer'
