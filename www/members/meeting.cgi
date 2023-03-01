@@ -81,6 +81,7 @@ _html do
     today = Time.now
     # Calculate quorum
     num_members, quorum_need, num_proxies, attend_irc = ASF::MeetingUtil.calculate_quorum(cur_mtg_dir)
+    proxy_nominees = ASF::MeetingUtil.getProxyNominees.count
     # Use ics files for accurate times; see create-meeting.rb; note change in process 2022/2023
     ics_date = ics2dtstart(File.join(cur_mtg_dir, ICS_FILE))
     ROSTER = "/roster/committer"
@@ -144,6 +145,12 @@ _html do
             _span.text_primary attend_irc
             _ " Members attending the first half of the meeting on Tuesday and respond to Roll Call to reach quorum and continue the meeting."
             _ " Calculation: Total voting members: #{num_members}, with one third for quorum: #{quorum_need}, minus previously submitted proxies: #{num_proxies}"
+          end
+          _p do
+            _ "There are #{proxy_nominees} people acting as proxies."
+            if proxy_nominees >= attend_irc
+              _strong 'If they all attend, then quorum will be achieved.'
+            end
           end
           _p 'Individual Members are considered to have Attended a meeting if they either: respond to Roll Call (in first or second half of meeting); submit a proxy (that gets submitted during Roll Call); or who cast a ballot on any matters.'
           _ul do
