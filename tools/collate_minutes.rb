@@ -41,7 +41,7 @@ force = ARGV.delete '--force' # rerun regardless
 
 NOSTAMP = ARGV.delete '--nostamp' # don't add dynamic timestamp to pages (for debug compares)
 
-NOWARN_LAYOUT = ARGV.delete '--nowarn_layout' # don't layout change warning to pages (for debug compares)
+NOWARN_LAYOUT = ARGV.delete '--nowarn_layout' # don't add layout change warning to pages (for debug compares)
 
 DUMP_AGENDA = ARGV.delete '--dump_agenda' # output agenda details
 
