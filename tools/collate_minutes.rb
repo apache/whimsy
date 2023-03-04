@@ -43,7 +43,9 @@ NOSTAMP = ARGV.delete '--nostamp' # don't add dynamic timestamp to pages (for de
 
 NOWARN_LAYOUT = ARGV.delete '--nowarn_layout' # don't add layout change warning to pages (for debug compares)
 
-DUMP_AGENDA = ARGV.delete '--dump_agenda' # output agenda details
+DUMP_AGENDA = ARGV.delete '--dump_agenda' # output agenda details to stdout
+
+DUMP_PENDING = ARGV.delete '--dump_pending' # output agenda details to stdout
 
 STAMP = (NOSTAMP ? Time.new(1970) :  Time.now).strftime '%Y-%m-%d %H:%M'
 
@@ -86,7 +88,7 @@ if File.exist? INDEX_FILE
   end
 end
 
-Wunderbar.info "Updating files"
+Wunderbar.info "Processing input files"
 
 # mapping of committee names to canonical names (generally from ldap)
 canonical = Hash.new {|hash, name| name}
@@ -274,6 +276,7 @@ seen={}
     Wunderbar.warn "Already processed #{seen[date]}; skipping #{txt}"
     next
   end
+  Wunderbar.info "Parsing input for #{date}"
   seen[date] = txt
   minutes = open(txt) {|file| file.read}
   pending = {}
@@ -435,7 +438,8 @@ seen={}
     report.meeting = date
     report.attach = attach
     report.owners = owners
-    report.comments = comments.strip
+    cs = comments.strip
+    report.comments = cs if cs.length > 0
   end
 
   # fill in comments from missing reports
@@ -456,7 +460,8 @@ seen={}
       report.meeting = date
       report.attach = attach
       report.owners = owners
-      report.comments = comments.strip
+      cs = comments.strip
+      report.comments = cs if cs.length > 0
     end
   end
 
@@ -716,6 +721,20 @@ seen={}
     end
   end
 
+  if DUMP_PENDING
+    puts "Dump of pending data for " + date
+    pending.each do |k,v|
+      puts "#{k} #{k == v.attach ? '==' : '!='} #{v.attach}"
+      puts v.title
+      puts "O: #{v.owners}" if v.owners
+      puts "S: #{v.subtitle}" if v.subtitle
+      p "C: #{v.comments}" if v.comments
+      text = v.text
+      puts "#{text.size} #{text.split("\n",2)[0]}"
+      puts ''
+    end
+  end
+  
   # Add to the running tally
   pending.each_value do |report|
     next if not report.title or report.title.empty?
@@ -730,7 +749,14 @@ seen={}
   end
 end
 
-puts
+if DUMP_AGENDA
+  puts "Dump of agenda data for this run"
+  agenda.each do |title, reports|
+    p [reports.length > 1 ? '>1' : '=1', reports.last.attach[0..1], reports.length, title]
+  end
+end
+
+Wunderbar.info "Starting to generate output"
 
 # determine link for each report
 link = {}
@@ -898,12 +924,6 @@ agenda.sort.each do |title, reports|
     open(dest, 'w') {|file| file.write page}
 #  else
 #    Wunderbar.info  "Not updating #{link[title]}"
-  end
-end
-
-if DUMP_AGENDA
-  agenda.each do |title, reports|
-    p [reports.length > 1 ? '>1' : '=1', reports.last.attach[0..1], reports.length, title]
   end
 end
 
