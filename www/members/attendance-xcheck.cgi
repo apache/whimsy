@@ -24,9 +24,9 @@ end
 
 # cross check against members.txt
 missing = []
-ASF::Member.list.each do |id, info|
-  unless attend.delete(info[:name]) or info['status']
-    missing << [info[:name], added[id]]
+ASF::Member.list_entries do |status, name, id, _entry|
+  unless attend.delete(name) or status != :current
+    missing << [name, added[id]]
   end
 end
 
