@@ -1,4 +1,5 @@
 require 'weakref'
+require 'wunderbar'
 
 module ASF
   class Member
@@ -132,6 +133,81 @@ module ASF
       self.list.keys - self.status.keys
     end
 
+    # convert key to symbol: replace non-alphanumeric with '_' and downcase
+    def self.key2sym(key)
+      Symbol === key ? key.downcase : key.gsub(%r{[^a-zA-Z0-9]}, '_').downcase.to_sym
+    end
+
+    # parse a single entry
+    # Params: keys_wanted array of key symbols to retrieve; defaults to ["Email"]
+    # Strings are forced to lower-case and non-alphanumeric replaced with '_'
+    def self.parse_entry(entry, keys_wanted=nil)
+      if keys_wanted.nil?
+        keys_wanted = %i{email}
+      end
+    # init array to collect matching key values, even if repeated
+      dict = {keys: keys_wanted.map{|k| [k,[]]}.to_h}
+      current_entry = nil
+      entry.each do |line|
+        if line =~ %r{^ +([^:]+): *(.*)}
+          val = $2.strip # must be done first otherwise $2 is clobbered
+          key = key2sym($1)
+          if keys_wanted.include? key
+            current_entry = dict[:keys][key]
+            current_entry << val
+          end
+        elsif current_entry and line.start_with? '    ' # needs to be indented at least this much to be a continuation line
+          value = line.strip
+          current_entry << value if value.size > 0
+        else
+          current_entry = nil
+        end
+      end
+      dict
+    end
+
+    # return all user entries, whether or not they have an id
+    # Params: keys_wanted: array of key names to extract and return
+    # Returns: array of [status, user name, availid or nil, entry lines, [keys]]
+    def self.list_entries(keys_wanted=nil)
+      # split by heading underlines; drop text before first
+      ASF::Member.text.split("\n").slice_before {|a| a.start_with? '================'}.drop(1).each_with_index do |sect, index|
+        status = nil
+        # assume the sections remain in the original order
+        case index
+        when 0
+          status = :current
+        when 1
+          status = :emeritus          
+        when 2
+          status = :other
+        when 3
+          status = :deceased
+        else
+          raise ArgumentError, "Unexpected section #{index} #{sect[1..2]}"
+        end
+        if status
+          sect.pop unless status == :deceased # drop next section name (except at the end)
+          # extract the entries, dropping the leading text
+          sect.slice_before {|a| a.start_with? ' *)'}.drop(1).each do |entry|
+            # we always want the name
+            name = entry.first[4..-1].sub(%r{ +/\*.+}, '') # skip ' *) '; drop comment
+            ids = []
+            entry.each {|e| ids << $1 if e =~ %r{^ +Avail ID: *(\S+)}}
+            if ids.length > 1
+              Wunderbar.error "Duplicate ids: #{ids} in #{name} entry"
+            end
+            if keys_wanted
+              yield status, name, ids.first, entry, self.parse_entry(entry, keys_wanted.map!{|k| self.key2sym(k)})
+            else
+              yield status, name, ids.first, entry
+            end
+          end
+        end
+      end
+      nil
+    end
+
     # An iterator that returns a list of ids and associated members.txt entries.
     def each
       ASF::Member.text.to_s.split(/^ \*\) /).each do |section|
@@ -151,6 +227,7 @@ module ASF
 
     # extract member emails from members.txt entry
     def self.emails(text)
+      # RE looks for optional continuation lines starting with spaces followed by nonspaces followed by '@'
       text.to_s.scan(/Email: (.*(?:\n\s+\S+@.*)*)/).flatten.
         join(' ').split(/\s+/).grep(/@/)
     end
