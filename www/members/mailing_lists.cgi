@@ -54,6 +54,8 @@ else
   filter = nil
 end
 
+mod_counts = ASF::MLIST.list_moderators(nil).first.map {|x,y| [x, y.length]}.to_h
+
 _html do
   _body? do
     _whimsy_body(
@@ -75,6 +77,11 @@ _html do
           _ "This script shows the flag settings for all mailing lists, and attempts to interpret them."
         end
         _p %{
+          'mod count' is the number of moderators for the list.
+          Lists should ideally have at least 3 moderators.
+          The count is enclosed in [] if the list is 'open' or 'subonly', because posts don't need to be moderated in that case.
+        }
+        _p %{
           Note that there are other settings which affect the behaviour, and the initial behaviour defined
           by the flags can be modified by local changes to the editor script.
         }
@@ -89,6 +96,7 @@ _html do
             _th 'list', data_sort: 'string'
             _th "flags #{filter}", data_sort: 'string'
             _th 'Type (mu)', data_sort: 'string'
+            _th 'mod count', data_sort: 'int'
             _th 'Known (z)', data_sort: 'string'
             _th 'Private (s)', data_sort: 'string'
             _th 'Filter (x)', data_sort: 'string'
@@ -106,6 +114,15 @@ _html do
               _td do
                 _ mu
                 _ type(mu)
+              end
+              count = mod_counts["#{list}@#{domain}"] 
+              if %w{subonly open}.include? type(mu)
+                # ensure unmoderated lists are not penalised for having few moderators
+                _td data_sort_value: count+100 do
+                  _ "[#{count}]"
+                end
+              else
+                _td count
               end
               _td flags.include? 'z'
               _td flags.include? 's'
