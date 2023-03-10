@@ -69,6 +69,9 @@ class MemApp < Vue
     # fetch memapp-received information
     jQuery.getJSON('../../memapp.json') do |result|
       @received = result.received
+      if @received.length == 0
+        alert "No entries found - has memapp-received.txt been set up yet?"
+      end
     end
 
     # watch for status updates
