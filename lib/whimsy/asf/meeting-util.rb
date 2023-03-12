@@ -8,7 +8,8 @@ require 'date'
 
 module ASF
   class MeetingUtil
-    RECORDS = ASF::SVN.svnurl!('Meetings')
+    RECORDS = ASF::SVN.svnurl!('Meetings') # in SVN
+    MEETINGS_DIR = ASF::SVN['Meetings'] # local checkout
     VCAL_EVENTS_FILENAME = 'ASF-members-meeting.ics'
     PROXIES_FILENAME = 'proxies'
 
@@ -134,10 +135,14 @@ module ASF
       end
     end
 
-    # Get the latest completed Meetings dir (i.e. has raw-irc-log)
+    # Get the latest completed Meetings dir (i.e. has raw-irc-log; this can be overridden)
     # TODO: is that the most appropriate file to check?
     def self.get_latest_completed(mtg_root, sentinel='raw-irc-log')
       return Dir[File.join(mtg_root, '2*')].select {|d| File.exist? File.join(d, sentinel) }.max
+    end
+
+    def self.get_latest_file(file='.', mtg_root=nil)
+      return Dir[File.join(mtg_root || MEETINGS_DIR, '2???????', file)].max
     end
 
     # Get the latest available Meetings dir
@@ -155,6 +160,29 @@ module ASF
       return JSON.parse(IO.read(File.join(mtg_root, 'attendance.json')))
     end
 
+
+    # 20081216: First Last <xxxxxx@apache.org>:		Yes
+    # 20090707: First Last <xxxxx@apache.org>:               yes
+    # 20100323: Invite? Applied?  ID        Name
+    # 20100323: ------- --------  --------- ------------------
+    # 20100323: yes|no   yes|no   availid   First Last
+    # latest:
+    # 20100713: Invite? Applied? members@? Karma? ID        Name
+    # 20100713: ------- -------- --------- ------ --------- ------------------
+    # 20100713: yes|no  yes|no   yes|no    yes|no availid   First Last
+    #  Note that the column widths may vary (especially the ID)
+
+    # parse a memapp file; if omitted, pick the latest found
+    # Does not support files before 2010
+    # Return: array of arrays
+    def self.parse_memapp(path=nil)
+      path ||= get_latest_file('memapp-received.txt')
+      text = File.read(path)
+        # latest layout; look for at least one yes column
+      list = text.scan(/^(no|yes)\s+(no|yes)(?:\s+(no|yes)\s+(no|yes))?\s+(\S+)\s+(.+)/)
+      list.each {|a| a.last.strip!} # trim the user name
+    end
+
     # Parse all memapp-received.txt files to get better set of names
     # @see whimsy/www/members/attendance-xcheck.cgi
     def self.read_memapps(dir)
@@ -163,8 +191,9 @@ module ASF
         meeting = File.basename(File.dirname(received))
         next if meeting.include? 'template'
         text = File.read(received)
-        list = text.scan(/(.+)\s<(.*)@.*>.*Yes/i)
+        list = text.scan(/(.+)\s<(.*)@.*>.*Yes/i) # early layout
         if list.empty?
+          # latest layout; look for at least one yes column
           list = text.scan(/^(?:no\s*)*(?:yes\s+)+(\w\S*)\s+(.*)\s*/)
         else
           # reverse order of id name type files
@@ -260,16 +289,15 @@ module ASF
 
     # return the dir containing the latest meeting files
     def self.latest_meeting_dir
-      MeetingUtil.get_latest(ASF::SVN['Meetings'])
+      MeetingUtil.get_latest(MEETINGS_DIR)
     end
 
     # return the current status of all inactive members
     def self.tracker(meetingsMissed)
-      meetings = ASF::SVN['Meetings']
-      cur_mtg_dir = MeetingUtil.get_latest(meetings)
+      cur_mtg_dir = MeetingUtil.get_latest(MEETINGS_DIR)
       current_status = self.current_status(cur_mtg_dir)
 
-      _attendance, matrix, dates, _nameMap = MeetingUtil.get_attend_matrices(meetings)
+      _attendance, matrix, dates, _nameMap = MeetingUtil.get_attend_matrices(MEETINGS_DIR)
       inactive = matrix.select do |id, _name, _first, missed|
         id and missed >= meetingsMissed
       end
