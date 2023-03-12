@@ -14,6 +14,7 @@ MEETING = {
   'memberless-pmcs.cgi' => "Crosscheck PMCs with few/no ASF Members, for future nominations",
   'member_nominations' => 'Add entries to list of nominated members',
   'nominations.cgi' => "Member's nominations cross-check - ensuring nominations get on the ballot, etc.",
+  'invitations.cgi' => "New Member invitations cross-check",
   'board-nominations.cgi' => "Board nominations cross-check - ensuring nominations get on the ballot, etc.",
   'board-nominate.cgi' => "Add entries to board nomination file",
   'attendance-xcheck.cgi' => "Member's Meeting Attendance cross-check - who attended when",

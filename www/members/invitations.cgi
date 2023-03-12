@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-PAGETITLE = "New Member invitations cross-check" # Wvisible:meeting
+PAGETITLE = "New Member invitations cross-check" # Wvisible:meeting,members
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 
 require 'wunderbar/bootstrap'
