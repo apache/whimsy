@@ -15,9 +15,12 @@ def setup_data
 
   # which entries are shown as uninvited; get availid and name
   notinvited = {}
+  notapplied = []
   ASF::MeetingUtil.parse_memapp(memappfile).filter_map do |a| 
     if a.first == 'no'
       notinvited[a[-2]] = {name: a[-1]}
+    elsif a[1..-3].any? {|e| e == 'no'} # any no after first?
+      notapplied<<a
     end
   end
 
@@ -61,7 +64,7 @@ def setup_data
     v[:replied] = match_person(replies, id, v[:name], mails)
     v[:nominators] = nominated_by[id] || 'unknown'
   end
-  return notinvited, memappfile, invites, replies, nominated_by
+  return notinvited, memappfile, invites, replies, nominated_by, notapplied
 end
 
 def match_person(hash, id, name, mails)
@@ -82,7 +85,7 @@ _html do
     .count {margin-left: 4em}
   }
   _body? do
-    notinvited, memappfile, _ = setup_data
+    notinvited, memappfile, _, _, _, notapplied = setup_data
     memappurl = ASF::SVN.getInfoItem(memappfile, 'url')
     nominationsurl = memappurl.sub('memapp-received.txt', 'nominated-members.txt')
     _whimsy_body(
@@ -117,6 +120,30 @@ _html do
           end
         end
       end
+
+      _h1 'Invitees who have yet to be granted membership'
+      _table.table.table_striped do
+        _tr do
+          _th 'invited?'
+          _th 'applied?'
+          _th 'members@?'
+          _th 'karma?'
+          _th 'id'
+          _th 'name'
+        end
+
+        notapplied.each do |entry|
+          _tr do
+            a, b, c, d, e, f = entry
+            _td a
+            _td b
+            _td c
+            _td d
+            _td e
+            _td f
+          end
+        end
+      end
     end
   end
 end
@@ -124,10 +151,11 @@ end
 # produce JSON output
 # N.B. This is activated if the ACCEPT header references 'json'
 _json do
-  notinvited, memappfile, invites, replies, nominated_by = setup_data
+  notinvited, memappfile, invites, replies, nominated_by, notapplied = setup_data
   _notinvited notinvited
   _memappfile memappfile
   _invites invites
   _replies replies
   _nominated_by nominated_by
+  _notapplied notapplied
 end
