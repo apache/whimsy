@@ -201,9 +201,9 @@ module ASF
               Wunderbar.error "Duplicate ids: #{ids} in #{name} entry"
             end
             if keys_wanted
-              y.yield status, name, ids.first, entry, self.parse_entry(entry, keys_wanted)
+              y.yield [status, name, ids.first, entry, self.parse_entry(entry, keys_wanted)]
             else
-              y.yield status, name, ids.first, entry
+              y.yield [status, name, ids.first, entry]
             end
           end
         else # can this happen?
