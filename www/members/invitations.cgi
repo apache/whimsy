@@ -96,7 +96,8 @@ _html do
         nominationsurl => 'nominated-members.txt',
       },
       helpblock: -> {
-        _ 'This script checks memapp-received.txt against invitation emails seen in members@apache.org'
+        _p 'This script checks memapp-received.txt against invitation emails seen in members@apache.org'
+        _p 'It does not check against applications which are pending'
       }
     ) do
 
