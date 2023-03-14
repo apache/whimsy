@@ -146,15 +146,17 @@ module ASF
         keys_wanted = %i{email}
       end
     # init array to collect matching key values, even if repeated
-      dict = {keys: keys_wanted.map{|k| [k,[]]}.to_h}
+      dict = keys_wanted.map{|k| [k,[]]}.to_h
       current_entry = nil
       entry.each do |line|
         if line =~ %r{^ +([^:]+): *(.*)}
           val = $2.strip # must be done first otherwise $2 is clobbered
           key = key2sym($1)
           if keys_wanted.include? key
-            current_entry = dict[:keys][key]
+            current_entry = dict[key]
             current_entry << val
+          else
+            current_entry = nil # new key, and not wanted
           end
         elsif current_entry and line.start_with? '    ' # needs to be indented at least this much to be a continuation line
           value = line.strip
@@ -169,7 +171,8 @@ module ASF
     # return all user entries, whether or not they have an id
     # Params: keys_wanted: array of key names to extract and return
     # Returns: array of [status, user name, availid or nil, entry lines, [keys]]
-    def self.list_entries(keys_wanted=nil)
+    def self.list_entries(keys_wanted=nil, &block)
+      Enumerator.new do |y|
       # split by heading underlines; drop text before first
       ASF::Member.text.split("\n").slice_before {|a| a.start_with? '================'}.drop(1).each_with_index do |sect, index|
         status = nil
@@ -198,14 +201,16 @@ module ASF
               Wunderbar.error "Duplicate ids: #{ids} in #{name} entry"
             end
             if keys_wanted
-              yield status, name, ids.first, entry, self.parse_entry(entry, keys_wanted.map!{|k| self.key2sym(k)})
+              y.yield status, name, ids.first, entry, self.parse_entry(entry, keys_wanted)
             else
-              yield status, name, ids.first, entry
+              y.yield status, name, ids.first, entry
             end
           end
+        else # can this happen?
+          raise ArgumentError, "Unexpected section with nil status!"
         end
       end
-      nil
+      end.each(&block)
     end
 
     # An iterator that returns a list of ids and associated members.txt entries.
