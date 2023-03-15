@@ -27,8 +27,15 @@ current = ASF::Member.current
 
 MEMBERS = 'apache/www-site/main/content/foundation/members.md'
 
-code, contents = ASF::Git.github(MEMBERS)
-raise "Could not read #{MEMBERS}, error: #{code}" unless code == '200'
+file = ARGV.shift # Override for local testing
+if file
+  puts "Reading #{file}"
+  contents = File.read(file)
+else
+  puts "Fetching members.md"
+  code, contents = ASF::Git.github(MEMBERS)
+  raise "Could not read #{MEMBERS}, error: #{code}" unless code == '200'
+end
 
 # # Members of The Apache Software Foundation #
 #
@@ -44,12 +51,19 @@ puts "===================="
 s = StringScanner.new(contents)
 s.skip_until(/\| Id \| Name \| Projects \|\n/)
 s.skip_until(/\n/)
+prev = nil # for context on error
 loop do
   s.scan(/\| (\S+) \|.*?$/)
-  id = s[1] or break
-  puts "#{id} #{status[id] || 'unknown status'}" unless current.include? id
+  id = s[1]
+  unless current.include? id
+    puts "#{id}: #{status[id] || 'unknown status'}" 
+    puts "Previous id: #{prev}" unless id
+  end
+  prev = id
   s.skip_until(/\n/)
+  break if s.match? %r{^\s*$|^##} # blank line or next section
 end
+
 
 # ## Emeritus Members of The Apache Software Foundation
 #
