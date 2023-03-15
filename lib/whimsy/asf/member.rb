@@ -324,7 +324,7 @@ module ASF
     #  :fullname - required
     #  :address - required, multi-line allowed
     #  :availid - required
-    #  :email - required
+    #  :email - optional
     #  :country - optional
     #  :tele - optional
     #  :fax - optional
@@ -332,7 +332,7 @@ module ASF
       fullname = fields[:fullname] or raise ArgumentError.new(":fullname is required")
       address = fields[:address] || '<postal address>'
       availid = fields[:availid] or raise ArgumentError.new(":availid is required")
-      email = fields[:email] || '<email>'
+      email = fields[:email] || "#{availid}@apache.org"
       country = fields[:country] || '<Country>'
       tele = fields[:tele] || '<phone number>'
       fax = fields[:fax] || ''
