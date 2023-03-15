@@ -64,6 +64,10 @@ def setup_data
     v[:replied] = match_person(replies, id, v[:name], mails)
     v[:nominators] = nominated_by[id] || 'unknown'
   end
+  notapplied.each do |record|
+    mails = ASF::Person.new(record[-2]).all_mail
+    record << (match_person(replies, record[-2], record[-1], mails) ? 'yes' : 'no')
+  end
   return notinvited, memappfile, invites, replies, nominated_by, notapplied
 end
 
@@ -126,6 +130,7 @@ _html do
       _table.table.table_striped do
         _tr do
           _th 'invited?'
+          _th 'Reply seen?'
           _th 'applied?'
           _th 'members@?'
           _th 'karma?'
@@ -135,8 +140,9 @@ _html do
 
         notapplied.each do |entry|
           _tr do
-            a, b, c, d, e, f = entry
+            a, b, c, d, e, f, g = entry
             _td a
+            _td g
             _td b
             _td c
             _td d
