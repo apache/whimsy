@@ -139,9 +139,12 @@ module ASF
     end
 
     # parse a single entry
-    # Params: keys_wanted array of key symbols to retrieve; defaults to ["Email"]
+    # Params:
+    # - entry
+    # - keys_wanted array of key symbols to retrieve; defaults to ["Email"]
+    # - raw: if true, then return raw email entries (with comments)
     # Strings are forced to lower-case and non-alphanumeric replaced with '_'
-    def self.parse_entry(entry, keys_wanted=nil)
+    def self.parse_entry(entry, keys_wanted=nil, raw=false)
       if keys_wanted.nil?
         keys_wanted = %i{email}
       end
@@ -150,11 +153,11 @@ module ASF
       current_entry = nil
       entry.each do |line|
         if line =~ %r{^ +([^:]+): *(.*)}
-          val = $2.strip # must be done first otherwise $2 is clobbered
+          value = $2.strip # must be done first otherwise $2 is clobbered
           key = key2sym($1)
           if keys_wanted.include? key
             current_entry = dict[key]
-            current_entry << val
+            current_entry << value
           else
             current_entry = nil # new key, and not wanted
           end
@@ -165,13 +168,19 @@ module ASF
           current_entry = nil
         end
       end
+      # remove comments from emails?
+      unless raw
+        if dict.include? :email
+          dict[:email] = dict[:email].each.map {|v| v.split(' ').grep(/@/)}.flatten
+        end
+      end
       dict
     end
 
     # return all user entries, whether or not they have an id
     # Params: keys_wanted: array of key names to extract and return
     # Returns: array of [status, user name, availid or nil, entry lines, [keys]]
-    def self.list_entries(keys_wanted=nil, &block)
+    def self.list_entries(keys_wanted=nil, raw=false, &block)
       Enumerator.new do |y|
       # split by heading underlines; drop text before first
       ASF::Member.text.split("\n").slice_before {|a| a.start_with? '================'}.drop(1).each_with_index do |sect, index|
@@ -201,7 +210,7 @@ module ASF
               Wunderbar.error "Duplicate ids: #{ids} in #{name} entry"
             end
             if keys_wanted
-              y.yield [status, name, ids.first, entry, self.parse_entry(entry, keys_wanted)]
+              y.yield [status, name, ids.first, entry, self.parse_entry(entry, keys_wanted, raw)]
             else
               y.yield [status, name, ids.first, entry]
             end
