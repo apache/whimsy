@@ -43,8 +43,8 @@ query = ENV['QUERY_STRING']
 # Only allow letters in the query string so it is safe to use
 if query =~ %r{^filter=([a-zA-Z]+)$}
   # Convert xmU into m.......U..x
+  letters = []
   if $1.length > 1
-    letters = []
     $1.split('').sort_by(&:upcase).each_cons(2).with_index do |(a, b), i|
       letters << a if i == 0
       (b.upcase.ord - a.upcase.ord - 1).times {letters << '.'}
