@@ -39,24 +39,28 @@ def type(mu)
   }[mu.to_sym]
 end
 
-query = ENV['QUERY_STRING']
+query = ENV['QUERY_STRING'] || ''
+params = CGI.parse(query)
+filter = nil
 # Only allow letters in the query string so it is safe to use
-if query =~ %r{^filter=([a-zA-Z]+)$}
+if params['filter'].last =~ %r{^([a-zA-Z]+)$}
   # Convert xmU into m.......U..x
+  sorted = $1.split('').sort_by(&:upcase)
   letters = []
-  if $1.length > 1
-    $1.split('').sort_by(&:upcase).each_cons(2).with_index do |(a, b), i|
-      letters << a if i == 0
-      (b.upcase.ord - a.upcase.ord - 1).times {letters << '.'}
-      letters << b
+  letters << sorted[0,1] # first letter needed to start off
+  sorted.each_cons(2).with_index do |(a, b), i|
+    gap = (b.upcase.ord - a.upcase.ord - 1)
+    if gap > 0
+      gap.times {letters << '.'}
+    else
+      raise ArgumentError,"Repeated letters #{[a, b]} not allowed"
     end
-  else
-    letters << $1
+    letters << b
   end
   filter = Regexp.new(letters.join)
-else
-  filter = nil
 end
+
+listfilter = params['match'].last
 
 mod_counts = ASF::MLIST.list_moderators(nil).first.map {|x,y| [x, y.length]}.to_h
 
@@ -109,17 +113,19 @@ _html do
         end
         _tbody do
           ASF::Mail.parse_flags(filter) do |domain, list, flags|
+            lad = "#{list}@#{domain}"
+            next if listfilter and ! lad.include? listfilter
             mu = flags.tr('^muMU', '')
             _tr do
               _td data_sort_value: "#{domain}-#{list}" do
-                _a "#{list}@#{domain}", href: "https://lists.apache.org/list.html?#{list}@#{domain}", target: '_blank'
+                _a lad, href: "https://lists.apache.org/list.html?#{lad}", target: '_blank'
               end
               _td flags
               _td do
                 _ mu
                 _ type(mu)
               end
-              count = mod_counts["#{list}@#{domain}"] 
+              count = mod_counts[lad] 
               if %w{subonly open}.include? type(mu)
                 # ensure unmoderated lists are not penalised for having few moderators
                 _td data_sort_value: count+100 do
