@@ -89,7 +89,7 @@ _html do
     .count {margin-left: 4em}
   }
   _body? do
-    notinvited, memappfile, _, _, _, notapplied = setup_data
+    notinvited, memappfile, _, _, nominated_by, notapplied = setup_data
     memappurl = ASF::SVN.getInfoItem(memappfile, 'url')
     nominationsurl = memappurl.sub('memapp-received.txt', 'nominated-members.txt')
     _whimsy_body(
@@ -136,6 +136,7 @@ _html do
           _th 'karma?'
           _th 'id'
           _th 'name'
+          _th 'Nominators'
         end
 
         notapplied.each do |entry|
@@ -148,6 +149,7 @@ _html do
             _td d
             _td e
             _td f
+            _td (nominated_by[e] || 'unknown').join(' ')
           end
         end
       end
