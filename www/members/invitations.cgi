@@ -147,7 +147,9 @@ _html do
             _td b
             _td c
             _td d
-            _td e
+            _td do
+              _a e, href: "https://whimsy.apache.org/roster/committer/#{e}"
+            end
             _td f
             _td (nominated_by[e] || 'unknown').join(' ')
           end
