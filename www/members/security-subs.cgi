@@ -4,7 +4,7 @@ require 'wunderbar/bootstrap'
 require 'whimsy/asf'
 require 'whimsy/asf/mlist'
 
-NOSUBSCRIBERS = 'No subscribers'
+NOSUBSCRIBERS = 'No subscribers or unknown subscribers'
 MINSUB = 3
 TOOFEW = "Not enough subscribers (< #{MINSUB})"
 
@@ -36,7 +36,7 @@ ASF::MLIST.list_parse('sub') do |dom, list, subs|
     [sub, person]
   end.to_h
   lists[dom.sub('.apache.org', '')] =
-    {subCount: unknown + ids.size, subscribers: sub_hash}
+    {subCount: unknown + ids.size, subscribers: sub_hash, unknown: unknown}
 end
 
 _html do
@@ -54,32 +54,39 @@ _html do
         _ 'The counts below exclude the archivers (and duplicate subscriptions), using the highlights: '
         _span.bg_danger NOSUBSCRIBERS
         _span.bg_warning TOOFEW
+        _br
+        _ 'The count column links to the detailed analysis, and the project column links to the PMC page'
       end
       _table.table.table_responsive do
         _tr do
-          _th.col_xs_1.text_right 'count'
-          _th.col_xs_3 'project'
-          _th.col_xs_1.text_right 'count'
-          _th.col_xs_3 'project'
-          _th.col_xs_1.text_right 'count'
-          _th.col_xs_3 'project'
+          _th.col_xs_2.text_right 'counts (subs/unknown)'
+          _th.col_xs_2 'project'
+          _th.col_xs_2.text_right 'counts (subs/unknown)'
+          _th.col_xs_2 'project'
+          _th.col_xs_2.text_right 'counts (subs/unknown)'
+          _th.col_xs_2 'project'
           # cols must add up to twelve
         end
         lists.each_slice(3) do |slice|
           _tr do
             slice.each do |dom, subs|
               subcount = subs[:subCount]
+              unknown = subs[:unknown]
               options = {}
-              if subcount == 0
+              if subcount == 0 or unknown > 0
                 options = {class: 'bg-danger', title: NOSUBSCRIBERS}
               elsif subcount < MINSUB
                 options = {class: 'bg-warning', title: TOOFEW}
               end
               _td.text_right options do
-                _ subcount
+                _a href: dom do
+                  _ subcount
+                  _ '/'
+                  _ unknown
+                end
               end
               _td do
-                _a dom, href: dom
+                _a dom, href: "/roster/committee/#{dom}#crosschecksec"
               end
             end
           end
