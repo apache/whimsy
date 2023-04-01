@@ -91,7 +91,7 @@ module ASF
           proxied = $1
           uid = $2
         else
-          raise ArgumentError, "proxies: bad assigment '#{line}'"
+          raise ArgumentError, "proxies: bad assignment '#{line}'"
         end
         [proxy, proxied, uid]
       end
