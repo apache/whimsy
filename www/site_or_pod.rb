@@ -51,7 +51,7 @@ _html do
   _body? do
     _whimsy_body(
       title: PAGETITLE,
-      subtitle: "Checking #{cgi_for_tlps ? 'Project' : 'Podling'} Websites For required content",
+      subtitle: "Checking #{cgi_for_tlps? ? 'Project' : 'Podling'} Websites For required content",
       related: {
         "/committers/tools" => "Whimsy Tool Listing",
         other => other_text,
