@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 PAGETITLE = "Apache Project Website Checks" # Wvisible:sites,brand
 
-def cgi_for_tlps
+def cgi_for_tlps?
   true
 end
 

@@ -15,8 +15,8 @@ require 'time' # for httpdate
 require 'whimsy/sitestandards'
 
 # Gather and analyze scans for TLP websites
-sites, crawl_time = SiteStandards.get_sites(cgi_for_tlps)
-checks_performed = SiteStandards.get_checks(cgi_for_tlps)
+sites, crawl_time = SiteStandards.get_sites(cgi_for_tlps?)
+checks_performed = SiteStandards.get_checks(cgi_for_tlps?)
 analysis = SiteStandards.analyze(sites, checks_performed)
 
 # Allow CLI testing, e.g. "PATH_INFO=/ ruby www/site.cgi >test.json"
@@ -41,7 +41,7 @@ _html do
       .table td {font-size: smaller;}
     }
   end
-  if cgi_for_tlps
+  if cgi_for_tlps?
     other = "/pods/"
     other_text = "PPMC Podling Website Checker"
   else
@@ -60,7 +60,7 @@ _html do
         "mailto:dev@whimsical.apache.org?subject=[SITE] Website Checker Question" => "Questions? Email Whimsy PMC"
       },
       helpblock: -> {
-        unless cgi_for_tlps
+        unless cgi_for_tlps?
           _div.bg_danger %{NOTE: most podlings may not pass these checks yet during incubation -
                            but they are expected to pass them before graduation.}
         end
@@ -78,7 +78,7 @@ _html do
           _ ', '
           _a 'validation checks details', href: "https://github.com/apache/whimsy/blob/master/lib/whimsy/sitewebsite.rb"
           _ ', and '
-          _a 'raw JSON data', href: "#{SiteStandards.get_url(false)}#{SiteStandards.get_filename(cgi_for_tlps)}"
+          _a 'raw JSON data', href: "#{SiteStandards.get_url(false)}#{SiteStandards.get_filename(cgi_for_tlps?)}"
           _ '.'
           _br
           _ "Last crawl time: #{crawl_time} over #{sites.size} websites."
@@ -86,7 +86,7 @@ _html do
       }
     ) do
       # Encapsulate data display (same for projects and podlings)
-      display_application(path_info, sites, analysis, checks_performed, cgi_for_tlps)
+      display_application(path_info, sites, analysis, checks_performed, cgi_for_tlps?)
     end
 
     _script %{
