@@ -253,7 +253,7 @@ else
   end
 
   # Scan podlings that have a website
-  ASF::Podling.list.each do |podling|
+  ASF::Podling.list.sort_by(&:name).each do |podling|
     if podling.status == 'current' and podling.podlingStatus[:website]
       # if more parameters specified, parse only those names
       if ARGV.length > 0
