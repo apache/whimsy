@@ -18,6 +18,7 @@ module ASFDOMAIN
     cloudstack.com
     cloudstack.org
     codehaus.org
+    communityovercode.org
     couchapp.com
     couchapp.org
     couchhack.org
