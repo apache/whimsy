@@ -33,7 +33,7 @@ _html do
       watch_list = ASF::Person.member_watch_list.keys
       meeting = ASF::MemberFiles.latest_meeting
 
-      nominations = ASF::MemberFiles.member_nominees.map {|k, _v| k}
+      nominations = ASF::MemberFiles.member_nominees.keys
 
       # determine which list to report on, based on the URI
       request = ENV['REQUEST_URI']
@@ -115,7 +115,8 @@ _html do
         list -= ASF.members
       elsif request =~ /nominees/
         _h2_ 'Member Nominees'
-        list = nominations.uniq.map {|id| ASF::Person.find(id)}
+        # Keep only ids that are not current members
+        list = nominations.map {|id| ASF::Person.find(id)}.reject{|p| p.asf_member_status == :current}
       elsif request =~ /appstatus/
         _h2_ 'Elected Members - Application Status'
         status = File.read(File.join(meeting, 'memapp-received.txt')).
