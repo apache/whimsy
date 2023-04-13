@@ -123,6 +123,10 @@ _html do
           scan(/^(yes|no)\s+(yes|no)\s+(yes|no)\s+(yes|no)\s+(\w+)\s/)
         status = status.map {|tokens| [tokens.pop, tokens]}.to_h
         list = status.keys.map {|id| ASF::Person.find(id)}
+        _p do
+          _ 'Accepted:'
+          _ status.filter_map {|k, v| list.find{|p| p.name == k}.public_name.to_s if v[1] == 'yes' }.sort.join(', ')
+        end
       else
         _h2_ 'From potential-member-watch-list.txt'
         list = watch_list
