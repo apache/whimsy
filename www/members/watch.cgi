@@ -203,9 +203,14 @@ _html do
               # ASF id
               if person.id =~ /^notinavail_\d+$/
                 _td
-              elsif person.asf_member?
+              elsif person.asf_member_status == :current
                 _td! do
                   _strong {_a person.id, href: "roster/committer/#{person.id}"}
+                end
+              elsif person.asf_member_status == :emeritus
+                _td! do
+                  _strong {_a person.id, href: "roster/committer/#{person.id}"}
+                  _ ' (emeritus)'
                 end
               else
                 _td! {_a person.id, href: "roster/committer/#{person.id}"}
