@@ -56,8 +56,10 @@ _html do
                   end
                 end
 
-                _li do
-                  _a 'Potential Member Watch List', href: 'members/watch'
+                if request =~ %r{/watch/\w} # only show main link for a sub-page
+                  _li do
+                    _a 'Potential Member Watch List', href: 'members/watch'
+                  end
                 end
 
                 unless request =~ /nominees/
