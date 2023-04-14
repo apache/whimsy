@@ -124,9 +124,9 @@ _html do
         status = status.map {|tokens| [tokens.pop, tokens]}.to_h
         list = status.keys.map {|id| ASF::Person.find(id)}
         _p do
-          accepted = status.filter_map {|k, v| list.find{|p| p.name == k}.public_name.to_s if v[1] == 'yes' }
-          _ "Accepted: (#{accepted.size}) "
-          _ accepted.sort.join(', ')
+          applied = status.filter_map {|k, v| list.find{|p| p.name == k}.public_name.to_s if v[1] == 'yes' }
+          _ "Applied: (#{applied.size}) "
+          _ applied.sort.join(', ')
         end
       else
         _h2_ 'From potential-member-watch-list.txt'
