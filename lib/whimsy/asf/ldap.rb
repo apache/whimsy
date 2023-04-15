@@ -873,6 +873,10 @@ module ASF
       "uid=#{name},#{ASF::Person.base}"
     end
 
+    def self.dn(name)
+      "uid=#{name},#{ASF::Person.base}"
+    end
+
     VALID_ATTRS = %w[
       asf-altEmail
       asf-committer-email
@@ -1054,6 +1058,11 @@ module ASF
     # obtain a list of groups from LDAP
     def self.list(filter='cn=*')
       ASF.search_one(base, filter, 'cn').flatten.map {|cn| find(cn)}
+    end
+
+    # return a list of groups (cns only), from LDAP.
+    def self.listcns(filter='cn=*')
+      ASF.search_one(base, filter, 'cn').flatten
     end
 
     # determine if a given ASF::Person is a member of this group
@@ -1430,13 +1439,14 @@ module ASF
 
     # fetch <tt>dn</tt>, <tt>member</tt>, <tt>modifyTimestamp</tt>, and
     # <tt>createTimestamp</tt> for all services in LDAP.
+    # N.B. some services have memberUid rather than member entries
     def self.preload
-      Hash[ASF.search_one(base, "cn=*", %w(dn member modifyTimestamp createTimestamp)).map do |results|
+      Hash[ASF.search_one(base, "cn=*", %w(dn member memberUid modifyTimestamp createTimestamp)).map do |results|
         cn = results['dn'].first[/^cn=(.*?),/, 1]
         service = self.find(cn)
         service.modifyTimestamp = results['modifyTimestamp'].first # it is returned as an array of 1 entry
         service.createTimestamp = results['createTimestamp'].first # it is returned as an array of 1 entry
-        members = results['member'] || []
+        members = results['member'] || results['memberUid'].map {|k| ASF::Person.dn(k)} || []
         service.members = members
         [service, members]
       end]
@@ -1455,18 +1465,22 @@ module ASF
     end
 
     # list of members for this service in LDAP
+    # N.B. some services have memberUid rather than member entries
     def members
       members = weakref(:members) do
-        ASF.search_one(base, "cn=#{name}", 'member').flatten
+        results = ASF.search_one(base, "cn=#{name}", ['member', 'memberUid']).first
+        results['member'] || results['memberUid'].map {|k| ASF::Person.dn(k)} || []
       end
 
       members.map {|uid| Person.find uid[/uid=(.*?),/, 1]}
     end
 
     # list of memberids for this service in LDAP
+    # N.B. some services have memberUid rather than member entries
     def memberids
       members = weakref(:members) do
-        ASF.search_one(base, "cn=#{name}", 'member').flatten
+        results = ASF.search_one(base, "cn=#{name}", ['member', 'memberUid']).first
+        results['member'] || results['memberUid'].map {|k| ASF::Person.dn(k)} || []
       end
 
       members.map {|uid| uid[/uid=(.*?),/, 1]}
@@ -1477,6 +1491,7 @@ module ASF
       @members = nil # force fresh LDAP search
       people = (Array(people) & members).map(&:dn)
       return if people.empty?
+      # TODO: how to handle memberUid service groups ?
       ASF::LDAP.modify(self.dn, [ASF::Base.mod_delete('member', people)])
     ensure
       @members = nil
@@ -1487,6 +1502,7 @@ module ASF
       @members = nil # force fresh LDAP search
       people = (Array(people) - members).map(&:dn)
       return if people.empty?
+      # TODO: how to handle memberUid service groups ?
       ASF::LDAP.modify(self.dn, [ASF::Base.mod_add('member', people)])
     ensure
       @members = nil
