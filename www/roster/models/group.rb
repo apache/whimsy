@@ -31,13 +31,13 @@ class Group
   # The ids 'treasurer' and 'svnadmins' currently both have two definitions
   # treasurer: LDAP Auth Group and Pit Auth; svnadmins: LDAP Auth Group and LDAP service
   # So the type is now provided as a work-round
-  def self.serialize(id, type=nil)
+  def self.serialize(id, itype=nil)
     response = {}
 
     type = 'LDAP group'
     group = ASF::Group.find(id)
 
-    unless group.hasLDAP? or (%w{treasurer svnadmins}.include? id and type !~ %r{Auth Group}i)
+    unless group.hasLDAP? or (%w{treasurer svnadmins}.include?(id) and (itype !~ %r{Auth Group}i))
       type = 'LDAP auth group'
       group = ASF::AuthGroup.find(id)
     end
