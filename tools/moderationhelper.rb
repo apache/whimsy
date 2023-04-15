@@ -94,6 +94,15 @@ _html do
                   _a 'email provider issues', href: '../committers/emailissues', target: '_blank'
                   _ ' (opens in new page)'
                 end
+                _p do
+                  _ 'N.B. the mailing list software uses the envelope-from address.'
+                  _br
+                  _ 'This is usually the same as the From: address, but for bots it may be different.'
+                  _br
+                  _ 'It can usually be found from the email headers: check the source for "envelope-from".'
+                  _br
+                  _ 'Unfortunately some senders use dynamic addresses. If that is the case, contact Infra.'
+                end
               end
             end
             _tr do
