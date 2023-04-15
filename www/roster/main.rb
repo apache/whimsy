@@ -319,7 +319,7 @@ end
 
 get '/group/:name' do |name|
   @auth = Auth.info(env)
-  @group = Group.serialize(name)
+  @group = Group.serialize(name, params['type'])
   pass unless @group and not @group.empty?
   _html :group
 end

@@ -64,7 +64,7 @@ _html do
             @groups.each do |name, type|
               next if name == 'apldap'
               _tr_ do
-                _td {_a name, href: "group/#{name}"}
+                _td {_a name, href: "group/#{name}?type=#{type}"}
                 _td type
               end
             end
