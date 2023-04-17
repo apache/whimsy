@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 # encoding: utf-8
+$LOAD_PATH.unshift '/srv/whimsy/lib'
+
 require 'wunderbar'
 require "date"
 require "yaml"
