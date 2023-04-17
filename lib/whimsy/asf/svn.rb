@@ -778,12 +778,11 @@ module ASF
       throw IOError.new("Could not check if #{path} exists: #{err}")
     end
 
-    # DRAFT DRAFT
     # create a new file and fail if it already exists
     # Parameters:
     #  directory - parent directory as an SVN URL
     #  filename - name of file to create
-    #  text - text of file to create
+    #  data - content of file: can be a text string, or a Tempfile
     #  msg - commit message
     #  env - user/pass
     #  _ - wunderbar context
@@ -794,7 +793,7 @@ module ASF
     # 0 on success
     # 1 if the file exists
     # IOError on unexpected error
-    def self.create_(directory, filename, text, msg, env, _, options={})
+    def self.create_(directory, filename, data, msg, env, _, options={})
       parentrev, err = self.getInfoItem(directory, 'revision', env.user, env.password)
       unless parentrev
         throw RuntimeError.new("Failed to get revision for #{directory}: #{err}")
@@ -803,8 +802,12 @@ module ASF
       return 1 if self.exist?(target, parentrev, env, options.reject {|k,v| k == :dryrun}) # need this to run!
       rc = nil
       Dir.mktmpdir do |tmpdir|
-        source = Tempfile.new('create_source', tmpdir)
-        File.write(source, text)
+        if data.instance_of? Tempfile
+          source = data
+        else
+          source = Tempfile.new('create_source', tmpdir)
+          File.write(source, data, encoding: Encoding::BINARY)
+        end
         commands = [['put', source.path, target]]
         # Detect file created in parallel. This generates the error message:
         # svnmucc: E160020: File already exists: <snip> path 'xxx'
