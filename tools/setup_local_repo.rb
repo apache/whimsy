@@ -23,7 +23,7 @@ svnrepos.map{|k,v| v['url'].split('/')[0]}.uniq.sort.each do |tlr|
   unless File.exist? File.join(repodir, 'format')
     cmd = ['svnadmin','create',repodir]
     puts cmd.join(' ')
-    system *cmd
+    system(*cmd)
   end
 end
 
@@ -33,17 +33,17 @@ svnrepos.each do |name, entry|
   svndir = File.join(LOCAL_URL, url)
 
   # if the relative URL does not exist, create the directory
-  revision, err = ASF::SVN.getRevision(svndir)
+  revision, _err = ASF::SVN.getRevision(svndir)
   unless revision
     puts "Creating #{svndir}"
-    system *%w(svn mkdir --parents --message Initial --), svndir
+    system(*%w(svn mkdir --parents --message Initial --), svndir)
   end
 
   # for each file, if it does not exist, copy the file from the ASF repo
   # TODO it might be better to copy from samples
   (entry['files'] || []).each do |file|
     filepath = File.join(svndir,file)
-    revision, err = ASF::SVN.getRevision(filepath)
+    revision, _err = ASF::SVN.getRevision(filepath)
     unless revision
       puts "Creating #{filepath}"
       Dir.mktmpdir do |tmp|
@@ -54,7 +54,7 @@ svnrepos.each do |name, entry|
         cmd = %w(svnmucc --message "Initial_create" -- put)
         cmd << out
         cmd << filepath
-        system *cmd
+        system(*cmd)
       end
     end
   end
