@@ -51,6 +51,9 @@ _html do
         if _.post?
           # params are arrays
           url = params['url'].first
+          if url !~ %r{^https://(dist|svn)\.apache\.org/\S+$}
+              raise ArgumentError.new("Invalid SVN URL!")
+          end
           source = params['source'].first
           msg = "Uploaded by Whimsy: #{params['msg'].first.strip}"
           # The source is StringIO for smaller files, Tempfile for larger ones
