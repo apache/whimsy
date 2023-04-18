@@ -109,7 +109,7 @@ _html do
                 IO.binwrite(name, @file.read)
                 ASF::SVN.svn_('add', name, _)
 
-                ASF::SVN.svn_('commit', name, _, {user: $USER, password: $PASSWORD})
+                ASF::SVN.svn_('commit', name, _, {msg: @message, user: $USER, password: $PASSWORD})
               end
             end
           end
