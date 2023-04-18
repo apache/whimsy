@@ -29,7 +29,7 @@ _html do
 
     person = ASF::Auth.decode(env)
     _p %{ Your data for meeting: #{File.basename(agendafile)} }
-    _table do
+    _table.table do
       _tr do
         _td 'Your id'
         _td person.id
@@ -43,6 +43,16 @@ _html do
       _tr do
         _td 'PMC chair?'
         _td ASF.pmc_chairs.include? person
+      end
+
+      _tr do
+        _td 'ASF Treasurer?'
+        _td person.treasurer?
+      end
+
+      _tr do
+        _td 'ASF Secretary?'
+        _td person.secretary?
       end
 
       _tr do
