@@ -283,5 +283,15 @@ module ASF
     def asf_member_status
       ASF::Member.member_status name
     end
+
+    # Is this person in the secretary team?
+    def secretary?
+      ASF::Service.find('asf-secretary').members.include? self
+    end
+
+    # Is this person in the treasurer team?
+    def treasurer?
+      ASF::AuthGroup.find('treasurer').members.include? self
+    end
   end
 end
