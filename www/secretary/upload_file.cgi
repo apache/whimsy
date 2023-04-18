@@ -63,7 +63,7 @@ _html do
           else
             data = source.read
           end
-          name = source.original_filename
+          name = source.original_filename.gsub(/[^-.\w]/, '_').sub(/^\.+/, '_')
           ASF::Auth.decode(env = {})
           # data can either be a string or a Tempfile
           if ASF::SVN.create_(url, name, data, msg, env, _) == 0
