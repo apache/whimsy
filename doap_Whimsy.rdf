@@ -35,15 +35,20 @@
     <category rdf:resource="http://projects.apache.org/category/content" />
     <bug-database rdf:resource="https://issues.apache.org/jira/browse/WHIMSY" />
     <mailing-list rdf:resource="https://lists.apache.org/list.html?dev@whimsical.apache.org" />
+
     <repository>
       <GitRepository>
         <location rdf:resource="https://github.com/apache/whimsy.git"/>
         <browse rdf:resource="https://github.com/apache/whimsy.git"/>
       </GitRepository>
+    </repository>
+
+    <repository>
       <GitRepository>
         <location rdf:resource="https://gitbox.apache.org/repos/asf/whimsy.git"/>
         <browse   rdf:resource="https://gitbox.apache.org/repos/asf/whimsy.git"/>
       </GitRepository>
     </repository>
+
   </Project>
 </rdf:RDF>
