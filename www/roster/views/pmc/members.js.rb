@@ -139,6 +139,9 @@ class PMCMembers < Vue
           }
         }
       end
+
+    else
+      _h4 'Sorry, you do not have access to show private list subscription checks'
     end
   end
 
