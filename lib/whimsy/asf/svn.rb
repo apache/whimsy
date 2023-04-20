@@ -799,7 +799,7 @@ module ASF
         throw RuntimeError.new("Failed to get revision for #{directory}: #{err}")
       end
       target = File.join(directory, filename)
-      return 1 if self.exist?(target, parentrev, env, options.reject {|k,v| k == :dryrun}) # need this to run!
+      return 1 if self.exist?(target, parentrev, env) # options not relevant here
       rc = nil
       Dir.mktmpdir do |tmpdir|
         if data.instance_of? Tempfile
