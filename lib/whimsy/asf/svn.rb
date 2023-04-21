@@ -778,7 +778,17 @@ module ASF
       throw IOError.new("Could not check if #{path} exists: #{err}")
     end
 
+    # Should agree with modules/whimsy_server/files/subversion-config-www in Puppet
+    MIMETYPES = { # if the extension matches, then apply the mime-type as below
+      '.jpg' => 'image/jpeg',
+      '.pdf' => 'application/pdf',
+      '.png' => 'image/png',
+      '.tif' => 'image/tiff',
+      '.tiff' => 'image/tiff',
+    }
+
     # create a new file and fail if it already exists
+    # sets the mimetype if the extension is present in the MIMETYPES hash
     # Parameters:
     #  directory - parent directory as an SVN URL
     #  filename - name of file to create
@@ -809,6 +819,11 @@ module ASF
           File.write(source, data, encoding: Encoding::BINARY)
         end
         commands = [['put', source.path, target]]
+        # Add mimetype if known
+        mimetype = MIMETYPES[File.extname(filename)]
+        if mimetype
+          commands << ['propset', 'svn:mime-type', mimetype, target]
+        end
         # Detect file created in parallel. This generates the error message:
         # svnmucc: E160020: File already exists: <snip> path 'xxx'
         rc = self.svnmucc_(commands, msg, env, _, parentrev, options.merge({tmpdir: tmpdir}))
