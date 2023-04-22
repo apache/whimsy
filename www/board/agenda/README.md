@@ -405,7 +405,7 @@ Adding a new modal dialog would involve:
   * Adding a Vue component for the form to `views/forms`
   * Adding a server side action to `views/actions`.  A number of [actions
     from the current agenda
-    tool](https://svn.apache.org/repos/infra/infrastructure/trunk/projects/whimsy/www/board/agenda/json)
+    tool](https://github.com/apache/whimsy/tree/master/lib/whimsy/asf/agenda)
     should be usable as is.
   * Adding any new files to [views/app.js.rb](views/app.js.rb)
   * Adding specifications to [specs/forms_specs.rb](specs/forms_specs.rb) and
