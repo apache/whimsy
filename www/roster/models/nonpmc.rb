@@ -49,7 +49,7 @@ class NonPMC
       lists = ASF::MLIST.domain_lists(mail_list, false)
     end
 
-    roster = cttee.roster.dup
+    roster = ASF.dup(cttee.roster)
     # if the roster is empty, then add the chair(s)
     if roster.empty?
       cttee.chairs.each do |ch|

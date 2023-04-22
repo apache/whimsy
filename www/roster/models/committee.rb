@@ -48,7 +48,7 @@ class Committee
       lists = ASF::MLIST.domain_lists(pmc.mail_list, false)
     end
 
-    roster = pmc.roster.dup # from committee-info
+    roster = ASF.dup(pmc.roster) # from committee-info
     # ensure PMC members are all processed even they don't belong to the owner group
     roster.each do |key, value|
       value[:role] = 'PMC member'

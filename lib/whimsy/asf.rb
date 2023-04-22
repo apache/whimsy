@@ -38,4 +38,13 @@ module ASF
     return @info if @info
     @info = `git show --format="%h  %ci"  -s HEAD`.strip
   end
+
+  # duplicate an object, allowing for nested hashes
+  def self.dup(obj)
+    obj.dup.tap do |new_obj|
+      new_obj.each do |key, val|
+        new_obj[key] = ASF.dup(val) if val.is_a?(Hash)
+      end
+    end
+  end
 end

@@ -13,7 +13,7 @@ _html do
         members: 'members'
       }
     ) do
-      members = ASF::Member.list.dup
+      members = ASF.dup(ASF::Member.list)
       # ********************************************************************
       # *                             Summary                              *
       # ********************************************************************
