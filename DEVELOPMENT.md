@@ -349,8 +349,8 @@ check `ASF::Auth` in their code, and output a "Status: 401 Unauthorized"
 line if access to the tool is **not** permitted for the user.
 
 ```ruby
-require 'whimsy/asf/rack' # Ensures server auth is passed thru
 require 'whimsy/asf' # Provides ASF::Auth class
+require 'whimsy/asf/rack' # Ensures server auth is passed thru, provides ASF::Auth module
 
 user = ASF::Auth.decode(env = {})
 unless user.asf_member? or ASF.pmc_chairs.include? user

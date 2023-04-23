@@ -5,8 +5,7 @@ $LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'wunderbar'
 require 'wunderbar/bootstrap'
 require 'whimsy/asf'
-require 'whimsy/asf/rack' # Ensures server auth is passed thru
-require 'whimsy/asf' # Provides ASF::Auth class
+require 'whimsy/asf/rack' # Ensures server auth is passed thru; provides ASF::Auth module
 
 _html do
   _body? do
