@@ -60,7 +60,7 @@ class Committee
         allMail = person.all_mail.map{|m| ASF::Mail.to_canonical(m.downcase)}
         # pSubs is already downcased
         # TODO should it be canonicalised as well above?
-        roster[key]['notSubbed'] = (allMail & pSubs.map{|m| ASF::Mail.to_canonical(m)}).empty?
+        roster[key]['notSubbed'] = true if (allMail & pSubs.map{|m| ASF::Mail.to_canonical(m)}).empty?
         unMatchedSubs.delete_if {|k| allMail.include? ASF::Mail.to_canonical(k.downcase)}
         unMatchedSecSubs.delete_if {|k| allMail.include? ASF::Mail.to_canonical(k.downcase)}
       end
@@ -77,7 +77,7 @@ class Committee
         allMail = person.all_mail.map{|m| ASF::Mail.to_canonical(m.downcase)}
         # pSubs is already downcased
         # TODO should it be canonicalised as well above?
-        roster[person.id]['notSubbed'] = (allMail & pSubs.map{|m| ASF::Mail.to_canonical(m)}).empty?
+        roster[person.id]['notSubbed'] = true if (allMail & pSubs.map{|m| ASF::Mail.to_canonical(m)}).empty?
         unMatchedSubs.delete_if {|k| allMail.include? ASF::Mail.to_canonical(k.downcase)}
         unMatchedSecSubs.delete_if {|k| allMail.include? ASF::Mail.to_canonical(k.downcase)}
       end

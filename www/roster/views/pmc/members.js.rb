@@ -183,13 +183,13 @@ class PMCMember < Vue
       end
       if @@person.member
         _td { _b { _a @@person.id, href: "committer/#{@@person.id}" }
-              _a ' (*)', href: "committee/#{@@committee.id}#crosscheck" if @@person.notSubbed and @@committee.analysePrivateSubs
+              _a ' (*)', href: "committee/#{@@committee.id}#crosscheck" if @@person.notSubbed
             }
         _td @@person.githubUsername
         _td { _b @@person.name }
       else
         _td { _a @@person.id, href: "committer/#{@@person.id}"
-              _a ' (*)', href: "committee/#{@@committee.id}#crosscheck" if @@person.notSubbed and @@committee.analysePrivateSubs
+              _a ' (*)', href: "committee/#{@@committee.id}#crosscheck" if @@person.notSubbed
             }
         _td @@person.githubUsername
         _td @@person.name

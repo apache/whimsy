@@ -72,13 +72,13 @@ class NonPMCMember < Vue
       end
       if @@person.member
         _td { _b { _a @@person.id, href: "committer/#{@@person.id}" }
-              _a ' (*)', href: "nonpmc/#{@@nonpmc.id}#crosscheck" if @@person.notSubbed and @@nonpmc.analysePrivateSubs
+              _a ' (*)', href: "nonpmc/#{@@nonpmc.id}#crosscheck" if @@person.notSubbed
             }
         _td @@person.githubUsername
         _td { _b @@person.name }
       else
         _td { _a @@person.id, href: "committer/#{@@person.id}"
-              _a ' (*)', href: "nonpmc/#{@@nonpmc.id}#crosscheck" if @@person.notSubbed and @@nonpmc.analysePrivateSubs
+              _a ' (*)', href: "nonpmc/#{@@nonpmc.id}#crosscheck" if @@person.notSubbed
             }
         _td @@person.githubUsername
         _td @@person.name

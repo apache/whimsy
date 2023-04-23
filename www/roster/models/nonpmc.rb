@@ -68,7 +68,7 @@ class NonPMC
       }
       if analysePrivateSubs
         allMail = person.all_mail.map(&:downcase)
-        roster[person.id]['notSubbed'] = (allMail & pSubs).empty?
+        roster[person.id]['notSubbed'] = true if (allMail & pSubs).empty?
         unMatchedSubs.delete_if {|k| allMail.include? k.downcase}
         unMatchedSecSubs.delete_if {|k| allMail.include? k.downcase}
       end
