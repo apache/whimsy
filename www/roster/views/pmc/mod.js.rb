@@ -46,13 +46,17 @@ class PMCMod < Vue
                 _br
                 _b do
                   _ 'Before adding a new PMC member, '
-                  _a 'email notification must have been received by the Board mailing list',
-                    href: 'https://www.apache.org/dev/pmc.html#send-the-board-a-notice-of-the-vote-to-add-someone'
-                  _ ' (cc: the PMC private@ mailing list).'
+                  _a 'the PMC must approve the new member by VOTE or consensus.',
+                  _a 'a VOTE thread or consensus decistion must be made on the private mail list',
+                    href: 'https://www.apache.org/dev/pmc.html#newpmc'
+                  _a 'You can use the following link to find the thread on the private list'
+                  _a 'and copy it into the text field below.'
+                    href: 'https://lists.apache.org/list?private@' + @@project.display.name + '.apache.org:lte=6M:'
+                  _ ' (the PMC private@ mailing list).'                  
                 end
                 _label do
-                  _span 'Has the NOTICE email been received by the board list?'
-                  _input type: 'checkbox', checked: @notice_elapsed
+                  _span 'Enter the link to the approval VOTE or consensus thread:'
+                  _input type: 'text', value:@votelink
                 end
               end
             end
