@@ -3,13 +3,13 @@ class Committee
 
     pmc = ASF::Committee.find(id)
     return unless pmc.pmc? # Only show PMCs
-    members = pmc.owners
+    owners = pmc.owners
     committers = pmc.committers
-    return if members.empty? and committers.empty?
+    return if owners.empty? and committers.empty?
 
     ASF::Committee.load_committee_info
     # We'll be needing the mail data later
-    ASF::Person.preload(['cn', 'mail', 'asf-altEmail', 'githubUsername'], (members + committers).uniq)
+    ASF::Person.preload(['cn', 'mail', 'asf-altEmail', 'githubUsername'], (owners + committers).uniq)
 
     comdev = ASF::SVN['comdev-foundation']
     info = JSON.parse(File.read(File.join(comdev, 'projects.json')))[id]
@@ -67,7 +67,7 @@ class Committee
       roster[key]['githubUsername'] = (person.attrs['githubUsername'] || []).join(', ')
     end
 
-    members.each do |person| # process the owners
+    owners.each do |person| # process the owners
       roster[person.id] ||= {
         name: person.public_name,
         role: 'PMC member' # TODO not strictly true, as CI is the canonical source
@@ -164,8 +164,8 @@ class Committee
       report: pmc.report,
       site: pmc.site,
       established: pmc.established,
-      ldap: members.map(&:id),
-      members: pmc.roster.keys,
+      ldap: owners.map(&:id), # ldap project owners
+      members: pmc.roster.keys, # committee-info members
       committers: committers.map(&:id),
       roster: roster,
       mail: lists.sort.to_h,
