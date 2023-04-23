@@ -84,7 +84,7 @@ class NonPMC
       roster[person.id]['githubUsername'] = (person.attrs['githubUsername'] || []).join(', ')
     end
 
-    roster.each {|_, info| info[:member] = ASF::Person.find(id).asf_member?}
+    roster.each {|k, v| v[:member] = ASF::Person.find(k).asf_member?}
 
     if cttee.chair and roster[cttee.chair.id]
       roster[cttee.chair.id]['role'] = 'Committee chair'
