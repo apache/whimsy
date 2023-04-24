@@ -8,6 +8,7 @@ class PMCMod < Vue
 
   def initialize
     @people = []
+    @votelink = ''
   end
 
   def render
@@ -51,7 +52,7 @@ class PMCMod < Vue
                     href: 'https://www.apache.org/dev/pmc.html#newpmc'
                   _a 'You can use the following link to find the thread on the private list'
                   _a 'and copy it into the text field below.'
-                    href: 'https://lists.apache.org/list?private@' + @@project.display.name + '.apache.org:lte=6M:'
+                    href: 'https://lists.apache.org/list?private@#{@project}.apache.org:lte=6M:'
                   _ ' (the PMC private@ mailing list).'                  
                 end
                 _label do
