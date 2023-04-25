@@ -1,3 +1,5 @@
+require 'whimsy/asf/mlist'
+
 class Committee
   def self.serialize(id, env)
 
@@ -16,30 +18,46 @@ class Committee
 
     image = ASF::SiteImage.find(id)
 
-    moderators = nil
-    modtime = nil
+    # always needed: if not a member, for checking moderator status
+    # and if a member, needed for showing list moderators
+    # will be dropped later if insufficient karma
+    moderators, modtime = ASF::MLIST.list_moderators(pmc.mail_list, true)
     subscribers = nil # we get the counts only here
     subtime = nil
     pSubs = [] # private@ subscribers
     unMatchedSubs = [] # unknown private@ subscribers
     unMatchedSecSubs = [] # unknown security@ subscribers
     currentUser = ASF::Person.find(env.user)
-    analysePrivateSubs = false # whether to show missing private@ subscriptions
-    if pmc.roster.include? env.user or currentUser.asf_member?
-      require 'whimsy/asf/mlist'
-      moderators, modtime = ASF::MLIST.list_moderators(pmc.mail_list)
+
+    # Users have extra karma if they are either of the following:
+    # ASF member or private@ list moderator (analysePrivateSubs)
+    # PMC member (isPMCMember)
+    # These attributes grant access as follows:
+    # both: can see (*) markers (PPMC members not subscribed to the private@ list)
+    # both: can see moderator addresses for mailing lists
+    # analysePrivateSubs: can see crosscheck of private@ list subscriptions
+
+
+    analysePrivateSubs = currentUser.asf_member?
+    unless analysePrivateSubs # not an ASF member - are we a moderator?
+      # TODO match using canonical emails
+      user_mail = currentUser.all_mail || []
+      pMods = moderators["private@#{pmc.mail_list}.apache.org"] || []
+      analysePrivateSubs = !(pMods & user_mail).empty?
+    end
+
+    isPMCMember = false # default to not needed
+    unless analysePrivateSubs
+      isPMCMember = pmc.roster.include? env.user
+    end
+
+    # Now get the data we are allowed to see
+    if analysePrivateSubs or isPMCMember
       subscribers, subtime = ASF::MLIST.list_subs(pmc.mail_list) # counts only, no archivers
-      analysePrivateSubs = currentUser.asf_member?
-      unless analysePrivateSubs # check for private moderator if not already allowed access
-        # TODO match using canonical emails
-        user_mail = currentUser.all_mail || []
-        pMods = moderators["private@#{pmc.mail_list}.apache.org"] || []
-        analysePrivateSubs = !(pMods & user_mail).empty?
-      end
+      pSubs = ASF::MLIST.private_subscribers(pmc.mail_list)[0]||[]
+      unMatchedSubs=Set.new(pSubs) if analysePrivateSubs # init ready to remove matched mails
+      pSubs.map!(&:downcase) # for matching
       if analysePrivateSubs
-        pSubs = ASF::MLIST.private_subscribers(pmc.mail_list)[0]||[]
-        unMatchedSubs=Set.new(pSubs) # init ready to remove matched mails
-        pSubs.map!(&:downcase) # for matching
         sSubs = ASF::MLIST.security_subscribers(pmc.mail_list)[0]||[]
         unMatchedSecSubs=Set.new(sSubs) # init ready to remove matched mails
       end
@@ -55,12 +73,14 @@ class Committee
       next if pmc.ownerids.include?(key) # skip the rest (expensive) if person is in the owner group
       person = ASF::Person[key]
       next unless person  # in case of missing entry (e.g. renamed uid)
-      if analysePrivateSubs
+      if analysePrivateSubs or isPMCMember
         # Analyse the subscriptions, matching against canonicalised personal emails
         allMail = person.all_mail.map{|m| ASF::Mail.to_canonical(m.downcase)}
         # pSubs is already downcased
         # TODO should it be canonicalised as well above?
         roster[key]['notSubbed'] = true if (allMail & pSubs.map{|m| ASF::Mail.to_canonical(m)}).empty?
+      end
+      if analysePrivateSubs 
         unMatchedSubs.delete_if {|k| allMail.include? ASF::Mail.to_canonical(k.downcase)}
         unMatchedSecSubs.delete_if {|k| allMail.include? ASF::Mail.to_canonical(k.downcase)}
       end
@@ -72,12 +92,14 @@ class Committee
         name: person.public_name,
         role: 'PMC member' # TODO not strictly true, as CI is the canonical source
       }
-      if analysePrivateSubs
+      if analysePrivateSubs or isPMCMember
         # Analyse the subscriptions, matching against canonicalised personal emails
         allMail = person.all_mail.map{|m| ASF::Mail.to_canonical(m.downcase)}
         # pSubs is already downcased
         # TODO should it be canonicalised as well above?
         roster[person.id]['notSubbed'] = true if (allMail & pSubs.map{|m| ASF::Mail.to_canonical(m)}).empty?
+      end
+      if analysePrivateSubs
         unMatchedSubs.delete_if {|k| allMail.include? ASF::Mail.to_canonical(k.downcase)}
         unMatchedSecSubs.delete_if {|k| allMail.include? ASF::Mail.to_canonical(k.downcase)}
       end
@@ -154,7 +176,12 @@ class Committee
       pmcchairs = ASF::Service.find('pmc-chairs')
       pmc_chair = pmcchairs.members.include? pmc.chair
     end
-    return {
+    # drop detailed information if it was only obtained for PMC members
+    unless analysePrivateSubs
+      moderators = modtime = subscribers = subtime = nil
+      nonASFmails = {}
+    end
+    ret = {
       id: id,
       chair: pmc.chair&.id,
       pmc_chair: pmc_chair,
@@ -181,6 +208,9 @@ class Committee
       asfMembers: asfMembers,
       unknownSecSubs: unknownSecSubs,
     }
+    # Don't add unnecessary settings
+    ret[:isPMCMember] = isPMCMember if isPMCMember
+    return ret
 
   end
 

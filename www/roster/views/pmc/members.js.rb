@@ -29,7 +29,7 @@ class PMCMembers < Vue
         end
       end
     end
-    if @@committee.analysePrivateSubs
+    if @@committee.analysePrivateSubs or @@committee.isPMCMember
       _h4.crosscheck! 'Cross-check of private@ list subscriptions'
       _p {
         _ 'PMC entries above with (*) do not appear to be subscribed to the private list.'

@@ -15,32 +15,47 @@ class PPMC
     # Also look for non-ASF mod emails
     nonASFmails = {}
 
-    moderators = nil
-    modtime = nil
+    # always needed: if not a member, for checking moderator status
+    # and if a member, needed for showing list moderators
+    # will be dropped later if insufficient karma
+    moderators, modtime = ASF::MLIST.list_moderators(ppmc.mail_list, true)
     subscribers = nil # we get the counts only here
     subtime = nil
     pSubs = [] # private@ subscribers
     unMatchedSubs = [] # unknown private@ subscribers
     currentUser = ASF::Person.find(env.user)
-    analysePrivateSubs = false # whether to show missing private@ subscriptions
-    if currentUser.asf_member? or owners.include? currentUser
-      require 'whimsy/asf/mlist'
-      moderators, modtime = ASF::MLIST.list_moderators(ppmc.mail_list, true)
-      subscribers, subtime = ASF::MLIST.list_subs(ppmc.mail_list, true) # counts only, no archivers
-      analysePrivateSubs = currentUser.asf_member?
-      unless analysePrivateSubs # check for private moderator if not already allowed access
-        # TODO match using canonical emails
-        user_mail = currentUser.all_mail || []
-        pMods = moderators["private@#{ppmc.mail_list}.apache.org"] || []
-        analysePrivateSubs = !(pMods & user_mail).empty?
-      end
-      if analysePrivateSubs
-        pSubs = ASF::MLIST.private_subscribers(ppmc.mail_list)[0]||[]
-        unMatchedSubs=Set.new(pSubs) # init ready to remove matched mails
-        pSubs.map!(&:downcase) # for matching
-      end
 
-      moderators.each { |_, mods| mods.each {|m| nonASFmails[m]='' unless m.end_with? '@apache.org'} }
+    # Users have extra karma if they are either of the following:
+    # ASF member or private@ list moderator (analysePrivateSubs)
+    # PPMC member (in owner LDAP group) (isOwner)
+    # These attributes grant access as follows:
+    # both: can see (*) markers (PPMC members not subscribed to the private@ list)
+    # both: can see moderator addresses for mailing lists
+    # analysePrivateSubs: can see crosscheck of private@ list subscriptions
+
+    analysePrivateSubs = currentUser.asf_member? # whether to show missing private@ subscriptions
+    unless analysePrivateSubs # not an ASF member - are we a moderator?
+      # TODO match using canonical emails
+      user_mail = currentUser.all_mail || []
+      pMods = moderators["private@#{ppmc.mail_list}.apache.org"] || []
+      analysePrivateSubs = !(pMods & user_mail).empty?
+    end
+
+    isOwner = false # default to not needed
+    unless analysePrivateSubs
+      isOwner = owners.include? currentUser
+    end
+
+
+    # Now get the data we are allowed to see
+    if analysePrivateSubs or isOwner
+      pSubs = ASF::MLIST.private_subscribers(ppmc.mail_list)[0]||[]
+      subscribers, subtime = ASF::MLIST.list_subs(ppmc.mail_list, true) # counts only, no archivers
+      if analysePrivateSubs
+        unMatchedSubs=Set.new(pSubs) if analysePrivateSubs # init ready to remove matched mails
+        moderators.each { |_, mods| mods.each {|m| nonASFmails[m]='' unless m.end_with? '@apache.org'} }
+      end
+      pSubs.map!(&:downcase) # for matching
       lists = ASF::MLIST.domain_lists(ppmc.mail_list, true)
     else
       lists = ASF::MLIST.domain_lists(ppmc.mail_list, false)
@@ -71,9 +86,11 @@ class PPMC
         role: 'PPMC Member',
         githubUsername: (person.attrs['githubUsername'] || []).join(', ')
       }
-      if analysePrivateSubs
+      if analysePrivateSubs or isOwner
         allMail = person.all_mail.map{|m| ASF::Mail.to_canonical(m.downcase)}
         roster[person.id]['notSubbed'] = true if (allMail & pSubs.map{|m| ASF::Mail.to_canonical(m)}).empty?
+      end
+      if analysePrivateSubs
         unMatchedSubs.delete_if {|k| allMail.include? ASF::Mail.to_canonical(k.downcase)}
       end
     end
@@ -89,9 +106,11 @@ class PPMC
         role: 'Mentor',
         githubUsername: (person.attrs['githubUsername'] || []).join(', ')
       }
-      if analysePrivateSubs
+      if analysePrivateSubs or isOwner
         allMail = person.all_mail.map{|m| ASF::Mail.to_canonical(m.downcase)}
         roster[person.id]['notSubbed'] = true if (allMail & pSubs.map{|m| ASF::Mail.to_canonical(m)}).empty?
+      end
+      if analysePrivateSubs or isOwner
         unMatchedSubs.delete_if {|k| allMail.include? ASF::Mail.to_canonical(k.downcase)}
       end
     end
@@ -126,7 +145,12 @@ class PPMC
       }
     end
 
-    return {
+    # drop moderators if there is no karma
+    unless isOwner or analysePrivateSubs
+      moderators = modtime = nil
+    end
+
+    ret = {
       id: id,
       display_name: ppmc.display_name,
       description: ppmc.description,
@@ -154,6 +178,9 @@ class PPMC
       unknownSubs: unknownSubs,
       asfMembers: asfMembers,
     }
+    # Don't add unnecessary settings
+    ret[:isOwner] = isOwner if isOwner
+    return ret
 
   end
 

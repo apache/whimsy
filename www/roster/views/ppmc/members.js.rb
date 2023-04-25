@@ -25,7 +25,7 @@ class PPMCMembers < Vue
       end
     end
 
-    if @@ppmc.analysePrivateSubs
+    if @@ppmc.analysePrivateSubs or @@ppmc.isOwner
       _h4.crosscheck! 'Cross-check of private@ list subscriptions'
       _p {
         _ 'PPMC entries above with (*) do not appear to be subscribed to the private list.'
