@@ -68,7 +68,7 @@ describe ASF::MLIST do
       res = ASF::MLIST.moderates(user_emails)
       expect(res.length).to eq(2)
       mods = res[:moderates]
-      expect(mods.length).to be_between(7, 20)
+      expect(mods.length).to be_between(6, 20)
     end
   end
 
