@@ -429,6 +429,10 @@ end
 
 # for debugging purposes
 get '/env' do
+  Wunderbar.info "Info"
+  Wunderbar.warn "Warn"
+  Wunderbar.error "Error"
+  Wunderbar.fatal "Fatal"
   content_type 'text/plain'
 
   asset = {
