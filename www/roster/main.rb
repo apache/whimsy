@@ -457,8 +457,10 @@ get '/env' do
         size: source && File.size(source),
       }
     },
+    line: __LINE__ # temp
   }
 
+  $stderr.puts "Stderr" # debug
   JSON.pretty_generate(env: env, ENV: ENV.to_h, asset: asset)
 end
 
