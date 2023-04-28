@@ -23,7 +23,11 @@ class Group
     groups += ASF::AuthGroup.listcns.map {|group| [group, "LDAP Auth Group"]}
 
     # add app groups
-    groups += ASF::AppGroup.listcns.map {|app| [app, "LDAP app group"]}
+    begin # HACK to bypass missing LDAP ou=apps group
+      groups += ASF::AppGroup.listcns.map {|app| [app, "LDAP app group"]}
+    rescue LDAP::ResultError => e
+      Wunderbar.warn "Ignoring LDAP error: #{e.inspect}"
+    end
 
     groups.sort
   end
