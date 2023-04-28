@@ -1509,37 +1509,6 @@ module ASF
     end
   end
 
-  # <tt>ou=apps</tt> subtree of <tt>ou=groups,dc=apache,dc=org</tt>, currently
-  # only used for <tt>hudson-jobadmin</tt>
-  class AppGroup < Service
-    @base = 'ou=apps,ou=groups,dc=apache,dc=org'
-
-    # return a list of App groups (cns only), from LDAP.
-    def self.listcns(filter='cn=*')
-      # Note that hudson-job-admin is under ou=hudson hence need
-      # to override Service.listcns and use subtree search
-      ASF.search_subtree(base, filter, 'cn').flatten
-    end
-
-    # remove people from an application group.
-    def remove(people)
-      @members = nil
-      people = (Array(people) & members).map(&:dn)
-      ASF::LDAP.modify(self.dn, [ASF::Base.mod_delete('member', people)])
-    ensure
-      @members = nil
-    end
-
-    # add people to an application group.
-    def add(people)
-      @members = nil
-      people = (Array(people) - members).map(&:dn)
-      ASF::LDAP.modify(self.dn, [ASF::Base.mod_add('member', people)])
-    ensure
-      @members = nil
-    end
-  end
-
   # <tt>ou=auth</tt> subtree of <tt>ou=groups,dc=apache,dc=org</tt>, used for
   # subprojects and a variety of organizational constructs (accounting,
   # exec-officers, fundraising, trademarks, ...)
@@ -1570,5 +1539,4 @@ if __FILE__ == $0
   puts newids.length
   puts newids.first
   ASF::RoleGroup.listcns.map {|g| puts ASF::RoleGroup.find(g).dn}
-  ASF::AppGroup.listcns.map {|g| puts ASF::AppGroup.find(g).dn}
 end

@@ -213,8 +213,6 @@ class GroupConfirm < Vue
       action = 'actions/authgroup'
     elsif @@group.type == 'LDAP service'
       action = 'actions/service'
-    elsif @@group.type == 'LDAP app group'
-      action = 'actions/appgroup'
     else
       alert "unsupported group type: #{@@group.type}"
       return
