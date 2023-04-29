@@ -64,6 +64,10 @@ module ASF
     @config[:svn] ||= "#{@root}/svn/*"
     @config[:git] ||= "#{@root}/git/*"
 
+    # default location of LDAP credentials
+    @config[:ldap_creds] ||= "/srv/ldap.txt"
+
+
     # The cache is used for local copies of SVN files that may be updated by Whimsy
     # for example: podlings.xml
     # www/roster/views/actions/ppmc.json.rb (write)

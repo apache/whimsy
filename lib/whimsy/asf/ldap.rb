@@ -46,6 +46,8 @@ module ASF
     # Mutex preventing simultaneous connections to LDAP from a single process
     CONNECT_LOCK = Mutex.new
 
+    LDAP_CREDS = ASF::Config.get(:ldap_creds)
+
     # connect to LDAP
     def self.connect(hosts = nil)
       # If the host list is specified, use that as is
@@ -268,8 +270,8 @@ module ASF
     ASF::LDAP::CONNECT_LOCK.synchronize do
       # fetch the default LDAP connection details
       if @ldap_dn.nil? || @ldap_pw.nil?
-        Wunderbar.info("Reading ldap.txt")
-        File.open("/srv/ldap.txt") do |io|
+        Wunderbar.info("Reading #{ASF::LDAP::LDAP_CREDS}")
+        File.open(ASF::LDAP::LDAP_CREDS) do |io|
           @ldap_dn = io.readline.strip
           @ldap_pw = io.readline.strip
         end
