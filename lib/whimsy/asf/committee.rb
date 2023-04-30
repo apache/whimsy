@@ -252,15 +252,24 @@ module ASF
 
         # split block into lines
         lines = block.strip.split("\n")
-
+        # get the first line and use that to calculate the offsets to use
+        # Note: this only affects new entries
+        sample = lines[1]
+        namelen = 26 # original
+        nameaddrlen = 59 # original
+        # N.B. 4 spaces are assumed at the start
+        if sample =~ %r{^    (\S.+) (<\S+?>\s+)\[}
+          namelen = $1.size
+          nameaddrlen = namelen + $2.size
+        end
         # add or remove people
         people.each do |person|
           id = person.id
           if action == 'add'
             unless lines.any? {|line| line.include? "<#{id}@apache.org>"}
-              name = "#{person.public_name.ljust(26)} <#{id}@apache.org>"
+              name = "#{person.public_name.ljust(namelen)} <#{id}@apache.org>"
               time = Time.new.gmtime.strftime('%Y-%m-%d')
-              lines << "    #{name.ljust(59)} [#{time}]"
+              lines << "    #{name.ljust(nameaddrlen)} [#{time}]"
             end
           elsif action == 'remove'
             lines.reject! {|line| line.include? "<#{id}@apache.org>"}
