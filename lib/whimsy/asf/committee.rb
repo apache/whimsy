@@ -399,9 +399,23 @@ module ASF
       sections.delete_if {|section| section.downcase.start_with? pmc.downcase}
 
       # build new section
+      # first check if need to increase column sizes
+      namelen = 26 # original
+      nameaddrlen = 59 # original
+      idlen = 0
+      people.map do |id, person|
+        namel = person[:name].size + 1
+        namelen = namel if namel > namelen
+        idl = id.size
+        idlen = idl if idl > idlen
+      end
+      idlen += 15 # '<@apache.org>  ' # allowing for two trailing spaces minimum
+      adjust = namelen + idlen - nameaddrlen
+      nameaddrlen += adjust if adjust > 0
+
       people = people.map do |id, person|
-        name = "#{person[:name].ljust(26)} <#{id}@apache.org>"
-        "    #{(name).ljust(59)} [#{date.strftime('%Y-%m-%d')}]"
+        name = "#{person[:name].ljust(namelen)} <#{id}@apache.org>"
+        "    #{(name).ljust(nameaddrlen)} [#{date.strftime('%Y-%m-%d')}]"
       end
 
       section = ["#{pmc}  (est. #{date.strftime('%m/%Y')})"] + people.sort
