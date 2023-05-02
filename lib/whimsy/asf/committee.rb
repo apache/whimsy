@@ -61,6 +61,10 @@ module ASF
       super
     end
 
+    # Original field sizes for PMC section
+    NAMELEN = 26 # length of name field
+    NAMEADDRLEN = 59 # length of name + email address fields (including separator)
+
     # mapping of committee names to canonical names (generally from ldap)
     # See also www/roster/committee.cgi
     @@aliases = Hash.new { |_hash, name| name.downcase}
@@ -252,34 +256,47 @@ module ASF
 
         # split block into lines
         lines = block.strip.split("\n")
-        # get the first line and use that to calculate the offsets to use
-        # Note: this only affects new entries
-        sample = lines[1]
-        namelen = 26 # original
-        nameaddrlen = 59 # original
+        header = lines.shift
+        # get the first line and use that to calculate the default offsets to use
+        # This is done to avoid changing the spacing needlessly
+        sample = lines.first
+        namelen = NAMELEN # original
+        nameaddrlen = NAMEADDRLEN # original
         # N.B. 4 spaces are assumed at the start
         if sample =~ %r{^    (\S.+) (<\S+?>\s+)\[}
           namelen = $1.size
           nameaddrlen = namelen + $2.size
         end
         # add or remove people
-        people.each do |person|
-          id = person.id
-          if action == 'add'
-            unless lines.any? {|line| line.include? "<#{id}@apache.org>"}
-              name = "#{person.public_name.ljust(namelen)} <#{id}@apache.org>"
-              time = Time.new.gmtime.strftime('%Y-%m-%d')
-              lines << "    #{name.ljust(nameaddrlen)} [#{time}]"
+        # There are generally more people already in a PMC than are added or removed,
+        # so try to scan the lines once
+        # Get list of emails affected
+        yyyymmdd = Time.new.gmtime.strftime('[%Y-%m-%d]')
+        # gather list of potential new entries (some may be removed below)
+        newentries = people.map do |person|
+          [person.public_name, "<#{person.id}@apache.org>", yyyymmdd]
+        end.to_a
+        if action == 'add'
+          # parse the lines so we can use format_pmc to recreate the entry, adjusting lengths if need be
+          parsed = lines.map do |line|
+            m = line.match(%r{^    (\S.+?) (<[^>]+>)\s+(\[\d.+)})
+            if m
+              newentries.reject! {|entry| m[2] == entry[1]}
+              [m[1].strip, m[2], m[3]]
+            else
+              raise ArgumentError.new("Unexpected entry: #{line}")
             end
-          elsif action == 'remove'
-            lines.reject! {|line| line.include? "<#{id}@apache.org>"}
-          else
-            raise ArgumentError.new("Expected action=[add|remove], found '#{action}'")
           end
+          parsed += newentries
+          lines = format_pmc(parsed, namelen, nameaddrlen)
+        elsif action == 'remove'
+          lines.reject! {|line| newentries.any? {|entry| line.include? entry[1]}}
+        else
+          raise ArgumentError.new("Expected action=[add|remove], found '#{action}'")
         end
 
         # replace committee block with new information
-        contents.sub! block, ([lines.shift] + lines.sort).join("\n") + "\n\n"
+        contents.sub! block, ([header] + lines.sort).join("\n") + "\n\n"
         found = true
         break
       end
@@ -399,24 +416,10 @@ module ASF
       sections.delete_if {|section| section.downcase.start_with? pmc.downcase}
 
       # build new section
-      # first check if need to increase column sizes
-      namelen = 26 # original
-      nameaddrlen = 59 # original
-      idlen = 0
-      people.map do |id, person|
-        namel = person[:name].size + 1
-        namelen = namel if namel > namelen
-        idl = id.size
-        idlen = idl if idl > idlen
+      entries = people.map do |id, person|
+        [person[:name], "<#{id}@apache.org>", "[#{date.strftime('%Y-%m-%d')}]"]
       end
-      idlen += 15 # '<@apache.org>  ' # allowing for two trailing spaces minimum
-      adjust = namelen + idlen - nameaddrlen
-      nameaddrlen += adjust if adjust > 0
-
-      people = people.map do |id, person|
-        name = "#{person[:name].ljust(namelen)} <#{id}@apache.org>"
-        "    #{(name).ljust(nameaddrlen)} [#{date.strftime('%Y-%m-%d')}]"
-      end
+      people = format_pmc(entries)
 
       section = ["#{pmc}  (est. #{date.strftime('%m/%Y')})"] + people.sort
 
@@ -428,6 +431,26 @@ module ASF
 
       # re-attach parts
       head + '* ' + sections.join('* ') + foot
+    end
+
+    # format a PMC entry
+    # people: array of entries in the form [name, email, date+comment]
+    # namelen: default size to allow for name field
+    # nameaddrlen: default size to allow for name + email field
+    # fields will be separated by at least one space on output
+    # The defaults are taken from the originals to avoid needless change
+    def self.format_pmc(people, namelen=NAMELEN, nameaddrlen=NAMEADDRLEN)
+      maillen = 0
+      people.each do |name, email, _datefield|
+        namelen = [namelen, name.size].max
+        maillen = [maillen, email.size].max
+      end
+      # +1 for space between fields
+      nameaddrlen = [nameaddrlen, namelen + maillen + 1].max
+      people.map do |name, email, datefield|
+        nameaddr = "#{name.ljust(namelen)} #{email}"
+        "    #{(nameaddr).ljust(nameaddrlen)} #{datefield}"
+      end
     end
 
     # extract chairs, list of nonpmcs, roster, start date, and reporting
