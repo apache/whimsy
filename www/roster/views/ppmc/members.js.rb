@@ -46,8 +46,6 @@ class PPMCMembers < Vue
           _br
           _ 'Or they could be ex-PPMC members who are still subscribed.'
           _br
-          _ '(Note that digest subscriptions are not currently included)'
-          _br
           _br
           _ul {
             unknownSubs.each do |sub|

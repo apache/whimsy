@@ -215,7 +215,10 @@ class Committer
       if response[:subscriptions] # did we get access to the mail?
         pmail = "private@#{pmc.mail_list}.apache.org" rescue ''
         subbed = false
-        response[:subscriptions].each do |sub|
+        subs = response[:subscriptions]
+        digs = response[:digests]
+        subs += digs if digs
+        subs.each do |sub|
           if sub[0] == pmail
             subbed = true
           end
