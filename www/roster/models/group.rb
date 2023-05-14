@@ -25,9 +25,10 @@ class Group
     groups.sort
   end
 
-  # The ids 'treasurer' and 'svnadmins' currently both have two definitions
-  # treasurer: LDAP Auth Group and Pit Auth; svnadmins: LDAP Auth Group and LDAP service
-  # So the type is now provided as a work-round
+  # The id 'svnadmins' currently has two definitions
+  # LDAP Auth Group and LDAP service
+  # See INFRA-24565
+  # So the type can now be provided as a work-round
   def self.serialize(id, itype=nil)
     response = {}
 
