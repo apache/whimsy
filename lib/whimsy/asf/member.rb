@@ -190,7 +190,7 @@ module ASF
         when 0
           status = :current
         when 1
-          status = :emeritus          
+          status = :emeritus
         when 2
           status = :other
         when 3
