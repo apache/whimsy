@@ -26,7 +26,7 @@ jobs:
         node-version: '14.19.1'
         # it seems that using the default Ubuntu version of node (14.19.0)
         # somehow fails to set the correct path for rake to use
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         persist-credentials: false
     - uses: ruby/setup-ruby@v1
