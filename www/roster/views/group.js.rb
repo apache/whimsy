@@ -11,7 +11,7 @@ class Group < Vue
   def render
     group = @group
     members = group.members.keys().sort_by {|id| group.members[id]}
-    asfmembers = group.asfmembers || []
+    memberstatus = group.memberstatus || {}
 
     if group.type == 'LDAP auth group' or group.id == 'asf-secretary'
       auth = (members.include? @@auth.id or @@auth.secretary or @@auth.root)
@@ -48,7 +48,7 @@ class Group < Vue
 
       _tbody do
         members.each do |id|
-          _GroupMember id: id, name: group.members[id], auth: auth, asfmember: asfmembers.includes(id),
+          _GroupMember id: id, name: group.members[id], auth: auth, memberstatus: memberstatus[id],
             pending: false
         end
 
@@ -115,10 +115,15 @@ class GroupMember < Vue
   def render
     _tr onDblclick: self.select do
       _td {_a @@id, href: "committer/#{@@id}"}
-      if @@asfmember
+      if @@memberstatus == 'current'
         _td { _b @@name }
-      else
+      elsif @@memberstatus.nil?
         _td @@name
+      else
+        _td do
+          _i @@name
+          _ " (#{@@memberstatus})"
+        end
       end
 
       _td data_id: @@id do

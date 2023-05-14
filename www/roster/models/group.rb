@@ -32,6 +32,8 @@ class Group
   def self.serialize(id, itype=nil)
     response = {}
 
+    member_status = ASF::Member.member_statuses
+
     type = 'LDAP group'
     group = ASF::Group.find(id)
 
@@ -55,7 +57,7 @@ class Group
         type: type,
         dn: (group.dn rescue ''), # not all groups have a DN
         members: Hash[group.members.map {|person| [person.id, (person.cn rescue '**Entry missing from LDAP people**')]}], # if id not in people
-        asfmembers: group.members.select{|person| ASF.members.include?(person)}.map(&:id),
+        memberstatus: group.members.map{|person| [person.id, member_status[person.id]]}.to_h,
       }
 
       if id == 'hudson-jobadmin'
@@ -84,7 +86,7 @@ class Group
           type: type,
           dn: (group.dn rescue ''), # not all groups have a DN
           members: Hash[group.map {|person| [person.id, person.cn]}],
-          asfmembers: group.select{|person| ASF.members.include?(person)}.map(&:id),
+          memberstatus: group.map{|person| [person.id, member_status[person.id]]}.to_h,
         }
       end
     end
