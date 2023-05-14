@@ -177,12 +177,22 @@ class PMCMember < Vue
              onClick: -> {self.toggleSelect(@@person)}
         end
       end
-      if @@person.member
+      if @@person.member == true # full member
         _td { _b { _a @@person.id, href: "committer/#{@@person.id}" }
               _a ' (*)', href: "committee/#{@@committee.id}#crosscheck" if @@person.notSubbed
             }
         _td @@person.githubUsername
         _td { _b @@person.name }
+      elsif @@person.member
+        _td { _i { _a @@person.id, href: "committer/#{@@person.id}" }
+              _a ' (*)', href: "committee/#{@@committee.id}#crosscheck" if @@person.notSubbed
+            }
+        _td @@person.githubUsername
+        _td { _i @@person.name
+              _ ' ('
+              _ @@person.member.sub(%r{( \(Non-voting\))? Member}, '')
+              _ ')'
+            }
       else
         _td { _a @@person.id, href: "committer/#{@@person.id}"
               _a ' (*)', href: "committee/#{@@committee.id}#crosscheck" if @@person.notSubbed
