@@ -11,6 +11,7 @@ feature 'report' do
 
   it "should allow timestamps to be edited" do
     visit '/2015-02-18/Call-to-order'
+    $stderr.puts page.html
     expect(page).to have_selector 'button', text: 'edit minutes'
   end
 
