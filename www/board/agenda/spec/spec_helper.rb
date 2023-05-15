@@ -96,8 +96,8 @@ DUMMY = {
     [['cn=board,ou=groups,ou=services,dc=apache,dc=org']],
     'ldapsearch -x -LLL -b ou=groups,ou=services,dc=apache,dc=org -s sub cn=pmc-chairs dn' =>
     [[]],
-    'ldapsearch -x -LLL -b ou=people,dc=apache,dc=org -s one uid=secretary_id ' =>
-    [],
+    "ldapsearch -x -LLL -b ou=people,dc=apache,dc=org -s one uid=#{SEC_ID} " =>
+    [{"uid"=>["#{SEC_ID}"], "dn"=>["uid=#{SEC_ID},ou=people,dc=apache,dc=org"]}],
 }
 
 
