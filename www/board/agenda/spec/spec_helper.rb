@@ -77,3 +77,45 @@ RSpec.configure do |config|
     FileUtils.mkdir_p Agenda::CACHE
   end
 end
+
+# must be a non-director member of the secretarial team
+SEC_ID='secretary_id' # dummy for testing
+
+DUMMY = {
+  'ldapsearch -x -LLL -b ou=groups,ou=services,dc=apache,dc=org -s one cn=pmc-chairs member memberUid' =>
+      [{"member" => []}],
+    'ldapsearch -x -LLL -b ou=groups,dc=apache,dc=org -s one cn=member memberUid' =>
+    [[]],
+    'ldapsearch -x -LLL -b ou=groups,ou=services,dc=apache,dc=org -s one cn=board member memberUid' =>
+    [{"member" => []}],
+    'ldapsearch -x -LLL -b ou=groups,ou=services,dc=apache,dc=org -s sub cn=asf-secretary dn' =>
+    [["cn=asf-secretary,ou=groups,ou=services,dc=apache,dc=org"]],
+    'ldapsearch -x -LLL -b ou=groups,ou=services,dc=apache,dc=org -s one cn=asf-secretary member memberUid' =>
+    [{"member"=>["uid=#{SEC_ID},ou=people,dc=apache,dc=org"], "dn"=>["cn=asf-secretary,ou=groups,ou=services,dc=apache,dc=org"]}],
+    'ldapsearch -x -LLL -b ou=groups,ou=services,dc=apache,dc=org -s sub cn=board dn' =>
+    [['cn=board,ou=groups,ou=services,dc=apache,dc=org']],
+    'ldapsearch -x -LLL -b ou=groups,ou=services,dc=apache,dc=org -s sub cn=pmc-chairs dn' =>
+    [[]],
+    'ldapsearch -x -LLL -b ou=people,dc=apache,dc=org -s one uid=secretary_id ' =>
+    [],
+}
+
+
+$LOAD_PATH.unshift '/srv/whimsy/lib'
+require 'whimsy/asf/config'
+require 'whimsy/asf/ldap'
+module ASF
+    def self.search_scope(scope, base, filter, attrs=nil)
+      sname = %w(base one sub children)[scope] rescue scope
+      cmd = "ldapsearch -x -LLL -b #{base} -s #{sname} #{filter} " +
+        [attrs].flatten.join(' ')
+        # $stderr.puts cmd
+      ret = DUMMY[cmd]
+      if ret
+        # $stderr.puts ret.inspect
+        return ret
+      else
+        raise "Cannot find response for: '#{cmd}'"
+      end
+    end
+end
