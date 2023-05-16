@@ -33,7 +33,7 @@ jobs:
       if:  matrix.os != 'macos-latest'
     - uses: actions/setup-node@v3
       with:
-        node-version: '14.19.1'
+        node-version: '18.16.0'
     - uses: actions/checkout@v3
       with:
         persist-credentials: false
