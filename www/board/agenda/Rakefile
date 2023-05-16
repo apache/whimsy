@@ -54,6 +54,7 @@ end
 file 'package-lock.json' => 'package.json' do
   sh 'npm install'
   sh 'touch package-lock.json'
+  sh 'npm audit fix --force' # as advised in GH action log
 end
 
 file 'test/work' do
@@ -86,8 +87,8 @@ end
 task :reset do
   testfiles.each do |testfile|
     if File.exist? "test/work/data/#{testfile}.yml"
-      if 
-        IO.read("test/#{testfile}.yml") != 
+      if
+        IO.read("test/#{testfile}.yml") !=
         IO.read("test/work/data/#{testfile}.yml")
       then
         rm "test/work/data/#{testfile}.yml"
@@ -109,7 +110,7 @@ task :reset do
   end
 end
 
-task :work => ['test/work/board', 
+task :work => ['test/work/board',
   *testfiles.map {|testfile| "test/work/data/#{testfile}.yml"}]
 
 namespace :test do
@@ -131,7 +132,7 @@ task :update do
     puts "#{File.dirname(File.realpath(__FILE__))}:"
     system 'git pull'
   end
-  
+
   # update libs
   if File.exist? "#{ENV['HOME']}/.whimsy"
     libs = YAML.load_file("#{ENV['HOME']}/.whimsy")[:lib] || []
