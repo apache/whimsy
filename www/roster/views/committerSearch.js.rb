@@ -119,8 +119,10 @@ class CommitterSearch < Vue
                     _td 'notinavail'
                   end
 
-                  if person.member
+                  if person.asf_member_status == :current
                     _td {_b person.name}
+                  elsif person.asf_member_status
+                    _td { _i "#{person.name} (#{person.asf_member_status})" }
                   else
                     _td person.name
                   end
