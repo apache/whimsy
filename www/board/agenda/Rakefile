@@ -10,7 +10,9 @@ $LOAD_PATH.unshift lib unless $LOAD_PATH.include? lib
 require 'whimsy/asf/config'
 
 require 'rspec/core/rake_task'
-RSpec::Core::RakeTask.new(:spec)
+raketask = RSpec::Core::RakeTask.new(:spec)
+rspec_opts = ENV['RSPEC_OPTS']
+raketask.rspec_opts = rspec_opts if rspec_opts
 task :default => :spec
 task :spec => 'test:setup'
 task :test => :spec
