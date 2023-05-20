@@ -17,6 +17,11 @@ task :default => :spec
 task :spec => 'test:setup'
 task :test => :spec
 
+## Run system and abort if it fails
+def system!(*args)
+  system(*args) or raise "system(#{args}) failed!"
+end
+
 # setup authentication
 task :auth do
   require 'etc'
@@ -65,16 +70,16 @@ end
 
 file 'test/work/repository' => 'test/work' do
   unless File.exist? 'test/work/repository/format'
-    system 'svnadmin create test/work/repository'
+    system! 'svnadmin create test/work/repository'
   end
 end
 
 file 'test/work/board' => 'test/work/repository' do
   Dir.chdir('test/work') do
     rm_rf 'board' if File.exist? 'board'
-    system "svn co file:///#{Dir.pwd}/repository board"
+    system! "svn co file:///#{Dir.pwd}/repository board"
     cp Dir['../data/*.txt'], 'board'
-    Dir.chdir('board') {system 'svn add *.txt; svn commit -m "initial commit"'}
+    Dir.chdir('board') {system! 'svn add *.txt; svn commit -m "initial commit"'}
   end
 end
 
@@ -132,7 +137,7 @@ task :update do
   # update agenda application
   Dir.chdir File.dirname(__FILE__) do
     puts "#{File.dirname(File.realpath(__FILE__))}:"
-    system 'git pull'
+    system! 'git pull'
   end
 
   # update libs
@@ -160,15 +165,15 @@ task :update do
 
       # update repository
       Dir.chdir lib do
-        system 'svn up' if repository == :svn
-        system 'git pull' if repository == :git
+        system! 'svn up' if repository == :svn
+        system! 'git pull' if repository == :git
       end
     end
   end
 
   # update gems
   puts "\nbundle update:"
-  system 'bundle update'
+  system! 'bundle update'
 end
 
 namespace :svn do
@@ -176,7 +181,7 @@ namespace :svn do
     ASF::Config.get(:svn).each do |svn|
       if Dir.exist? svn
         puts "\n#{svn}:"
-        Dir.chdir(svn) {system 'svn up'}
+        Dir.chdir(svn) {system! 'svn up'}
       end
     end
   end
