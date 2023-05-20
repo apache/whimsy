@@ -96,7 +96,8 @@ module ASF
       refresh
       unless @@email_index
         @@email_index = {}
-        each {|icla| @@email_index[icla.email.downcase] = icla}
+        # Allow for multiple emails separated by comma or space
+        each {|icla| icla.email.downcase.split(/[, ]/).each {|m| @@email_index[m] = icla}}
       end
 
       @@email_index[value.downcase]
