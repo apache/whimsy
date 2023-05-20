@@ -58,5 +58,6 @@ jobs:
     - name: test agenda code
       run: |
         cd www/board/agenda
-        gem list # DEBUG
+        gem info # DEBUG
         SKIP_NAVIGATION=1 bundle exec rake RSPEC_OPTS='--pattern=secret*.rb'
+        gem info # DEBUG
