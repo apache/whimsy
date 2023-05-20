@@ -309,8 +309,11 @@ module ASF
       return @obsolete_emails if @obsolete_emails
 
       result = []
-      if icla && active_emails.none? {|mail| mail.downcase == icla.email.downcase}
-        result << icla.email
+      if icla
+        icla.emails.each do |email|
+          active_emails.none? {|mail| mail.downcase == email.downcase}
+          result << email
+        end
       end
       @obsolete_emails = result
     end
