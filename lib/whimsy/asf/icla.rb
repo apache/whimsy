@@ -17,7 +17,7 @@ module ASF
     # public name for the individual; should match LDAP
     attr_accessor :name
 
-    # email address from the ICLA
+    # email address from the ICLA (may include multiple values, separated by space or comma)
     attr_accessor :email
 
     # lists the name of the form on file; includes claRef information
@@ -97,7 +97,7 @@ module ASF
       unless @@email_index
         @@email_index = {}
         # Allow for multiple emails separated by comma or space
-        each {|icla| icla.email.downcase.split(/[, ]/).each {|m| @@email_index[m] = icla}}
+        each {|icla| icla.emails.each {|m| @@email_index[m.downcase] = icla}}
       end
 
       @@email_index[value.downcase]
@@ -286,6 +286,12 @@ module ASF
     def noId?
       self.id == 'notinavail'
     end
+
+    # return emails split by comma or space
+    def emails
+      email.split(/[, ]/)
+    end
+
   end
 
   class Person

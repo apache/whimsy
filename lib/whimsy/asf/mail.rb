@@ -31,7 +31,9 @@ module ASF
       # load all ICLA emails in one pass
       ASF::ICLA.each do |icla|
         person = Person.find(icla.id)
-        list[icla.email.downcase] ||= person
+        icla.emails.each do |email|
+          list[email.downcase] ||= person
+        end
         next if icla.noId?
 
         list["#{icla.id.downcase}@apache.org"] ||= person
