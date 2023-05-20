@@ -11,9 +11,6 @@ feature 'report' do
 
   it "should allow timestamps to be edited" do
     visit '/2015-02-18/Call-to-order'
-    $stderr.puts "++++++++++++++++++++++++"
-    $stderr.puts page.source
-    $stderr.puts "------------------------"
     expect(page).to have_selector 'button', text: 'edit minutes'
   end
 
@@ -102,9 +99,6 @@ feature 'report' do
 
   it "should publish minutes" do
     visit '/2015-01-21/'
-    $stderr.puts "++++++++++++++++++++++++"
-    $stderr.puts page.source
-    $stderr.puts "------------------------"
     expect(page).to have_selector 'textarea', text:
       '[21 January 2015](../records/minutes/2015/board_minutes_2015_01_21.txt)'
     expect(page).to have_selector 'textarea', text:
