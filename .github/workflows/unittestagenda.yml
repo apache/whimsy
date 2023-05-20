@@ -55,9 +55,13 @@ jobs:
         ls -l /srv
         echo ":ldap: ldaps://ldap-us.apache.org:636" >> .whimsy
         sudo $(which ruby) -I $PWD/lib -r whimsy/asf -e "ASF::LDAP.configure"
-    - name: test agenda code
+    - name: show environ
       run: |
         node -v
         npm -v
+        npm list
+        gem list
+    - name: test agenda code
+      run: |
         cd www/board/agenda
         SKIP_NAVIGATION=1 bundle exec rake RSPEC_OPTS='--pattern=secret*.rb'
