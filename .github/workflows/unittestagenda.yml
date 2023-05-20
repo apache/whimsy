@@ -35,7 +35,7 @@ jobs:
       if:  matrix.os != 'macos-latest'
     - uses: actions/setup-node@v3
       with:
-        node-version: '18.16.0'
+        node-version: 'v14.21.3' # try same version as Docker
     - uses: actions/checkout@v3
       with:
         persist-credentials: false
