@@ -35,7 +35,7 @@ jobs:
       if:  matrix.os != 'macos-latest'
     - uses: actions/setup-node@v3
       with:
-        node-version: 'v14.21.3' # try same version as Docker
+        node-version: 'v16.20.0' # works on macos; 20.x does not
     - uses: actions/checkout@v3
       with:
         persist-credentials: false
@@ -57,8 +57,7 @@ jobs:
         sudo $(which ruby) -I $PWD/lib -r whimsy/asf -e "ASF::LDAP.configure"
     - name: test agenda code
       run: |
+        node -v
+        npm -v
         cd www/board/agenda
-        gem info # DEBUG
-        SKIP_NAVIGATION=1 bundle exec rake RSPEC_OPTS='--pattern=secret*.rb' || true
-        gem info # DEBUG
-        npm list
+        SKIP_NAVIGATION=1 bundle exec rake RSPEC_OPTS='--pattern=secret*.rb'
