@@ -59,9 +59,15 @@ jobs:
       run: |
         node -v
         npm -v
-        npm list
         gem list
     - name: test agenda code
       run: |
         cd www/board/agenda
-        SKIP_NAVIGATION=1 bundle exec rake RSPEC_OPTS='--pattern=secret*.rb'
+        SKIP_NAVIGATION=1 bundle exec rake RSPEC_OPTS='--pattern=secret*.rb' || echo "action_state=failed" >> $GITHUB_ENV
+      continue-on-error: true
+    - name: Run Summary
+      run: |
+        npm list # added by Rakefile
+        echo "${{ env.action_state }}"
+        # This will be be true for a successful run
+        test "${{ env.action_state }}" != 'failed'
