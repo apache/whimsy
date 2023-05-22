@@ -458,6 +458,7 @@ get '/env' do
         size: source && File.size(source),
       }
     },
+    params: params,
     line: __LINE__ # temp
   }
 
