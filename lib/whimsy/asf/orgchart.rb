@@ -12,6 +12,13 @@ module ASF # :nodoc:
     @@duties = {}
     @@desc = {}
 
+    # the file names used to be the same as the role ids, however
+    # these were changed in order to fix public links using the shorter names
+    @@aliases = {
+      'vp-marketing' => 'vp-marketingandpublicity',
+      'infra-admin' => 'infrastructureadministrator',
+    }
+
     # parse any changed YAML role files.
     def self.load
       @@source ||= ASF::SVN['personnel-duties']
@@ -21,6 +28,7 @@ module ASF # :nodoc:
         data = Hash[*File.read(file).split(/^\[(.*)\]\n/)[1..-1].map(&:strip)]
         next unless data['info']
         data['info'] = YAML.safe_load(data['info'])
+        name = @@aliases[name] || name
         # fix up data items available from elsewhere
         if name =~ %r{^vp-(.+)$} or name =~ %r{^(security)$}
           post = $1
