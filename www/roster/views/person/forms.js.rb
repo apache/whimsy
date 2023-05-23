@@ -16,7 +16,7 @@ class PersonForms < Vue
 
             if form == 'icla'
               _li do
-                if link == '' # has ICLA bu no karma to view it
+                if link == '' # has ICLA but no karma to view it
                   _ 'ICLA'
                 else
                   _a 'ICLA', href: link
