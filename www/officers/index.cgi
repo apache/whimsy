@@ -10,6 +10,7 @@ require 'wunderbar/bootstrap'
 OFFICERS = {
   '/board/agenda' => "Monthly Board Agenda Tool",
   'acreq.cgi' => "New Account Request Helper",
+  'unlistedclas.cgi' => "Unlisted CLAs (prospective committers)",
   'mlreq.cgi' => "New Mailing List Request Form",
   '/committers/subscribe.cgi' => "Apache Mailing List Subscription/Unsubscription Tool",
   '/board/subscriptions' => "PMC Chair board@ Subscription Crosscheck",
