@@ -21,7 +21,7 @@ def emit_form(search=nil, value=nil)
       _whimsy_forms_subhead(label: 'Enter search term')
       field = 'search'
       _whimsy_forms_input(label: 'Search for', name: field, id: field,
-        value: search, helptext: 'Enter email address'
+        value: search, helptext: 'Enter email address. Must match the field on the ICLA exactly.'
       )
       if value
         field = 'match'
@@ -48,7 +48,8 @@ _html do
       },
       helpblock: -> {
         _p %{
-          This script allows officers and members to search for CLAs from prospective committers
+          This script allows officers and members to search for CLAs from prospective committers.
+          You can only search by email address, as names are not unique.
         }
       },
     ) do
