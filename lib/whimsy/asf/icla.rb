@@ -103,16 +103,28 @@ module ASF
       @@email_index[value.downcase]
     end
 
-    # find ICLA by name
-    def self.find_by_name(value)
+    # find ICLA by (public) name
+    # There are multiple entries with the same name.
+    # So if there are multiple matches, it does not make sense to return a single entry.
+    # By default, only return an entry if there is a single match. (else nil)
+    # If the multiple param is true, return an array of all matching entries.
+    # The array may be empty; does not return nil.
+    #
+    # N.B. matching by name is inherently inaccurate due to misspellings and duplicates.
+    # There are likely to be both false positives and false negatives. Use with caution!
+    def self.find_by_name(value, multiple=false)
       return unless SOURCE
       refresh
       unless @@name_index
-        @@name_index = {}
-        each {|icla| @@name_index[icla.name] = icla}
+        # Collect all the entries for each matching name
+        @@name_index = Hash.new {|h, k| h[k] = Array.new}
+        each {|icla| @@name_index[icla.name] << icla }
       end
 
-      @@name_index[value]
+      entries = @@name_index[value]
+      return entries if multiple # no filtering needed
+      return entries.first if entries&.size == 1
+      return nil
     end
 
     # find number of matches in target array
