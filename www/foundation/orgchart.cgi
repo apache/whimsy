@@ -117,7 +117,7 @@ def emit_role(role: {}, oversees: {}, desc: {})
               _td do
                 _a value, href: "mailto:#{value}"
               end
-            elsif %w(resolution website).include? key
+            elsif %w(resolution website resolution-policy resolution-other reports-board).include? key
               _td do
                 _a value, href: value
               end
