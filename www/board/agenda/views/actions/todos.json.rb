@@ -181,7 +181,7 @@ if (@change || @establish) and env.password
   unless people.empty?
     # add new chairs to pmc-chairs
     ASF::LDAP.bind(env.user, env.password) do
-      chairs.add people - chairs.members
+      chairs.add people
     end
 
     # send out congratulations email
