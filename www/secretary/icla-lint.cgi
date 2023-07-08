@@ -385,7 +385,7 @@ _html do
         body = "Dear " + name + ",\n\n" +
             "We are reviewing our records to be sure that all submitted ICLAs are on file.\n" +
             "Unfortunately, we are unable to locate the ICLA that you submitted earlier.\n\n" +
-            "Can you please resubmit to secretary@apache.org? http://apache.org/licenses/#submitting\n" +
+            "Can you please resubmit to secretary@apache.org? https://apache.org/licenses/contributor-agreements.html#submitting\n" +
             "Please do *not* use an apache email as your E-Mail address.\n" +
             "You can send the original ICLA (if the email address is still valid) or a new one.\n\n" +
             "Best regards,\n"
