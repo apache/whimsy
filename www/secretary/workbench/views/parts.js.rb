@@ -25,6 +25,8 @@ class Parts < Vue
     @signature_not_armored = false
     @unsigned = false
     @script_font = false
+    @upload_sig = false
+    @invalid_availid = false
   end
 
   ########################################################################
@@ -200,6 +202,8 @@ class Parts < Vue
             _input type: 'hidden', name: 'signature_not_armored', value: @signature_not_armored
             _input type: 'hidden', name: 'unsigned', value: @unsigned
             _input type: 'hidden', name: 'script_font', value: @script_font
+            _input type: 'hidden', name: 'upload_sig', value: @upload_sig
+            _input type: 'hidden', name: 'invalid_availid', value: @invalid_availid
             # the above entries must agree with the checked: entries below
             # also any new entries must be added to the backend script incomplete.json.rb
 
@@ -322,6 +326,20 @@ class Parts < Vue
                   _input type: 'checkbox', checked: @script_font,
                   onClick: -> {@script_font = !@script_font}
                   _span ' script font'
+                end
+              end
+              _li do
+                _label do
+                  _input type: 'checkbox', checked: @upload_sig,
+                  onClick: -> {@upload_sig = !@upload_sig}
+                  _span ' upload signature'
+                end
+              end
+              _li do
+                _label do
+                  _input type: 'checkbox', checked: @invalid_availid,
+                  onClick: -> {@invalid_availid = !@invalid_availid}
+                  _span ' invalid availid'
                 end
               end
             end

@@ -27,6 +27,11 @@ REASONS = {
   '@unsigned' => 'the document appears to be unsigned',
   '@script_font' => 'a name typed in a script font is not a signature',
 }
+# These aren't reasons for rejection, but need to be fixed
+OTHERS = {
+  '@upload_sig' => 'please also upload your signature to keyserver.ubuntu.com. (see the link below for details)',
+  '@invalid_availid' => 'please also provide a valid id',
+}
 
 # send rejection email
 task "email #{message.from}" do
@@ -38,6 +43,11 @@ task "email #{message.from}" do
   end
   missing_items << '' if missing_items.size > 0 # add separator
   @missing_items = missing_items.join("\n")
+  other_items = []
+  OTHERS.each do |k, v|
+    other_items << "- #{v}" if instance_variable_get(k) == 'true'
+  end
+  @other_items = other_items.join("\n")
   mail = message.reply(
     from: @from,
     cc: [

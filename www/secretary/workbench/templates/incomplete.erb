@@ -2,7 +2,10 @@ Dear <%= @email.display_names.join(', ') %>,
 
 We received this document but we cannot file it as is.
 <%= @missing_items %>
-Please fill all required fields and resubmit all pages
+<% if @other_items.size > 0 %>The following also need to be fixed:
+<%= @other_items %>
+<% end %>
+Please complete all required fields and resubmit all pages
 to secretary@apache.org
 https://apache.org/licenses/contributor-agreements.html#submitting
 
