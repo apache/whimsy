@@ -334,12 +334,6 @@ class Parts < Vue
               _span 'resubmitted form'
             end
 
-            _label do
-              _input type: 'radio', name: 'doctype', value: 'empty',
-                onClick: self.generic_reject
-              _span 'empty form'
-            end
-
           end
         end
 
