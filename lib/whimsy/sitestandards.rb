@@ -110,10 +110,13 @@ module SiteStandards
       CHECK_DOC => 'All website content SHOULD include a copyright notice for the ASF.',
     },
 
-    'privacy' => { # link_check
+    'privacy' => { # link_check; allow original link (now redirected)
       CHECK_TEXT => %r{Privacy Policy}i,
       CHECK_CAPTURE => %r{(Privacy)}i,
-      CHECK_VALIDATE => %r{\Ahttps://privacy\.apache\.org/policies/privacy-policy-public.html\z}i,
+      CHECK_VALIDATE => %r{\Ahttps://privacy\.apache\.org/policies/privacy-policy-public\.html\z
+                          |
+                          \Ahttps?://(?:www\.)?apache\.org/foundation/policies/privacy\.html\z
+                          }ix,
       CHECK_TYPE => true,
       CHECK_POLICY => 'https://www.apache.org/foundation/marks/pmcs.html#navigation',
       CHECK_DOC => 'All websites must link to the Privacy Policy.',
