@@ -206,7 +206,7 @@ def name_changes(title)
   title.sub! 'iBatis', 'iBATIS'
   title.sub! 'infrastructure', 'Infrastructure'
   title.sub! 'ISIS', 'Causeway'
-  title.sub! 'ISIS', 'Causeway'
+  title.sub! 'Isis', 'Causeway'
   title.sub! 'IVY', 'Ivy'
   title.sub! 'JackRabbit', 'Jackrabbit'
   title.sub! 'James', 'JAMES'
