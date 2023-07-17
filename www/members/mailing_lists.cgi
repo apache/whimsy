@@ -86,8 +86,9 @@ _html do
         end
         _p %{
           'mod count' is the number of moderators for the list.
-          Lists should ideally have at least 3 moderators.
-          The count is enclosed in [] if the list is 'open' or 'subonly', because posts don't need to be moderated in that case.
+          Lists should ideally have at least 3 moderators to ensure timely responses.
+          The count is enclosed in [] if the list is 'open' or 'subonly' (and not private(s)),
+          because posts (and subscriptions) don't need to be moderated in that case.
         }
         _p %{
           Note that there are other settings which affect the behaviour, and the initial behaviour defined
@@ -126,13 +127,19 @@ _html do
                 _ type(mu)
               end
               count = mod_counts[lad] 
-              if %w{subonly open}.include? type(mu)
+              if !flags.include?('s') and %w{subonly open}.include? type(mu)
                 # ensure unmoderated lists are not penalised for having few moderators
                 _td data_sort_value: count+100 do
                   _ "[#{count}]"
                 end
               else
-                _td count
+                if count.to_i < 3
+                  _td class: 'bg-danger' do
+                    _ count 
+                  end
+                else
+                  _td count
+                end
               end
               _td flags.include? 'z'
               _td flags.include? 's'
