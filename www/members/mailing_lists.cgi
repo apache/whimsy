@@ -22,7 +22,7 @@ FLAGS = %{
 -mz moderate after checking sender is known
 -Mz unmoderated, but requires sender to be known
 
--s subscriptions are moderated (i.e. private list)
+-s subscriptions are moderated (usually means the list is private)
 
 -x check mime-type, size etc
 -y send copy to security@apache.org
@@ -63,6 +63,9 @@ end
 listfilter = params['match'].last
 
 mod_counts = ASF::MLIST.list_moderators(nil).first.map {|x,y| [x, y.length]}.to_h
+
+list_types = {}
+ASF::MLIST.list_types(true) {|d,l,t| list_types["#{l}@#{d}"] = t}
 
 _html do
   _body? do
@@ -107,7 +110,8 @@ _html do
             _th 'Type (mu)', data_sort: 'string'
             _th 'mod count', data_sort: 'int'
             _th 'Known (z)', data_sort: 'string'
-            _th 'Private (s)', data_sort: 'string'
+            _th 'Moderate subs(s)', data_sort: 'string'
+            _th 'Archiver type', data_sort: 'string'
             _th 'Filter (x)', data_sort: 'string'
             _th 'cc.Security (y)', data_sort: 'string'
           end
@@ -143,6 +147,7 @@ _html do
               end
               _td flags.include? 'z'
               _td flags.include? 's'
+              _td list_types[lad]
               _td flags.include? 'x'
               _td flags.include? 'y'
             end
