@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-PAGETITLE = "Apache List Moderator checks" # Wvisible:members
+PAGETITLE = "Apache List Moderator checks" # Wvisible:members mail
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 
 # check moderators are known

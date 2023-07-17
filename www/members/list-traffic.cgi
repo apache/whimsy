@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-PAGETITLE = "Members@ Mailing List Statistics" # Wvisible:members
+PAGETITLE = "Members@ Mailing List Statistics" # Wvisible:members mail
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 
 require 'wunderbar'

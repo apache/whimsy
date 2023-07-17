@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-PAGETITLE = "Apache Mailing List Info" # Wvisible:members
+PAGETITLE = "Apache Mailing List Info" # Wvisible:members mail
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 
 # parse mailing list flags and try to interpret them
