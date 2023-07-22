@@ -346,7 +346,7 @@ module ASF
       when 'whimsy'
         'whimsical'
 
-      when 'brandmanagement'
+      when 'brand'
         'trademarks@apache.org'
       when 'infrastructure'
         'infra'
