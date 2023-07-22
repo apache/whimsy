@@ -365,6 +365,8 @@ module ASF
         'w3c@apache.org'
       when 'concom'
         'planners@apachecon.com'
+      when 'publicaffairs'
+        'public-affairs-private@apache.org'
       else
         name.downcase
       end
