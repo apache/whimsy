@@ -7,7 +7,7 @@ class NonPMC
     members = cttee.owners
     committers = cttee.committers
     # Hack to fix unusual mail_list values e.g. press@apache.org
-    mail_list = cttee.mail_list.sub(/@.*/,'')
+    mail_list = cttee.mail_list.sub(/@apache\.org/,'')
     mail_list = 'legal' if mail_list =~ /^legal-/ && cttee.name != 'dataprivacy'
     mail_list = 'fundraising' if mail_list =~ /^fundraising-/
 
