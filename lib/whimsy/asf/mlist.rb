@@ -52,7 +52,7 @@ module ASF
       if parts.length == 1
         dom = "#{pmc}.apache.org"
         list = 'private'
-      elsif parts.length == 2 && parts[1] == 'apache.org'
+      elsif parts.length == 2 && %w{apache.org apachecon.com}.include?(parts[1])
         dom = parts[1]
         list = parts[0]
       else
