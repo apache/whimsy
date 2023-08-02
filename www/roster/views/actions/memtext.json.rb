@@ -1,8 +1,9 @@
 # validate new entry
 new_entry = @entry.strip
-unless new_entry.include? "Forms on File: ASF Membership Application\n" and
-  new_entry.include? "Avail ID: #{@userid}\n"
-  raise Exception.new('Missing required item: Avail ID and/or Forms')
+#ensure required entries are present as separate lines
+unless new_entry =~ %r{^\s*Forms on File: ASF Membership Application$} and
+       new_entry =~ %r{^\s*Avail ID: #{@userid}$}
+  raise Exception.new('Missing required item: Avail ID and/or Forms, or Avail ID does not match')
 end
 
 # get existing entry for @userid
