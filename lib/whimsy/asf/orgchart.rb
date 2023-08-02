@@ -33,10 +33,10 @@ module ASF # :nodoc:
         if name =~ %r{^vp-(.+)$} or name =~ %r{^(security)$}
           post = $1
           begin
-            data['info']['id'] = ASF::Committee[post].chairs.first[:id]
+            data['info']['id'] = ASF::Committee[post].chairs.map {|a| a[:id]}
           rescue
             begin
-              data['info']['id'] = ASF::Committee.officers.select{|o| o.name == post}.first.chairs.first[:id]
+              data['info']['id'] = ASF::Committee.officers.select{|o| o.name == post}.first.chairs.map {|a| a[:id]}
             rescue
               Wunderbar.info "Cannot find chair for #{name}"
             end
@@ -44,7 +44,7 @@ module ASF # :nodoc:
         else
           tmp = ASF::Committee.officers.select{|o| o.name == name}.first
           if tmp
-            data['info']['id'] = tmp.chairs.first[:id]
+            data['info']['id'] = tmp.chairs.map {|a| a[:id]}
           else
             Wunderbar.info "Cannot find chair for #{name}"
           end

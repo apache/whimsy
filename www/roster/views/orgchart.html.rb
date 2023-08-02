@@ -41,7 +41,10 @@ _html do
                 # person holding the role
                 _td do
                   id = value['info']['id'] || value['info']['chair']
-                  _a ASF::Person.find(id).public_name, href: "committer/#{id}"
+                  [id].flatten.each_with_index do |id1, i| # may be single id or array
+                    _ ',' if i > 0
+                    _a ASF::Person.find(id1).public_name, href: "committer/#{id1}"
+                  end
                 end
 
                 # Website - often valuable to people looking for info

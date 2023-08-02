@@ -14,9 +14,13 @@ _html do
         orgchart: 'orgchart/' # This is a sub-page of orgchart
       }
     ) do
-      id = @role['info']['id'] || @role['info']['chair']
+      id = @role['info']['id'] || @role['info']['chair'] # may be single id or array
+      names= []
+      [id].flatten.each do |id1|
+        names << ASF::Person.find(id1).public_name
+      end
       _whimsy_panel_table(
-        title: "#{@role['info']['role']} - #{ASF::Person.find(id).public_name}",
+        title: "#{@role['info']['role']} - #{names.join(', ')}",
         helpblock: -> {
           _ 'Note that this detail page includes  '
           _span.glyphicon.glyphicon_lock :aria_hidden, class: 'text-primary', aria_label: 'ASF Members Private'
@@ -40,8 +44,10 @@ _html do
                     if value == 'tbd'
                       _span value
                     else
-#                      TODO allow for multiple holders?
-                      _a value, href: "committer/#{value}"
+                      [value].flatten.each_with_index do |value1, i| # may be single id or array of ids
+                        _ ', ' if i > 0
+                        _a value1, href: "committer/#{value1}"
+                      end
                     end
                   end
                 elsif %w(reports-to).include? key
