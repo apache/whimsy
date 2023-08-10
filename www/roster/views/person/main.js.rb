@@ -50,6 +50,9 @@ class Person < Vue
               unless @committer.committees.include?(pmc)
                 _b ' (not in LDAP committee group)'
               end
+              unless @committer.committer.include?(pmc)
+                _b ' (not in LDAP committer group)'
+              end
             }
           end
           if noPMCsub
