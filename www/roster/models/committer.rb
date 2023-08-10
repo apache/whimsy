@@ -74,11 +74,10 @@ class Committer
 
     response[:urls] = person.urls unless person.urls.empty?
 
-    response[:committees] = person.committees.map(&:name)
-
     response[:groups] = person.services
-    response[:committer] = []
-    response[:podlings] = []
+    response[:committer] = [] # PMC committers
+    response[:committees] = [] # PMC owners
+    response[:podlings] = [] # podling owner or committer
     pmcs = ASF::Committee.pmcs
     pmc_names = pmcs.map(&:name) # From CI
     podlings = ASF::Podling.current.map(&:id)
@@ -90,14 +89,22 @@ class Committer
       end
     end
 
+    # Get project(owner) details
+    person.project_owners.map(&:name).each do |project|
+      if pmc_names.include? project
+        response[:committees] << project
+      elsif podlings.include? project
+        response[:podlings] << project
+      else
+        # TODO should this populate anything?
+      end
+    end
+
     # Get project(member) details
     person.projects.map(&:name).each do |project|
       if pmc_names.include? project
-          # Don't show committer karma if person has committee karma
-          unless response[:committees].include? project
-            # LDAP project group
-            response[:committer] << project
-          end
+        # LDAP project group
+        response[:committer] << project
       elsif podlings.include? project
         response[:podlings] << project
       else
@@ -117,6 +124,10 @@ class Committer
     response[:groups].sort!
     response[:committer].sort!
     response[:podlings].sort!
+    response[:committees].uniq!
+    response[:groups].uniq!
+    response[:committer].uniq!
+    response[:podlings].uniq!
 
     member = {} # collect member info
 
@@ -235,6 +246,7 @@ class Committer
       response[:chairOf] << pmc.name if pmc.chairs.map{|ch| ch[:id]}.include?(person.id)
     end
     response[:pmcs].sort!
+    response[:pmcs].uniq!
 
     response[:nonPMCchairOf] = [] # use separate list to avoid missing pmc-chair warnings
     nonpmcs = ASF::Committee.nonpmcs
@@ -243,6 +255,7 @@ class Committer
       response[:nonPMCchairOf] << nonpmc.name if nonpmc.chairs.map{|ch| ch[:id]}.include?(person.id)
     end
     response[:nonpmcs].sort!
+    response[:nonpmcs].uniq!
 
     response
   end
