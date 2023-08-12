@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-PAGETITLE = "ASF Distribution Mirror Checker" # Wvisible:infra mirror
+PAGETITLE = "ASF Distribution Mirror Checker" # __Wvisible:infra mirror
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'wunderbar'
 require 'wunderbar/bootstrap'
