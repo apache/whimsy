@@ -124,6 +124,9 @@ _html do
               if ASF::Person[id].nologin?
                 _ 'NoLogin'
               end
+              if ASF::Person[id].asf_banned?
+                _ 'Banned'
+              end
               _br
             end
           end
@@ -132,14 +135,13 @@ _html do
     end
   end
 
-  _h2 'people who are not committers (excluding nologin)'
+  _h2 'people who are not committers (excluding nologin or banned)'
 
-  non_committers = people.reject { |p| p.nologin? or cmtgrp.include? p.name or p.name == 'apldaptest'}
+  non_committers = people.reject { |p| p.inactive? or cmtgrp.include? p.name or p.name == 'apldaptest'}
   if non_committers.length > 0
     _table do
       _tr do
         _th 'UID'
-        _th 'asf-banned?'
         _th 'Date'
         _th 'ICLA'
         _th 'Subscriptions'
@@ -151,7 +153,6 @@ _html do
           _td do
             _a p.name, href: '/roster/committer/' + p.name
           end
-          _td p.asf_banned?
           _td p.createDate
           if icla
             if icla.claRef
