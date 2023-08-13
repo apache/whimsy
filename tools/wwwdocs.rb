@@ -97,7 +97,7 @@ def get_auth
       loc = $1.gsub(/^\^/,'') # remove ^ prefix
     elsif l =~ %r{<Directory ([^>]+)>}
       # remove standard prefix and append '/' directory marker
-      loc = $1.sub('/x1/srv/whimsy/www','')+'/'
+      loc = $1.sub(%r{^(/x1)?/srv/whimsy/www},'')+'/'
     elsif l =~ %r{AuthName\s+"(.+)"} # generate the entry
       hash[loc] = $1 if loc
       loc = nil
