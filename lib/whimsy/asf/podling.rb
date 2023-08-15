@@ -117,9 +117,9 @@ module ASF
 
     # date this podling was accepted for incubation
     def startdate
-      return unless @startdate
+      return unless @startdate and @startdate.length >= 7 # "YYYY-MM"
       # assume 15th (mid-month) if no day specified
-      return Date.parse("#{@startdate}-15") if @startdate.length < 8
+      return Date.parse("#{@startdate}-15") if @startdate.length == 7
       Date.parse(@startdate)
     rescue ArgumentError
       nil
@@ -128,9 +128,9 @@ module ASF
     # date this podling either retired or graduated.  <tt>nil</tt> for
     # current podlings.
     def enddate
-      return unless @enddate
+      return unless @enddate and @enddate.length >= 7
       # assume 15th (mid-month) if no day specified
-      return Date.parse("#{@enddate}-15") if @enddate.length < 8
+      return Date.parse("#{@enddate}-15") if @enddate.length == 7
       Date.parse(@enddate)
     rescue ArgumentError
       nil
