@@ -41,6 +41,16 @@ def getText(txt, node, match=/Apache Software Foundation/i)
   return txt, parent
 end
 
+# helper for multiple events
+# TODO should we show them all?
+def save_events(data, value)
+  if data[:events]
+    puts "Events: already have #{data[:events]}, not storing #{value}"
+  else
+    data[:events] = value
+  end
+end
+
 # Parse an Apache project website and return text|urls that match our checks
 # @return Hash of symbols: text|url found from a check made
 # @see SiteStandards for definitions of what we should scan for (in general)
@@ -74,7 +84,18 @@ def parse(id, site, name)
   data[:uri] = uri.to_s
 
   # FIRST: scan each link's a_href to see if we need to capture it
-  doc.css('a').each do |a|
+  # also capture script src for events
+  doc.traverse do |a|
+
+    if a.name == 'script'
+      a_src = a['src'].to_s.strip
+      if a_src =~ SiteStandards::COMMON_CHECKS['events'][SiteStandards::CHECK_CAPTURE]
+        save_events data, uri + a_src
+      end
+    end
+
+    next unless a.name == 'a'
+
     # Normalize the text and href for our capture purposes
     a_href = a['href'].to_s.strip
     a_text = a.text.downcase.strip
@@ -92,12 +113,8 @@ def parse(id, site, name)
     end
 
     if a_href =~ SiteStandards::COMMON_CHECKS['events'][SiteStandards::CHECK_CAPTURE]
-      img = a.at('img')
-      if img
-        data[:events] = uri + img['src'].strip
-      else
-        data[:events] = uri + a_href
-      end
+      # Hack to ignore hidden links on main site
+      save_events data, uri + a_href unless a['class'] == 'visible-home' and uri.path != '/'
     end
 
     # Check the a_text strings for other patterns
@@ -150,14 +167,18 @@ def parse(id, site, name)
   data[:image] = ASF::SiteImage.find(id)
 
   # Check for resource loading from non-ASF domains
-  cmd = ['node', '/srv/whimsy/tools/scan-page.js', site]
-  out, err, status = exec_with_timeout(cmd, 30)
-  if status
-    ext_urls = out.split("\n").reject {|x| ASFDOMAIN.asfhost? x}.tally
-    resources = ext_urls.values.sum
-    data[:resources] = "Found #{resources} external resources: #{ext_urls}"
+  if $skipresourcecheck
+    data[:resources] = "Not checked"
   else
-    data[:resources] = err
+    cmd = ['node', '/srv/whimsy/tools/scan-page.js', site]
+    out, err, status = exec_with_timeout(cmd, 30)
+    if status
+      ext_urls = out.split("\n").reject {|x| ASFDOMAIN.asfhost? x}.tally
+      resources = ext_urls.values.sum
+      data[:resources] = "Found #{resources} external resources: #{ext_urls}"
+    else
+      data[:resources] = err
+    end
   end
 
   #  TODO: does not find js references such as:
@@ -214,6 +235,7 @@ results = {}
 podlings = {}
 $cache = Cache.new(dir: 'site-scan')
 $verbose = ARGV.delete '--verbose'
+$skipresourcecheck = ARGV.delete '--noresource'
 
 puts "Started: #{Time.now}"  # must agree with site-scan monitor
 

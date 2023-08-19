@@ -52,10 +52,13 @@ module SiteStandards
       CHECK_POLICY => 'https://www.apache.org/foundation/marks/pmcs#navigation',
       CHECK_DOC => 'All projects must feature some prominent link back to the main ASF homepage at http://www.apache.org/',
     },
+    # <script src="https://www.apachecon.com/event-images/snippet.js">
+    # https://events.apache.org/x/current-event[.html]
+    # https://[www.]apache.org/events/current-event[.html]
     'events' => { # Custom: a_href.include? 'apache.org/events/' then custom check for img
       CHECK_TEXT => nil,
-      CHECK_CAPTURE => %r{apache\.org/events},
-      CHECK_VALIDATE => %r{^https?://.*apache.org/events/current-event},
+      CHECK_CAPTURE => %r{(events|x)/current-event|event-images},
+      CHECK_VALIDATE => %r{^https?://((www\.)?apache\.org/events/current-event|events\.apache.org/x/current-event|www\.apachecon\.com/event-images/snippet\.js)},
       CHECK_TYPE => true,
       CHECK_POLICY => 'https://www.apache.org/events/README.txt',
       CHECK_DOC => 'Projects SHOULD include a link to any current ApacheCon event, as provided by VP, Conferences.',
