@@ -82,8 +82,8 @@ and running - these are only needed for a new deployment.
 
  * Ensure that the IP address is static, and has been added to the list of allowed mail relays
 
- * Run the following command to create an SSL cert (see [tutorial](https://www.digitalocean.com/community/tutorials/how-to-secure-apache-with-let-s-encrypt-on-ubuntu-18-04) for details):
-     * `/x1/srv/git/letsencrypt/letsencrypt-auto --apache -d whimsy.apache.org -d whimsy6.apache.org -d whimsy-vm6.apache.org -d whimsy-test.apache.org`
+  * Set up a new SSL cert: this can be done using some files that should be set up by Puppet. You will need root access to whimsy.apache.org as well in order to set up the challenge.
+    * run /root/getcert.sh; this will prompt for input using /root/authenticator.sh and cleanup using /root/cleanup.sh
 
  * The SVN settings should now be set up in whimsy-vm5 and later (Puppet 6)
 
