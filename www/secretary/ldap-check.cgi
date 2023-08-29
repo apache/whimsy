@@ -200,7 +200,8 @@ _html do
       _th 'Login'
       _th 'Projects (if any)'
     end
-    people.select {|p| p.inactive? and cmtrol.include? p.name}.sort_by(&:name).each do |p|
+    people.select {|p| p.inactive? and
+      (cmtrol.include?(p.name) or cmtgrp.include?(p.name))}.sort_by(&:name).each do |p|
       _tr do
         _td do
           _a p.name, href: '/roster/committer/' + p.name
