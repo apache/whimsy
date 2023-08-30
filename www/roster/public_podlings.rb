@@ -104,14 +104,15 @@ public_json_output(
 )
 
 if ARGV.length == 2
-  podh = ASF::Podling.list.map {|podling| [podling.name, podling.as_hash]}.to_h
-  podh.each do |p| # drop empty aliases
-    p[1].delete(:resourceAliases) if p[1][:resourceAliases].length == 0
-    p[1].delete(:duration) # This changes every day ...
-  end
   status_counts = Hash.new(0)
-  podh.each do |_, v|
+  podh = ASF::Podling.list.map {|podling| [podling.name, podling.as_hash]}.to_h
+  podh.each do |p,v| # drop empty aliases
+    v.delete(:resourceAliases) if v[:resourceAliases].length == 0
+    v.delete(:duration) # This changes every day ...
     status_counts[v[:status]] += 1
+    if v[:status] == 'graduated' and not (v[:resolutionTLP] or v[:resolutionURL])
+      Wunderbar.warn "Graduated Podling #{p} but no valid resolution"
+    end
   end
   public_json_output_file({
     last_updated: mtime,
