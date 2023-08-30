@@ -50,6 +50,9 @@ module ASF
     # <resolution url="">, from podlings.xml
     attr_accessor  :resolutionURL
 
+    # <resolution tlp="">, from podlings.xml
+    attr_accessor  :resolutionTLP
+
     # create a podling from a Nokogiri node built from podlings.xml
     def initialize(node)
       @mtime = nil
@@ -71,8 +74,16 @@ module ASF
       @reporting = node.at('reporting') || nil # ensure variable is defined
       @monthly = @reporting&.text&.split(/,\s*/)
 
-      @resolutionLink = node.at('resolution') ? node.at('resolution')['link'] : nil
-      @resolutionURL = node.at('resolution') ? node.at('resolution')['url'] : nil
+      res = node.at('resolution')
+      if res
+        @resolutionLink = res.attr('link')
+        @resolutionURL = res.attr('url')
+        @resolutionTLP = res.attr('tlp')
+      else
+        @resolutionLink = nil
+        @resolutionURL = nil
+        @resolutionTLP = nil
+      end
 
       # Note: the following optional elements are not currently processed:
       # - resolution (except for resolution/@link)
@@ -384,6 +395,7 @@ module ASF
       hash[:podlingStatus] = podlingStatus
       hash[:resolutionLink] = resolutionLink if resolutionLink
       hash[:resolutionURL] = resolutionURL if resolutionURL
+      hash[:resolutionTLP] = resolutionTLP if resolutionTLP
       hash
     end
 
