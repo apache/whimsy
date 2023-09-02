@@ -160,7 +160,17 @@ module ICLAParser
     begin
       reader = PDF::Reader.new(path)
       %w(pdf_version info metadata page_count).each do |i|
-        metadata[i] = reader.public_send(i)
+        # It looks like some of the values may not be UTF-8
+        # In particular info[:Producer] may have odd characters
+        val = reader.public_send(i)
+        if val.instance_of? String
+          metadata[i] = val.encode("utf-8", "utf-8", :invalid => :replace)
+        elsif val.instance_of? Hash
+          metadata[i] = val.transform_values {|v| v.encode("utf-8", "utf-8", :invalid => :replace)}
+        else
+          metadata[i] = val.class
+        end
+
       end
       reader.objects.each do |_k, v|
         type = v[:Type] rescue nil
@@ -190,7 +200,7 @@ module ICLAParser
               val = v[:V].to_s # might be a symbol
               # This is a hack; should really find the font def and use that
               if val
-                debug[key] = v.inspect
+                # debug[key] = v.inspect
                 val = encode(val)
                 if val.length > 0
                   ckey = canon_field_name(key)
@@ -209,7 +219,7 @@ module ICLAParser
           key = v[:T]
           val = v[:V].to_s # might be a symbol
           if val
-            debug[key] = v.inspect
+            # debug[key] = v.inspect
             if val.length > 0
               data[canon_field_name(key)] = val
             end
@@ -250,7 +260,7 @@ module ICLAParser
         text = receiver.get_text()
 #        p text
         lines = receiver.get_lines() # do we still need these?
-        debug[:lines] = lines
+        # debug[:lines] = lines
         if text.length > 3
           metadata[:dataSource]['Text'] = true
           data[:text] = text
@@ -279,7 +289,7 @@ module ICLAParser
     rescue StandardError => e
       data[:error] = "Error processing #{path} => #{e.inspect}\n#{e.backtrace.join("\n")}"
     end
-#    data[:debug] = debug
+    data[:debug] = debug
     # TODO attempt to classify data[:text] items?
     data
   end
