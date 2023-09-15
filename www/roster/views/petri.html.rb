@@ -32,6 +32,7 @@ _html do
             _th.sorting_asc 'Id', data_sort: 'string-ins'
             _th 'Name', data_sort: 'string'
             _th 'Status', data_sort: 'string'
+            _th 'Error', data_sort: 'string'
             _th 'Description', data_sort: 'string'
           end
         end
@@ -43,6 +44,7 @@ _html do
               end
               _td petri.name
               _td petri.status
+              _td petri.error
               _td petri.description
             end
           end

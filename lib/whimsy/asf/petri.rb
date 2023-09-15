@@ -22,6 +22,7 @@ module ASF
     attr_reader :wiki
     attr_reader :release
     attr_reader :licensing
+    attr_accessor :error
 
     def initialize(entry)
       key, hash = entry
@@ -29,16 +30,27 @@ module ASF
       hash.each { |name, value| instance_variable_set("@#{name}", value) }
     end
 
-    # Array of all active Petri culture entries
+    # Array of all Petri culture entries
     def self.list
       @list = []
       response = Net::HTTP.get_response(URI(PETRI_INFO))
       response.value() # Raises error if not OK
       yaml = YAML.safe_load(response.body, permitted_classes: [Symbol])
       # @mentors = yaml['mentors']
-      # Active cultures are listed under projects
+      yaml['cultures'].each do |proj|
+        prj = new(proj)
+        if yaml['projects'].include? proj 
+          prj.error = 'Listed as a current project' unless prj.status == 'current'
+        else
+          prj.error = 'Not listed as a current project' if prj.status == 'current'
+        end
+        @list << prj
+      end
+      # Now check against projects listing
       yaml['projects'].each do |proj|
-        @list << new(yaml['cultures'][proj])
+        unless yaml['cultures'].include? proj
+          @list << new([proj,{name: '', status: '', error: 'No culture entry found'}])
+        end
       end
       @list
     end
