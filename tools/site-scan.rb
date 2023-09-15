@@ -57,6 +57,8 @@ end
 # @see SiteStandards for definitions of what we should scan for (in general)
 def parse(id, site, name)
   data = {}
+  # force https to avoid issue with cache (sites should use https anyway)
+  site.sub!(%r{^http:},'https:')
   SiteStandards::COMMON_CHECKS.each_key do |k|
     data[k.to_sym] = nil
   end
