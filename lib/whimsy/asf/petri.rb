@@ -29,15 +29,16 @@ module ASF
       hash.each { |name, value| instance_variable_set("@#{name}", value) }
     end
 
-    # Array of all Petri culture entries
+    # Array of all active Petri culture entries
     def self.list
       @list = []
       response = Net::HTTP.get_response(URI(PETRI_INFO))
       response.value() # Raises error if not OK
       yaml = YAML.safe_load(response.body, permitted_classes: [Symbol])
       # @mentors = yaml['mentors']
-      yaml['cultures'].each do |proj|
-        @list << new(proj)
+      # Active cultures are listed under projects
+      yaml['projects'].each do |proj|
+        @list << new(yaml['cultures'][proj])
       end
       @list
     end
