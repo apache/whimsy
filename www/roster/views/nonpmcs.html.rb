@@ -28,6 +28,7 @@ _html do
       _thead do
         _tr do
           _th.sorting_asc 'Name', data_sort: 'string-ins'
+          _th 'Website'
           _th 'Chair(s)', data_sort: 'string'
           _th 'Description', data_sort: 'string'
         end
@@ -39,6 +40,9 @@ _html do
               _a pmc.display_name, href: "nonpmc/#{pmc.name}"
             end
 
+            _td do
+              _a pmc.site, href: pmc.site
+            end
             _td do
               pmc.chairs.each_with_index do |chair, index|
                 _span ', ' unless index == 0
