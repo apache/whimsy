@@ -7,7 +7,11 @@ class PersonGitHub < Vue
     committer = @@person.state.committer
 
     _div.row data_edit: 'github' do
-      _div.name 'GitHub username'
+      _div.name do
+        _ 'GitHub username(s) (user-provided)'
+        _br
+        _a 'Link GitHub username to ASF id', href: 'https://gitbox.apache.org/boxer/'
+      end
 
       _div.value do
 
@@ -45,6 +49,7 @@ class PersonGitHub < Vue
                 end
               end
             end
+            _ '(might not be linked to ASF id)'
           end
         end
       end
