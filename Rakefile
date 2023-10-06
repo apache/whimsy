@@ -454,11 +454,11 @@ end
 # Docker support
 namespace :docker do
   task :build do
-    sh 'docker-compose build web' # name 'web' must agree with services entry in docker-compose.yaml
+    sh 'docker compose build web' # name 'web' must agree with services entry in docker-compose.yaml
   end
 
   task :update => :build do
-    sh 'docker-compose run  --entrypoint ' +
+    sh 'docker compose run  --entrypoint ' +
       %('bash -c "rake update"') +
       ' web'
   end
@@ -466,11 +466,11 @@ namespace :docker do
   task :up do
     ldap_init # create LDAP config data files
     # Start the container which then runs 'rake docker:entrypoint'
-    sh 'docker-compose up'
+    sh 'docker compose up'
   end
 
   task :exec do
-    sh 'docker-compose exec web /bin/bash'
+    sh 'docker compose exec web /bin/bash'
   end
 
   # cannot depend on :config

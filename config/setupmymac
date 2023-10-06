@@ -321,7 +321,7 @@ end
 
 if force[:prune]
   Dir.chdir 'docker' do
-    `docker-compose ps -q`.lines.each do |line|
+    `docker compose ps -q`.lines.each do |line|
       run 'docker', 'stop', line.chomp
     end
   end
