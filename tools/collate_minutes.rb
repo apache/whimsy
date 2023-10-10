@@ -519,6 +519,7 @@ seen={}
         end
 
         title.sub! 'VP, Data Privacy', 'VP Data Privacy'
+        title.sub! /Executive Session \(\d\d.*?\)/, 'Executive Session' # Drop times from titles
 
         report = OpenStruct.new
         report.title = title.gsub(/\s+/, ' ')
@@ -702,7 +703,7 @@ seen={}
       title.sub! 'Executive VP', 'Executive Vice President'
       title.sub! 'Exec. V.P. and Secretary', 'Secretary'
       title.sub! 'Vice Chairman', 'Vice Chair'
-      title.sub! 'Acting Chairman', 'Acting Chair'
+      title.sub! 'Acting Chairman', 'Board Chair' # merge report(s) from acting chair
       title.sub! 'Chairman', 'Board Chair'
 
       report = OpenStruct.new
