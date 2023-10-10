@@ -323,6 +323,7 @@ seen={}
     title.sub! /\s[Pp]roject\s*$/, ''
     title.sub! /\sPMC$/, ''
     title.sub! 'Apache Software Foundation', 'ASF'
+    title.sub! 'Standardise the privacy policy for Foundation web sites', 'Standardise privacy policy for foundation websites'
 
     name_changes(title)
 
