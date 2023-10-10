@@ -323,7 +323,6 @@ seen={}
     title.sub! /\s[Pp]roject\s*$/, ''
     title.sub! /\sPMC$/, ''
     title.sub! 'Apache Software Foundation', 'ASF'
-    title.sub! 'Standardise the privacy policy for Foundation web sites', 'Standardise privacy policy for foundation websites'
 
     name_changes(title)
 
@@ -568,6 +567,7 @@ seen={}
     next if title.count("\n")>1
     report = OpenStruct.new
     title.sub! /(^|\n)\s*Resolution R\d:/, ''
+    title.sub! 'Standardise the privacy policy for Foundation web sites', 'Standardise privacy policy for foundation websites'
     title.sub!(/^(?:Proposed )?Resolution (\[R\d\]|to|for) ./) {|c| c[-1..-1].upcase}
     title.sub! /\.$/, ''
     report.title ||= title.strip
