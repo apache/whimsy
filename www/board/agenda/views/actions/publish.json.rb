@@ -65,6 +65,7 @@ ASF::SVN.update MINUTES, @message, env, _ do |tmpdir|
   unless File.exist? year_minutes
     _.system('cp', File.join(BOARD_PRIVATE, minutes), yeardir)
     ASF::SVN.svn_('add', year_minutes, _)
+    ASF::SVN.svn_('propset', ['svn:mime-type', 'text/plain; charset=utf-8', year_minutes], _)
   end
 end
 
