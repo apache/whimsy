@@ -153,7 +153,7 @@ class Minutes
       'Published minutes can be found at:'
 
     minutes.sub! ASF::SVN.svnpath!('foundation_board'),
-      'http://www.apache.org/foundation/board/calendar.html'
+      'https://www.apache.org/foundation/board/calendar.html'
 
     minutes.sub!(/ \d\. Committee Reports.*?\n\s+A\./m) do |heading|
       heading.sub('reports require further', 'reports required further')
