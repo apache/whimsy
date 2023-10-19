@@ -203,13 +203,18 @@ def exec_with_timeout(cmd, timeout)
 
     Timeout.timeout(timeout) do
       Process.waitpid(pid)
+      status = $?.success?
       # close write ends so we can read from them
       wout.close
       werr.close
 
       stdout = rout.readlines.join
       stderr = rerr.readlines.join
-      status = true
+      unless status
+        $stderr.puts "WARN:  #{Time.now} failed scanning #{cmd[-1]} #{pid}"
+        stderr = 'Scanning failed'
+      end
+
     end
 
   rescue Timeout::Error
