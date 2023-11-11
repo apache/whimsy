@@ -13,9 +13,9 @@ _extract_project
 
 # The keys below must agree with the checkbox names in parts.js.rb
 REASONS = {
-  '@missing_address' => 'missing or incomplete postal address',
+  '@missing_address' => 'missing or incomplete postal address (include street, building, unit/apartment)',
   '@missing_email' => 'missing email address',
-  '@corporate_postal' => 'the postal address does not appear to be a personal postal address',
+  '@corporate_postal' => 'the postal address does not appear to be a personal residence address',
   '@invalid_public' => 'the public name should be a real name or pen name and not a user id',
   '@separate_signature' => 'the document and signature must be sent attached to the same email',
   '@unauthorized_signature' => 'the signature must be from an authorized person, usually a company executive',
