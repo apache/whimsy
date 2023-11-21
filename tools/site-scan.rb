@@ -223,14 +223,18 @@ def exec_with_timeout(cmd, timeout)
     puts "WARN: timeout scanning #{cmd[-1]} #{pid}"
     $stderr.puts "WARN:  #{Time.now} timeout scanning #{cmd[-1]} #{pid}"
     stderr = 'Timeout'
+    ret=''
     begin
-      # try using less drastic kill first (on process group)
-      Process.kill(-2, -pid) # INT
-      $stderr.puts "WARN:  #{Time.now} sent kill -2 #{-pid}"
-      Process.kill(-15, -pid) # TERM
-      $stderr.puts "WARN:  #{Time.now} sent kill -15 #{-pid}"
+      # kill -pid responds with EINVAL - invalid argument
+      $stderr.puts "WARN:  #{Time.now} about to kill -2 #{pid}"
+      ret = Process.kill(-2, pid) # INT
+      $stderr.puts "WARN:  #{Time.now} sent kill -2 #{pid} ret=#{ret}"
+
+      $stderr.puts "WARN:  #{Time.now} about to kill -15 #{pid}"
+      ret = Process.kill(-15, pid) # TERM
+      $stderr.puts "WARN:  #{Time.now} sent kill -15 #{pid} ret=#{ret}"
     rescue StandardError => e
-      $stderr.puts "WARN:  #{Time.now} exception #{e}"
+      $stderr.puts "WARN:  #{Time.now} ret=#{ret} exception: #{e}"
     end
     Process.detach(pid)
   ensure
