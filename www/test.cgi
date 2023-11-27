@@ -4,7 +4,7 @@ print "Content-type: text/plain; charset=UTF-8\r\n\r\n"
 
 ENV.sort.each do |k,v|
   if k.eql? 'HTTP_AUTHORIZATION'
-      # cannot use sub! because value is fozen
+      # cannot use sub! because value is frozen
       # redact non-empty string
       if v and not v.empty?
         v = '<redacted>'

@@ -420,7 +420,7 @@ module ASF
 
   # Superclass for all classes which are backed by LDAP data.  Encapsulates
   # the management of collections to weak references to instance data, for
-  # both performance and funcational reasons.  Sequentially finding the same
+  # both performance and functional reasons.  Sequentially finding the same
   # same object will return the same instance unless the prior instance has
   # been reclaimed by garbage collection.  This often prevents large numbers
   # of requests to fetch the same data from LDAP.
