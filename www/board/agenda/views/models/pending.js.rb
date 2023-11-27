@@ -105,7 +105,7 @@ class Pending
     return match
   end
 
-  # determine if offline operatios are (or should be) supported
+  # determine if offline operations are (or should be) supported
   def self.offline_enabled
     return false unless PageCache.enabled
 

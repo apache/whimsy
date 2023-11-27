@@ -105,7 +105,7 @@ module ASF
       end.uniq
     end
 
-    # Get info about current users's proxying
+    # Get info about current users proxying
     # @return "help text", ["id | name (proxy)", ...] if they are a proxy for other(s)
     # @return "You have already submitted a proxy form" to someone else
     # @return nil otherwise
