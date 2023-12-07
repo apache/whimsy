@@ -230,6 +230,8 @@ def exec_with_timeout(cmd, timeout)
       ret = Process.kill(-2, pid) # INT
       $stderr.puts "WARN:  #{Time.now} sent kill -2 #{pid} ret=#{ret}"
 
+      sleep 5 # allow some time for process to exit
+
       $stderr.puts "WARN:  #{Time.now} about to kill -15 #{pid}"
       ret = Process.kill(-15, pid) # TERM
       $stderr.puts "WARN:  #{Time.now} sent kill -15 #{pid} ret=#{ret}"
