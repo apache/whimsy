@@ -359,10 +359,15 @@ seen={}
 
     if title == 'Incubator' and text
       sections = text.split(/\nStatus [rR]eport (.*)\n=+\n/)
-      # Some minutes have a 'Detailed Reports' header before the first podling report
+      # Some early 2012 minutes have a 'Detailed Reports' header before the first podling report
+      # i.e. the podling reports follow the line
+      # '-------------------- Detailed Reports --------------------'
+      # instead of the following
+      # '--------------------'
+      # Some reports include trailing spaces after the ----
       # podling header may now be prefixed with ## (since June 2019)
       # Also there may be a blank line before the ##
-      sections = text.split(/\n[-=][-=]+(?: Detailed Reports ---+)?\n(?:\n?##)?\s*([a-zA-Z].*)\n\n/) if sections.length < 9
+      sections = text.split(/\n[-=][-=]+(?: Detailed Reports ---+)?\s*\n(?:\n?##)?\s*([a-zA-Z].*)\n\n/) if sections.length < 9
       sections = [''] if sections.include? 'FAILED TO REPORT'
       sections = text.split(/\n(\w+)\n-+\n\n/) if sections.length < 9
       sections = text.split(/\n=+\s+([\w.]+)\s+=+\n+/) if sections.length < 9
