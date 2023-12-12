@@ -226,15 +226,15 @@ def exec_with_timeout(cmd, timeout)
     ret=''
     begin
       # kill -pid responds with EINVAL - invalid argument
-      $stderr.puts "WARN:  #{Time.now} about to kill -2 #{pid}"
-      ret = Process.kill(-2, pid) # INT
-      $stderr.puts "WARN:  #{Time.now} sent kill -2 #{pid} ret=#{ret}"
+      $stderr.puts "WARN:  #{Time.now} about to kill -15 #{pid}"
+      ret = Process.kill(-15, pid) # SIGTERM
+      $stderr.puts "WARN:  #{Time.now} sent kill -15 #{pid} ret=#{ret}"
 
       sleep 15 # allow some time for process to exit
 
-      $stderr.puts "WARN:  #{Time.now} about to kill -15 #{pid}"
-      ret = Process.kill(-15, pid) # TERM
-      $stderr.puts "WARN:  #{Time.now} sent kill -15 #{pid} ret=#{ret}"
+      $stderr.puts "WARN:  #{Time.now} about to kill -9 #{pid}"
+      ret = Process.kill(-9, pid) # SIGKILL
+      $stderr.puts "WARN:  #{Time.now} sent kill -9 #{pid} ret=#{ret}"
     rescue StandardError => e
       $stderr.puts "WARN:  #{Time.now} ret=#{ret} exception: #{e}"
     end
