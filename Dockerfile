@@ -13,10 +13,6 @@ RUN apt-get update && \
       gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg && \
       echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_18.x nodistro main" > \
       /etc/apt/sources.list.d/nodesource.list && \
-    echo "deb http://opensource.wandisco.com/ubuntu bionic svn110" > \
-      /etc/apt/sources.list.d/subversion.list && \
-    curl -sL http://opensource.wandisco.com/wandisco-debian-new.gpg | \
-      apt-key add - &&\
     apt-get update && \
     DEBIAN_FRONTEND='noninteractive' apt-get install -y \
       apache2 \
