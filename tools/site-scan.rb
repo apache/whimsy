@@ -211,7 +211,7 @@ def exec_with_timeout(cmd, timeout)
       stdout = rout.readlines.join
       stderr = rerr.readlines.join
       unless status
-        $stderr.puts "WARN:  #{Time.now} failed scanning #{cmd[-1]} #{pid}"
+        $stderr.puts "WARN:  #{Time.now} failed scanning #{cmd} #{pid} #{stderr}"
         stderr = 'Scanning failed'
       end
 
