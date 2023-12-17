@@ -13,11 +13,17 @@ $LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'whimsy/asf/agenda'
 require 'mail'
 require 'listen'
+require 'mustache'
+require_relative '../helpers/integer'
 
 FOUNDATION_BOARD = ASF::SVN['foundation_board']
 AGENDA_WORK = ASF::Config.get(:agenda_work) || '/srv/agenda'
 
 require './models/agenda'
+
+# Dummy (would be tricky to include main.rb where this is defined)
+def validate_board_file(name)
+end
 
 # draft reminder text
 @reminder = ARGV.first || 'reminder1'
