@@ -1,9 +1,10 @@
 require_relative '../asf'
-require 'tzinfo'
+require 'active_support'
+require 'active_support/time'      
 
 module ASF
   module Board
-    TIMEZONE = ActiveSupport::TimeZone.new('UTC') rescue nil # HACK fix failure in public_committee_info.rb
+    TIMEZONE = ActiveSupport::TimeZone.new('UTC')
 
     # Convert a time to a timeanddate link, shortened if possible.
     # Note: the path must be adjusted if the TIMEZONE changes.
