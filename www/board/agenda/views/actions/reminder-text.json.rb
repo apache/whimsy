@@ -1,3 +1,5 @@
+# Pre-process a Mustache template, replacing the references that are fixed for a given meeting
+
 require 'active_support/time'
 
 raise ArgumentError, "Invalid syntax #{@reminder}" unless  @reminder =~ /\A[-\w]+\z/
@@ -12,6 +14,7 @@ meeting = ASF::Board.nextMeeting
 dueDate = meeting - 7.days
 
 # substitutable variables
+# Warning: references to missing variables will be silently dropped
 view = {
   project: '{{{project}}}',
   link: '{{{link}}}',
