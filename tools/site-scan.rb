@@ -224,22 +224,32 @@ def exec_with_timeout(cmd, timeout)
     $stderr.puts "WARN:  #{Time.now} timeout scanning #{cmd[-1]} #{pid}"
     stderr = 'Timeout'
     ret=''
+    # Try to show process tree
+    cmd = "ps -lfg #{pid}"
     begin
+      $stderr.puts "WARN:  #{Time.now} #{cmd}:"
+      $stderr.puts `#{cmd}`
+      reaper = Process.detach(pid) # ensure the process is reaped
       # kill -pid responds with EINVAL - invalid argument
       $stderr.puts "WARN:  #{Time.now} about to kill -15 #{pid}"
       ret = Process.kill(-15, pid) # SIGTERM
       $stderr.puts "WARN:  #{Time.now} sent kill -15 #{pid} ret=#{ret}"
 
-      sleep 30 # allow some time for process to exit
+      thrd = reaper.join 30 # allow some time for process to exit
 
-      $stderr.puts "WARN:  #{Time.now} about to kill -9 #{pid}"
-      ret = Process.kill(-9, pid) # SIGKILL
-      $stderr.puts "WARN:  #{Time.now} sent kill -9 #{pid} ret=#{ret}"
+      if thrd # original process has finished
+        $stderr.puts  "WARN:  #{Time.now} process completed #{thrd.value}"
+      else # not yet finished, try a stronger kill
+        $stderr.puts "WARN:  #{Time.now} about to kill -9 #{pid}"
+        ret = Process.kill(-9, pid) # SIGKILL
+        $stderr.puts "WARN:  #{Time.now} sent kill -9 #{pid} ret=#{ret}"
+      end
     rescue StandardError => e
       $stderr.puts "WARN:  #{Time.now} ret=#{ret} exception: #{e}"
     end
-    Process.detach(pid)
-  ensure
+    $stderr.puts "WARN:  #{Time.now} #{cmd}:"
+    $stderr.puts `#{cmd}`
+ensure
     wout.close unless wout.closed?
     werr.close unless werr.closed?
     # dispose the read ends of the pipes
