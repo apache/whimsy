@@ -33,6 +33,7 @@ gem 'rubyXL'
 gem 'chronic'
 
 group :test do
+  ENV['PUMA_DISABLE_SSL']="1" # https://github.com/puma/puma/issues/2839#issuecomment-1086173532
   gem 'rspec'
   gem 'puma'
   gem 'capybara'
