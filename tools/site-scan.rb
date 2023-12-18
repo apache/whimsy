@@ -243,6 +243,12 @@ def exec_with_timeout(cmd, timeout)
         $stderr.puts "WARN:  #{Time.now} about to kill -9 #{pid}"
         ret = Process.kill(-9, pid) # SIGKILL
         $stderr.puts "WARN:  #{Time.now} sent kill -9 #{pid} ret=#{ret}"
+        thrd = reaper.join 5 # allow some time for process to exit
+        if thrd
+          $stderr.puts  "WARN:  #{Time.now} process completed #{thrd.value}"
+        else
+          $stderr.puts "ERROR:  #{Time.now} failed to kill -9 #{pid}"
+        end
       end
     rescue StandardError => e
       $stderr.puts "WARN:  #{Time.now} ret=#{ret} exception: #{e}"
