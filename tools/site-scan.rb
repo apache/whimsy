@@ -225,7 +225,7 @@ def exec_with_timeout(cmd, timeout)
     stderr = 'Timeout'
     ret=''
     # Try to show process tree
-    cmd = "ps -lfg #{pid}"
+    cmd = "ps -lfg #{$$}"
     begin
       $stderr.puts "WARN:  #{Time.now} #{cmd}:"
       $stderr.puts `#{cmd}`
