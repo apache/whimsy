@@ -37,8 +37,8 @@ RUN apt-get update && \
       apache2-dev \
       libapr1-dev \
       libaprutil1-dev && \
-    gem update --system &&\
-    gem install bundler passenger --install_dir=/var/lib/gems/2.7.0 && \
+    gem update --system 3.4.22 &&\
+    gem install bundler:2.4.22 passenger --install_dir=/var/lib/gems/2.7.0 && \
     passenger-install-apache2-module --auto && \
     passenger-install-apache2-module --snippet > \
       /etc/apache2/conf-enabled/passenger.conf && \
