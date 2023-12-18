@@ -174,7 +174,7 @@ def parse(id, site, name)
     data[:resources] = "Not checked"
   else
     cmd = ['node', '/srv/whimsy/tools/scan-page.js', site]
-    out, err, status = exec_with_timeout(cmd, 30)
+    out, err, status = exec_with_timeout(cmd, 60)
     if status
       ext_urls = out.split("\n").reject {|x| ASFDOMAIN.asfhost? x}.tally
       resources = ext_urls.values.sum
