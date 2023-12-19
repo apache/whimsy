@@ -146,7 +146,7 @@ class PPMCMember < Vue
         _td @@person.githubUsername
         _td { _i @@person.name
               _ ' ('
-              _ @@person.member.sub(%r{( \(Non-voting\))? Member}, '')
+              _ @@person.member.sub(%r{( \(Non-voting\))? Member}, '').sub(%r{^Emeritus}, 'ASF Emeritus')
               _ ')'
             }
       else
