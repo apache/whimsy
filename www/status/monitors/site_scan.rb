@@ -22,7 +22,7 @@ def Monitor.site_scan(previous_status)
   # Drop standard cache info
   log.gsub! /^([-\w]+ )*https?:\S+ \w+\n/, ''
   # Drop other info (must agree with scanner script)
-  log.gsub! %r{^(Started|Ended):.+\n}, ''
+  log.gsub! %r{^(Started|Ended|Events):.+\n}, '' # drop 'Events: already have'
 
   danger_period = 86_400 # one day
 
