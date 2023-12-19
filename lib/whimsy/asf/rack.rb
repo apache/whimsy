@@ -18,7 +18,7 @@ module ASF
 
       if auth.to_s.empty?
         env.user = env['REMOTE_USER'] || ENV['USER'] || Etc.getpwuid.name
-        Wunderbar.warn "No auth found for #{env.user}"
+        Wunderbar.warn "No auth found for #{env.user} at #{caller[0..2]}"
       else
         require 'base64'
         env.user, env.password = Base64.
