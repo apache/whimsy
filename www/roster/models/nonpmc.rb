@@ -73,7 +73,6 @@ class NonPMC
         unMatchedSecSubs.delete_if {|k| allMail.include? k.downcase}
       end
       roster[person.id]['ldap'] = true
-      roster[person.id]['githubUsername'] = (person.attrs['githubUsername'] || []).join(', ')
     end
 
     committers.each do |person|
@@ -81,10 +80,13 @@ class NonPMC
         name: person.public_name,
         role: 'Committer'
       }
-      roster[person.id]['githubUsername'] = (person.attrs['githubUsername'] || []).join(', ')
     end
 
-    roster.each {|k, v| v[:member] = ASF::Person.find(k).asf_member?}
+    roster.each do |k, v|
+      person = ASF::Person.find(k)
+      v[:member] = person.asf_member?
+      v['githubUsername'] = (person.attrs['githubUsername'] || []).join(', ')
+    end
 
     if cttee.chair and roster[cttee.chair.id]
       roster[cttee.chair.id]['role'] = 'Committee chair'
