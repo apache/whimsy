@@ -11,7 +11,7 @@ require 'whimsy/asf'
 
 ASF_REPO='https://svn.apache.org/repos/' # where to fetch files
 
-LOCAL_FILE='/var/tools/svnrep' # Change this as required; must exist
+LOCAL_FILE=ARGV.shift || '/var/tools/svnrep' # Change this as required; must exist
 
 LOCAL_URL='file://' + LOCAL_FILE
 
