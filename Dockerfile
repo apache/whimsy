@@ -91,6 +91,9 @@ RUN sed -i -e '$i  PassengerDisableSecurityUpdateCheck on' /etc/apache2/conf-ena
     sed -i -e '$i  PassengerUser www-data' /etc/apache2/conf-enabled/passenger.conf && \
     sed -i -e '$i  PassengerGroup www-data' /etc/apache2/conf-enabled/passenger.conf
 
+# For running SVN in the container
+RUN apt-get install libapache2-mod-svn
+
 WORKDIR /srv/whimsy
 RUN git config --global --add safe.directory /srv/whimsy
 EXPOSE 80
