@@ -61,9 +61,7 @@ module ASF
           @repos = Hash[Dir[*svn].map { |name|
             if Dir.exist? name
               out, _ = self.getInfoItem(name, 'url')
-              if out
-                [out.sub(/^http:/, 'https:'), name]
-              end
+              [out, name] if out
             end
           }.compact]
         end
