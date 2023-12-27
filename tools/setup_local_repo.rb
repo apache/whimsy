@@ -11,11 +11,11 @@ require 'whimsy/asf'
 
 ASF_REPO='https://svn.apache.org/repos/' # where to fetch files
 
-LOCAL_FILE='/var/tools/svnrep' # Change this as required
+LOCAL_FILE='/var/tools/svnrep' # Change this as required; must exist
 
 LOCAL_URL='file://' + LOCAL_FILE
 
-svnrepos = ASF::SVN.repo_entries(true)
+svnrepos = ASF::SVN.repo_entries(true).reject{|k,v| v['url'].start_with? 'http'}
 
 # Find the top-level directories and create repositories
 svnrepos.map{|k,v| v['url'].split('/')[0]}.uniq.sort.each do |tlr|
