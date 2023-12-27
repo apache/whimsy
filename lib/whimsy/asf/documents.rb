@@ -4,7 +4,7 @@ require 'json'
 
 module ASF
 
-  module DocumentUtils
+  module DocumentUtils # This module is also used for member_apps
 
     MAX_AGE = 600  # 5 minutes
 
