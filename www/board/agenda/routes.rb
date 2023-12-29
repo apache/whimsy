@@ -550,14 +550,6 @@ get '/new' do
   @pmcs = ASF::Board.reporting(@meeting)
   @owner = ASF::Board::ShepherdStream.new(actions)
 
-  # Get list of unpublished and unapproved minutes
-  draft = YAML.load_file(Dir["#{AGENDA_WORK}/board_minutes*.yml"].max)
-  @minutes = dir("board_agenda_*.txt").
-    map {|file| Date.parse(file[/\d[_\d]+/].gsub('_', '-'))}.
-    reject {|date| date >= @meeting.to_date}.
-    reject {|date| draft[date.strftime('%B %d, %Y')] == 'approved'}.
-    sort
-
   template = File.join(ASF::SVN['foundation_board'], 'templates', 'board_agenda.erb')
   @disabled = dir("board_agenda_*.txt").
     include? @meeting.strftime("board_agenda_%Y_%m_%d.txt")
