@@ -551,7 +551,12 @@ get '/new' do
   @owner = ASF::Board::ShepherdStream.new(actions)
 
   # Get list of unpublished and unapproved minutes
-  draft = YAML.load_file(Dir["#{AGENDA_WORK}/board_minutes*.yml"].max)
+  latest = Dir["#{AGENDA_WORK}/board_minutes*.yml"].max
+  if latest
+    draft = YAML.load_file(latest)
+  else
+    draft = {} # allow for missing yml file
+  end
   @minutes = dir("board_agenda_*.txt").
     map {|file| Date.parse(file[/\d[_\d]+/].gsub('_', '-'))}.
     reject {|date| date >= @meeting.to_date}.
