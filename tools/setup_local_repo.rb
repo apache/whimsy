@@ -64,4 +64,6 @@ svnrepos.each do |name, entry|
   # Meetings/yyyymmdd/memapp-received.txt where yyyymmdd is within the time limit (32 days?)
   #  acreq/new-account-reqs.txt
   # foundation_board/board_agenda_2020_08_19.txt (e.g.)
+  # foundation_board/current.txt
+  # foundation_board/templates
 end
