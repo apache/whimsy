@@ -550,7 +550,7 @@ get '/new' do
   @pmcs = ASF::Board.reporting(@meeting)
   @owner = ASF::Board::ShepherdStream.new(actions)
 
-  # Get list of unpublished and unapproved minutes
+  # Get list of unpublished and unapproved minutes (used by the agenda template)
   latest = Dir["#{AGENDA_WORK}/board_minutes*.yml"].max
   if latest
     draft = YAML.load_file(latest)
