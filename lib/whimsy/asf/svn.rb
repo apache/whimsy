@@ -430,6 +430,13 @@ module ASF
       end
     end
 
+    # as for self.svn, but failure raises an error
+    def self.svn!(command, path, options = {})
+      out, err = self.svn(command, path, options = options)
+      raise Exception.new("SVN command failed: #{err}") if out.nil?
+      return out, err
+    end
+
     # low level SVN command for use in Wunderbar context (_json, _text etc)
     # params:
     # command - info, list etc
