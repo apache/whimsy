@@ -6,8 +6,13 @@ raise ArgumentError, "Invalid syntax #{@reminder}" unless  @reminder =~ /\A[-\w]
 # read template for the reminders
 template = File.read(File.join(FOUNDATION_BOARD, 'templates', "#{@reminder}.mustache"))
 
-# find the latest agenda
-agenda = Dir[File.join(FOUNDATION_BOARD, 'board_agenda_*.txt')].max
+# Allow override of timeZoneInfo (avoids the need to parse the last agenda)
+timeZoneInfo = @tzlink
+unless timeZoneInfo
+  # find the latest agenda
+  agenda = Dir[File.join(FOUNDATION_BOARD, 'board_agenda_*.txt')].max
+  timeZoneInfo = File.read(agenda)[/Other Time Zones: (.*)/, 1]
+end
 
 # determine meeting time
 meeting = ASF::Board.nextMeeting
@@ -21,7 +26,7 @@ view = {
   meetingDate:  meeting.strftime("%a, %d %b %Y at %H:%M %Z"),
   month: meeting.strftime("%B"),
   year: meeting.year.to_s,
-  timeZoneInfo: File.read(agenda)[/Other Time Zones: (.*)/, 1],
+  timeZoneInfo: timeZoneInfo,
   dueDate:  dueDate.strftime("%a %b #{dueDate.day.ordinalize}"),
   agenda: meeting.strftime("https://whimsy.apache.org/board/agenda/%Y-%m-%d/")
 }
