@@ -24,7 +24,7 @@ module Status
 
   # are we migrating?
   def self.migrating?
-    false # Edit as needed
+    true # Edit as needed
   end
 
   # are we a test node?
