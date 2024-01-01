@@ -541,10 +541,15 @@ get '/new' do
   @next_month = next_month[/(.*#.*\n)+/] || ''
 
   # get potential actions
-  actions = JSON.parse(Wunderbar::JsonBuilder.new({}).instance_eval(
-    File.read("#{settings.views}/actions/potential-actions.json.rb"),
-  ).target!, symbolize_names: true)[:actions]
-
+  begin
+    actions = JSON.parse(Wunderbar::JsonBuilder.new({}).instance_eval(
+      File.read("#{settings.views}/actions/potential-actions.json.rb"),
+    ).target!, symbolize_names: true)[:actions]
+  rescue IOError => e
+    Wunderbar.warn "#{e}, could not access previous actions, continuing"
+    actions = nil
+  end
+  
   # Get directors, list of pmcs due to report, and shepherds
   @directors = ASF::Board.directors
   @pmcs = ASF::Board.reporting(@meeting)
@@ -590,19 +595,25 @@ post %r{/(\d\d\d\d-\d\d-\d\d)/} do |date|
 
   Dir.mktmpdir do |dir|
 
-    ASF::SVN.svn('checkout', [boardurl, dir], {depth: 'empty', env: env})
+    ASF::SVN.svn!('checkout', [boardurl, dir], {depth: 'empty', env: env})
 
     agendapath = File.join(dir, agenda)
     File.write agendapath, contents
-    ASF::SVN.svn('add', agendapath)
+    ASF::SVN.svn!('add', agendapath)
 
     currentpath = File.join(dir, 'current.txt')
-    ASF::SVN.svn('update', currentpath, {env: env})
+    ASF::SVN.svn!('update', currentpath, {env: env})
 
-    File.unlink currentpath
-    File.symlink agenda, currentpath
+    if File.exist? currentpath
+      File.unlink currentpath 
+      File.symlink agenda, currentpath
+    else
+      Wunderbar.warn "current.txt link does not exist, creating it"
+      File.symlink agenda, currentpath
+      ASF::SVN.svn!('add', currentpath)
+    end
 
-    ASF::SVN.svn('commit', [agendapath, currentpath], {msg: "Post #{date} agenda", env: env})
+    ASF::SVN.svn!('commit', [agendapath, currentpath], {msg: "Post #{date} agenda", env: env})
     Agenda.update_cache agenda, agendapath, contents, false
   end
 
