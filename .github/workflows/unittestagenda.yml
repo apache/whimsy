@@ -63,7 +63,8 @@ jobs:
     - name: test agenda code
       run: |
         cd www/board/agenda
-        SKIP_NAVIGATION=1 bundle exec rake RSPEC_OPTS='--pattern=secret*.rb' || echo "action_state=failed" >> $GITHUB_ENV
+        # SKIP_NAVIGATION=1 bundle exec rake RSPEC_OPTS='--pattern=secret*.rb' || echo "action_state=failed" >> $GITHUB_ENV
+        SKIP_NAVIGATION=1 bundle exec rake || echo "action_state=failed" >> $GITHUB_ENV
       continue-on-error: true
     - name: Run Summary
       run: |
