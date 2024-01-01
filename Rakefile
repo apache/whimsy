@@ -1,5 +1,7 @@
 require 'open3'
 
+SERVICE='web'  # name must agree with services entry in docker-compose.yaml
+
 # N.B. this file must be invoked from its containing directory.
 # It assumes that it will be run from the top of the Whimsy code tree
 
@@ -454,13 +456,13 @@ end
 # Docker support
 namespace :docker do
   task :build do
-    sh 'docker compose build web' # name 'web' must agree with services entry in docker-compose.yaml
+    sh "docker compose build #{SERVICE}"
   end
 
   task :update => :build do
     sh 'docker compose run  --entrypoint ' +
       %('bash -c "rake update"') +
-      ' web'
+      " #{SERVICE}"
   end
 
   task :up do
@@ -470,7 +472,7 @@ namespace :docker do
   end
 
   task :exec do
-    sh 'docker compose exec web /bin/bash'
+    sh "docker compose exec #{SERVICE} /bin/bash"
   end
 
   # cannot depend on :config
