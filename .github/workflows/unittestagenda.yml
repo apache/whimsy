@@ -35,7 +35,7 @@ jobs:
       if:  matrix.os != 'macos-latest'
     - uses: actions/setup-node@v3
       with:
-        node-version: 'v16.20.0' # works on macos; 20.x does not
+        node-version: 'v21.4.0' # works on macOS
     - uses: actions/checkout@v3
       with:
         persist-credentials: false
