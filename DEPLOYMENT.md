@@ -89,7 +89,7 @@ and running - these are only needed for a new deployment.
 
  * check that board-agenda-websocket.service is running:
    * `sudo systemctl status board-agenda-websocket.service` - this should show the service is running and has been up for some while
-   * `curl localhost:34234` - should produce 'curl: (52) Empty reply from server' or similar
+   * `curl -N localhost:34234` - should produce 'curl: (52) Empty reply from server' or similar
    * if curl replies with something else, check that the service is still running (and has not just been restarted)
    * if the syslog contains a message of the form:
      'Sep 24 13:09:07 whimsy-vm6 ruby[3435205]:   what():  Encryption not available on this event-machine'
@@ -100,16 +100,17 @@ and running - these are only needed for a new deployment.
  * Update the following cron scripts under https://svn.apache.org/repos/infra/infrastructure/apmail/trunk/bin:
      * listmodsubs.sh - add the new host
      * whimsy_qmail_ids.sh - add the new host
-     * make sure that the host is added to the known_hosts file on hermes (e.g. rsync whimsyN.apache.org: and agree to the prompt if the hash is correct)
+     * make sure that the host is added to the known_hosts file on hermes
+     (e.g. rsync whimsy-vmN.apache.org: and agree to the prompt if the hash is correct; must be done from the apmail account)
      * the old hosts should be removed sometime after switchover. This approach requires two edits to the files
      but ensures that the rsync has been tested for the new host and allows the new host to be better tested
 
  * Add the following mail subscriptions (see apmail/trunk/bin/whimsy_subscribe.sh):
-    * Subscribe `board@whimsy-vm6.apache.org` to `board@apache.org`.
-    * Subscribe `members@whimsy-vm6.apache.org` to `members@apache.org`.
-    * Subscribe `www-data@whimsy-vm6.apache.org` to `private-allow@whimsical.apache.org`. (Cron daemon)
-    * Subscribe `root@whimsy-vm6.apache.org` to `private-allow@whimsical.apache.org`. (Cron daemon)
-    * Add `secretary@whimsy-vm6.apache.org` to the `secretary@apache.org` alias.
+    * Subscribe `board@whimsy-vmN.apache.org` to `board@apache.org`.
+    * Subscribe `members@whimsy-vmN.apache.org` to `members@apache.org`.
+    * Subscribe `www-data@whimsy-vmN.apache.org` to `private-allow@whimsical.apache.org`. (Cron daemon)
+    * Subscribe `root@whimsy-vmN.apache.org` to `private-allow@whimsical.apache.org`. (Cron daemon)
+    * Add `secretary@whimsy-vmN.apache.org` to the `secretary@apache.org` alias.
 
  * Verify that email can be sent to non-apache.org email addresses.
    * Run [testmail.rb](tools/testmail.rb)
