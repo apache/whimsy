@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [ubuntu-20.04]
+        os: [ubuntu-20.04, macos-latest]
         ruby: [2.7]
         # os: [ubuntu-20.04, ubuntu-22.04]
         # ruby: [2.7, 3.1]
