@@ -47,6 +47,10 @@ end
 
 conf.sub! 'wss://', 'ws://'
 
+conf.gsub! /AuthLDAPUrl .*/, 'AuthLDAPUrl "ldaps://<%= ldaphosts%>/ou=people,dc=apache,dc=org?uid"'
+conf.gsub! /AuthLDAPBindDN .*/, 'AuthLDAPBindDN <%= ldapbinddn%>'
+conf.gsub! /AuthLDAPBindPassword .*/, 'AuthLDAPBindPassword "<%= ldapbindpw%>"'
+
 if ARGV.empty?
   puts conf
 else
