@@ -1,10 +1,10 @@
 name: Unit test agenda
 on:
-  push:
-    paths:
-      - '**/unittestagenda.yml'
-      - 'www/board/agenda/**'
-      - 'lib/**'
+  # push:
+  #   paths:
+  #     - '**/unittestagenda.yml'
+  #     - 'www/board/agenda/**'
+  #     - 'lib/**'
 
   workflow_dispatch:
 
