@@ -177,7 +177,7 @@ module SiteStandards
 
   # Get URL to default filename location on server
   def get_url(is_local = true)
-    is_local ? (return '../../../www/public/') : (return 'https://whimsy-vm7.apache.org/public/') # TEMP HACK
+    is_local ? (return '../../../www/public/') : (return 'https://whimsy.apache.org/public/')
   end
 
   # Get check data for tlp | podling
