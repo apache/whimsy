@@ -110,6 +110,7 @@ and running - these are only needed for a new deployment.
     * Subscribe `members@whimsy-vmN.apache.org` to `members@apache.org`.
     * Subscribe `www-data@whimsy-vmN.apache.org` to `private-allow@whimsical.apache.org`. (Cron daemon)
     * Subscribe `root@whimsy-vmN.apache.org` to `private-allow@whimsical.apache.org`. (Cron daemon)
+    * Subscribe `root@whimsy-vmN.apache.org` to `notifications@whimsical.apache.org`. (Cron daemon)
     * Add `secretary@whimsy-vmN.apache.org` to the `secretary@apache.org` alias.
 
  * Verify that email can be sent to non-apache.org email addresses.
