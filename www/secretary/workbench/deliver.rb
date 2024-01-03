@@ -2,6 +2,12 @@
 # Process email as it is received
 #
 
+YYYYMM = ARGV.shift # Override for merging mails later
+if YYYYMM
+  raise ArgumentError.new("Invalid yyyymm override #{YYYYMM}") unless YYYYMM =~ /\A20[23]\d(0\d|1[012])\z/
+  $stderr.puts "Overriding YYYYMM: #{YYYYMM}"
+end
+
 Dir.chdir File.dirname(File.expand_path(__FILE__))
 
 require_relative 'models/mailbox'
@@ -24,7 +30,7 @@ rescue => e
 end
 
 # construct message
-month = Time.now.strftime('%Y%m')
+month = YYYYMM || Time.now.strftime('%Y%m')
 mailbox = Mailbox.new(month)
 message = Message.new(mailbox, hash, headers, email)
 

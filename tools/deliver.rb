@@ -6,6 +6,11 @@ require 'digest'
 require 'fileutils'
 
 MAIL_ROOT = '/srv/mail'
+YYYYMM = ARGV.shift # Override for merging mails later
+if YYYYMM
+  raise ArgumentError.new("Invalid yyyymm override #{YYYYMM}") unless YYYYMM =~ /\A20[23]\d(0\d|1[012])\z/
+  $stderr.puts "Overriding YYYYMM: #{YYYYMM}"
+end
 
 # get the message ID
 def self.getmid(hdrs)
@@ -28,7 +33,7 @@ hdrs = mail[/\A(.*?)\r?\n\r?\n/m, 1] || ''
 # extract info
 dest = hdrs[/^List-Id: <(.*)>/, 1] || hdrs[/^Delivered-To.* (\S+)\s*$/, 1] || 'unknown'
 list = dest[/^[-\w]+/]
-month = Time.now.strftime('%Y%m')
+month = YYYYMM || Time.now.strftime('%Y%m')
 hash = Digest::SHA1.hexdigest(getmid(hdrs) || mail)[0..9]
 
 # build file name
