@@ -177,7 +177,7 @@ module SiteStandards
 
   # Get URL to default filename location on server
   def get_url(is_local = true)
-    is_local ? (return '../../../www/public/') : (return 'https://whimsy.apache.org/public/')
+    is_local ? (return '../../../www/public/') : (return 'https://whimsy-vm7.apache.org/public/') # TEMP HACK
   end
 
   # Get check data for tlp | podling
@@ -190,6 +190,7 @@ module SiteStandards
       crawl_time = File.mtime(local_copy).httpdate # show time in same format as last-mod
       sites = JSON.parse(File.read(local_copy))
     else
+      Wunderbar.warn "Failed to find #{local_copy}"
       response = Net::HTTP.get_response(URI("#{get_url(false)}#{get_filename(tlp)}"))
       crawl_time = response['last-modified']
       sites = JSON.parse(response.body)
