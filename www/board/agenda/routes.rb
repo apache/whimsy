@@ -604,7 +604,7 @@ post %r{/(\d\d\d\d-\d\d-\d\d)/} do |date|
     currentpath = File.join(dir, 'current.txt')
     ASF::SVN.svn!('update', currentpath, {env: env})
 
-    if File.exist? currentpath
+    if File.symlink? currentpath # Does the symlink exist?
       File.unlink currentpath 
       File.symlink agenda, currentpath
     else
