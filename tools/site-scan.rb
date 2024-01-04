@@ -272,6 +272,7 @@ podlings = {}
 $cache = Cache.new(dir: 'site-scan')
 $verbose = ARGV.delete '--verbose'
 $skipresourcecheck = ARGV.delete '--noresource'
+$skipresourcecheck = true # TEMP until can get it working
 
 puts "Started: #{Time.now}"  # must agree with site-scan monitor
 
