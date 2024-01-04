@@ -19,7 +19,10 @@ if (!isASFhost(inithost)) {
 }
 
 (async () => {
-  const browser = await puppeteer.launch({headless: "new"});
+  // new fails with:
+  // Error: Failed to launch the browser process!
+  // chrome_crashpad_handler: --database is required
+  const browser = await puppeteer.launch({headless: "old"});
   const page = await browser.newPage();
   await page.setRequestInterception(true);
   page.on('request', (interceptedRequest) => {
