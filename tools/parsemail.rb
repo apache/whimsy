@@ -76,7 +76,7 @@ module ParseMail
     if data.size == 0
       log :INFO, "No new entries found"
     else
-      # update the file with any new entries
+      # update the file with any new entries (this locks the file)
       YamlFile.update(yamlfile) do |yaml|
         data.each do |k,v|
             unless yaml[k] # don't update existing entries (should rarely happen)
@@ -111,7 +111,7 @@ module ParseMail
 
     maildir = File.join(MAIL_ROOT, list, yyyymm) # where to find the mail files
     if Dir.exists? maildir
-      log :INFO, "Processing #{maildir}"
+      log :INFO, "Processing #{maildir} into #{yamlfile}"
       parse_dir(maildir, yamlfile)
     else
       log :WARN, "Could not find #{maildir}"
@@ -122,7 +122,7 @@ module ParseMail
 
       maildir = File.join(MAIL_ROOT, list, lastmonth) # where to find the mail files
       if Dir.exists? maildir
-        log :INFO, "Processing #{maildir}"
+        log :INFO, "Processing #{maildir} into #{yamlfile}"
         parse_dir(maildir, yamlfile)
       else
         log :WARN, "Could not find #{maildir}"
