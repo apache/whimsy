@@ -45,6 +45,10 @@ def Monitor.public_json(previous_status)
       # Ignore Wunderbar logging for normal messages (may occur multiple times)
       contents.gsub!(/^(_INFO|_DEBUG) .*?\n+/, '')
 
+      # Ignore Ruby warnings, e.g.:
+      # /usr/lib/ruby/2.7.0/net/protocol.rb:66: warning: previous definition of ProtocRetryError was here
+      contents.gsub!(%r{^(/usr|/var)\S+\.rb:\d+: warning: .*\n}, '')
+
       # diff -u output: (may have additional \n at end)
       if contents.gsub!(/^--- .*?\n\n?(\n|\Z)/m, '')
         status[name].merge! level: 'info', title: 'updated'
@@ -136,7 +140,7 @@ def Monitor.public_json(previous_status)
   {data: status}
 end
 
-# for debugging purposes
+# for debugging purposes; must be run from www/status currently
 if __FILE__ == $0
   require_relative 'unit_test'
   runtest('public_json') # must agree with method name above
