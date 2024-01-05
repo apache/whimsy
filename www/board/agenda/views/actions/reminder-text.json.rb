@@ -3,8 +3,6 @@
 require 'active_support/time'
 
 raise ArgumentError, "Invalid syntax #{@reminder}" unless  @reminder =~ /\A[-\w]+\z/
-# read template for the reminders
-template = File.read(File.join(FOUNDATION_BOARD, 'templates', "#{@reminder}.mustache"))
 
 # Allow override of timeZoneInfo (avoids the need to parse the last agenda)
 timeZoneInfo = @tzlink
@@ -32,11 +30,4 @@ view = {
 }
 
 # perform the substitution
-template = Mustache.render(template, view)
-
-# extract subject
-subject = template[/Subject: (.*)/, 1]
-template[/Subject: .*\s+/] = ''
-
-# return results
-{subject: subject, body: template}
+AgendaTemplate.render(@reminder, view)
