@@ -14,7 +14,7 @@ if index
     end
   end
 
-  # return previous mailbox name and headers for the messages in the mbox
+  # return previous mailbox name and headers for the messages (that have attachments) in the mbox
   {
     mbox: (File.basename(prevmbox, '.yml') if prevmbox),
     messages: Mailbox.new(@mbox).client_headers

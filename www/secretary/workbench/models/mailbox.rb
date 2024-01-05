@@ -165,7 +165,7 @@ class Mailbox
   end
 
   #
-  # return headers (client view)
+  # return headers (client view; only shows messages with attachments)
   #
   def client_headers
     # fetch a list of headers for all messages in the mailbox with attachments
