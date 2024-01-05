@@ -133,6 +133,7 @@ def Monitor.git(previous_status)
     end
   end
 
+  status[:empty] = {level: success, data: update} if status.empty? # no entries found in the log
   {data: status}
 end
 
