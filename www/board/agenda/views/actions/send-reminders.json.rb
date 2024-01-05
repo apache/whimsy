@@ -49,13 +49,15 @@ Agenda.parse(@agenda, :full).each do |item|
 
   # cc list
   cclist = []
-  if item['mail_list']
+  mail_list = item['mail_list']
+  if mail_list
     if @selection == 'inactive'
-      cclist << "dev@#{item['mail_list']}.apache.org"
+      cclist << "dev@#{mail_list}.apache.org"
     elsif item[:attach] =~ /^[A-Z]+/
-      cclist << "private@#{item['mail_list']}.apache.org"
-    else
-      cclist << "#{item['mail_list']}@apache.org"
+      cclist << "private@#{mail_list}.apache.org"
+    else # This is not a PMC, and the mail_list may already include the domain
+      mail_list = mail_list + '@apache.org' unless mail_list.include? '@'
+      cclist << mail_list
     end
   end
 
