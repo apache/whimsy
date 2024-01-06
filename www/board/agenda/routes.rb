@@ -617,5 +617,33 @@ post %r{/(\d\d\d\d-\d\d-\d\d)/} do |date|
     Agenda.update_cache agenda, agendapath, contents, false
   end
 
+  auto_remind(date, agenda)
+
   redirect to("/#{date}/")
+end
+
+get %r{/testautoremind/(\d\d\d\d-\d\d-\d\d)/} do |date|
+    agenda = "board_agenda_#{date.gsub('-', '_')}.txt"
+    @dryrun = !Status.testnode? # For debug only!
+    _json auto_remind(date, agenda)
+end
+
+# Code to send initial reminders
+def auto_remind(date, agenda)
+  # draft reminder text
+  @reminder = 'reminder1' # reminder template
+  @tzlink = ASF::Board.tzlink(ASF::Board::TIMEZONE.utc_to_local(ASF::Board.nextMeeting))
+  reminder = eval(File.read("views/actions/reminder-text.json.rb"))
+
+  # extract data
+  @subject = reminder[:subject]
+  @message = reminder[:body]
+
+  # send reminders and summary
+  @summary = 'reminder-summary' # template name
+  @sendsummary = true
+  @agenda = agenda
+  @meeting = date
+  @from = '"Board Chair" <board-chair@apache.org>'
+  eval(File.read("views/actions/send-reminders.json.rb"))
 end
