@@ -47,7 +47,7 @@ def Monitor.public_json(previous_status)
 
       # Ignore Ruby warnings, e.g.:
       # /usr/lib/ruby/2.7.0/net/protocol.rb:66: warning: previous definition of ProtocRetryError was here
-      contents.gsub!(%r{^(/usr|/var)\S+\.rb:\d+: warning: .*\n}, '')
+      contents.gsub!(%r{^(/usr|/var)\S+\.rb:\d+: warning: .*?\n}, '')
 
       # diff -u output: (may have additional \n at end)
       if contents.gsub!(/^--- .*?\n\n?(\n|\Z)/m, '')
