@@ -1,0 +1,26 @@
+# Template file for .bash_aliases 
+# Needs to be present in the parent directory of the workspace
+
+# Note: logs can be stored on the host; create the directory apache2_logs
+alias logs='ls -lrt /var/log/apache2'
+alias cdl='cd /var/log/apache2'
+alias tfe='tail -f /var/log/apache2/error.log'
+alias tfwe='tail -f /var/log/apache2/whimsy_error.log'
+
+# IRB access
+alias wrb='irb  -I /srv/whimsy/lib -r whimsy/asf'
+alias wrbmf='irb  -I /srv/whimsy/lib -r whimsy/asf -r whimsy/asf/member-files'
+
+if [ ! -r $HOME/.irbrc ]
+then
+    echo Creating $HOME/.irbrc
+    cat >$HOME/.irbrc <<EOD
+require 'pp'
+# Set up Wunderbar logging if running wrb
+if \$LOAD_PATH.include?("/srv/whimsy/lib") # wrb?
+  puts "#{__FILE__} - setting log_level=info"
+  require 'wunderbar' # it has not been loaded yet
+  Wunderbar.log_level="info"
+end
+EOD
+fi

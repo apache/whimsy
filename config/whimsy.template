@@ -1,0 +1,31 @@
+# Template file for .whimsy
+# Needs to be present in the parent directory of the workspace
+---
+:root: .
+
+# To use a local SVN, set up the repositories at the location in whimsy.conf
+# This is at /srv/REPO in the container (see SVNPath defines), and is at 'root'/REPOS on the host
+# Then enable the following line to define SVN for Whimsy
+#:svn_base: http://localhost/repos/
+# WARNING: the SVN checkouts will need to link to the above URL, which is only valid in the container
+# In order to populate the repos, start the container and run 'rake svn:update' in a shell.
+
+# To allow the code to send emails locally, create an SMTP server, e.g as follows in a shell login:
+# python -m smtpd -n -c DebuggingServer localhost:1025
+# and enable the following lines:
+# :sendmail:
+#   address: localhost
+#   port: 1025
+#   delivery_method: smtp
+
+# The default LDAPs to be used
+# :ldap:
+#  - ldaps://ldap-eu.apache.org:636
+# Beware: this is the live LDAP.
+# INFRA may be able to grant access to a test LDAP, in which case define it here
+
+# N.B. whimsy_dn must be defined; this specifies the LDAP role to be used by Whimsy
+# Optionally define httpd_dn in case you want to use a different role for httpd authentication
+
+# :whimsy_dn: cn=<rolename>,ou=users,ou=services,dc=apache,dc=org
+# :httpd_dn:  cn=<rolename>,ou=users,ou=services,dc=apache,dc=org

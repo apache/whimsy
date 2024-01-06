@@ -57,16 +57,18 @@ Installation instructions
       host file system outside of your home directory as those files will not
       be visible to the container.
 * `cd` into that directory
-* `echo ":root: ." >.whimsy`
-* `echo ":whimsy_dn: dn-to-be-used-for-whimsy LDAP access" >>.whimsy`
-* `echo ":httpd_dn: dn-to-be-used-for-httpd LDAP access" >>.whimsy` # defaults to whimsy_dn
 * `git clone git@github.com:apache/whimsy.git` OR
 * `git clone https://github.com/apache/whimsy.git` (whichever works best for you)
-* `create .bash_aliases` if required - this will be picked up by the root user
+* `cp whimsy/config/whimsy.template .whimsy`
+* edit the `.whimsy` file as per its comments
+* Create the file `.bash_aliases` if required - this will be picked up by the root user
+There is a sample template `whimsy/config/bash_aliases.template` to get you started
+* `mkdir apache2_logs` if required - this will be used for the server logs (makes it easier to review them)
 * `cd whimsy`
 * Start Docker if necessary: `$ open /Applications/Docker.app`
 * `rake docker:update` # this runs docker:build and updates any Gems
-* `rake svn:update git:pull` # This updates the Whimsy data sources
+* If you are using a local copy of SVN, you will need to start the server and run `rake svn:update` from a shell
+* Otherwise you can run `rake svn:update` externally
 * `rake docker:up` # This prompts for LDAP Bind password
 * visit `http://localhost:1999/` in your favorite browser
 
@@ -87,10 +89,13 @@ This should be re-run if you update any of the resources used for the build,
 e.g. files in docker-config and the Dockerfile
 
 
-The `rake svn:update git:pull` step updates the SVN and Git repos used by Whimsy.
+The `rake svn:update` step updates the SVN repos used by Whimsy.
 The container does not automatically update these (unlike the live installation),
 so the step should be performed as necessary before starting the container to ensure the
 data is sufficiently up-to-date. This requires karma to fetch some of the files.
+If using a local copy of the SVN repos, `rake svn:update` must be run from the container.
+It does not need any special karma.
+
 
 This should be enough to get most of Whimsy working.  It is not
 known yet what functions work and what functions do not.
@@ -111,7 +116,7 @@ Note on Repositories
 --------------------
 
 If you don't want to check out all of the repositories, omit the
-`rake docker:update svn:update git:pull`, and only checkout/clone
+`rake docker:update svn:update`, and only checkout/clone
 the repositories that you need.  You can find the complete list in
 [repository.yml](./repository.yml).
 
@@ -125,6 +130,8 @@ To correct this, do the following:
     cd /srv/svn
     svn co https://svn.apache.org/repos/private/foundation/board foundation_board
 
+Adjust as necessary if using local (private) SVN repos
+
 Testing email
 -------------
 
@@ -134,21 +141,19 @@ The following command can be used to run a dummy smtp server on port 1025:
 It can be tested with:
 `tools/testmail.rb <userid>`
 
-[Note that Whimsy does not generally send emails unless it detects that it is the active server.]
-
 Known not to work (ToDos)
 -------------------------
 
 * Board agenda web socket (used to communicate updates from the server to
   browsers)
 * Automatic restarting of passenger based tools when source code changes are
-  made.
+  made. Just restart the server instead: `apachectl restart`.
 
 Uninstallation procedures
 -------------------------
 
 * Exit out of any running containers
-* Remove the entire directory created as step 1 of the installation
+* Remove the entire directory structure created as step 1 of the installation
   instructions.
 * `docker image rm whimsy-web`
 * `docker image prune -f`
