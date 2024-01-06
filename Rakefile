@@ -519,6 +519,12 @@ namespace :docker do
       ln_s '/srv/.bash_aliases', '/root/.bash_aliases'
     end
 
+    # Allow logs to be written to host system
+    if Dir.exist? '/srv/apache2_logs'
+      FileUtils.rm_rf '/var/log/apache2'
+      ln_s '/srv/apache2_logs', '/var/log/apache2'
+    end
+
     ldap_setup # set up LDAP entries in container
   end
 
