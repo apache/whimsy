@@ -644,6 +644,7 @@ def auto_remind(date, agenda)
   @sendsummary = true
   @agenda = agenda
   @meeting = date
-  @from = '"Board Chair" <board-chair@apache.org>'
+  boardchair = ASF::Committee.officers.select{|h| h.name == 'boardchair'}.first.chairs.first[:name]
+  @from = "\"#{boardchair}\" <board-chair@apache.org>"
   eval(File.read("views/actions/send-reminders.json.rb"))
 end
