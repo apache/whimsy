@@ -2,13 +2,15 @@
 # Needs to be present in the parent directory of the workspace
 
 # Note: logs can be stored on the host; create the directory apache2_logs
-alias logs='ls -lrt /var/log/apache2'
+alias logs='ls -lrt /var/log/apache2/'
 alias cdl='cd /var/log/apache2'
 alias tfe='tail -f /var/log/apache2/error.log'
 alias tfwe='tail -f /var/log/apache2/whimsy_error.log'
 
 alias apr='apachectl restart'
 alias aprl='rm /var/log/apache2/*;apachectl restart'
+
+alias mail_server='python3 -u -m smtpd -n -c DebuggingServer localhost:1025'
 
 # IRB access
 alias wrb='irb  -I /srv/whimsy/lib -r whimsy/asf'
