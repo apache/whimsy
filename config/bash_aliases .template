@@ -7,6 +7,9 @@ alias cdl='cd /var/log/apache2'
 alias tfe='tail -f /var/log/apache2/error.log'
 alias tfwe='tail -f /var/log/apache2/whimsy_error.log'
 
+alias apr='apachectl restart'
+alias aprl='rm /var/log/apache2/*;apachectl restart'
+
 # IRB access
 alias wrb='irb  -I /srv/whimsy/lib -r whimsy/asf'
 alias wrbmf='irb  -I /srv/whimsy/lib -r whimsy/asf -r whimsy/asf/member-files'
