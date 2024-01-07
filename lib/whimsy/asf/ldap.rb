@@ -39,6 +39,11 @@ require 'base64'
 require 'securerandom'
 require 'set'
 
+if __FILE__ == $0
+  $LOAD_PATH.unshift '/srv/whimsy/lib'
+  require 'whimsy/asf/config'
+end
+
 module ASF
   @@weakrefs = Set.new
 
@@ -1526,8 +1531,6 @@ module ASF
 end
 
 if __FILE__ == $0
-  $LOAD_PATH.unshift '/srv/whimsy/lib'
-  require 'whimsy/asf/config'
   mem = ASF.members()
   puts mem.length
   puts mem.first.inspect
