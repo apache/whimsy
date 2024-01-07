@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby
+$LOAD_PATH.unshift '/srv/whimsy/lib' # public_json.rb needs this
+
 require 'json'
 require 'time'
 
