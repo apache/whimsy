@@ -30,6 +30,9 @@ def Monitor.public_json(previous_status)
 
   status = {}
 
+  require 'whimsy/asf/status'
+  sendMail = Status.active?
+ 
   Dir[logs].each do |log|
     name = File.basename(log).sub('public-', '').to_sym
 
@@ -100,25 +103,30 @@ def Monitor.public_json(previous_status)
           # Save a copy of the log; append the severity so can track more problems
           file = File.basename(log)
           FileUtils.copy log, File.join(archive, file + '.' + lvl), preserve: true
-          begin
-            require 'mail'
-            $LOAD_PATH.unshift '/srv/whimsy/lib'
-            require 'whimsy/asf'
-            ASF::Mail.configure
-            mail = Mail.new do
-              from 'Public JSON job monitor  <dev@whimsical.apache.org>'
-              to 'Notification List <notifications@whimsical.apache.org>'
-              subject "Problem (#{lvl}) detected in #{name} job"
-              body "\nLOG:\n#{contents_save}\nSTATUS: #{status[name]}\n"
+          subject = "Problem (#{lvl}) detected in #{name} job"
+          if sendMail
+            begin
+              require 'mail'
+              $LOAD_PATH.unshift '/srv/whimsy/lib'
+              require 'whimsy/asf'
+              ASF::Mail.configure
+              mail = Mail.new do
+                from 'Public JSON job monitor  <dev@whimsical.apache.org>'
+                to 'Notification List <notifications@whimsical.apache.org>'
+                subject subject
+                body "\nLOG:\n#{contents_save}\nSTATUS: #{status[name]}\n"
+              end
+              # in spite of what the docs say, this does not seem to work in the body above
+              mail.charset = 'utf-8'
+              # Replace .mail suffix with more accurate one
+              mail.message_id = "<#{Mail.random_tag}@#{::Socket.gethostname}.apache.org>"
+              # deliver mail
+              mail.deliver!
+            rescue => e
+              $stderr.puts "Send mail failed: exception #{e}" # record error in server log
             end
-            # in spite of what the docs say, this does not seem to work in the body above
-            mail.charset = 'utf-8'
-            # Replace .mail suffix with more accurate one
-            mail.message_id = "<#{Mail.random_tag}@#{::Socket.gethostname}.apache.org>"
-            # deliver mail
-            mail.deliver!
-          rescue => e
-            $stderr.puts "Send mail failed: exception #{e}" # record error in server log
+          else
+            $stderr.puts "Did not detect active status, not sending mail: #{subject}"
           end
         end
       end
