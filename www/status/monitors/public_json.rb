@@ -50,7 +50,7 @@ def Monitor.public_json(previous_status)
 
       # Ignore Ruby warnings, e.g.:
       # /usr/lib/ruby/2.7.0/net/protocol.rb:66: warning: previous definition of ProtocRetryError was here
-      contents.gsub!(%r{^(/usr|/var)\S+\.rb:\d+: warning: .*?\n}, '')
+      contents.gsub!(%r{^(/usr|/var|/srv/gems/)\S+\.rb:\d+: warning: .*?\n}, '')
 
       # diff -u output: (may have additional \n at end)
       if contents.gsub!(/^--- .*?\n\n?(\n|\Z)/m, '')
@@ -150,6 +150,7 @@ end
 
 # for debugging purposes; must be run from www/status currently
 if __FILE__ == $0
+  $LOAD_PATH.unshift '/srv/whimsy/lib'
   require_relative 'unit_test'
   runtest('public_json') # must agree with method name above
 end
