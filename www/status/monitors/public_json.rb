@@ -67,7 +67,7 @@ def Monitor.public_json(previous_status)
       # Ruby warnings, e.g.
       # /usr/lib/ruby/2.7.0/net/protocol.rb:66: warning: previous definition of ProtocRetryError was here
       if contents.gsub!(%r{^/(?:var|usr|/srv/gems)/lib/\S+: (warning:.*?)\n+}, '')
-        status[name].merge! level: 'warning', data: $1
+        status[name].merge! level: 'warning', data: $1 unless $1.include? '/net/protocol.rb:' # can't fix this
       end
 
       # Check to see if the log has been updated recently
