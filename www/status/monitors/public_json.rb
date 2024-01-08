@@ -48,10 +48,6 @@ def Monitor.public_json(previous_status)
       # Ignore Wunderbar logging for normal messages (may occur multiple times)
       contents.gsub!(/^(_INFO|_DEBUG) .*?\n+/, '')
 
-      # Ignore Ruby warnings, e.g.:
-      # /usr/lib/ruby/2.7.0/net/protocol.rb:66: warning: previous definition of ProtocRetryError was here
-      contents.gsub!(%r{^(/usr|/var|/srv/gems/)\S+\.rb:\d+: warning: .*?\n}, '')
-
       # diff -u output: (may have additional \n at end)
       if contents.gsub!(/^--- .*?\n\n?(\n|\Z)/m, '')
         status[name].merge! level: 'info', title: 'updated'
@@ -68,8 +64,9 @@ def Monitor.public_json(previous_status)
           title: "#{warnings.length} warnings"
       end
 
-      # Ruby warnings
-      if contents.gsub!(%r{^/(?:var|usr)/lib/\S+: (warning:.*?)\n+}, '')
+      # Ruby warnings, e.g.
+      # /usr/lib/ruby/2.7.0/net/protocol.rb:66: warning: previous definition of ProtocRetryError was here
+      if contents.gsub!(%r{^/(?:var|usr|/srv/gems)/lib/\S+: (warning:.*?)\n+}, '')
         status[name].merge! level: 'warning', data: $1
       end
 
@@ -84,6 +81,8 @@ def Monitor.public_json(previous_status)
         status[name].merge! level: 'danger',
           data: "Last updated: #{File.mtime(log).to_s} (more than 24 hours old)"
       end
+
+      contents.gsub!(%r{^\s+$} , '') # drop any remaining blank lines
 
       # Treat everything left as an error to be reported
       unless contents.empty?
