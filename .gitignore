@@ -8,4 +8,5 @@ work
 .rakeTasks
 /assets/
 maintenance.txt
+migrating.txt
 .ruby-version
