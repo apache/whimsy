@@ -57,21 +57,22 @@ module Status
 
     nil
   end
-end
 
-def self.currentIP # intended for CLI testing
-  Resolv::DNS.open do |rs|
-    begin
-      @currentIP ||= rs.getaddress(hostname) # local as IP; should not change during a run
-    rescue Resolv::ResolvError => e # allow this to fail on a test node
-      raise unless testnode?
-      $stderr.puts "WARNING: Failed to resolve local IP address: #{e}"
+  def self.currentIP # intended for CLI testing
+    Resolv::DNS.open do |rs|
+      begin
+        @currentIP ||= rs.getaddress(hostname) # local as IP; should not change during a run
+      rescue Resolv::ResolvError => e # allow this to fail on a test node
+        raise unless testnode?
+        $stderr.puts "WARNING: Failed to resolve local IP address: #{e}"
+      end
     end
   end
-end
-
-def self.activeIP # intended for CLI testing
-  Resolv::DNS.open.getaddress(ACTIVE_HOSTNAME)
+  
+  def self.activeIP # intended for CLI testing
+    Resolv::DNS.open.getaddress(ACTIVE_HOSTNAME)
+  end
+  
 end
 
 # for debugging purposes
