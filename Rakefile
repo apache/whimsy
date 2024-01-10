@@ -307,7 +307,7 @@ namespace :git do
     # clone/pull git repositories
     git = ASF::Config.get(:git)
     if git.instance_of? String and git.end_with? '/*'
-      mkdir_p File.dirname(git)
+      mkdir_p? File.dirname(git)
       Dir.chdir File.dirname(git) do
         require 'uri'
         base = URI.parse('git://git.apache.org/')
