@@ -33,7 +33,7 @@ def Monitor.git(previous_status)
     end
   end
 
-  updates = fdata.split(%r{\n(?:/\w+)*/srv/git/})[1..-1]
+  updates = fdata.split(%r{\n(?:/\w+)*/srv/git/})[1..-1] || [] # allow for empty file
 
   status = {}
   seen_level = {}
