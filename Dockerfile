@@ -94,6 +94,11 @@ RUN sed -i -e '$i  PassengerDisableSecurityUpdateCheck on' /etc/apache2/conf-ena
 # For running SVN in the container
 RUN apt-get install libapache2-mod-svn
 
+# for maintenance banner
+RUN DEBIAN_FRONTEND='noninteractive' apt-get install -y \
+  lua5.2 && \
+  a2enmod lua
+
 WORKDIR /srv/whimsy
 RUN git config --global --add safe.directory /srv/whimsy
 EXPOSE 80
