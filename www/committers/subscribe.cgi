@@ -247,11 +247,11 @@ _html do
         Dir.mktmpdir do |tmpdir|
 
           # commit using user's credentials if possible, otherwise use whisysvn
-          if not $PASSWORD
-            credentials = {}
+          if not $PASSWORD # should not happen
+            raise ArgumentError.new "Missing credentials"
           elsif user.asf_member?
             credentials = {user: $USER, password: $PASSWORD}
-          else
+          else # committer has insufficient karma, use the proxy
             credentials = {user: 'whimsysvn'}
           end
 
