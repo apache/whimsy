@@ -30,7 +30,6 @@ def Monitor.public_json(previous_status)
 
   status = {}
 
-  require 'whimsy/asf/status'
   sendMail = Status.active?
  
   Dir[logs].each do |log|

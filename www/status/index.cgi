@@ -1,8 +1,9 @@
 #!/usr/bin/env ruby
-$LOAD_PATH.unshift '/srv/whimsy/lib' # public_json.rb needs this
+$LOAD_PATH.unshift '/srv/whimsy/lib'
 
 require 'json'
 require 'time'
+require 'whimsy/asf/status'
 
 json = File.expand_path('../status.json', __FILE__)
 status = JSON.parse(File.read(json)) rescue {}
