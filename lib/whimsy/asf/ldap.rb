@@ -324,6 +324,7 @@ module ASF
 
     # try once per host, with a minimum of two tries
     attempts_left = [ASF::LDAP.hosts.length, 2].max
+    target = nil # ensure access from rescue block
     begin
       attempts_left -= 1
       ASF.ldap # creates connection if necessary and binds it
