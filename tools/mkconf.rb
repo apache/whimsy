@@ -22,6 +22,12 @@ conf = <<-EOF + conf
 #
 EOF
 
+conf.sub! 'SetEnv HOME /var/www',"""SetEnv HOME /var/www
+
+# to agree with Dockerfile (ensure svn does not complain)
+SetEnv LANG C.UTF-8
+SetEnv LC_ALL C.UTF-8"""
+
 conf.sub! 'VirtualHost *:443', 'VirtualHost *:80'
 conf.sub! /ServerName whimsy(.*?)\.apache\.org/, 'ServerName whimsy.local'
 
@@ -51,8 +57,7 @@ conf.gsub! /AuthLDAPUrl .*/, 'AuthLDAPUrl "ldaps://<%= ldaphosts %>/ou=people,dc
 conf.gsub! /AuthLDAPBindDN .*/, 'AuthLDAPBindDN <%= ldapbinddn %>'
 conf.gsub! /AuthLDAPBindPassword .*/, 'AuthLDAPBindPassword "<%= ldapbindpw %>"'
 
-appendix="""
-# Needs libapache2-mod-svn to be installed
+appendix="""# Needs libapache2-mod-svn to be installed
 # These are separate repos, as per the real ones
 <Location /repos/asf>
   DAV svn
@@ -72,10 +77,11 @@ appendix="""
   SetOutputFilter DEFLATE
 </Location>
 
-</VirtualHost>
-"""
+</VirtualHost>"""
 
 conf.sub! '</VirtualHost>', appendix
+
+conf.gsub! %r{ $}, "" # Trailing spaces
 
 if ARGV.empty?
   puts conf
