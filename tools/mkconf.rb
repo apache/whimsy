@@ -47,9 +47,35 @@ end
 
 conf.sub! 'wss://', 'ws://'
 
-conf.gsub! /AuthLDAPUrl .*/, 'AuthLDAPUrl "ldaps://<%= ldaphosts%>/ou=people,dc=apache,dc=org?uid"'
-conf.gsub! /AuthLDAPBindDN .*/, 'AuthLDAPBindDN <%= ldapbinddn%>'
-conf.gsub! /AuthLDAPBindPassword .*/, 'AuthLDAPBindPassword "<%= ldapbindpw%>"'
+conf.gsub! /AuthLDAPUrl .*/, 'AuthLDAPUrl "ldaps://<%= ldaphosts %>/ou=people,dc=apache,dc=org?uid"'
+conf.gsub! /AuthLDAPBindDN .*/, 'AuthLDAPBindDN <%= ldapbinddn %>'
+conf.gsub! /AuthLDAPBindPassword .*/, 'AuthLDAPBindPassword "<%= ldapbindpw %>"'
+
+appendix="""
+# Needs libapache2-mod-svn to be installed
+# These are separate repos, as per the real ones
+<Location /repos/asf>
+  DAV svn
+  SVNPath /srv/REPO/asf
+  SetOutputFilter DEFLATE
+</Location>
+
+<Location /repos/infra>
+  DAV svn
+  SVNPath /srv/REPO/infra
+  SetOutputFilter DEFLATE
+</Location>
+
+<Location /repos/private>
+  DAV svn
+  SVNPath /srv/REPO/private
+  SetOutputFilter DEFLATE
+</Location>
+
+</VirtualHost>
+"""
+
+conf.sub! '</VirtualHost>', appendix
 
 if ARGV.empty?
   puts conf
