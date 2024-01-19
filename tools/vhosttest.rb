@@ -10,6 +10,10 @@ require 'whimsy/asf'
 
 # Allow override of local repo
 IP = ARGV.shift or raise RuntimeError.new "Need path to infrastructure puppet checkout"
+# Allow override of yaml name
+base = ARGV.shift || 'whimsy-vm*'
+yaml =  Dir["#{IP}/data/nodes/#{base}.apache.org.yaml"].
+  max_by {|path| path[/-vm(\d+)/, 1].to_i}
 
 # Create dummy version of function to allow import
 module Puppet
@@ -23,8 +27,6 @@ end
 require 'yaml'
 require "#{IP}/modules/vhosts_whimsy/lib/puppet/functions/preprocess_vhosts.rb"
 
-yaml = Dir["#{IP}/data/nodes/whimsy-vm*.apache.org.yaml"].
-  max_by {|path| path[/-vm(\d+)/, 1].to_i}
 facts = YAML.load_file(yaml)['vhosts_whimsy::vhosts::vhosts']['whimsy-vm-443']
 ldap = 'ldap-us.apache.org:636' # No longer defined in whimsy
 
