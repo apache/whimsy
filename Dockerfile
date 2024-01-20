@@ -84,6 +84,8 @@ RUN DEBIAN_FRONTEND='noninteractive' apt-get install -y libyaml-dev
 # Allow www-data user to use Git repo owned by root
 COPY docker-config/gitconfig-www /var/www/.gitconfig
 
+COPY docker-config/maintenance_banner.lua /etc/apache2
+
 # disable security check and telemetry
 # Must use the same user and group as apache
 RUN sed -i -e '$i  PassengerDisableSecurityUpdateCheck on' /etc/apache2/conf-enabled/passenger.conf && \

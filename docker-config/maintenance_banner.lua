@@ -3,7 +3,7 @@
   It adds a banner when maintenance mode is detected
 
   It is invoked by the following file exists:
-  /srv/whimsy/www/maintenance.tct
+  /srv/whimsy/www/maintenance.txt
 
   The mod_lua API is described here:
   https://httpd.apache.org/docs/current/mod/mod_lua.html#modifying_buckets
@@ -22,12 +22,10 @@ function output_filter(r)
 
     -- create the customised banner
     local divstyle = 'font-size:x-large;padding:15px;color:white;background:red;z-index:99;' ;
-    -- local astyle = 'color:white;text-decoration:underline' ; -- <a>
     local div = ([[
       <div style='%s'>
         The Whimsy server is undergoing maintenance. Not all functions are available.
-        %s
-      </div>]]):format(divstyle, r.content_type)
+      </div>]]):format(divstyle)
 
     -- add header:
     coroutine.yield(div)
