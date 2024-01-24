@@ -9,6 +9,19 @@ $LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'wunderbar/bootstrap'
 require 'whimsy/asf'
 
+# Allow override of user in test mode
+if ENV['RACK_ENV'] == 'test'
+  user = ASF::Person[ENV['USER']]
+else
+  user = ASF::LDAP.http_auth(ENV['HTTP_AUTHORIZATION'])
+end
+
+unless user
+print "Status: 401 Unauthorized\r\n"
+print "WWW-Authenticate: Basic realm=\"ASF Members and Officers\"\r\n\r\n"
+exit
+end
+
 # load list of repositories
 repository = ASF::SVN.repo_entries
 

@@ -92,7 +92,7 @@ print <<-EOF
       <li><a href="../member/logs">Apache HTTPD error logs</a>
         (ASF member only)</li>
       <li><a href="passenger">Passenger</a> (ASF committer only)</li>
-      <li><a href="svn">Subversion</a></li>
+      <li><a href="svn">Subversion</a> (ASF committer only)</li>
       <li>Git code info: #{git_info}</li>
       <li>Git repo info: #{git_repo}</li>
     </ul>
