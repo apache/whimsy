@@ -14,6 +14,7 @@ class Parts < Vue
     @project = nil
     @missing_address = false
     @missing_email = false
+    @wrong_email = false
     @corporate_postal = false
     @invalid_public = false
     @separate_signature = false
@@ -191,6 +192,7 @@ class Parts < Vue
             _input type: 'hidden', name: 'signature', value: @@signature
             _input type: 'hidden', name: 'missing_address', value: @missing_address
             _input type: 'hidden', name: 'missing_email', value: @missing_email
+            _input type: 'hidden', name: 'wrong_email', value: @wrong_email
             _input type: 'hidden', name: 'corporate_postal', value: @corporate_postal
             _input type: 'hidden', name: 'invalid_public', value: @invalid_public
             _input type: 'hidden', name: 'separate_signature', value: @separate_signature
@@ -249,6 +251,13 @@ class Parts < Vue
                   _input type: 'checkbox', checked: @missing_email,
                   onClick: -> {@missing_email = !@missing_email}
                   _span ' missing email address'
+                end
+              end
+              _li do
+                _label do
+                  _input type: 'checkbox', checked: @wrong_email,
+                  onClick: -> {@wrong_email = !@wrong_email}
+                  _span ' incorrect email address'
                 end
               end
               _li do
