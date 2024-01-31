@@ -17,7 +17,6 @@ module ASF
   class SVN
     svn_base = ASF::Config.get(:svn_base)
     if svn_base
-      require 'wunderbar'
       Wunderbar.warn("Found override for svn_base: #{svn_base}")
     else
       svn_base = 'https://svn.apache.org/repos/'
@@ -52,7 +51,6 @@ module ASF
           if repo_override
             svn_over = repo_override[:svn]
             if svn_over
-              require 'wunderbar'
               Wunderbar.warn("Found override for repository.yml[:svn]")
               @@repository_entries[:svn].merge!(svn_over)
             end
