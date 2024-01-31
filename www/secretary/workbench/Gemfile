@@ -6,6 +6,7 @@ if File.exist? version_file
   # for deployment and local testing
   asf_version = File.read(version_file).chomp
   gem 'whimsy-asf', asf_version, path: File.expand_path(root, __FILE__)
+  gem 'puma' # needed for rake server
 else
   # for docker purposes (at least for now)
   gem 'whimsy-asf'
