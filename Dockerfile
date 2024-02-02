@@ -85,6 +85,7 @@ RUN DEBIAN_FRONTEND='noninteractive' apt-get install -y libyaml-dev
 COPY docker-config/gitconfig-www /var/www/.gitconfig
 
 COPY docker-config/maintenance_banner.lua /etc/apache2
+COPY docker-config/logformat.conf /etc/apache2/conf-enabled/logformat.conf
 
 # disable security check and telemetry
 # Must use the same user and group as apache
