@@ -59,7 +59,7 @@ def getURI(uri, file)
       File.open(file, "w") do |f|
         # Save the data directly; don't store in memory
         res.read_body do |segment|
-          f.puts segment
+          f.write segment
         end
       end
       size = File.size(file)
