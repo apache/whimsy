@@ -102,6 +102,9 @@ RUN DEBIAN_FRONTEND='noninteractive' apt-get install -y \
   lua5.2 && \
   a2enmod lua
 
+# For /usr/bin/host (used in acreq.erb)
+RUN DEBIAN_FRONTEND='noninteractive' apt-get install -y host
+
 WORKDIR /srv/whimsy
 RUN git config --global --add safe.directory /srv/whimsy
 EXPOSE 80
