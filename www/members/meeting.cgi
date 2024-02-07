@@ -160,7 +160,8 @@ _html do
             _li 'Ballots emailed: February 29, 2024'
             _li 'Voting closes: March 06, 2024 20:00 UTC (single IRC meeting March 07, 2024 20:00 UTC)'
           end
-          _p 'The above dates are taken from https://svn.apache.org/repos/private/foundation/Meetings/20240307/README.txt'
+          _p 'The above dates are manually copied from https://svn.apache.org/repos/private/foundation/Meetings/20240307/README.txt'
+          _p 'The file to edit is at: https://github.com/apache/whimsy/blob/master/www/members/meeting.cgi'
         end
       }
     ) do
