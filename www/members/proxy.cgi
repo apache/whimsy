@@ -81,6 +81,12 @@ end
 
 # Emit meeting data and form for user to select a proxy - GET
 def emit_form(cur_mtg_dir, meeting, volunteers, disabled)
+  begin
+    secretary_id = ASF::Committee.officers.select{|x|x.name == 'secretary'}.first.chairs.map{|x|x[:id]}.first
+  rescue StandardError
+    secretary_id = ''
+  end
+  
   help, copypasta = ASF::MeetingUtil.is_user_proxied(cur_mtg_dir, $USER)
   user_is_proxy = help && copypasta
   _whimsy_panel(user_is_proxy ? "You Are Proxying For Others" : "Select A Proxy For Upcoming Meeting", style: 'panel-success') do
@@ -141,7 +147,7 @@ def emit_form(cur_mtg_dir, meeting, volunteers, disabled)
                 next if members_txt[member.id]['status'] # Emeritus/Deceased
                 # Display the availid to users to match volunteers array above
                 _option "#{member.public_name} (#{member.id})",
-                  selected: (meeting == '20220615' && member.id == 'mattsicker')
+                  selected: (member.id == secretary_id)
               end
             end
           end
