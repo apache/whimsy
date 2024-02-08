@@ -81,6 +81,11 @@ end
 
 # Emit meeting data and form for user to select a proxy - GET
 def emit_form(cur_mtg_dir, meeting, volunteers, disabled)
+  if disabled
+    _h3 'No upcoming meeting'
+    _p 'There is currently no meeting scheduled. Call back later.'
+    return
+  end
   begin
     secretary_id = ASF::Committee.officers.select{|x|x.name == 'secretary'}.first.chairs.map{|x|x[:id]}.first
   rescue StandardError
@@ -158,11 +163,7 @@ def emit_form(cur_mtg_dir, meeting, volunteers, disabled)
             end
             _p 'Note that you cannot select a member who has provided a proxy'
             _div.button_group.text_center do
-              if disabled
-                _button.btn.btn_primary 'Submit', :disabled
-              else
-                _button.btn.btn_primary 'Submit'
-              end
+              _button.btn.btn_primary 'Submit'
             end
           end
         end
