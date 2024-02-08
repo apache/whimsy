@@ -141,7 +141,7 @@ def emit_form(cur_mtg_dir, meeting, volunteers, disabled)
                 next if members_txt[member.id]['status'] # Emeritus/Deceased
                 # Display the availid to users to match volunteers array above
                 _option "#{member.public_name} (#{member.id})",
-                  selected: (meeting == '20220615' && member.id == 'mattsicker')
+                  selected: (member.id == 'mattsicker')
               end
             end
           end
