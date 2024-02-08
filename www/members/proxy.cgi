@@ -87,7 +87,7 @@ def emit_form(cur_mtg_dir, meeting, volunteers, disabled)
     return
   end
   begin
-    secretary_id = ASF::Committee.officers.select{|x|x.name == 'secretary'}.first.chairs.map{|x|x[:id]}.first
+    secretary_id = ASF::Committee.officer('secretary').id
   rescue StandardError
     secretary_id = ''
   end
@@ -185,6 +185,8 @@ def emit_form(cur_mtg_dir, meeting, volunteers, disabled)
     $('*[name="proxy"]').change(function() {
       $('.btn').prop('disabled', false);
       });
+
+      $('.combobox').on
   }
 end
 
