@@ -183,6 +183,9 @@ end
 
 # Emit a record of a user's submission - POST
 def emit_post(cur_mtg_dir, meeting, _)
+  # Detect missing/invalid proxy info (should not happen)
+  raise ArgumentError,"Invalid proxy name '#{@proxy}'" unless @proxy =~ %r{\A.+ \([a-z0-9-]+\)\z}
+
   _h3_ 'Proxy Assignment - Session Transcript'
 
   # collect data
