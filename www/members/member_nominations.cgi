@@ -41,7 +41,8 @@ def validate_form(formdata: {})
   uid = formdata['availid']
   chk = ASF::Person[uid]&.asf_member?
   chk.nil? and return "Invalid availid: #{uid}"
-  chk and return "Already a member: #{uid}"
+  # Allow renomination of Emeritus
+  chk && !chk.to_s.start_with?('Emeritus') and return "Already a member: #{uid}"
   already = ASF::MemberFiles.member_nominees
   return "Already nominated: #{uid} by #{already[uid]['Nominated by']}" if already.include? uid
   return 'OK'
