@@ -163,8 +163,6 @@ def emit_form(cur_mtg_dir, meeting, volunteers, disabled)
     $('*[name="proxy"]').change(function() {
       $('.btn').prop('disabled', false);
       });
-
-      $('.combobox').on
   }
 end
 
