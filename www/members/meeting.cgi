@@ -25,7 +25,7 @@ end
 
 # Utility function for links, Note: cheezy path detection within MEETING_FILES
 def emit_link(cur_mtg_dir, f, desc)
-  _a desc, href: f.include?('/') ? f : File.join(cur_mtg_dir, f)
+  _a desc, href: f.include?('/') && !f.start_with?('runbook/') ? f : File.join(cur_mtg_dir, f)
 end
 
 # Output action links for meeting records, depending on if current or past
