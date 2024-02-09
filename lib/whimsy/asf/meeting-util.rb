@@ -15,8 +15,8 @@ module ASF
 
     MEETING_FILES = { # Filename in meeting dir, pathname to another deployed tool, or URL
       'README.txt' => 'README For Meeting Process And Roll Call',
-      'nomination_of_board.txt' => 'How To Nominate Someone For Board',
-      'nomination_of_members.txt' => 'How To Nominate A New Member',
+      'runbook/email_03_nomination_of_board.txt' => 'How To Nominate Someone For Board',
+      'runbook/email_02_nomination_of_members.txt' => 'How To Nominate A New Member',
       '/members/proxy.cgi' => 'How To Submit A Proxy/Check Your Proxies',
       'https://www.apache.org/foundation/governance/meetings' => 'How Voting Via Email Works',
       'agenda.txt' => 'Official Meeting Agenda',
