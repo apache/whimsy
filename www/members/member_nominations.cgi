@@ -52,14 +52,17 @@ end
 # @return true if we think it succeeded; false in all other cases
 def process_form(formdata: {}, wunderbar: {})
   statement = formdata['statement']
+  uid = formdata['availid']
 
   _h3 'Copy of statement to put in an email (if necessary)'
-  _pre statement
+  _pre do
+    _ "[MEMBER NOMINATION] #{ASF::Person.new(uid).public_name} (#{uid})\n"
+    _ statement
+  end
 
   _hr
 
   _h3 'Transcript of update to nomination file'
-  uid = formdata['availid']
   entry = ASF::MemberFiles.make_member_nomination({
     availid: uid,
     nomby: $USER,
