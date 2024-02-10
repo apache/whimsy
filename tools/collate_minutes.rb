@@ -259,8 +259,6 @@ def name_changes(title)
   title.sub! %r{Security$}, 'Security Team'
 end
 
-# Dir.chdir(SVN_SITE_RECORDS_MINUTES) { system 'svn update' }
-
 agenda = {}
 
 posted = Dir[MINUTES_PATH].sort
