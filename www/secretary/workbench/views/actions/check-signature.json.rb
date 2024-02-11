@@ -99,20 +99,7 @@ begin
 
     out2 = err2 = '' # needed later
 
-    #+++ TEMPORARY HACK (WHIMSY-275)
-
-#    KEYSERVERS.each do |server|
-#      out2, err2, rc2 = Open3.capture3 gpg, '--keyserver', server,
-#        '--debug', 'ipc', # seems to show communication with dirmngr
-#        '--recv-keys', keyid
-#      # for later analysis
-#      Wunderbar.warn "#{gpg} --keyserver #{server} --recv-keys #{keyid} rc2=#{rc2} out2=#{out2} err2=#{err2}"
-#      if rc2.exitstatus == 0 # Found the key
-#        out2 = err2 = '' # Don't add download error to verify error
-#        break
-#      end
-#    end
-
+    # Try to fetch the key
     KEYSERVERS.each do |server|
       found = false
       Dir.mktmpdir do |dir|
@@ -132,7 +119,6 @@ begin
       end
       break if found
     end
-    #--- TEMPORARY HACK (WHIMSY-275)
 
     # run gpg verify command again
     # TODO: may need to drop the keyid-format parameter when gpg is updated as it might
