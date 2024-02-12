@@ -137,6 +137,15 @@ module ASF
 
       @config[:svn] = path
     end
+
+    #  Get an executable path override
+    # e.g. 
+    # :exepaths:
+    #   gpg: /usr/local/bin/gpg3
+    # returns its input if no override is found
+    def self.getexepath(name)
+      @config[:exepaths]&.fetch(name, name) || name
+    end
   end
 
 end
