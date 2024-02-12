@@ -101,10 +101,9 @@ def validate_sig(attachment, signature)
       tmpfile = File.join(dir, keyid)
       KEYSERVERS.each do |server|
         begin
-          # uri = getServerURI(server, keyid)
+          uri = getServerURI(server, keyid)
           # get the public key if possible (throws if not)
-          # getURI(uri, tmpfile)
-          FileUtils.cp(File.join('/srv/whimsy', keyid), tmpfile) # Temp, don't bother gpg database
+          getURI(uri, tmpfile)
           # import the key for use in validation
           out, err, rc = Open3.capture3 gpg,
             '--batch', '--import', tmpfile
