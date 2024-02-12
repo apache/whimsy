@@ -1,17 +1,25 @@
 # frozen_string_literal: true
 
 require 'uri'
+require 'net/http'
+
+MAX_KEY_SIZE = 125000 # don't import if the ascii keyfile is larger than this
 
 # check signature on an attachment
 #
+
+if $0 == __FILE__
+  require 'wunderbar'
+  $LOAD_PATH.unshift '/srv/whimsy/lib'
+  require 'whimsy/asf'
+  require_relative '../../models/mailbox'
+end
 
 ENV['GNUPGHOME'] = GNUPGHOME if GNUPGHOME
 
 # see WHIMSY-274 for secure servers
 # ** N.B. ensure the keyserver URI is known below **
 
-# Restored keys.openpgp.org; sks-keryservers is dead; we can do without email
-# gozer.rediris.es certificate has expired
 KEYSERVERS = %w{keyserver.ubuntu.com}
 # openpgp does not return the uid needed by gpg
 
@@ -32,10 +40,6 @@ def getServerURI(server, keyid)
   Wunderbar.warn uri
   return uri
 end
-
-MAX_KEY_SIZE = 125000 # don't import if the ascii keyfile is larger than this
-
-require 'net/http'
 
 # fetch the Key from the URI and store in the file
 def getURI(uri, file)
@@ -71,13 +75,7 @@ def getURI(uri, file)
   end
 end
 
-message = Mailbox.find(@message)
-
-begin
-  # fetch attachment and signature
-  attachment = message.find(URI::RFC2396_Parser.new.unescape(@attachment)).as_file # This is derived from a URI
-  signature  = message.find(@signature).as_file # This is derived from the YAML file
-
+def validate_sig(attachment, signature)
   # pick the latest gpg version
   gpg = `which gpg2`.chomp
   gpg = `which gpg`.chomp if gpg.empty?
@@ -97,40 +95,37 @@ begin
     # extract and fetch key
     keyid = err[/[RD]SA key (ID )?(\w+)/,2]
 
-    out2 = err2 = '' # needed later
-
     # Try to fetch the key
-    KEYSERVERS.each do |server|
+    Dir.mktmpdir do |dir|
       found = false
-      Dir.mktmpdir do |dir|
+      tmpfile = File.join(dir, keyid)
+      KEYSERVERS.each do |server|
         begin
-          tmpfile = File.join(dir, keyid)
-          uri = getServerURI(server, keyid)
-          getURI(uri, tmpfile)
-          out2, err2, rc2 = Open3.capture3 gpg,
+          # uri = getServerURI(server, keyid)
+          # get the public key if possible (throws if not)
+          # getURI(uri, tmpfile)
+          FileUtils.cp(File.join('/srv/whimsy', keyid), tmpfile) # Temp, don't bother gpg database
+          # import the key for use in validation
+          out, err, rc = Open3.capture3 gpg,
             '--batch', '--import', tmpfile
           # For later analysis
-          Wunderbar.warn "#{gpg} --import #{tmpfile} rc2=#{rc2} out2=#{out2} err2=#{err2}"
+          Wunderbar.warn "#{gpg} --import #{tmpfile} rc=#{rc} out=#{out} err=#{err}"
           found = true
         rescue Exception => e
           Wunderbar.warn "GET uri=#{uri} e=#{e}"
-          err2 = e.to_s
+          err = "Key #{keyid} not found: #{e.to_s}".dup # Dup needed to unfreeze string for later
         end
+        break if found
       end
-      break if found
-    end
+      if found
 
-    # run gpg verify command again
-    # TODO: may need to drop the keyid-format parameter when gpg is updated as it might
-    # reduce the keyid length from the full fingerprint
-    out, err, rc = Open3.capture3 gpg,
-      '--keyid-format', 'long', # Show a longer id
-      '--verify', signature.path, attachment.path
-
-    # if verify failed, concatenate fetch output
-    if rc.exitstatus != 0
-      out += out2
-      err += err2
+        # run gpg verify command again
+        # TODO: may need to drop the keyid-format parameter when gpg is updated as it might
+        # reduce the keyid length from the full fingerprint
+        out, err, rc = Open3.capture3 gpg,
+          '--keyid-format', 'long', # Show a longer id
+          '--verify', signature.path, attachment.path
+      end
     end
   end
 
@@ -146,9 +141,42 @@ begin
 
   ignore.each {|re| err.gsub! re, ''}
 
-ensure
-  attachment.unlink if attachment
-  signature.unlink if signature
+  return out, err, rc
 end
 
-{output: out, error: err, rc: rc.exitstatus}
+def process
+  message = Mailbox.find(@message) # e.g. /secretary/workbench/yyyymm/123456789a/
+
+  begin
+    # fetch attachment and signature
+    # e.g. icla.pdf and icla.pdf.asc
+    attachment = message.find(URI::RFC2396_Parser.new.unescape(@attachment)).as_file # This is derived from a URI
+    signature  = message.find(@signature).as_file # This is derived from the YAML file
+
+    out, err, rc = validate_sig(attachment, signature)
+
+  ensure
+    attachment.unlink if attachment
+    signature.unlink if signature
+  end
+
+  return {output: out, error: err, rc: rc.exitstatus}
+end
+
+# Allow direct testing
+if $0 == __FILE__
+  yyyymmid = ARGV.shift or fail "Need yyyymm/msgid"
+  att = ARGV.shift || 'icla.pdf'
+  sig = ARGV.shift || att + '.asc'
+  @message = "/secretary/workbench/#{yyyymmid}/"
+  @attachment=att
+  @signature=sig
+  ret = process
+  if ret[:rc] == 0
+    puts "Success: #{ret[:output]} #{ret[:error]}"
+  else
+    puts "Failure(#{ret[:rc]}): #{ret[:output]} #{ret[:error]}"
+  end
+else
+  process # must be the last executable statement
+end
