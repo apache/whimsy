@@ -75,7 +75,7 @@ def getURI(uri, file)
   end
 end
 
-def validate_sig(attachment, signature)
+def validate_sig(attachment, signature, msgid)
   # pick the latest gpg version
   gpg = `which gpg2`.chomp
   gpg = `which gpg`.chomp if gpg.empty?
@@ -109,6 +109,28 @@ def validate_sig(attachment, signature)
             '--batch', '--import', tmpfile
           # For later analysis
           Wunderbar.warn "#{gpg} --import #{tmpfile} rc=#{rc} out=#{out} err=#{err}"
+          if err.include? 'imported: 1' # downloaded key is valid; store it for posterity
+            Dir.mktmpdir do |tmpdir|
+              container = ASF::SVN.svnpath!('iclas', '__keys__')
+              ASF::SVN.svn!('checkout',[container, tmpdir],
+                            {depth: 'empty', user: $USER, password: $PASSWORD})
+              outfile = File.join(tmpdir, keyid)
+              # Just in case we already have a copy
+              ASF::SVN.svn!('update', outfile, {user: $USER, password: $PASSWORD})
+              present = File.exist? outfile
+              FileUtils.cp(tmpfile, outfile) # add the latest copy
+              if present # must have been dropped from the pubkey database (or was maybe backfilled)
+                Wunderbar.warn "Already have a copy of #{keyid}"
+                # Has it changed?
+                Wunderbar.warn ASF::SVN.svn('diff', outfile, {verbose: true}).inspect
+              else # we have a new key
+                ASF::SVN.svn!('add', outfile, {verbose: true})
+              end
+              ASF::SVN.svn!('commit', outfile, {msg: "Adding key for msgid: #{msgid}", user: $USER, password: $PASSWORD})
+            end
+          else
+            Wunderbar.warn "Failed to import #{keyid}"
+          end
           found = true
         rescue Exception => e
           Wunderbar.warn "GET uri=#{uri} e=#{e}"
@@ -151,8 +173,9 @@ def process
     # e.g. icla.pdf and icla.pdf.asc
     attachment = message.find(URI::RFC2396_Parser.new.unescape(@attachment)).as_file # This is derived from a URI
     signature  = message.find(@signature).as_file # This is derived from the YAML file
+    msgid = message.headers.select{|k,v| k.downcase == 'message-id'}.values.first
 
-    out, err, rc = validate_sig(attachment, signature)
+    out, err, rc = validate_sig(attachment, signature, msgid)
 
   ensure
     attachment.unlink if attachment
