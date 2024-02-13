@@ -8,7 +8,7 @@ require 'wunderbar/bootstrap'
 require 'whimsy/asf'
 require 'whimsy/asf/member-files'
 require 'whimsy/asf/meeting-util'
-require '../tools/parsemail'
+require_relative '../../tools/parsemail'
 
 # link to members private-arch
 MBOX = 'https://mail-search.apache.org/members/private-arch/members/'
@@ -118,7 +118,7 @@ _html do
             _li! do
               person = ASF::Person.find(nominee[:id])
 
-              if emails.any? {|mail| ASF::Person.asciize(mail.subject.downcase.delete('.'), nil) =~ nominee[:match]}
+              if emails.any? {|mail| mail[:asciiname] =~ nominee[:match]}
                 _a.present person.public_name || '??', href: "#{ROSTER}/#{nominee[:id]}"
               else
                 _a.missing person.public_name || '??', href: "#{ROSTER}/#{nominee[:id]}"
