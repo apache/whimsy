@@ -8,7 +8,7 @@ require 'wunderbar/bootstrap'
 require 'whimsy/asf'
 require 'whimsy/asf/member-files'
 require 'whimsy/asf/meeting-util'
-require '../tools/parsemail'
+require_relative '../../tools/parsemail'
 
 # link to members private-arch
 MBOX = 'https://mail-search.apache.org/members/private-arch/members/'
@@ -18,7 +18,7 @@ ROSTER = '/roster/committer'
 MEETINGS = ASF::SVN['Meetings']
 MAIL_ROOT = '/srv/mail' # TODO: this should be config item
 # Only need these items
-Email = Struct.new(:subject, :date, :message_id, :from, :asciiname)
+Email = Struct.new(:subject, :date, :message_id, :from, :asciiname, :id)
 
 # Encapsulate gathering data to improve error processing
 def setup_data
@@ -43,11 +43,19 @@ def setup_data
       next unless /^\[?MEMBER(SHIP)? NOMI[MN]ATION\]? *(?<name>.*)/i =~ subject
       # N.B. the named capture only works if the RE is on the LHS
       messageid = value[:MessageId]
-      emails << Email.new(subject, Time.parse(date).utc, messageid, [value[:From]], ASF::Person.asciize(name.delete('.'), nil))
+      # Extract the (id) if present
+      name.strip!
+      if name =~ %r{\A(.+)?\(([a-z0-9-]+)\)\z}
+        name = $1.strip
+        id = $2
+      else
+        id = '__'
+      end
+      emails << Email.new(subject, Time.parse(date).utc, messageid, [value[:From]], ASF::Person.asciize(name.delete('.'), nil), id)
     end
   end
 
-  # parse nominations for names and ids
+  # parse nominations for names and ids (from SVN)
   nominations = ASF::MemberFiles.member_nominees.map do |id, hash|
     {id: id, name: hash['Public Name'], nominator: hash['Nominated by']}
   end
@@ -124,7 +132,7 @@ _html do
             _li! do
               person = ASF::Person.find(nominee[:id])
 
-              if emails.any? {|mail| ASF::Person.asciize(mail.subject.downcase.delete('.'), nil) =~ nominee[:match]}
+              if emails.any? {|mail| mail[:asciiname] =~ nominee[:match] or mail[:id] == nominee[:id]}
                 _a.present person.public_name || '??', href: "#{ROSTER}/#{nominee[:id]}"
               else
                 _a.missing person.public_name || '??', href: "#{ROSTER}/#{nominee[:id]}"
@@ -160,7 +168,7 @@ _html do
               href = MBOX + mail.date.strftime('%Y%m') + '.mbox/' +
               ERB::Util.url_encode('<' + mail.message_id + '>')
 
-              if nominations.any? {|nominee| mail[:asciiname] =~ nominee[:match]}
+              if nominations.any? {|nominee| mail[:asciiname] =~ nominee[:match] or mail[:id] == nominee[:id]}
                 _a.present mail.subject, href: href
               else
                 _a.missing mail.subject, href: href
