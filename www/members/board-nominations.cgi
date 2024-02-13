@@ -36,6 +36,7 @@ def setup_data
     yaml.each do |key, value|
       subject = value[:Subject]
       next unless subject
+      next if subject.include? 'What to expect'
       date = value[:Date]
       next unless date.include? year
       next unless /^\[?BOARD NOMI[MN]ATION\]? *(?<name>.*)/i =~ subject
