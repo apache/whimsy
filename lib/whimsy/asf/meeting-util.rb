@@ -23,6 +23,7 @@ module ASF
       'https://www.apache.org/foundation/governance/meetings' => 'How Voting Via Email Works',
       'agenda.txt' => 'Official Meeting Agenda',
       'board_ballot.txt' => 'Official Board Candidate Ballots',
+      'board_nominations.txt' => 'Board Nominations',
       'nominated-members.txt' => 'Official New Member Nominees/Seconds',
       PROXIES_FILENAME => 'Official List Of Meeting Proxies',
       'record' => 'Official List Of Voting Members',
