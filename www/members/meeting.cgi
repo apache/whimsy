@@ -10,6 +10,7 @@ require 'wunderbar/jquery/stupidtable'
 require 'whimsy/asf/meeting-util'
 DTFORMAT = '%A, %d %B %Y at %H:%M %z'
 TADFORMAT = '%Y%m%dT%H%M%S'
+WDAYFORMAT = '%A'
 ICS_FILE = 'ASF-members-meeting.ics' # see Meetings/meeting-template/
 ERROR_DATE = Time.new(1970, 1, 1) # An obvious error value 8-)
 
@@ -143,7 +144,7 @@ _html do
           _p do
             _ 'Currently, we will need '
             _span.text_primary attend_irc
-            _ " Members attending the first half of the meeting on Tuesday and respond to Roll Call to reach quorum and continue the meeting."
+            _ " Members to attend the meeting on #{ics_date.strftime(WDAYFORMAT)} and respond to Roll Call to reach quorum and continue the meeting."
             _ " Calculation: Total voting members: #{num_members}, with one third for quorum: #{quorum_need}, minus previously submitted proxies: #{num_proxies}"
           end
           _p do
