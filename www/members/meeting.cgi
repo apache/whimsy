@@ -153,7 +153,7 @@ _html do
               _strong 'If they all attend, then quorum will be achieved.'
             end
           end
-          _p 'Individual Members are considered to have Attended a meeting if they either: respond to Roll Call in the meetind; submit a proxy (this gets submitted during Roll Call); or who cast a ballot on any matters.'
+          _p 'Individual Members are considered to have Attended a meeting if they either: respond to Roll Call in the meeting; submit a proxy (this gets submitted during Roll Call); or who cast a ballot on any matters.'
           _ul do
             _li '2024 dates:'
             _li 'Nominations open: February 06'
