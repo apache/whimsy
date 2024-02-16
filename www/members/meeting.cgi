@@ -200,7 +200,9 @@ _html do
           _ 'Before the meeting, any Member may nominate people either for the Board, or as a New Member Candidate.  Much of this discussion happens on members@ mailing list.  Remember, all new nominated names must be checked into SVN 10 days before the meeting.'
           _ 'Also, you should submit a proxy if you might not attend the the meeting.'
           _ul do
-            ['board_nominations.txt', 'board_ballot.txt', 'nominated-members.txt', '/members/proxy.cgi'].each do |f|
+            ['board_nominations.txt', 'board_ballot.txt', '/members/board-nominate.cgi', '/members/board_nominations.cgi',
+              'nominated-members.txt', '/members/member_nominations.cgi', '/members/nominations.cgi',
+              '/members/proxy.cgi'].each do |f|
               _li do
                 emit_link(svn_mtg_dir, f, ASF::MeetingUtil::MEETING_FILES[f])
               end
