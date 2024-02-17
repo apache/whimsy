@@ -216,7 +216,7 @@ _html do
       _whimsy_panel("Timeline: Seconds Period (last ten days before meeting)", style: 'panel-default') do
         _p do
           _ 'The last 10 days before the meeting, you may add seconds (comments of support) to existing nomination files, but no new nominations are allowed.'
-          _ 'Also, you can still submit a proxy if you might not attend the the meeting.'
+          _ 'Also, you can still submit a proxy.'
           _ul do
             ['nominated-members.txt', '/members/proxy.cgi'].each do |f|
               _li do
