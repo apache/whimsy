@@ -1,3 +1,5 @@
+$LOAD_PATH.unshift '/srv/whimsy/lib' if __FILE__ == $PROGRAM_NAME
+
 require 'whimsy/asf/string-utils'
 
 require_relative 'config'
@@ -10,6 +12,8 @@ module ASF
 
     NOMINATED_MEMBERS = 'nominated-members.txt'
     NOMINATED_BOARD = 'board_nominations.txt'
+    # N.B. Board does not include email
+    VALID_KEYS = ['Nominated by','Nomination statement', 'Nominee email', 'Seconded by']
   
     # get the latest meeting directory or nomination file
     def self.latest_meeting(name=nil)
@@ -56,12 +60,15 @@ module ASF
         nominee = {}
         header = nil
         block
-            .slice_before(/^ +(\S+ \S+):\s*/) # split on the header names
+            .slice_before(/^ +(\w+ \w+):\s*/) # split on the header names
             .each_with_index do |para, idx|
           if idx == 0 # id and name (or just name for board)
             header = para.first.strip
           else
-            key, value = para.shift.strip.split(': ', 2)
+            key, value = para.shift.strip.split(':', 2)
+            unless VALID_KEYS.include? key
+              raise ArgumentError.new "Invalid key name '#{key}' at '#{header}' in #{nomfile}"
+            end
             if para.size == 0 # no more data to follow
               nominee[key] = value
             else
@@ -71,7 +78,17 @@ module ASF
             end
           end
         end
-        yield header, nominee unless header.nil? || header.empty?
+
+        unless header.nil? || header.empty?
+          keys = nominee.keys
+          case name
+          when NOMINATED_BOARD
+            raise ArgumentError.new "Expected 3 keys, found #{keys} at '#{header}' in #{name}" unless keys.size == 3
+          when NOMINATED_MEMBERS
+            raise ArgumentError.new "Expected 4 keys, found #{keys} at '#{header}' in #{name}" unless keys.size == 4
+          end
+          yield header, nominee 
+        end
       end
     end
 
