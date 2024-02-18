@@ -9,6 +9,11 @@ require 'whimsy/asf'
 require 'whimsy/asf/member-files'
 require 'whimsy/asf/meeting-util'
 require_relative '../../tools/parsemail'
+require 'whimsy/asf/time-utils'
+
+t_now = Time.now.to_i
+t_end = ASF::MeetingUtil.get_invite_times.first
+
 
 # link to members private-arch
 MBOX = 'https://mail-search.apache.org/members/private-arch/members/'
@@ -104,6 +109,13 @@ _html do
         _ 'Entries are highlighted if they are not present in both lists.'
       }
     ) do
+      if t_end > t_now
+        _h3 "Nominations close in #{ASFTime.secs2text(t_end - t_now)} at #{Time.at(t_end).utc}"
+        _p 'Please ensure all posted nominations are added to SVN before then.'
+      else
+        _h1 'Nominations are now closed!'
+        _p 'Nominations must no longer be added to the nominations file'
+      end
       cur_mtg_dir = File.basename(ASF::MeetingUtil.get_latest(MEETINGS))
       nominations, emails = setup_data
       _div.flexbox do
