@@ -112,11 +112,10 @@ def validate_sig(attachment, signature, msgid)
           if err.include? 'imported: 1' # downloaded key is valid; store it for posterity
             Dir.mktmpdir do |tmpdir|
               container = ASF::SVN.svnpath!('iclas', '__keys__')
-              ASF::SVN.svn!('checkout',[container, tmpdir],
-                            {depth: 'empty', user: $USER, password: $PASSWORD})
+              ASF::SVN.svn!('checkout',[container, tmpdir], {depth: 'empty', env: env})
               outfile = File.join(tmpdir, keyid)
               # Just in case we already have a copy
-              ASF::SVN.svn!('update', outfile, {user: $USER, password: $PASSWORD})
+              ASF::SVN.svn!('update', outfile, {env: env})
               present = File.exist? outfile
               FileUtils.cp(tmpfile, outfile) # add the latest copy
               if present # must have been dropped from the pubkey database (or was maybe backfilled)
@@ -126,7 +125,7 @@ def validate_sig(attachment, signature, msgid)
               else # we have a new key
                 ASF::SVN.svn!('add', outfile, {verbose: true})
               end
-              ASF::SVN.svn!('commit', outfile, {msg: "Adding key for msgid: #{msgid}", user: $USER, password: $PASSWORD})
+              ASF::SVN.svn!('commit', outfile, {msg: "Adding key for msgid: #{msgid}", env: env})
             end
           else
             Wunderbar.warn "Failed to import #{keyid}"
