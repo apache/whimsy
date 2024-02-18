@@ -10,8 +10,11 @@ require 'whimsy/asf/forms'
 require 'whimsy/asf/member-files'
 require 'whimsy/asf/wunderbar_updates'
 require 'whimsy/asf/meeting-util'
+require 'whimsy/asf/time-utils'
 
-nomclosed = Time.now.to_i > ASF::MeetingUtil.get_invite_times.first
+t_now = Time.now.to_i
+t_end = ASF::MeetingUtil.get_invite_times.first
+nomclosed = t_now > t_end
 
 def emit_form(title, prev_data)
   _whimsy_panel(title, style: 'panel-success') do
@@ -99,7 +102,9 @@ _html do
     ) do
 
       if nomclosed
-        _h1 'Nominations are now closed!' 
+        _h1 'Nominations are now closed!'
+      else
+        _h3 "Nominations close in #{ASFTime.secs2text(t_end - t_now)} at #{Time.at(t_end).utc}"
       end
 
       _div id: 'nomination-form' do
