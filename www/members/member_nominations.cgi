@@ -27,7 +27,7 @@ def emit_form(title, prev_data)
         label: 'Seconded by', name: 'secby', helptext: 'Optional comma-separated list of seconds'
       )
       field = 'statement'
-      _whimsy_forms_input(label: 'Nomination statement', name: field, rows: 10,
+      _whimsy_forms_input(label: 'Nomination Statement', name: field, rows: 10,
         value: prev_data[field], helptext: 'Reason for nomination'
       )
       _whimsy_forms_submit

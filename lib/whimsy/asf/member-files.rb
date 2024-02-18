@@ -13,7 +13,7 @@ module ASF
     NOMINATED_MEMBERS = 'nominated-members.txt'
     NOMINATED_BOARD = 'board_nominations.txt'
     # N.B. Board does not include email
-    VALID_KEYS = ['Nominated by','Nomination statement', 'Nominee email', 'Seconded by']
+    VALID_KEYS = ['Nominated by','Nomination Statement', 'Nominee email', 'Seconded by']
   
     # get the latest meeting directory or nomination file
     def self.latest_meeting(name=nil)
@@ -109,7 +109,7 @@ module ASF
         "   Nominated by: #{nomby}@apache.org",
         "   Seconded by: #{secby}",
         '',
-        '   Nomination statement:',
+        '   Nomination Statement:',
         ASFString.reflow(statement, 4, 80),
         ''
       ].compact.join("\n") + "\n"
@@ -130,7 +130,7 @@ module ASF
         "   Nominated by: #{nomby}@apache.org",
         "   Seconded by: #{secby}",
         '',
-        '   Nomination statement:',
+        '   Nomination Statement:',
         ASFString.reflow(statement, 4, 80),
         ''
       ].compact.join("\n") + "\n"
