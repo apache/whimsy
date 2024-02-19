@@ -356,7 +356,7 @@ end
 task :rdoc => 'www/docs/api/index.html'
 file 'www/docs/api/index.html' => Rake::FileList['lib/whimsy/**/*.rb'] do
   # remove old files first
-  FileUtils.remove_dir(File.join(File.dirname(__FILE__),'www/docs/api'))
+  FileUtils.remove_dir(File.join(File.dirname(__FILE__),'www/docs/api'), true) # ignore error if missing
   system!('rdoc', 'lib/whimsy', '--output', 'www/docs/api', '--force-output',
     '--title', 'whimsy/asf lib', {chdir: File.dirname(__FILE__)})
 end
