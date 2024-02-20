@@ -48,6 +48,7 @@ module ASF
       # Find most recent file:
       nomfile = latest_meeting(name)
 
+      lastheader = nil # what was the last valid header
       # It does not appear to be possible to have file open or read
       # automatically transcode strings, so we do it here.
       # This is necessary to avoid issues with matching Regexes.
@@ -64,6 +65,8 @@ module ASF
             .each_with_index do |para, idx|
           if idx == 0 # id and name (or just name for board)
             header = para.first.strip
+            raise ArgumentError.new "Unexpected start to entry after #{lastheader}: #{para}" unless header.size > 3
+            lastheader = header
           else
             key, value = para.shift.strip.split(':', 2)
             unless VALID_KEYS.include? key
