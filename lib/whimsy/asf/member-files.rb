@@ -57,7 +57,8 @@ module ASF
         .slice_before(/^\s*---+--\s*/)
         .drop(2) # instructions and sample block
         .each do |block|
-        block.shift(2) # divider and blank line
+        block.shift(1) # divider
+        block.shift(1) if block[0]&.strip == '' # Allow for missing blank line (last block is empty)
         nominee = {}
         header = nil
         block
