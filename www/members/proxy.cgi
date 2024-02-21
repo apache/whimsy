@@ -26,7 +26,7 @@ def emit_instructions(today, cur_mtg_dir, meeting)
     This form allows you to assign a proxy for the upcoming
     Member's Meeting on #{meeting_display}. If there is any chance you might not be able
     to attend the first part of the Member's Meeting on Tuesday in IRC, then
-    please assign a proxy, because that helps the meeting reach
+    please assign an attendance proxy, because that helps the meeting reach
     quorum more quickly - the meeting can't formally continue without quorum at the start.
     You can still attend the meeting if you want, and you can revoke a
     proxy at any time.
@@ -106,6 +106,15 @@ def emit_form(cur_mtg_dir, meeting, volunteers, disabled)
         _form method: 'POST' do
           _div.form_group do
             _label 'Select proxy'
+            _b do
+              _p %{
+                WARNING: If you select someone other than the Chair or Secretary (*), please note
+                that your proxy will not be counted if the person is unable to attend.              }
+            end
+            _p %{
+              (* The meeting will be postponed if the Chair and/or Secretary cannot attend)
+            }
+            
 
             # Fetch LDAP
             ldap_members = ASF.members
@@ -139,7 +148,7 @@ def emit_form(cur_mtg_dir, meeting, volunteers, disabled)
               _ "IMPORTANT! Be sure to tell the person that you select as proxy above that you've assigned them to mark your attendance! They simply need to mark your proxy attendance when the meeting starts."
               _a 'Read full procedures for Member Meeting', href: 'https://www.apache.org/foundation/governance/members.html#meetings'
             end
-            _p 'Note that you cannot select a member who has provided a proxy'
+            _p 'Note that you cannot select a member who has nominated a proxy'
             _div.button_group.text_center do
               _button.btn.btn_primary 'Submit'
             end
