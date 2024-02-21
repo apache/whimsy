@@ -12,9 +12,31 @@ module ASF
 
     NOMINATED_MEMBERS = 'nominated-members.txt'
     NOMINATED_BOARD = 'board_nominations.txt'
-    # N.B. Board does not include email
-    VALID_KEYS = ['Nominated by','Nomination Statement', 'Nominee email', 'Seconded by']
-  
+    NAME2OUTPUTKEY = { # names (from Regex) and corresponding output keys
+      'email' => 'Nominee email',
+      'nomby' => 'Nominated by',
+      'seconds' => 'Seconded by',
+      'statement' => 'Nomination Statement',
+    }
+
+    # Same as MEMBER_REGEX, but no <uid> and no <email>
+    BOARD_REGEX = %r{
+        \A(?<header>(?<name>[^:]+?):?)\r?\n
+        \s*Nominated\ by:\s*(?<nomby>.*)\r?\n
+        \s*Seconded\ by:\s*(?<seconds>.*?)\r?\n+
+        \s*Nomination\ [sS]tatement:\s*?\r?\n+(?<statement>.*)\z
+        }mx
+
+    # This Regex is very similar to the one in the script used to create ballots:
+    # https://svn.apache.org/repos/private/foundation/Meetings/steve-tools/seed-issues.py
+    MEMBER_REGEX = %r{
+      \A(?<header>(?:(?<uid>[-_.a-z0-9]+)\s+)?(?<name>[^:]+?):?)\r?\n
+      \s*Nominee\ email:\s*(?<email>.*)\r?\n
+      \s*Nominated\ by:\s*(?<nomby>.*)\r?\n
+      \s*Seconded\ by:\s*(?<seconds>.*?)\r?\n+
+      \s*Nomination\ [sS]tatement:\s*?\r?\n+(?<statement>.*)\z
+      }mx
+
     # get the latest meeting directory or nomination file
     def self.latest_meeting(name=nil)
       if name.nil? # we want the parent directory
@@ -35,11 +57,19 @@ module ASF
     # Seconded by => array of seconders
     # Nomination Statement => array of text lines
     def self.parse_file(name)
+      case name
+      when NOMINATED_BOARD
+        regex = BOARD_REGEX
+      when NOMINATED_MEMBERS
+        regex = MEMBER_REGEX
+      else
+        raise ArgumentError.new "Unexpected name: #{name}"
+      end
       # N.B. The format has changed over the years. This is the syntax as of 2021.
       # -----------------------------------------
       # <empty line>
       #  header line
-      #    Nominee email:
+      #    Nominee email: (not present in board file)
       #    Nominated by:
       #    Seconded by:
 
@@ -54,45 +84,32 @@ module ASF
       # This is necessary to avoid issues with matching Regexes.
       File.open(nomfile, mode: 'rb:UTF-8')
         .map(&:scrub)
-        .slice_before(/^\s*---+--\s*/)
+        .slice_before(/^\s*-{35,60}\s*/)
         .drop(2) # instructions and sample block
         .each do |block|
         block.shift(1) # divider
-        block.shift(1) if block[0]&.strip == '' # Allow for missing blank line (last block is empty)
         nominee = {}
         header = nil
-        block
-            .slice_before(/^ +(\w+ \w+):\s*/) # split on the header names
-            .each_with_index do |para, idx|
-          if idx == 0 # id and name (or just name for board)
-            header = para.first.strip
-            raise ArgumentError.new "Unexpected start to entry after #{lastheader}: #{para}" unless header.size > 3
-            lastheader = header
+        data = block.join.strip
+        next if data == ''
+        md = regex.match(data)
+        raise  ArgumentError.new "Cannot parse #{data}" unless md
+        md.named_captures.each do |k, v|
+          case k
+          when 'header'
+            header = v
+          when 'header'
+            header = v
+          when 'uid', 'name'
+            # not currently used
           else
-            key, value = para.shift.strip.split(':', 2)
-            unless VALID_KEYS.include? key
-              raise ArgumentError.new "Invalid key name '#{key}' at '#{header}' in #{nomfile}"
-            end
-            if para.size == 0 # no more data to follow
-              nominee[key] = value
-            else
-              tmp = [value, para.map(&:chomp)].flatten.compact
-              tmp.pop if tmp[-1].empty? # drop trailing empty line only
-              nominee[key] = tmp
-            end
+            outkey = NAME2OUTPUTKEY[k]
+            raise ArgumentError.new "Unexpected regex capture name: #{k}" if outkey.nil?
+            v = v.split("\n") if k == 'statement' or k == 'seconds'
+            nominee[outkey] = v
           end
         end
-
-        unless header.nil? || header.empty?
-          keys = nominee.keys
-          case name
-          when NOMINATED_BOARD
-            raise ArgumentError.new "Expected 3 keys, found #{keys} at '#{header}' in #{name}" unless keys.size == 3
-          when NOMINATED_MEMBERS
-            raise ArgumentError.new "Expected 4 keys, found #{keys} at '#{header}' in #{name}" unless keys.size == 4
-          end
-          yield header, nominee 
-        end
+        yield header, nominee
       end
     end
 
