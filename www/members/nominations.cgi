@@ -83,6 +83,7 @@ def create_match(nominee)
   names << pname.delete('.')
   names << pname.sub(%r{ [A-Z] }, ' ') # drop initial
   names << pname.sub(/\bChristo(ph|f)er\b/, 'Chris') # Special
+  names << 'Lukasz Dywick' if pname == 'Lukasz Dywicki' # special
   personname = ASF::Person.find(nominee[:id]).public_name
   names << ASF::Person.asciize(personname, nil) if personname
   list = names.uniq.map {|name| Regexp.escape(name)}.join('|')
