@@ -98,7 +98,7 @@ Details for each type of deployed tool or script:
    [Phusion Passenger](https://www.phusionpassenger.com/) under Apache httpd.
    Again, `Gemfile`s are used to specify dependencies.  In addition to simply
    checking the application, one line per passenger application needs to be
-   added to the puppet file under 'passenger:` as seen in [DEPLOYMENT.md](./DEPLOYMENT.md#puppetnode).
+   added to the puppet file under `passenger:` as seen in [DEPLOYMENT.md](./DEPLOYMENT.md#puppetnode).
 
    A sample rack application (two empty directories, and a one line file):
 
