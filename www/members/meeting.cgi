@@ -142,9 +142,9 @@ _html do
             _ 'Nominations for the board or new members close 10 days before the meeting starts; no new names may be added after that date.'
           end
           _p do
-            _ 'Currently, we will need '
+            _ 'Currently, we need '
             _span.text_primary attend_irc
-            _ " Members to attend the meeting on #{ics_date.strftime(WDAYFORMAT)} and respond to Roll Call to reach quorum and continue the meeting."
+            _ " Members who have NOT submitted a proxy, to attend the meeting on #{ics_date.strftime(WDAYFORMAT)} and respond to Roll Call to reach quorum and continue the meeting, so that between Members actually attending, and Members who have assigned a proxy are counted as attending."
             _ " Calculation: Total voting members: #{num_members}, with one third for quorum: #{quorum_need}, minus previously submitted proxies: #{num_proxies}"
           end
           _p do
