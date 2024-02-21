@@ -39,7 +39,7 @@ module ASF
       # @mentors = yaml['mentors']
       yaml['cultures'].each do |proj|
         prj = new(proj)
-        if yaml['projects'].include? proj 
+        if yaml['projects'].include? proj
           prj.error = 'Listed as a current project' unless prj.status == 'current'
         else
           prj.error = 'Not listed as a current project' if prj.status == 'current'

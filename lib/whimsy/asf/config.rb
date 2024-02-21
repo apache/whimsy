@@ -139,7 +139,7 @@ module ASF
     end
 
     #  Get an executable path override
-    # e.g. 
+    # e.g.
     # :exepaths:
     #   gpg: /usr/local/bin/gpg3
     # returns its input if no override is found

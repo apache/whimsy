@@ -31,7 +31,7 @@ def Monitor.public_json(previous_status)
   status = {}
 
   sendMail = Status.active?
- 
+
   Dir[logs].each do |log|
     name = File.basename(log).sub('public-', '').to_sym
 

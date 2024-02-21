@@ -45,7 +45,7 @@ end
 # TODO should we show them all?
 def save_events(data, value)
   prev = data[:events]
-  if prev and prev != value 
+  if prev and prev != value
     puts "Events: already have '#{prev}', not storing '#{value}'"
   else
     data[:events] = value

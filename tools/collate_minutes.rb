@@ -740,7 +740,7 @@ seen={}
       puts ''
     end
   end
-  
+
   # Add to the running tally
   pending.each_value do |report|
     next if not report.title or report.title.empty?
