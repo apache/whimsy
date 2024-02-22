@@ -31,9 +31,11 @@ def emit_orgchart(org: {})
   ) do
     _table.table.table_striped do
       _thead do
-        _th 'Title / Role'
-        _th 'Contact, Chair, or Person holding that title'
-        _th 'Website'
+        _tr_ do
+          _th 'Title / Role'
+          _th 'Contact, Chair, or Person holding that title'
+          _th 'Website'
+        end
       end
       _tbody do
         org.sort_by {|key, value| value['info']['role']}.each do |key, value|
