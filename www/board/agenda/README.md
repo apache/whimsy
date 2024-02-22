@@ -240,7 +240,7 @@ Viewing Source (this time, Actual Code)
    [views/app.js.rb](views/app.js.rb) lists all of the files that make up the
    client side of the application.
 
- * This brings us back to to the `app.js` script mentioned much earlier.
+ * This brings us back to the `app.js` script mentioned much earlier.
    If you visit [http://localhost:9292/app.js](http://localhost:9292/app.js)
    you will see the full script.  Every bit of this JavaScript was generated
    from the js.rb files mentioned above.  Undoubtedly you have seen small
@@ -351,7 +351,7 @@ in your home directory.  The file format is YAML, and here is mine:
 
 
 Adapt as necessary.  You don't need to have all those entries in the `svn`
-value to run the board agenda tool.  The `lib` value is is an array of
+value to run the board agenda tool.  The `lib` value is an array of
 libraries that are to be used instead of gems you may have installed.  This is
 useful if you are making changes to the agenda parsing logic, ruby2js or
 wunderbar.  You can remove this too.  If you drop the `ldap` entry, one will
