@@ -56,7 +56,7 @@ loop do
   s.scan(/\| (\S+) \|.*?$/)
   id = s[1]
   unless current.include? id
-    puts "#{id}: #{status[id] || 'unknown status'}" 
+    puts "#{id}: #{status[id] || 'unknown status'}"
     puts "Previous id: #{prev}" unless id
   end
   prev = id

@@ -68,11 +68,11 @@ module Status
       end
     end
   end
-  
+
   def self.activeIP # intended for CLI testing
     Resolv::DNS.open.getaddress(ACTIVE_HOSTNAME)
   end
-  
+
 end
 
 # for debugging purposes

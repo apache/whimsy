@@ -10,7 +10,7 @@ Encoding.default_internal = Encoding::UTF_8
 if __FILE__ == $0
   CIN = ARGV.shift || '/srv/svn/board/committee-info.txt'
   OUT = ARGV.shift || '/srv/svn/board/committee-info.tmp'
-  
+
   File.open(OUT, 'w') do |out|
     File.open(CIN, 'r').slice_before{|l| l.start_with? '* '}.each do |lines|
       head = lines.shift

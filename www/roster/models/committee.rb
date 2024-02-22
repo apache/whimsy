@@ -80,7 +80,7 @@ class Committee
         # TODO should it be canonicalised as well above?
         roster[key]['notSubbed'] = true if (allMail & pSubs.map{|m| ASF::Mail.to_canonical(m)}).empty?
       end
-      if analysePrivateSubs 
+      if analysePrivateSubs
         unMatchedSubs.delete_if {|k| allMail.include? ASF::Mail.to_canonical(k.downcase)}
         unMatchedSecSubs.delete_if {|k| allMail.include? ASF::Mail.to_canonical(k.downcase)}
       end

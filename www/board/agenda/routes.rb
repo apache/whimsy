@@ -549,7 +549,7 @@ get '/new' do
     Wunderbar.warn "#{e}, could not access previous actions, continuing"
     actions = nil
   end
-  
+
   # Get directors, list of pmcs due to report, and shepherds
   @directors = ASF::Board.directors
   @pmcs = ASF::Board.reporting(@meeting)
@@ -605,7 +605,7 @@ post %r{/(\d\d\d\d-\d\d-\d\d)/} do |date|
     ASF::SVN.svn!('update', currentpath, {env: env})
 
     if File.symlink? currentpath # Does the symlink exist?
-      File.unlink currentpath 
+      File.unlink currentpath
       File.symlink agenda, currentpath
     else
       Wunderbar.warn "current.txt link does not exist, creating it"
