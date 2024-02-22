@@ -233,7 +233,7 @@ Configure whimsy.local, Complete Apache configuration, Make whimsy.local an
 alias for your machine, and Optional: forward whimsy.local traffic to port 8080
 steps.
 
-Running Whimsy tools locally depends on httpd.  Apple provides a copy of httpd that that you can configure and start.
+Running Whimsy tools locally depends on httpd.  Apple provides a copy of httpd that you can configure and start.
 
 Install:
 
@@ -338,7 +338,7 @@ $ brew info passenger
 
 For the second step (`brew info passenger`), you will need to
 follow the instructions -- which essentially is to copy a few lines to
-to a specified location, typically `/etc/apache2/other/passenger.conf`.
+a specified location, typically `/etc/apache2/other/passenger.conf`.
 
 If your ruby is installed in `/usr/local/bin`, change the last line to
 
