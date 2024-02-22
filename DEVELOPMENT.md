@@ -333,7 +333,7 @@ different set of gem versions from the local directory.
 ### How To: Authenticate/Authorize Your Scripts
 
 User authentication for any CGI script is provided by the http server's
-LDAP module, and can be done by by adding the path to the CGI in the
+LDAP module, and can be done by adding the path to the CGI in the
 deployment descriptor for the server under the appropriate `authldap` realm:
 
 https://github.com/apache/infrastructure-puppet/blob/deployment/data/nodes/whimsy-vm4.apache.org.yaml#L127
