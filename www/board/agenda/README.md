@@ -202,7 +202,7 @@ Viewing Source (this time, Actual Code)
    a stack traceback indicating where the problem is.  Undo this change,
    and then lets continue exploring.
 
- * The [views/forms/add-comment.js.rb](views/forms/add-comment.js.rb) file is
+ * The [views/buttons/add-comment.js.rb](views/buttons/add-comment.js.rb) file is
    probably a more typical example of a component.  The render function is
    more straightforward.  Not mentioned before, but element names followed by
    a dot followed by a name is a shorthand for specifying HTML class
@@ -316,7 +316,7 @@ Now onto the tests:
     that the back button actually works (verifying the browser `history`
     API calls were made correctly).
 
-  * Finally, [actions_spec.rb](actions_spec.rb) verifies the server side logic
+  * Finally, [spec/actions_spec.rb](spec/actions_spec.rb) verifies the server side logic
     executed in response to posting a comment.
 
 Despite the diversity, the above tests have a lot of commonality and build
@@ -384,7 +384,7 @@ Congratulations for making it this far.  To recap:
    you needing to expend much effort to make it so.
 
 This code clearly isn't complete.  What I'm looking for is people who are
-wlling to experiment and contribute.  Are you in?
+willing to experiment and contribute.  Are you in?
 
 Sketching out some ideas: adding a new page to the navigation dropdown
 would involve:
@@ -396,20 +396,20 @@ would involve:
   * Adding a Vue component for the page to `views/pages`
   * Adding any new files to [views/app.js.rb](views/app.js.rb)
   * Adding a specification to
-    [specs/other_views_specs.rb](specs/other_views_specs.rb)
+    [spec/other_views_spec.rb](spec/other_views_spec.rb)
 
 Adding a new modal dialog would involve:
 
-  * Adding a entry to the buttons list in
-    [views/models/agenda.rb](views/models/agenda.rb)
+  * Adding an entry to the buttons list in
+    [views/models/agenda.js.rb](views/models/agenda.js.rb)
   * Adding a Vue component for the form to `views/forms`
   * Adding a server side action to `views/actions`.  A number of [actions
     from the current agenda
     tool](https://github.com/apache/whimsy/tree/master/lib/whimsy/asf/agenda)
     should be usable as is.
   * Adding any new files to [views/app.js.rb](views/app.js.rb)
-  * Adding specifications to [specs/forms_specs.rb](specs/forms_specs.rb) and
-    [specs/actions_specs.rb](specs/actions_specs.rb).
+  * Adding specifications to [spec/forms_spec.rb](spec/forms_spec.rb) and
+    [spec/actions_spec.rb](spec/actions_spec.rb).
 
 
 Gotchas
