@@ -51,7 +51,7 @@ RUN apt-get autoremove -y && \
 
 # Whimsy Agenda
 RUN gem install bundler
-ADD Gemfile /home/agenda/ 
+ADD Gemfile /home/agenda/
 WORKDIR /home/agenda
 RUN bundle install
 RUN ruby -r whimsy/asf -e "ASF::LDAP.configure"

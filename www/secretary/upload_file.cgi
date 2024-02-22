@@ -14,7 +14,7 @@ _html do
     helpblock: -> {
       _p do
         _ 'Upload a new file to SVN using your credentials'
-        _br 
+        _br
         _ 'The file will have the same name in SVN, so rename it locally first if necessary'
       end
     }

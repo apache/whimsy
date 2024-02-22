@@ -12,7 +12,7 @@
     For simplicity, we add the banner to the start of the page.
 
     This is not really valid HTML, but seems to work in most cases, and avoids having to find a better
-    place to insert it. 
+    place to insert it.
 
 ]]--
 

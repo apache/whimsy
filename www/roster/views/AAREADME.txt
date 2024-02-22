@@ -1,4 +1,4 @@
-The contents of the views directory *except* for the 
+The contents of the views directory *except* for the
 'actions' subdirectory are run on the client.
 
 To factor out code from actions, it needs to be placed

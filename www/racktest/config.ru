@@ -15,7 +15,7 @@ run lambda {|env|
       gem_version: Gem::VERSION,
       env: env
     }
-  
+
     [ 200, {'Content-Type' => 'text/plain'}, [JSON.pretty_generate(data)] ]
   rescue => e
     [ 500, {'Content-Type' => 'text/plain'}, [e.to_s] ]
