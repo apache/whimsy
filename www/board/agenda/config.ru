@@ -4,7 +4,7 @@ require File.expand_path('../main.rb', __FILE__)
 
 use ASF::Auth::MembersAndOfficers do |env|
   # allow access to bootstrap related content
-  if 
+  if
     env['PATH_INFO'] =~ %r{^/(app|sw)\.js(\.map)?$} or
     env['PATH_INFO'] =~ %r{\.js\.rb?$} or
     env['PATH_INFO'] =~ %r{^/stylesheets/.*\.css\$} or

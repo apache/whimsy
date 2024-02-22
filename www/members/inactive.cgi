@@ -98,7 +98,7 @@ _html do
             Unfortunately this was only discovered after an email was sent to members.
             Apologies to those of you who received an email in error.
           }
-  
+
         end
       }
     ) do
@@ -178,8 +178,8 @@ _html do
           _p_ %{
             If you haven't attended or voted in meetings recently, please consider participating, at
             least by proxy, in the upcoming membership meeting.  Assigning a proxy does NOT prevent
-            you from attending meetings.  Normally, your proxy will just be at the meeting to 
-            mark your attendance.  You will still get any vote emails yourself.  Remember that 
+            you from attending meetings.  Normally, your proxy will just be at the meeting to
+            mark your attendance.  You will still get any vote emails yourself.  Remember that
             voting at a meeting also counts for attendance.
           }
         end

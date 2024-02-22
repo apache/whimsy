@@ -1,4 +1,4 @@
-# Template file for .bash_aliases 
+# Template file for .bash_aliases
 # Needs to be present in the parent directory of the workspace
 
 # Note: logs can be stored on the host; create the directory apache2_logs

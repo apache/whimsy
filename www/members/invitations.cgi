@@ -16,7 +16,7 @@ def setup_data
   # which entries are shown as uninvited; get availid and name
   notinvited = {}
   notapplied = []
-  ASF::MeetingUtil.parse_memapp(memappfile).filter_map do |a| 
+  ASF::MeetingUtil.parse_memapp(memappfile).filter_map do |a|
     if a.first == 'no'
       notinvited[a[-2]] = {name: a[-1]}
     elsif a[1..-3].any? {|e| e == 'no'} # any no after first?
@@ -27,7 +27,7 @@ def setup_data
   # find relevant email files (exclude ones before the meeting)
   yyyymm = File.basename(File.dirname(memappfile))[0..5]
   yamls = Dir[File.join(MAIL_DIR, '2?????.yaml')].select {|n| File.basename(n, 'yaml') >= yyyymm }
-  
+
   # now find invitations and replies
   invites = {emails: {}, names: {}}
   replies = {emails: {}, names: {}}
@@ -114,7 +114,7 @@ _html do
           _th 'reply seen?'
           _th 'nominator(s)'
         end
-    
+
         notinvited.each do |id, v|
           _tr_ do
             _td id

@@ -130,7 +130,7 @@ _html do
                 _ mu
                 _ type(mu)
               end
-              count = mod_counts[lad] 
+              count = mod_counts[lad]
               if !flags.include?('s') and %w{subonly open}.include? type(mu)
                 # ensure unmoderated lists are not penalised for having few moderators
                 _td data_sort_value: count+100 do
@@ -139,7 +139,7 @@ _html do
               else
                 if count.to_i < 3
                   _td class: 'bg-danger' do
-                    _ count 
+                    _ count
                   end
                 else
                   _td count
