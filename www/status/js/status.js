@@ -1,5 +1,5 @@
 $(function() {
-        
+
   // convert status into .list-group-item and .list-group elements, and
   // insert into the container.  Use prefix when generating ids.
   function listGroup(status, prefix, container) {
@@ -51,7 +51,7 @@ $(function() {
       if (value.href) {
         div.children('a:not(.data-toggle)').attr('href', value.href);
       }
- 
+
       // provide ISO-8601 formatted GMT time as a tooltip
       if (value.mtime && !value.title) {
         div.children('a:not(.data-toggle)').attr('title', value.mtime);

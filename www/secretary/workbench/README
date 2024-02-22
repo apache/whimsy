@@ -103,9 +103,9 @@ Design Notes:
   and will reload that month.
   This may add items to the display which were not there before, however this should be very
   rare.
-  
+
   As noted above, deleted entries are returned by server updates. Although the Secretary receives
   a lot of mail, most of it does not look like the ICLA or CLA submissions for which the app is
   designed, and such mails are never seen by the app. This reduces the amount of data that needs
   to be returned.
-  [If necessary, deleted entries could be sent as a separate list of hrefs to reduce the traffic] 
+  [If necessary, deleted entries could be sent as a separate list of hrefs to reduce the traffic]
