@@ -97,9 +97,7 @@ module ASF
         md.named_captures.each do |k, v|
           case k
           when 'header'
-            header = v
-          when 'header'
-            header = v
+            header = v.strip
           when 'uid', 'name'
             # not currently used
           else
