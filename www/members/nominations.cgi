@@ -119,6 +119,9 @@ _html do
         _ 'This probably only works in the period shortly before or after a Members meeting!'
         _br
         _ 'Entries are highlighted if they are not present in both lists.'
+        _br
+        _br
+        _b 'N.B. only entries present in the SVN file will be considered for the ballot.'
       }
     ) do
       if t_end > t_now
