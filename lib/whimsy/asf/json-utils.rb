@@ -61,9 +61,12 @@ module ASFJSON
 end
 
 if __FILE__ == $0
+  require 'stringio'
   old_file = ARGV.shift or raise ArgumentError.new "Old file!"
   new_file = ARGV.shift or raise ArgumentError.new "New file!"
   old_json = JSON.parse(File.read(old_file))
   new_json = JSON.parse(File.read(new_file))
-  ASFJSON.compare_json(old_json, new_json)
+  out = StringIO.new
+  ASFJSON.compare_json(old_json, new_json, out=out)
+  puts out.string
 end
