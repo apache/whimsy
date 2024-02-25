@@ -65,6 +65,11 @@ _html do
         _li 'live.com'
         _li 'outlook.com'
       end
+      _h2 'GMail'
+      _p %{
+        Some email headers (e.g. Reply-To) are supposed to appear at most once.
+        GMail have started rejecting emails that have duplicate entries for such headers.
+      }
       _h2 'Other domains'
       _p %{
         TBA
