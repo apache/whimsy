@@ -47,7 +47,7 @@ module ASFJSON
         out.puts [bcj, key, v1, '=>', v2].inspect
       when 'Array'
         v1, v2 = args
-        out.puts  [bcj, 'Dropped', v1-v2, 'Added', v2-v1].inspect
+        out.puts  [bcj, key, 'Dropped', v1-v2, 'Added', v2-v1].inspect
       when 'Dropped'
         out.puts  [bcj, 'Dropped', key, args].inspect
       when 'Added'
