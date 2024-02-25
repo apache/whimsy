@@ -10,6 +10,8 @@
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'whimsy/asf'
 require 'json'
+require 'stringio'
+require 'whimsy/asf/json-utils'
 
 require 'open3'
 require 'wunderbar'
@@ -123,6 +125,15 @@ def write_output(file, results)
 
     if File.exist?(file)
       @changed = ChangeStatus::CHANGED
+      # Note: we reparse results rather than trying to use the original json
+      # to esure consistency with the file settings re: symbols etc
+      begin
+        jsonout = StringIO.new
+        ASFJSON.compare_json(JSON.parse(@old_file), JSON.parse(results),jsonout)
+        sendMail("Difference(s) in JSON #{file} (ALPHA)", jsonout.string)
+      rescue StandardError => e
+        Wunderbar.warn "Failed trying to compare JSON: #{e}"
+      end
     else
       @changed = ChangeStatus::NEW
     end
