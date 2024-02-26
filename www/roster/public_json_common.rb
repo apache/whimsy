@@ -130,7 +130,7 @@ def write_output(file, results)
       begin
         jsonout = StringIO.new
         ASFJSON.compare_json(JSON.parse(@old_file), JSON.parse(results),jsonout)
-        sendMail("Difference(s) in JSON #{file} (ALPHA)", jsonout.string)
+        sendMail("JSON changes in #{file}", jsonout.string)
       rescue StandardError => e
         Wunderbar.warn "Failed trying to compare JSON: #{e}"
       end
