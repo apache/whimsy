@@ -74,10 +74,10 @@ module SiteStandards
     'thanks' => { # link_check a_text =~ /\A(sponsors|thanks!?|thanks to our sponsors)\z/
         CHECK_TEXT => /\A(sponsors|thanks!?|thanks to our sponsors)\z/,
         CHECK_CAPTURE => /\A(sponsors|thanks!?|thanks to our sponsors)\z/,
-        CHECK_VALIDATE => %r{^https?://.*apache.org/foundation/thanks},
+        CHECK_VALIDATE => %r{^https?://.*apache.org/foundation/(thanks|sponsors)},
         CHECK_TYPE => true,
         CHECK_POLICY => 'https://www.apache.org/foundation/marks/pmcs#navigation',
-        CHECK_DOC => '"Sponsors", "Thanks" or "Thanks to our Sponsors" should link to: http://www.apache.org/foundation/thanks.html',
+        CHECK_DOC => '"Sponsors", "Thanks" or "Thanks to our Sponsors" should link to: http://www.apache.org/foundation/thanks.html or sponsors.html',
     },
     'security' => { # link_check a_text == 'security'
       CHECK_TEXT => /security/,
