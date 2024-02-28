@@ -106,10 +106,10 @@ if $0 == __FILE__
   $misses = 0 # items not matched
 
   options = {}
-  options[:debug] = ARGV.delete('--debug')
-  # Cannot use shift as ARGV is needed for a relaunch
-  pubsub_URL = ARGV[0]  || PUBSUB_URL
-  pubsub_FILE = ARGV[1] || File.join(Dir.home, '.pubsub')
+  args = ARGV.dup # preserve ARGV for relaunch
+  options[:debug] = args.delete('--debug')
+  pubsub_URL = args[0]  || PUBSUB_URL
+  pubsub_FILE = args[1] || File.join(Dir.home, '.pubsub')
   pubsub_CRED = File.read(pubsub_FILE).chomp.split(':') rescue nil
 
   WATCH = Hash.new{|h, k| h[k] = Array.new}
