@@ -118,7 +118,7 @@ module ASF
           @committee_mtime = @@svn_change = Time.now
         end
 
-        parse_committee_info contents
+        @nonpmcs, @officers, @committee_info = parse_committee_info_nocache(contents)
       else
         board = ASF::SVN.find('board')
         return unless board
@@ -132,8 +132,9 @@ module ASF
         @committee_mtime = File.mtime(file)
         @@svn_change = Time.parse(ASF::SVN.getInfoItem(file, 'last-changed-date')).gmtime
 
-        parse_committee_info File.read(file)
+        @nonpmcs, @officers, @committee_info = parse_committee_info_nocache(File.read(file))
       end
+      @committee_info
     end
 
     # update next month section.  Remove entries that have reported or
@@ -454,10 +455,12 @@ module ASF
     end
 
     # extract chairs, list of nonpmcs, roster, start date, and reporting
-    # information from <tt>committee-info.txt</tt>.  Note: this method is
-    # intended to be internal, use ASF::Committee.load_committee_info as it
-    # will cache this data.
-    def self.parse_committee_info(contents)
+    # information from <tt>committee-info.txt</tt>.
+    # @return nonpmcs, officers, committees (including nonpmcs)
+    # This can safely be called with any input as it is idempotent
+    # For general use, use ASF::Committee.load_committee_info
+    # which caches the data
+    def self.parse_committee_info_nocache(contents)
       # List uses full (display) names as keys, but the entries use the canonical names
       # - the local version of find() converts the name
       # - and stores the original as the display name if it has some upper case
@@ -491,13 +494,13 @@ module ASF
       end
       # Extract the non-PMC committees (e-mail address may be absent)
       # first drop leading text (and Officers) so we only match non-PMCs
-      @nonpmcs = head.sub(/.*?also has /m, '').sub(/ Officers:.*/m, '').
+      nonpmcs = head.sub(/.*?also has /m, '').sub(/ Officers:.*/m, '').
         scan(/^[ \t]+(\w.*?)(?:[ \t][ \t]|[ \t]?$)/).flatten.uniq.
         map {|name| list[name]}
 
       # Extract officers
       # first drop leading text so we only match officers at end of section
-      @officers = head.sub(/.*?also has .*? Officers/m, '').
+      officers = head.sub(/.*?also has .*? Officers/m, '').
         scan(/^[ \t]+(\w.*?)(?:[ \t][ \t]|[ \t]?$)/).flatten.uniq.
         map {|name| list[name]}
 
@@ -558,14 +561,14 @@ module ASF
           end
         end
       end
-      @committee_info = (list.values - @officers).uniq
+      committee_info = (list.values - officers).uniq
       # Check if there are duplicates.
-      @committee_info.each do |c|
+      committee_info.each do |c|
         if c.chairs.length != 1 && c.name != 'fundraising' # hack to avoid reporting non-PMC entry
           Wunderbar.warn "Unexpected chair count for #{c.display_name}: #{c.chairs.inspect rescue ''}"
         end
       end
-      @committee_info
+      return nonpmcs, officers, committee_info
     end
 
     # return a list of PMC committees.  Data is obtained from
