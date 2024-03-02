@@ -439,15 +439,15 @@ module ASF
     # Returns: [out, err], where:
     #  out = array of entries, each of which is an array of [commitid, committer, datestamp]
     #  err = error message (in which case out is nil)
-    def self.svn_commits(path, before, after, env=nil)
-      out, err = ASF::SVN.svn('log', path, {env: env, quiet: true, revision: "#{before}:#{after}"})
+    def self.svn_commits(path, before, after, options = {})
+      out, err = ASF::SVN.svn('log', path, options.merge({quiet: true, revision: "#{before}:#{after}"}))
       # extract lines starting with r1234, and split into fields
       return out&.scan(%r{^r\d+ .*})&.map {|k| k.split(' | ')}, err
     end
 
     # as for self.svn_commits, but failure raises an error
-    def self.svn_commits!(path, before, after, env=nil)
-      out, err = self.svn_commits(path, before, after, env)
+    def self.svn_commits!(path, before, after, options = {})
+      out, err = self.svn_commits(path, before, after, options = options)
       raise Exception.new("SVN command failed: #{err}") if out.nil?
       return out, err
     end
