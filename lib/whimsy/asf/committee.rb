@@ -464,7 +464,7 @@ module ASF
       # List uses full (display) names as keys, but the entries use the canonical names
       # - the local version of find() converts the name
       # - and stores the original as the display name if it has some upper case
-      list = Hash.new {|hash, name| hash[name] = find(name)}
+      list = Hash.new {|hash, name| hash[name] = find(name, true)}
 
       # Split the file on lines starting "* ", i.e. the start of each group in section 3
       info = contents.split(/^\* /)
@@ -603,9 +603,12 @@ module ASF
     # Finds a committee based on the name of the Committee.  Is aware of
     # a number of aliases for a given committee.  Will set display name
     # if the name being searched on contains an uppercase character.
-    def self.find(name)
+    # If clear is true, then remove any cached entry
+    def self.find(name, clear=false)
       raise ArgumentError.new('name: must not be nil') unless name
-      result = super(@@namemap.call(name.downcase))
+      namelc = @@namemap.call(name.downcase)
+      collection[namelc] = nil if clear
+      result = super(namelc)
       result.display_name = name if name =~ /[A-Z]/
       result
     end
