@@ -13,13 +13,13 @@ $LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'whimsy/asf'
 require 'mail'
 require 'etc'
-person = ASF::Person.find(ARGV.first || ENV['USER'] || Etc.getlogin)
+userid = ARGV.first || ENV['USER'] || Etc.getlogin
 
 ASF::Mail.configure
 
 mail = Mail.new do
-  from "#{person.public_name} <#{person.id}@apache.org>"
-  to "#{person.public_name} <#{person.mail.first}>"
+  from "#{userid} <#{userid}@apache.org>"
+  to "#{userid}@apache.org>"
   subject 'test mail'
   body "sent from #{`hostname`}"
 end
