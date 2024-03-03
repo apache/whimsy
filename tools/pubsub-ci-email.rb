@@ -205,6 +205,8 @@ end
 if $0 == __FILE__
   $stdout.sync = true
 
+  ASF::Mail.configure
+
   # show initial start
   previous_revision = File.read(PREVIOUS_REVISION).chomp
   mail = Mail.new do
