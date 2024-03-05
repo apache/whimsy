@@ -204,7 +204,7 @@ def handle_change(revision)
     # Get pairs of entries and calculate differences
     out.each_cons(2) do |before, after|
       do_diff(before, after)
-      # File.write(PREVIOUS_REVISION, after[0]) # done that one
+      File.write(PREVIOUS_REVISION, after[0]) # done that one
     end
   rescue StandardError => e
     raise e
