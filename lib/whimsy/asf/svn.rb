@@ -294,7 +294,7 @@ module ASF
     end
 
     # These keys are common to svn_ and svn
-    VALID_KEYS = %i[user password verbose env dryrun msg depth quiet item revision]
+    VALID_KEYS = %i[user password verbose env dryrun msg depth quiet item revision xml]
 
     # common routine to build SVN command line
     # returns [cmd, stdin] where stdin is the data for stdin (if any)
@@ -332,6 +332,8 @@ module ASF
       cmd += ['--depth', depth] if depth
 
       cmd << '--quiet' if options[:quiet]
+
+      cmd << '--xml' if options[:xml]
 
       item = options[:item]
       cmd += ['--show-item', item] if item
