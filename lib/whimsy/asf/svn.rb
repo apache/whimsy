@@ -437,14 +437,57 @@ module ASF
       return out, err
     end
 
+    DELIM = '------------------------------------------------------------------------'
+    # parse commit log (non-xml)
+    # Return:
+    # Array of hash entries with keys: :revision, :author, :date, :msg
+    # The :msg entry will be missing if the quiet log option was used
+    # Note: parsing XML output proved somewhat slower
+    def self._parse_commits(src)
+      out = []
+      state = 0
+      linect = ent = msg = nil # ensure visibility
+      src.split(%r{\R}).each do |l|
+        case state
+        when 0 # start of block, should be delim
+          if l == DELIM
+            state = 1
+            ent = {}
+          else
+            raise ArgumentError.new "Unexpected line: '#{l}'"
+          end
+        when 1 # header line
+          revision, author, date, lines = l.split(' | ')
+          ent = {revision: revision, author: author, date: date}
+          if lines =~ %r{^(\d+) lines?} # There are some log lines
+            linect = $1.to_i + 3 # Allow for delim, header and blank line
+            msg = [] # collect the log message lines here
+            state += 1 # get ready to collect log lines
+          else # no log lines provided, we are done
+            out << ent
+            state = 0
+          end
+        else # collecting log lines
+          state += 1
+          msg << l if state > 3 # skip the blank line
+          if state == linect # we have read all the lines
+            ent[:msg] = msg.join("\n")
+            out << ent
+            state = 0
+          end
+        end
+      end
+      out
+    end
+    
     # get list of commmits from initial to current, and parses the output
     # Returns: [out, err], where:
-    #  out = array of entries, each of which is an array of [commitid, committer, datestamp]
+    #  out = array of entries, each of which is a hash
     #  err = error message (in which case out is nil)
     def self.svn_commits(path, before, after, options = {})
-      out, err = ASF::SVN.svn('log', path, options.merge({quiet: true, revision: "#{before}:#{after}"}))
-      # extract lines starting with r1234, and split into fields
-      return out&.scan(%r{^r\d+ .*})&.map {|k| k.split(' | ')}, err
+      out, err = ASF::SVN.svn('log', path, options.merge({revision: "#{before}:#{after}"}))
+      out = _parse_commits(out) if out
+      return out, err
     end
 
     # as for self.svn_commits, but failure raises an error
