@@ -172,7 +172,7 @@ def do_diff(initialhash, currenthash)
        #{commit_msg}
 
     Links for convenience:
-    https://svn.apache.org/repos/private/committers/board/committee-info.txt (#{currentrev})
+    https://svn.apache.org/repos/private/committers/board/committee-info.txt
     https://lists.apache.org/list?#{mail_list}
     https://whimsy.apache.org/roster/committee/#{cttee.name}
 
