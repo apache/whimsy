@@ -269,6 +269,7 @@ if $0 == __FILE__
   mail = Mail.new do
     to 'notifications@whimsical.apache.org'
     from 'notifications@whimsical.apache.org'
+    reply_to 'noreply@whimsical.apache.org' # Experimental
     subject subject
     body body
   end
