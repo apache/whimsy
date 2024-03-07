@@ -149,6 +149,10 @@ def do_diff(initialhash, currenthash, triggerrev)
   end
   #  N.B. before/after are hashes: committee_name => {roster hash}
   ASFJSON.cmphash(before, after) do |bc, type, key, args|
+    unless TYPES.include? type # Don't need to handle changes to entries
+      puts stamp "SKIPPING: #{[bc, type, key, args].inspect}"
+      next
+    end
     # bc = breadcrumb, type = Added/Dropped, key = committeename, args = individual roster entry
     pmcid = bc[1]
     next unless pmcid
