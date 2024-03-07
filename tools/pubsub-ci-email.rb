@@ -182,7 +182,8 @@ def do_diff(initialhash, currenthash, triggerrev)
 
     EOD
     mail = Mail.new do
-      from "noreply@whimsical.apache.org" # Reply to Whimsy is not useful
+      from "#{username} <#{userid}@apache.org>"
+      sender "notifications@whimsical.apache.org"
       # to to # Intial testing, only use Bcc
       bcc 'notifications@whimsical.apache.org' # keep track of mails
       subject subject
