@@ -2,4 +2,4 @@
 
 print "Content-type: text/plain; charset=UTF-8\r\n\r\n"
 
-Hello
+puts "Hello"
