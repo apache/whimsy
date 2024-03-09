@@ -41,6 +41,9 @@ _html do
         _p 'This form generates ezmlm mailing list addresses for various moderator requests.'
         _p do
           _b 'N.B. Only list moderators can make these requests. Requests from non-moderators will be rejected (or possibly ignored).'
+          _br
+          _ 'PMC members can add themselves as moderators to project lists using'
+          _a 'webmod', href: 'https://webmod.apache.org/modreq.html?action=modreq'
         end
         _p do
           _ 'Enter the ASF mailing list name, select the operation to perform, and enter a subscriber email (if needed).'
