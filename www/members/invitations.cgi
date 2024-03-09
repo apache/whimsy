@@ -106,6 +106,10 @@ _html do
     ) do
 
       _h1 'Nominations listed as not yet invited in memapp-received.txt'
+      _p do
+        _ 'If an invite or reply has been seen, the relevant table cell is'
+        _span.missing 'flagged'
+      end
       _table.table.table_striped do
         _tr do
           _th 'id'
@@ -119,8 +123,16 @@ _html do
           _tr_ do
             _td id
             _td v[:name]
-            _td v[:invited]
-            _td v[:replied]
+            if v[:invited]
+              _td.missing v[:invited]
+            else
+              _td v[:invited]
+            end
+            if v[:replied]
+              _td.missing v[:replied]
+            else
+              _td v[:replied]
+            end
             _td v[:nominators].join(', ')
           end
         end
