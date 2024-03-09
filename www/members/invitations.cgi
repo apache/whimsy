@@ -2,12 +2,26 @@
 PAGETITLE = "New Member invitations cross-check" # Wvisible:meeting,members
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 
+require 'date'
 require 'wunderbar/bootstrap'
 require 'whimsy/asf'
 require 'mail'
 require 'whimsy/asf/meeting-util'
 
 MAIL_DIR = '/srv/mail/members'
+
+# Get a link to lists.a.o for an email
+def lists_link(email)
+  mid = email[:MessageId]
+  return "https://lists.apache.org/thread/<#{mid}>?<members.apache.org>" if mid
+  # No mid; try another way
+  datime = DateTime.parse email[:EnvelopeDate] # '2024-03-07T23:20:23+00:00'
+  date1 = datime.strftime('%Y-%-m-%-d')
+  date2 = (datime+1).strftime('%Y-%-m-%-d') # allow for later arrival
+  from = email[:From]
+  text = "Invitation to join The Apache Software Foundation Membership #{from}"
+  "https://lists.apache.org/list?members@apache.org:dfr=#{date1}|dto=#{date2}:#{text}"
+end
 
 # Encapsulate gathering data to improve error processing
 def setup_data
@@ -35,19 +49,20 @@ def setup_data
   yamls.each do |index|
     mail = YamlFile.read(index)
     mail.each do |k, v|
+      link = lists_link(v)
       # This may not find all the invites ...
       if v[:Subject] =~ /^Invitation to join The Apache Software Foundation Membership/
         to = Mail::AddressList.new(v[:To])
         to.addresses.each do |add|
           addr = add.address
           next if addr == 'members@apache.org'
-          invites[:emails][addr] = 1
-          invites[:names][add.display_name] = 1 if add.display_name
+          invites[:emails][addr] = link
+          invites[:names][add.display_name] = link if add.display_name
         end
       elsif v[:Subject] =~ /^Re: Invitation to join The Apache Software Foundation Membership/
         add = Mail::Address.new(v[:From])
-        replies[:emails][add.address] = 1
-        replies[:names][add.display_name] = 1 if add.display_name
+        replies[:emails][add.address] = link
+        replies[:names][add.display_name] = link if add.display_name
       end
     end
   end
@@ -65,16 +80,25 @@ def setup_data
     v[:nominators] = nominated_by[id] || 'unknown'
   end
   notapplied.each do |record|
-    mails = ASF::Person.new(record[-2]).all_mail
-    record << (match_person(replies, record[-2], record[-1], mails) ? 'yes' : 'no')
+    id = record[-2]
+    name = record[-1]
+    mails = ASF::Person.new(id).all_mail
+    record << match_person(replies, id, name, mails)
+    record << match_person(invites, id, name, mails)
   end
   return notinvited, memappfile, invites, replies, nominated_by, notapplied
 end
 
+# return a link to the email (if any)
 def match_person(hash, id, name, mails)
   mail = "#{id}@apache.org"
-  return true if hash[:emails].key? mail or hash[:names].key? name
-  return mails.any? {|e| hash[:emails].key? e}
+  link = hash[:emails][mail] || hash[:names][name]
+  return link if link
+  mails.each do |m|
+    link = hash[:emails][m]
+    return link if link
+  end
+  return nil
 end
 
 # produce HTML output of reports, highlighting ones that have not (yet)
@@ -102,6 +126,7 @@ _html do
       helpblock: -> {
         _p 'This script checks memapp-received.txt against invitation emails seen in members@apache.org'
         _p 'It does not check against applications which are pending'
+        _p 'The invite and reply columns link to the relevant emails'
       }
     ) do
 
@@ -124,14 +149,18 @@ _html do
             _td id
             _td v[:name]
             if v[:invited]
-              _td.missing v[:invited]
+              _td.missing do
+                _a 'true', href: v[:invited]
+              end
             else
-              _td v[:invited]
+              _td 'false'
             end
             if v[:replied]
-              _td.missing v[:replied]
+              _td.missing do
+                _a 'true', href: v[:replied]
+              end
             else
-              _td v[:replied]
+              _td 'false'
             end
             _td v[:nominators].join(', ')
           end
@@ -139,6 +168,8 @@ _html do
       end
 
       _h1 'Invitees who have yet to be granted membership'
+      _ 'If an invite email cannot be found, the table cell is'
+      _span.missing 'flagged'
       _table.table.table_striped do
         _tr do
           _th 'invited?'
@@ -153,9 +184,21 @@ _html do
 
         notapplied.each do |entry|
           _tr do
-            a, b, c, d, e, f, g = entry
-            _td a
-            _td g
+            a, b, c, d, e, f, g, h = entry
+            if h
+              _td do
+                _a 'yes', href: h
+              end
+            else
+              _td.missing 'no'
+            end
+            if g
+              _td do
+                _a 'yes', href: g
+              end
+            else
+              _td 'no'
+            end
             _td b
             _td c
             _td d
