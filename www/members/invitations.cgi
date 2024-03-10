@@ -54,6 +54,7 @@ def setup_data
       # Note: occasionally someone will forget to copy members@, in which case the email
       # may be sent as a reply
       if v[:Subject] =~ /^(Re: )?Invitation to join The Apache Software Foundation Membership/
+        pfx = $1
         to = Mail::AddressList.new(v[:To])
         to.addresses.each do |add|
           addr = add.address
@@ -61,10 +62,11 @@ def setup_data
           invites[:emails][addr] = link
           invites[:names][add.display_name] = link if add.display_name
         end
-      elsif v[:Subject] =~ /^Re: Invitation to join The Apache Software Foundation Membership/
-        add = Mail::Address.new(v[:From])
-        replies[:emails][add.address] = link
-        replies[:names][add.display_name] = link if add.display_name
+        if pfx # it's a reply
+          add = Mail::Address.new(v[:From])
+          replies[:emails][add.address] = link
+          replies[:names][add.display_name] = link if add.display_name
+        end
       end
     end
   end
