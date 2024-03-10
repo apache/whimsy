@@ -128,8 +128,10 @@ _html do
       helpblock: -> {
         _p 'This script checks memapp-received.txt against invitation emails seen in members@apache.org'
         _p 'It does not check against applications which are pending'
-        _p 'The invite and reply columns link to the relevant emails'
-      }
+        _p 'The invite and reply columns link to the relevant emails if possible'
+        _p %{
+            N.B. The code only looks at the subject to determine if an email is an invite or its reply
+        }
     ) do
 
       _h1 'Nominations listed as not yet invited in memapp-received.txt'
