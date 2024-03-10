@@ -57,7 +57,8 @@ def setup_data
       if v[:Subject] =~ /^(Re: )?Invitation to join The Apache Software Foundation Membership/
         pfx = $1
         to = Mail::AddressList.new(v[:To])
-        to.addresses.each do |add|
+        cc = Mail::AddressList.new(v[:Cc])
+        (to.addresses + cc.addresses).each do |add|
           addr = add.address
           next if addr == 'members@apache.org'
           invites[:emails][addr] = link
