@@ -51,7 +51,9 @@ def setup_data
     mail.each do |k, v|
       link = lists_link(v)
       # This may not find all the invites ...
-      if v[:Subject] =~ /^Invitation to join The Apache Software Foundation Membership/
+      # Note: occasionally someone will forget to copy members@, in which case the email
+      # may be sent as a reply
+      if v[:Subject] =~ /^(Re: )?Invitation to join The Apache Software Foundation Membership/
         to = Mail::AddressList.new(v[:To])
         to.addresses.each do |add|
           addr = add.address
