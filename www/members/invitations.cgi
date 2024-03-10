@@ -151,7 +151,8 @@ _html do
           _th 'nominator(s)'
         end
 
-        notinvited.each do |id, v|
+        # sort by nominators to make it easier to send reminders
+        notinvited.sort_by{|k,v| v[:nominators].join(', ')}.each do |id, v|
           _tr_ do
             _td id
             _td v[:name]
