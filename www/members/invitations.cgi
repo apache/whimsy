@@ -128,9 +128,14 @@ _html do
         nominationsurl => 'nominated-members.txt',
       },
       helpblock: -> {
-        _p 'This script checks memapp-received.txt against invitation emails seen in members@apache.org'
+        _p do
+          _ 'This script checks'
+          _a 'memapp-received.txt', href: memappurl
+          _ 'against invitation emails seen in'
+          _a 'members@apache.org', href: 'https://lists.apache.org/list.html?members@apache.org'
+        end
         _p 'It does not check against applications which are pending'
-        _p 'The invite and reply columns link to the relevant emails if possible'
+        _p 'The invite and reply columns link to the relevant emails in members@ if possible'
         _p %{
             N.B. The code only looks at the subject to determine if an email is an invite or its reply
         }
@@ -141,6 +146,7 @@ _html do
       _p do
         _ 'If an invite or reply has been seen, the relevant table cell is'
         _span.missing 'flagged'
+        _ '. After confirming that the invite was correctly identified, the memapp-received.txt file can be updated'
       end
       _table.table.table_striped do
         _tr do
