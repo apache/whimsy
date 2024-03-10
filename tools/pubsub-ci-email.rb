@@ -3,11 +3,13 @@
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 
 # Script to detect changes to committee-info.txt and send emails to board and the PMC
+# Only sends change emails if it is the active Whimsy (or a test node, which is expected to use a dummy smtpserver)
 
 require 'mail'
 require 'net/http'
 require 'json'
 require 'whimsy/asf'
+require 'whimsy/asf/status'
 require 'whimsy/asf/json-utils'
 
 def stamp(*s)
@@ -197,7 +199,7 @@ def do_diff(initialhash, currenthash, triggerrev)
       subject subject
       body body
     end
-    mail.deliver!
+    mail.deliver! if Status.active? or Status.testnode?
   end
 end
 
@@ -281,7 +283,7 @@ if $0 == __FILE__
     subject subject
     body body
   end
-  mail.deliver!
+  mail.deliver! # Does it matter if this is sent from an inactive node?
 
   raise ArgumentError.new error if error
   
