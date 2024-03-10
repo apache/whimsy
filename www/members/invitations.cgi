@@ -132,6 +132,7 @@ _html do
         _p %{
             N.B. The code only looks at the subject to determine if an email is an invite or its reply
         }
+      }
     ) do
 
       _h1 'Nominations listed as not yet invited in memapp-received.txt'
