@@ -30,11 +30,12 @@ def setup_data
   # which entries are shown as uninvited; get availid and name
   notinvited = {}
   notapplied = []
+  fields = %i(invite apply mail karma id name)
   ASF::MeetingUtil.parse_memapp(memappfile).filter_map do |a|
     if a.first == 'no'
       notinvited[a[-2]] = {name: a[-1]}
     elsif a[1..-3].any? {|e| e == 'no'} # any no after first?
-      notapplied<<a
+      notapplied << fields.zip(a).to_h
     end
   end
 
@@ -84,11 +85,11 @@ def setup_data
     v[:nominators] = nominated_by[id] || 'unknown'
   end
   notapplied.each do |record|
-    id = record[-2]
-    name = record[-1]
+    id = record[:id]
+    name = record[:name]
     mails = ASF::Person.new(id).all_mail
-    record << match_person(replies, id, name, mails)
-    record << match_person(invites, id, name, mails)
+    record[:replied] = match_person(replies, id, name, mails)
+    record[:invited] = match_person(invites, id, name, mails)
   end
   return notinvited, memappfile, invites, replies, nominated_by, notapplied
 end
@@ -198,29 +199,28 @@ _html do
 
         notapplied.each do |entry|
           _tr do
-            a, b, c, d, e, f, g, h = entry
-            if h
+            if entry[:invited]
               _td do
-                _a 'yes', href: h
+                _a 'yes', href: entry[:invited]
               end
             else
               _td.missing 'no'
             end
-            if g
+            if entry[:replied]
               _td do
-                _a 'yes', href: g
+                _a 'yes', href: entry[:replied]
               end
             else
               _td 'no'
             end
-            _td b
-            _td c
-            _td d
+            _td entry[:apply]
+            _td entry[:mail]
+            _td entry[:karma]
             _td do
-              _a e, href: "https://whimsy.apache.org/roster/committer/#{e}"
+              _a entry[:id], href: "https://whimsy.apache.org/roster/committer/#{entry[:id]}"
             end
-            _td f
-            _td (nominated_by[e] || 'unknown').join(' ')
+            _td entry[:name]
+            _td (nominated_by[entry[:id]] || 'unknown').join(' ')
           end
         end
       end
