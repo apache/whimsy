@@ -51,6 +51,7 @@ def setup_data
     mail = YamlFile.read(index)
     mail.each do |k, v|
       link = lists_link(v)
+      envdate = v[:EnvelopeDate]
       # This may not find all the invites ...
       # Note: occasionally someone will forget to copy members@, in which case the email
       # may be sent as a reply
@@ -61,8 +62,11 @@ def setup_data
         (to.addresses + cc.addresses).each do |add|
           addr = add.address
           next if addr == 'members@apache.org'
-          invites[:emails][addr] = link
-          invites[:names][add.display_name] = link if add.display_name
+          prev = invites[:emails][addr] || [nil,'']
+          if envdate > prev[1] # Only store later dates
+            invites[:emails][addr] = [link, envdate] # temp save the timestamp
+            invites[:names][add.display_name] = link if add.display_name
+          end
         end
         if pfx # it's a reply
           add = Mail::Address.new(v[:From])
@@ -72,6 +76,8 @@ def setup_data
       end
     end
   end
+
+  invites[:emails].transform_values!{|v| v.first} # Drop the timestamp
 
   nominated_by = {}
   # might be more than one ...
