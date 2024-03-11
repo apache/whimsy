@@ -134,6 +134,7 @@ _html do
         memappurl => 'memapp-received.txt',
         'https://lists.apache.org/list.html?members@apache.org' => 'members@apache.org',
         nominationsurl => 'nominated-members.txt',
+        'https://github.com/apache/whimsy/blob/master/www/members/invitations.cgi' => 'Source code for this page'
       },
       helpblock: -> {
         _p do
@@ -227,7 +228,7 @@ _html do
               _a entry[:id], href: "https://whimsy.apache.org/roster/committer/#{entry[:id]}"
             end
             _td entry[:name]
-            _td (nominated_by[entry[:id]] || 'unknown').join(' ')
+            _td (nominated_by[entry[:id]] || ['unknown']).join(' ')
           end
         end
       end
