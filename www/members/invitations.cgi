@@ -53,6 +53,7 @@ def setup_data
     mail.each do |k, v|
       link = lists_link(v)
       envdate = v[:EnvelopeDate]
+      age = (Date.today - Date.parse(envdate)).to_i # How long since it was
       # This may not find all the invites ...
       # Note: occasionally someone will forget to copy members@, in which case the email
       # may be sent as a reply
@@ -63,22 +64,20 @@ def setup_data
         (to.addresses + cc.addresses).each do |add|
           addr = add.address
           next if addr == 'members@apache.org'
-          prev = invites[:emails][addr] || [nil,'']
-          if envdate > prev[1] # Only store later dates
-            invites[:emails][addr] = [link, envdate] # temp save the timestamp
-            invites[:names][add.display_name] = link if add.display_name
+          prev = invites[:emails][addr] || [nil, 100]
+          if age < prev[1] # Only store later dates
+            invites[:emails][addr] = [link, age] # temp save the timestamp
+            invites[:names][add.display_name] = [link, age] if add.display_name
           end
         end
         if pfx # it's a reply
           add = Mail::Address.new(v[:From])
-          replies[:emails][add.address] = link
-          replies[:names][add.display_name] = link if add.display_name
+          replies[:emails][add.address] = [link, age]
+          replies[:names][add.display_name] = [link, age] if add.display_name
         end
       end
     end
   end
-
-  invites[:emails].transform_values!{|v| v.first} # Drop the timestamp
 
   nominated_by = {}
   # might be more than one ...
@@ -172,16 +171,20 @@ _html do
           _tr_ do
             _td id
             _td v[:name]
-            if v[:invited]
+            url, age = v[:invited]
+            daysn = age == 1 ? 'day' : 'days'
+            if url
               _td.missing do
-                _a 'true', href: v[:invited]
+                _a "#{age} #{daysn} ago", href: url
               end
             else
               _td 'false'
             end
-            if v[:replied]
+            url, age = v[:replied]
+            daysn = age == 1 ? 'day' : 'days'
+            if url
               _td.missing do
-                _a 'true', href: v[:replied]
+                _a "#{age} #{daysn} ago", href: url
               end
             else
               _td 'false'
@@ -208,16 +211,20 @@ _html do
 
         notapplied.each do |entry|
           _tr do
-            if entry[:invited]
+            url, age = entry[:invited]
+            daysn = age == 1 ? 'day' : 'days'
+            if url
               _td do
-                _a 'yes', href: entry[:invited]
+                _a "#{age} #{daysn} ago", href: url
               end
             else
               _td.missing 'no'
             end
-            if entry[:replied]
+            url, age = entry[:replied]
+            daysn = age == 1 ? 'day' : 'days'
+            if url
               _td do
-                _a 'yes', href: entry[:replied]
+                _a "#{age} #{daysn} ago", href: url
               end
             else
               _td 'no'
