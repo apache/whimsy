@@ -10,7 +10,7 @@ received = Dir["#{meetings}/2*/memapp-received.txt"].max
 # ------- -------- --------- ------ --------------- ------------------
 # yes     no       no        no     user-id_        User name
 # N.B. user id can contain - and _
-pattern = /^\w+\s+(\w+)\s+(\w+)\s+(\w+)\s+([a-z][a-z_0-9-]+)\s+(.*?)\s*\n/
+pattern = /^(\w+)\s+(\w+)\s+(\w+)\s+(\w+)\s+([a-z][a-z_0-9-]+)\s+(.*?)\s*\n/
 if Date.today - Date.parse(received[/\d{8}/]) <= 32
   table = File.read(received).scan(pattern)
 else
@@ -18,5 +18,5 @@ else
 end
 
 # map contents to a hash
-fields = %w(apply mail karma id name)
+fields = %w(invite apply mail karma id name)
 {received: table.map {|results| fields.zip(results).to_h}.sort_by {|k| k['name']}}
