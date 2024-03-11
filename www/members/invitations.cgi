@@ -32,10 +32,11 @@ def setup_data
   notapplied = []
   fields = %i(invite apply mail karma id name)
   ASF::MeetingUtil.parse_memapp(memappfile).filter_map do |a|
-    if a.first == 'no'
-      notinvited[a[-2]] = {name: a[-1]}
-    elsif a[1..-3].any? {|e| e == 'no'} # any no after first?
-      notapplied << fields.zip(a).to_h
+    entry = fields.zip(a).to_h
+    if entry[:invite] == 'no'
+      notinvited[entry[:id]] = {name: entry[:name]}
+    elsif %i(apply mail karma).any? {|e| entry[e] == 'no'} # any no apart from invite?
+      notapplied << entry
     end
   end
 
