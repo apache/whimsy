@@ -13,6 +13,7 @@ require 'uri'
 require 'sanitize'
 require 'escape'
 require 'time' # for iso8601
+require 'whimsy/asf/meeting-util'
 
 require_relative 'personalize'
 require_relative 'helpers'
@@ -195,11 +196,7 @@ get %r{/(\d{6})/(\w+)/_index_} do |month, hash|
   @appmtime = Wunderbar::Asset.convert(File.join(settings.views, 'app.js.rb')).mtime.to_i
   @projects = (ASF::Podling.current+ASF::Committee.pmcs).map(&:name).sort
 
-  # Section 4.1 of the ASF bylaws provides requirements for when membership
-  # applications can be accepted.  Two days are added to cover the adjournment
-  # period of the meeting during which the vote takes place.
-  received = Dir["#{ASF::SVN['Meetings']}/2*/memapp-received.txt"].max
-  @meeting = Date.today - Date.parse(received[/\d{8}/]) <= 32 rescue true # rescue crash in local testing
+  @meeting = ASF::MeetingUtil.applications_valid
 
   _html :parts
 end
