@@ -10,8 +10,16 @@ module ASF
   class MeetingUtil
     RECORDS = ASF::SVN.svnurl!('Meetings') # in SVN
     MEETINGS_DIR = ASF::SVN['Meetings'] # local checkout
+    # This ICS file contains 3 events: the meeting itself, nominations close, and polls close
     VCAL_EVENTS_FILENAME = 'ASF-members-meeting.ics'
     PROXIES_FILENAME = 'proxies'
+
+    # https://www.apache.org/foundation/bylaws.html#article-iv
+    # application must be received by the Secretary no later than 30 days following the vote.
+    # Current thinking is that the vote is considered to have occurred when the results are announced.
+    # TBC
+    APPLICATION_EXPIRY_POST_VOTE_DAYS = 30
+    APPLICATION_EXPIRY_POST_VOTE_SECS = APPLICATION_EXPIRY_POST_VOTE_DAYS*24*60*60
 
     # The URL is generated using emit_link() in meeting.cgi
     # if the name includes '/' then use as is unless it starts with 'runbook/'
@@ -190,6 +198,15 @@ module ASF
       list.each {|a| a.last.strip!} # trim the user name
     end
 
+    # parse a memapp file; if omitted, pick the latest found
+    # Does not support files before 2010
+    # Return: array of hash entries with the symbolic keys:
+    # :invite :apply :mail :karma :id :name
+    def self.parse_memapp_to_h(path=nil)
+      keys = %i(invite apply mail karma id name)
+      self.parse_memapp(path).map {|entry| keys.zip(entry).to_h}
+    end
+
     # Parse all memapp-received.txt files to get better set of names
     # @see whimsy/www/members/attendance-xcheck.cgi
     def self.read_memapps(dir)
@@ -344,6 +361,16 @@ module ASF
       end
       return [times['asf-members-nominations-close'], times['asf-members-polls-close'], times['asf-members']]
     end
+
+    # How long remains before applications close?
+    # Returned as hash, e.g. {:hoursremain=>605, :days=>25, :hours=>5}
+    def self.application_time_remaining
+      _, _, meeting = self.get_invite_times # this is in seconds
+      now = DateTime.now.to_time.to_i
+      remain = (meeting + APPLICATION_EXPIRY_POST_VOTE_SECS - now) / 3600
+      {hoursremain: remain, days: remain/24, hours: remain%24}
+    end
+
   end
 end
 
