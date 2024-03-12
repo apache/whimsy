@@ -25,6 +25,7 @@ require 'whimsy/asf/yaml'
 
 require 'mail'
 require 'date'
+require 'fileutils'
 
 module ParseMail
   MAIL_ROOT = '/srv/mail'
@@ -37,6 +38,16 @@ module ParseMail
   end
 
   def self.parse_dir(maildir, yamlfile)
+    # Has the directory changed since the last run?
+    # If not, don't reprocess
+    ytime = File.mtime(yamlfile)
+    dtime = File.mtime(maildir)
+    if ytime > dtime + 60 # Allow for yaml update window
+      log :INFO, "No change to #{maildir} (#{dtime}) since #{yamlfile} (#{ytime}), skipping"
+      return
+    else
+      log :INFO, "Timediff #{dtime - ytime}"
+    end
     data = Hash.new
 
     begin
@@ -74,7 +85,9 @@ module ParseMail
     log :INFO, "Found #{entries} files, with #{dupes} duplicates, giving #{data.size} new entries"
 
     if data.size == 0
-      log :INFO, "No new entries found"
+      log :INFO, "No new entries found, updating last date"
+      FileUtils.touch yamlfile # needed to skip processing next time
+      # Should not happen often, an updated dir should result in updating the yaml
     else
       # update the file with any new entries (this locks the file)
       YamlFile.update(yamlfile) do |yaml|
