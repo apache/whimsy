@@ -213,9 +213,10 @@ _html do
         _tr do
           _th 'invited?'
           _th 'Reply seen?'
-          _th 'applied?'
-          _th 'members@?'
-          _th 'karma?'
+          # No point showing these, as we don't check them
+          # _th 'applied?'
+          # _th 'members@?'
+          # _th 'karma?'
           _th 'id'
           _th 'name'
           _th 'Nominators'
@@ -241,9 +242,9 @@ _html do
             else
               _td 'no'
             end
-            _td entry[:apply]
-            _td entry[:mail]
-            _td entry[:karma]
+            # _td entry[:apply]
+            # _td entry[:mail]
+            # _td entry[:karma]
             _td do
               _a entry[:id], href: "https://whimsy.apache.org/roster/committer/#{entry[:id]}"
             end
