@@ -187,24 +187,58 @@ module ASF
     # 20100713: yes|no  yes|no   yes|no    yes|no availid   First Last
     #  Note that the column widths may vary (especially the ID)
 
-    # parse a memapp file; if omitted, pick the latest found
+    # parse a memapp file, optionally returning the format
+    # Params:
+    #  - path to file; if omitted, pick the latest found
+    #  - parse header to extract format, default false
     # Does not support files before 2010
-    # Return: array of arrays
-    def self.parse_memapp(path=nil)
+    # Return: array of arrays or [array of arrays, format, hdr lines]
+    # The original contents can be regenerated as follows:
+    # Parse the file:
+    #  list,hdr,fmt = ASF::MeetingUtil.parse_memapp(nil, true)
+    # Regenerate an indidividual entry:
+    # fmt % entry
+    # Regenerate all the contents (excluding the header):
+    #  [hdr, list.map{|item| fmt % item}].join("\n")
+    def self.parse_memapp(path=nil,header=false)
       path ||= get_latest_file('memapp-received.txt')
       text = File.read(path)
-        # latest layout; look for at least one yes column
-      list = text.scan(/^(no|yes)\s+(no|yes)(?:\s+(no|yes)\s+(no|yes))?\s+(\S+)\s+(.+)/)
-      list.each {|a| a.last.strip!} # trim the user name
+      # latest layout; look for at least one yes column; trim the user name
+      list = text.scan(/^(no|yes)\s+(no|yes)(?:\s+(no|yes)\s+(no|yes))?\s+(\S+)\s+(.+)/).each {|a| a.last.strip!}
+      if header
+        hdr = text.split(/\R/)[0..1] # Assume 2 line header
+        # Assume 6 columns for now
+        hyphens=hdr[1].scan(/^(--+ +)(---+ +)(---+ +)(---+ +)(---+ +)(----+ *)$/).first
+        hyphens.pop # drop last; don't want to pad that
+        fmt = [hyphens.map{|h| "%%-%ds" % (h.size - 1)},'%s'].join(" ")
+        return [list, hdr, fmt]
+      else
+        return list
+      end
     end
 
     # parse a memapp file; if omitted, pick the latest found
+    # optionally return the line format and key list
     # Does not support files before 2010
     # Return: array of hash entries with the symbolic keys:
     # :invite :apply :mail :karma :id :name
-    def self.parse_memapp_to_h(path=nil)
+    # optionally followed by format, keylist, hdr
+    # The original contents can be regenerated as follows:
+    # Parse the file:
+    #  list,hdr,fmt,keys = ASF::MeetingUtil.parse_memapp_to_h(nil,true)
+    # Regenerate an indidividual entry:
+    # fmt % keys.map{|key| entry[key]}
+    # Regenerate all the contents:
+    #  [hdr, list.map{|item| fmt % keys.map{|key| item[key]} }].join("\n")
+    def self.parse_memapp_to_h(path=nil,header=false)
       keys = %i(invite apply mail karma id name)
-      self.parse_memapp(path).map {|entry| keys.zip(entry).to_h}
+      res = self.parse_memapp(path, header)
+      if header
+        list, hdr, fmt = res # split the response
+        return [list.map{|entry| keys.zip(entry).to_h}, hdr, fmt, keys]
+      else
+        return res.map{|entry| keys.zip(entry).to_h}
+      end
     end
 
     # Parse all memapp-received.txt files to get better set of names
