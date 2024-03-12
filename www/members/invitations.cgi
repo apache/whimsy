@@ -169,7 +169,9 @@ _html do
         # sort by nominators to make it easier to send reminders
         notinvited.sort_by{|k,v| v[:nominators].join(', ')}.each do |id, v|
           _tr_ do
-            _td id
+            _td do
+              _a id, href: "https://whimsy.apache.org/roster/committer/#{id}"
+            end
             _td v[:name]
             url, age = v[:invited]
             daysn = age == 1 ? 'day' : 'days'
