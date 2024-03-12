@@ -163,16 +163,10 @@ end
 # TODO combine with other SVN updates
 
 task "svn commit memapp-received.text" do
-  meetings = ASF::SVN['Meetings']
-  file = Dir["#{meetings}/2*/memapp-received.txt"].max
+  file = ASF::MeetingUtil.get_latest_file('memapp-received.txt')
   received = File.read(file)
-  if received =~ /^no\s+\w+\s+\w+\s+\w+\s+#{@availid}\s/
-    received[/^(no )\s+\w+\s+\w+\s+\w+\s+#{@availid}\s/,1] = 'yes'
-  end
-  received[/(no )\s+\w+\s+\w+\s+#{@availid}\s/,1] = 'yes'
-  received[/(no )\s+\w+\s+#{@availid}\s/,1] = 'yes'
-  received[/(no )\s+#{@availid}\s/,1] = 'yes'
-  @line = received[/.*\s#{@availid}\s.*/]
+  original = received[/.*\s#{@availid}\s.*/]
+  @line = original.gsub('no ','yes')
 
   form do
     _input value: @line, name: 'line'
@@ -182,7 +176,7 @@ task "svn commit memapp-received.text" do
     meeting = file.split('/')[-2]
     path = ASF::SVN.svnpath!('Meetings', meeting,'memapp-received.txt')
     rc = ASF::SVN.update(path, @document, env, _, {diff: true}) do |_tmpdir, input|
-      input[/.*\s#{@availid}\s.*/] = @line
+      input.sub!(original, @line)
       input
     end
     raise RuntimeError.new("exit code: #{rc}") if rc != 0
