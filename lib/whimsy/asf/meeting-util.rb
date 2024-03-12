@@ -371,6 +371,12 @@ module ASF
       {hoursremain: remain, days: remain/24, hours: remain%24}
     end
 
+    # Are membership applications still valid?
+    # return: true/false
+    def self.applications_valid
+      self.application_time_remaining[:hoursremain] > 0
+    end
+
   end
 end
 
