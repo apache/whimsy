@@ -113,6 +113,8 @@ def match_person(hash, id, name, mails)
   return nil
 end
 
+remain = ASF::MeetingUtil.application_time_remaining
+
 # produce HTML output of reports, highlighting ones that have not (yet)
 # been posted
 _html do
@@ -146,8 +148,16 @@ _html do
         _p 'It does not check against applications which are pending'
         _p 'The invite and reply columns link to the relevant emails in members@ if possible'
         _p %{
-            N.B. The code only looks at the subject to determine if an email is an invite or its reply
+            N.B. The code only looks at the subject to determine if an email is an invite or its reply.
+            Also the members@ emails are only scanned every 10 minutes or so.
         }
+        _p do
+          if remain[:hoursremain] > 0
+            _b "Applications close in #{remain[:days]} days and #{remain[:hours]} hours"
+          else
+            _b "Applications can no longer be accepted, sorry."
+          end
+        end
       }
     ) do
 
