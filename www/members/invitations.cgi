@@ -89,7 +89,7 @@ def setup_data
     mails = ASF::Person.new(id).all_mail
     v[:invited] = match_person(invites, id, v[:name], mails)
     v[:replied] = match_person(replies, id, v[:name], mails)
-    v[:nominators] = nominated_by[id] || 'unknown'
+    v[:nominators] = nominated_by[id] || ['unknown']
   end
   notapplied.each do |record|
     id = record[:id]
