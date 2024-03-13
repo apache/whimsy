@@ -198,8 +198,10 @@ module ASF
     #  list,hdr,fmt = ASF::MeetingUtil.parse_memapp(nil, true)
     # Regenerate an indidividual entry:
     # fmt % entry
-    # Regenerate all the contents (excluding the header):
+    # Regenerate all the contents:
     #  [hdr, list.map{|item| fmt % item}].join("\n")
+    # N.B. you may need to add a trailing EOL or two
+    # when writing the file
     def self.parse_memapp(path=nil,header=false)
       path ||= get_latest_file('memapp-received.txt')
       text = File.read(path)
@@ -230,6 +232,8 @@ module ASF
     # fmt % keys.map{|key| entry[key]}
     # Regenerate all the contents:
     #  [hdr, list.map{|item| fmt % keys.map{|key| item[key]} }].join("\n")
+    # N.B. you may need to add a trailing EOL or two
+    # when writing the file
     def self.parse_memapp_to_h(path=nil,header=false)
       keys = %i(invite apply mail karma id name)
       res = self.parse_memapp(path, header)
