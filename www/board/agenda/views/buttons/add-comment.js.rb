@@ -35,7 +35,7 @@ class AddComment < Vue
       end
 
       #input field: initials
-      _input.comment_initials! label: 'Initials',
+      _input.comment_initials! label: 'Apache ID',
         placeholder: 'initials', disabled: @disabled,
         value: @@server.pending.initials || @@server.initials
 
