@@ -12,7 +12,7 @@ require_relative '../../tools/parsemail'
 require 'whimsy/asf/time-utils'
 
 t_now = Time.now.to_i
-t_end = ASF::MeetingUtil.get_invite_times.first
+t_end = ASF::MeetingUtil.nominations_close
 
 
 # link to members private-arch

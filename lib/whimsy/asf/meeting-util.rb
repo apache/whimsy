@@ -376,12 +376,12 @@ module ASF
     end
 
     # get the times from the VCAL events file
-    # returns: nominations close, polls close, meeting starts as seconds since epoch
+    # returns: hash with keys: nominations_close:, polls_close:, meeting_start, meeting_close:
     def self.get_invite_times
       times = {}
       File.readlines(File.join(latest_meeting_dir, VCAL_EVENTS_FILENAME)).slice_before(/^BEGIN:VEVENT/).drop(1).each do |ev|
         uid = nil
-        dtstart = nil
+        dtstart = dtend = nil
         ev.each do |line|
           case line
             when /^UID:(.+)/
@@ -393,19 +393,50 @@ module ASF
               else
                 raise ArgumentError.new("Cannot parse #{line.chomp} in #{VCAL_EVENTS_FILENAME}")
               end
+            when /^DTEND;TZID=(.+):(.+)/
+              tz = $1
+              if tz == 'UTC'
+                dtend = DateTime.iso8601($2.chomp).to_time.to_i
+              else
+                raise ArgumentError.new("Cannot parse #{line.chomp} in #{VCAL_EVENTS_FILENAME}")
+              end
           end
         end
         times[uid] = dtstart
+        times['asf-members-end'] = dtend if uid == 'asf-members'
       end
-      return [times['asf-members-nominations-close'], times['asf-members-polls-close'], times['asf-members']]
+      return {
+        nominations_close: times['asf-members-nominations-close'],
+        polls_close: times['asf-members-polls-close'],
+        meeting_start: times['asf-members'],
+        meeting_end: times['asf-members-end'],
+      }
+    end
+
+    # Shorthand methods for callers
+    def self.nominations_close
+      self.get_invite_times[:nominations_close]
+    end
+
+    def self.polls_close
+      self.get_invite_times[:polls_close]
+    end
+
+    def self.meeting_start
+      self.get_invite_times[:meeting_start]
+    end
+
+    def self.meeting_end
+      self.get_invite_times[:meeting_end]
     end
 
     # How long remains before applications close?
+    # (Time is measured from scheduled end of the meeting in which the votes were declared)
     # Returned as hash, e.g. {:hoursremain=>605, :days=>25, :hours=>5}
     def self.application_time_remaining
-      _, _, meeting = self.get_invite_times # this is in seconds
+      meetingend = self.meeting_end # this is in seconds
       now = DateTime.now.to_time.to_i
-      remain = (meeting + APPLICATION_EXPIRY_POST_VOTE_SECS - now) / 3600
+      remain = (meetingend + APPLICATION_EXPIRY_POST_VOTE_SECS - now) / 3600
       {hoursremain: remain, days: remain/24, hours: remain%24}
     end
 

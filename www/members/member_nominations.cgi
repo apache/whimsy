@@ -13,7 +13,7 @@ require 'whimsy/asf/meeting-util'
 require 'whimsy/asf/time-utils'
 
 t_now = Time.now.to_i
-t_end = ASF::MeetingUtil.get_invite_times.first
+t_end = ASF::MeetingUtil.nominations_close
 nomclosed = t_now > t_end
 
 def emit_form(title, prev_data)
