@@ -441,9 +441,19 @@ module ASF
     end
 
     # Are membership applications still valid?
+    # Applications close date has yet to be reached
     # return: true/false
     def self.applications_valid
       self.application_time_remaining[:hoursremain] > 0
+    end
+
+    # Is this particular membership application still valid?
+    # Used to check if an application was received before the close date
+    # return: true/false
+    def self.application_valid?(message_datetime)
+      expirytime = self.meeting_end + APPLICATION_EXPIRY_POST_VOTE_SECS
+      msgtime = DateTime.iso8601(message_datetime).to_time.to_i
+      msgtime <= expirytime
     end
 
   end
