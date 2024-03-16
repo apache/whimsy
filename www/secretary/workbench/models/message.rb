@@ -410,6 +410,8 @@ class Message
 
     # start an entry for this mail
     headers = {
+      envelope_from: mail.envelope_from,
+      envelope_date: mail.envelope_date.to_s, # effectively the delivery date to secretary@
       from: mail.from_addrs.first,
       name: from,
       time: (mail.date.to_time.gmtime.iso8601 rescue nil),
