@@ -196,7 +196,11 @@ get %r{/(\d{6})/(\w+)/_index_} do |month, hash|
   @appmtime = Wunderbar::Asset.convert(File.join(settings.views, 'app.js.rb')).mtime.to_i
   @projects = (ASF::Podling.current+ASF::Committee.pmcs).map(&:name).sort
 
-  @meeting = ASF::MeetingUtil.applications_valid
+  # Check if applications closed; if so, check it application was received in time
+  # Default to 'now' if envelope date not found; hopefully won't be triggered as emails
+  # should now all have the field set up
+  @meeting = ASF::MeetingUtil.applications_valid ||
+    ASF::MeetingUtil.application_valid?(@headers[:envelope_date] || DateTime.now.iso8601)
 
   _html :parts
 end
