@@ -40,8 +40,12 @@ module ParseMail
   def self.parse_dir(maildir, yamlfile)
     # Has the directory changed since the last run?
     # If not, don't reprocess
-    ytime = File.mtime(yamlfile)
-    dtime = File.mtime(maildir)
+    begin
+      ytime = File.mtime(yamlfile)
+    rescue Errno::ENOENT # not yet created
+      ytime = Time.at(0)
+    end
+    dtime = File.mtime(maildir) # must exist
     if ytime > dtime + 60 # Allow for yaml update window
       log :INFO, "No change to #{maildir} (#{dtime}) since #{yamlfile} (#{ytime}), skipping"
       return
