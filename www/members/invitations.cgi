@@ -57,7 +57,9 @@ def setup_data
       # This may not find all the invites ...
       # Note: occasionally someone will forget to copy members@, in which case the email
       # may be sent as a reply
-      if v[:Subject] =~ /^(Re: )?Invitation to join The Apache Software Foundation Membership/
+      # The alternative prefix has been seen in a reply from China
+      # Looks like ': ' is being treated as a separate character
+      if v[:Subject] =~ /^(Re: |Re：)?Invitation to join The Apache Software Foundation Membership/
         pfx = $1
         to = Mail::AddressList.new(v[:To])
         cc = Mail::AddressList.new(v[:Cc])
