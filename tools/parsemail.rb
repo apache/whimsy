@@ -81,6 +81,7 @@ module ParseMail
           MessageId: mail.message_id, # could be nil
           EnvelopeFrom: mail.envelope_from,
           EnvelopeDate: mail.envelope_date.to_s, # effectively the delivery date to the mailing list
+          InReplyTo: mail["In-Reply-To"]&.decoded, # will be nil if not present
         }
         data[name] = entry
       end
