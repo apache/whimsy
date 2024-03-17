@@ -149,7 +149,7 @@ class Parts < Vue
             _span 'software grant'
           end
 
-          if @@meeting && false
+          if @@meeting
             _label do
               _input type: 'radio', name: 'doctype', value: 'mem',
                 onClick: -> {@form = MemApp}
