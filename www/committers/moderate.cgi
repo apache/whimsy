@@ -7,10 +7,9 @@ PAGETITLE = "ASF Mailing List Moderator Setup" # Wvisible:mail moderation
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'wunderbar'
 require 'wunderbar/bootstrap'
+require 'whimsy/asf' # for _whimsy_body
 
 _html do
-  # better system output styling (errors in red)
-  _style :system
   _body? do
     _whimsy_body(
       title: PAGETITLE,
@@ -36,7 +35,12 @@ _html do
         end
       }
     ) do
-      _p 'No longer in use - please see webmod.apache.org'
+      _h4 do
+        _ 'No longer in use - please see'
+        _a 'webmod.apache.org', href: 'https://webmod.apache.org/modreq.html?action=modreq'
+      end
+      _br
+      _br
     end
   end
 end
