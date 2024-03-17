@@ -6,6 +6,7 @@ PAGETITLE = "ASF Mailing List Moderator Setup" # Wvisible:mail moderation
 
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'wunderbar'
+require 'wunderbar/bootstrap'
 
 _html do
   # better system output styling (errors in red)
