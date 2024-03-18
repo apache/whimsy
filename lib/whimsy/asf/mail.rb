@@ -352,8 +352,10 @@ module ASF
         'infra'
       when 'dataprivacy'
         'privacy@apache.org'
-      when 'legalaffairs'
+      when 'legalaffairs' # Not sure what uses this
         'legal-internal@apache.org'
+      when 'legal' # This seems to be used by the board agenda
+        'legal-private@apache.org'
       when 'fundraising'
         'fundraising-private@apache.org'
       when 'marketingandpublicity'
