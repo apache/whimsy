@@ -530,6 +530,14 @@ module ASF
       ASF.search_one(base, "cn=#{name}", 'cn').any?
     end
 
+    # Low-level search for retrieving LDAP entries. Assumes scope ONE
+    # Returns list of hashes, where the keys are the attributes
+    # Optionally provide a list of attributes to return, e.g. ['uid','mail']
+    # Always includes 'dn' in the hashes
+    def self.ldap_search(filter, attributes=['dn'])
+      raise ArgumentError.new "Cannot be used for #{self.name} instances" unless base
+      ASF.search_one(base, filter, [attributes].flatten)
+    end
   end
 
   # a hash of attributes which is not populated until the first attempt
