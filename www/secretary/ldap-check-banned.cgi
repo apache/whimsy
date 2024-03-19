@@ -93,7 +93,10 @@ _html do
       end
       if errs.size > 0 # Found an error
         _tr do
-          _td singleton attrs['uid']
+          uid = singleton attrs['uid'] 
+          _td do
+            _a uid, href: "https://whimsy.apache.org/roster/committer/#{uid}"
+          end
           _td singleton attrs['cn']
           _td singleton(attrs['asf-banned']), class: errs['asf-banned']
           _td singleton(attrs['loginShell']), class: errs['loginShell']
