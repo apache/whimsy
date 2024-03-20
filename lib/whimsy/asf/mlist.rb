@@ -155,10 +155,9 @@ module ASF
 
     # for a mail domain, extract related lists and their moderators
     # also returns the time when the data was last checked
-    # If podling==true, then also check for old-style podling names
     # returns: [{dev@a.o=>[email1, email2]}, mod-time]
     # if mail_domain is nil, matches all lists except infra test lists
-    def self.list_moderators(mail_domain, _podling=false)
+    def self.list_moderators(mail_domain)
 
       moderators = {}
       list_parse('mod') do |dom, list, subs|

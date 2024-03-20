@@ -21,7 +21,7 @@ class Committee
     # always needed: if not a member, for checking moderator status
     # and if a member, needed for showing list moderators
     # will be dropped later if insufficient karma
-    moderators, modtime = ASF::MLIST.list_moderators(pmc.mail_list, true)
+    moderators, modtime = ASF::MLIST.list_moderators(pmc.mail_list)
     subscribers = nil # we get the counts only here
     subtime = nil
     pSubs = [] # private@ subscribers
