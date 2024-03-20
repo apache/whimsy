@@ -17,9 +17,12 @@ require 'whimsy/asf'
 require 'whimsy/asf/mlist'
 require 'wunderbar'
 
+EXPECTED_SHELL='/usr/bin/false'
+NOSHELL = %w{/usr/bin/false /bin/false /home/striker/bin/no-cla /usr/sbin/nologin /bin/nologin /sbin/nologin}
+
 CHECKS = {
   'asf-banned' => 'yes',
-  'loginShell' => '/usr/bin/false',
+  'loginShell' => EXPECTED_SHELL,
   'host' => nil,
   'sshPublicKey' => nil,
 }
@@ -34,7 +37,8 @@ ATTRS=%w{uid cn asf-banned loginShell host sshPublicKey modifiersName modifyTime
 
 if ENV['QUERY_STRING'].include? 'checkShell'
   CHECKSHELL = true
-  FILTER = '(|(asf-banned=*)(loginShell=/usr/bin/false))'
+  logins=NOSHELL.map{|k| "(loginshell=#{k})"}.join('')
+  FILTER = "(|(asf-banned=*)#{logins})"
 else
   FILTER = '(asf-banned=*)'
   CHECKSHELL = false
@@ -53,17 +57,17 @@ _html do
 
   _p %{
     This script compares the LDAP settings for asf-banned, loginShell and host.
-    If asf-banned is set, it is expected to equal 'yes', and loginShell should be '/usr/bin/false'.
+    If asf-banned is set, it is expected to equal 'yes', and loginShell should be #{EXPECTED_SHELL}.
     Also host and sshPublicKey should be empty.
   }
   if CHECKSHELL
     _p %{
-      Likewise, if loginShell is '/usr/bin/false', asf-banned should probably be 'yes', and the other two fields empty.
+      Likewise, if loginShell is one of #{NOSHELL.join(' ')}, asf-banned should probably be 'yes', and the other two fields empty.
     }
   else
     _p do
       _a 'Append "?checkShell"', href: "#{ENV['SCRIPT_NAME']}?checkShell"
-      _ ' to the URL to check against loginShell=/usr/bin/false'
+      _ " to the URL to check against loginShell in one of #{NOSHELL.join(' ')}"
     end
   end
 
