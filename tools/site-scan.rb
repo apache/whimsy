@@ -52,12 +52,12 @@ def save_events(data, value)
   end
 end
 
-# Extract link text, skipping invisible stuff (assumed to be a class ending with '-sr-only')
+# Extract link text, skipping invisible stuff (assumed to be a class ending with 'sr-only')
 def get_link_text(anode)
   bits = []
   anode.traverse do |node|
     if node.name == 'text'
-      bits << node.text unless node.parent.name == 'span' and  node.parent.attribute('class')&.value&.end_with? '-sr-only' 
+      bits << node.text unless node.parent.name == 'span' and  node.parent.attribute('class')&.value&.end_with? 'sr-only'
     end
 end
   bits.join(' ')
