@@ -101,8 +101,9 @@ def parse(id, site, name)
 
     # Normalize the text and href for our capture purposes
     a_href = a['href'].to_s.strip
-    a_text = a.text.downcase.strip
-    $stderr.puts "#{a_text} #{a_href}" if $verbose
+    # HACK to fix TsFile; should have better way to filter out such text
+    a_text = a.text.downcase.sub('open in new window', '').strip
+    $stderr.puts "#{a_text.inspect} #{a_href}" if $verbose
 
     # Check the href urls for some patterns
     if a_href =~ SiteStandards::COMMON_CHECKS['foundation'][SiteStandards::CHECK_CAPTURE]
