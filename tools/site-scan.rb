@@ -84,6 +84,11 @@ def parse(id, site, name)
     return data
   end
   doc = Nokogiri::HTML(response)
+  if $saveparse
+    file = File.join('/tmp',"site-scan_#{$$}.txt")
+    File.write(file, doc.to_s)
+    $stderr.puts "Wrote parsed input to #{file}"
+  end
   data[:uri] = uri.to_s
 
   # FIRST: scan each link's a_href to see if we need to capture it
@@ -272,6 +277,7 @@ results = {}
 podlings = {}
 $cache = Cache.new(dir: 'site-scan')
 $verbose = ARGV.delete '--verbose'
+$saveparse = ARGV.delete '--saveparse'
 $skipresourcecheck = ARGV.delete '--noresource'
 
 puts "Started: #{Time.now}"  # must agree with site-scan monitor
