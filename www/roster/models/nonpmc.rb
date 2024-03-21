@@ -31,6 +31,15 @@ class NonPMC
       require 'whimsy/asf/mlist'
       moderators, modtime = ASF::MLIST.list_moderators(mail_list)
       subscribers, subtime = ASF::MLIST.list_subs(mail_list) # counts only, no archivers
+      if mail_list == 'press' # SPECIAL
+        %w{markpub announce}.each do |alt_list|
+          mods, _ = ASF::MLIST.list_moderators(alt_list)
+          moderators.merge! mods
+          subs, _ = ASF::MLIST.list_subs(alt_list)
+          subscribers.merge! subs
+        end
+      end
+      # TODO: do any non-PMCs have private lists?
       analysePrivateSubs = currentUser.asf_member?
       unless analysePrivateSubs # check for private moderator if not already allowed access
         user_mail = currentUser.all_mail || []
