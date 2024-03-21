@@ -52,6 +52,17 @@ def save_events(data, value)
   end
 end
 
+# Extract link text, skipping invisible stuff (assumed to be a class ending with '-sr-only')
+def get_link_text(anode)
+  bits = []
+  anode.traverse do |node|
+    if node.name == 'text'
+      bits << node.text unless node.parent.name == 'span' and  node.parent.attribute('class')&.value&.end_with? '-sr-only' 
+    end
+end
+  bits.join(' ')
+end
+
 # Parse an Apache project website and return text|urls that match our checks
 # @return Hash of symbols: text|url found from a check made
 # @see SiteStandards for definitions of what we should scan for (in general)
@@ -106,8 +117,7 @@ def parse(id, site, name)
 
     # Normalize the text and href for our capture purposes
     a_href = a['href'].to_s.strip
-    # HACK to fix TsFile; should have better way to filter out such text
-    a_text = a.text.downcase.sub('open in new window', '').strip
+    a_text = get_link_text(a) # Not down-cased yet
     $stderr.puts "#{a_text.inspect} #{a_href}" if $verbose
 
     # Check the href urls for some patterns
@@ -117,7 +127,7 @@ def parse(id, site, name)
         # use the title (hover text) in preference to the source
         data[:foundation] = img['title'] ? squash(img['title']) : uri + img['src'].strip
       else
-        data[:foundation] = squash(a.text)
+        data[:foundation] = squash(a_text)
       end
     end
 
@@ -127,6 +137,7 @@ def parse(id, site, name)
     end
 
     # Check the a_text strings for other patterns
+    a_text = a_text.downcase.strip # needs to be downcased here
     # Note this is an unusual case
     if (a_text =~ SiteStandards::COMMON_CHECKS['license'][SiteStandards::CHECK_TEXT]) and
         (a_href =~ SiteStandards::COMMON_CHECKS['license'][SiteStandards::CHECK_CAPTURE])
