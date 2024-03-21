@@ -334,10 +334,10 @@ module ASF
       if File.exist?(resource_yml)
         rawYaml = Psych.load_file(resource_yml, permitted_classes: [Date, Symbol])
         hash = { }
-        hash[:sga] = rawYaml[:sga].strftime('%Y-%m-%d') if rawYaml[:sga]
-        hash[:asfCopyright] = rawYaml[:asfCopyright].strftime('%Y-%m-%d') if rawYaml[:asfCopyright]
-        hash[:distributionRights] = rawYaml[:distributionRights].strftime('%Y-%m-%d') if rawYaml[:distributionRights]
-        hash[:ipClearance] = rawYaml[:ipClearance].strftime('%Y-%m-%d') if rawYaml[:ipClearance]
+        hash[:sga] = rawYaml[:sga].strftime('%Y-%m-%d') if rawYaml[:sga]&.class == Date
+        hash[:asfCopyright] = rawYaml[:asfCopyright].strftime('%Y-%m-%d') if rawYaml[:asfCopyright]&.class == Date
+        hash[:distributionRights] = rawYaml[:distributionRights].strftime('%Y-%m-%d') if rawYaml[:distributionRights]&.class == Date
+        hash[:ipClearance] = rawYaml[:ipClearance].strftime('%Y-%m-%d') if rawYaml[:ipClearance]&.class == Date
         hash[:sourceControl] = rawYaml[:sourceControl]
         hash[:wiki] = rawYaml[:wiki]
         hash[:jira] = rawYaml[:jira]
@@ -346,7 +346,7 @@ module ASF
         hash[:news] = []
         rawYaml[:news]&.each do |ni|
           newsItem = {}
-          newsItem[:date] = ni[:date].strftime('%Y-%m-%d')
+          newsItem[:date] = ni[:date].strftime('%Y-%m-%d') if ni[:date]&.class == Date
           newsItem[:note] = ni[:note]
           hash[:news].push(newsItem)
         end
