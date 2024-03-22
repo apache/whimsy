@@ -121,7 +121,7 @@ def submit_survey(formdata: {})
 
     survey_data = JSON.parse(File.read(filename), :symbolize_names => true)
     # Add user data (may overwrite existing entry!)
-    survey_data[$USER] = formdata
+    survey_data[$USER.to_sym] = formdata
     # Sort file (to keep diff clean) and write it back
     survey_data = Hash[survey_data.keys.sort.map {|k| [k, survey_data[k]]}]
 
