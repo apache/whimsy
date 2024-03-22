@@ -194,7 +194,7 @@ class PPMC < Vue
           _a 'podlings.xml', href: 'https://svn.apache.org/repos/asf/incubator/public/trunk/content/podlings.xml'
         end
         _li do
-          _a 'Individual status files', href: 'https://svn.apache.org/repos/asf/incubator/public/trunk/content/podlings/'
+          _a 'Podling status file', href: "https://svn.apache.org/repos/asf/incubator/public/trunk/content/podlings/#{@ppmc.id}.yml"
         end
       end
       _br
@@ -239,13 +239,24 @@ class PPMC < Vue
     _ul do
       if @ppmc.podlingStatus.ipClearance
         _li  'IP Clearance: '+ @ppmc.podlingStatus.ipClearance
+      else
+        _li.podlingWarning 'No IP Clearance Filed (or invalid ipClearance entry)'
       end
-      _li 'Software Grant Received on: '+@ppmc.podlingStatus.sga if @ppmc.podlingStatus.sga
-      _li.podlingWarning 'No Software Grant and No IP Clearance Filed' unless @ppmc.podlingStatus.sga || @ppmc.podlingStatus.ipClearance
-      _li 'Confirmation of ASF Copyright Headers on Source Code on: '+@ppmc.podlingStatus.asfCopyright if @ppmc.podlingStatus.asfCopyright
-      _li.podlingWarning 'No Release Yet/Missing ASF Copyright Headers on Source Code' unless @ppmc.podlingStatus.asfCopyright
-      _li 'Confirmation of Binary Distribution Licensing: '+@ppmc.podlingStatus.distributionRights if @ppmc.podlingStatus.distributionRights
-      _li.podlingWarning 'No Release Yet/Binary has licensing issues' unless @ppmc.podlingStatus.distributionRights
+      if @ppmc.podlingStatus.sga
+        _li 'Software Grant Received on: '+@ppmc.podlingStatus.sga
+      else
+        _li.podlingWarning 'No Software Grant Filed (or invalid sga entry)'
+      end
+      if @ppmc.podlingStatus.asfCopyright
+        _li 'Confirmation of ASF Copyright Headers on Source Code on: '+@ppmc.podlingStatus.asfCopyright
+      else
+        _li.podlingWarning 'No Release Yet/Missing ASF Copyright Headers on Source Code'
+      end
+      if @ppmc.podlingStatus.distributionRights
+        _li 'Confirmation of Binary Distribution Licensing: '+@ppmc.podlingStatus.distributionRights
+      else
+        _li.podlingWarning 'No Release Yet/Binary has licensing issues'
+      end
     end
 
     # reporting schedule
