@@ -127,7 +127,7 @@ def submit_survey(formdata: {})
 
     File.write(filename, JSON.pretty_generate(survey_data))
     Dir.chdir tmpdir do
-      # rc = ASF::SVN.svn_('commit', filename, _, {msg: "Survey submission (whimsy)", user: $USER, password: $PASSWORD})
+      rc = ASF::SVN.svn_('commit', filename, _, {msg: "Survey submission (via whimsy)", user: $USER, password: $PASSWORD})
     end
   end
   if rc == 0
@@ -223,4 +223,3 @@ _html do
     end
   end
 end
-
