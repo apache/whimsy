@@ -100,7 +100,7 @@ def display_survey(survey_layout)
 end
 
 # Validation as needed within the script
-def validate_survey(_formdata: {})
+def validate_survey(formdata: {})
   return true # TODO: Futureuse
 end
 
