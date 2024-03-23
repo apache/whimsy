@@ -121,21 +121,23 @@ def send_form(formdata: {})
     _pre mentor_update
   end
 
-  Dir.mktmpdir do |tmpdir|
-    credentials = {user: $USER, password: $PASSWORD}
-    # TODO: investigate if we should to --depth empty and attempt to get only that mentor's file
-    ASF::SVN.svn_('checkout', [MentorFormat::MENTORS_SVN, tmpdir], _, credentials)
-    Dir.chdir tmpdir do
-      if File.exist? fn
-        File.write(fn, mentor_update + "\n")
-        ASF::SVN.svn_('status','.', _)
-        message = "Updating my mentoring data (whimsy)"
-      else
-        File.write(fn, mentor_update + "\n")
-        ASF::SVN.svn_('add', fn, _)
-        message = "#{$USER} += mentoring volunteer (whimsy)"
+  _div.transcript do
+    Dir.mktmpdir do |tmpdir|
+      credentials = {user: $USER, password: $PASSWORD}
+      # TODO: investigate if we should to --depth empty and attempt to get only that mentor's file
+      ASF::SVN.svn_('checkout', [MentorFormat::MENTORS_SVN, tmpdir], _, credentials)
+      Dir.chdir tmpdir do
+        if File.exist? fn
+          File.write(fn, mentor_update + "\n")
+          ASF::SVN.svn_('status','.', _)
+          message = "Updating my mentoring data (whimsy)"
+        else
+          File.write(fn, mentor_update + "\n")
+          ASF::SVN.svn_('add', fn, _)
+          message = "#{$USER} += mentoring volunteer (whimsy)"
+        end
+        rc = ASF::SVN.svn_('commit', fn, _, {msg: message}.merge(credentials))
       end
-      rc = ASF::SVN.svn_('commit', fn, _, {msg: message}.merge(credentials))
     end
   end
 
