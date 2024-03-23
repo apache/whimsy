@@ -194,7 +194,7 @@ def do_diff(initialhash, currenthash, triggerrev)
     mail = Mail.new do
       from "#{currentcommittername} <#{currentcommitter}@apache.org>"
       sender "notifications@whimsical.apache.org"
-      # to to # Intial testing, only use Bcc
+      # to to # Initial testing, only use Bcc
       bcc 'notifications@whimsical.apache.org' # keep track of mails
       subject subject
       body body
@@ -210,7 +210,7 @@ def handle_change(revision)
   begin
     previous_revision = File.read(PREVIOUS_REVISION).chomp
     puts stamp "Detected last known revision '#{previous_revision}'"
-    # get list of commmits from initial to current.
+    # get list of commits from initial to current.
     # @return array of entries, each of which is an array of [commitid, committer, datestamp]
     out,_ = ASF::SVN.svn_commits!(SOURCE_URL, previous_revision, revision)
     commits = out.size - 1
