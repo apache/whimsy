@@ -1,0 +1,60 @@
+# https://github.com/actions/labeler
+github:
+- any:
+  - changed-files:
+    - any-glob-to-any-file:
+      - .github/**/*
+
+config:
+- any:
+  - changed-files:
+    - any-glob-to-any-file:
+      - config/**/*
+
+docker-config:
+- any:
+  - changed-files:
+    - any-glob-to-any-file:
+      - docker-config/**/*
+
+documentation:
+- any:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/*.md'
+
+examples:
+- any:
+  - changed-files:
+    - any-glob-to-any-file:
+      - examples/**/*
+
+images:
+- any:
+  - changed-files:
+    - any-glob-to-any-file:
+      - images/**/*
+
+lib:
+- any:
+  - changed-files:
+    - any-glob-to-any-file:
+      - lib/**/*
+
+tools:
+- any:
+  - changed-files:
+    - any-glob-to-any-file:
+      - tools/**/*
+
+www:
+- any:
+  - changed-files:
+    - any-glob-to-any-file:
+      - www/**/*
+
+root:
+- any:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '*'
