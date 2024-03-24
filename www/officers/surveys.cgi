@@ -41,7 +41,7 @@ def get_survey_root(asfsvn = false)
 end
 
 # Convenience method to sanitize/construct paths to .json
-# @param filename to request, either a layout or datafile
+# @param filename to request a layout
 # @return sanitized path/filename
 def get_survey_path(f)
   filename = f
@@ -107,8 +107,8 @@ end
 # Handle POST submission (checkout survey data, add user's submission, checkin file)
 # @return true if we think it succeeded; false in all other cases
 def submit_survey(formdata: {})
-  filename = get_survey_path(formdata[:datafile])
-  formdata.delete(:datafile) # Remove before generating output
+  filename = formdata.delete(:datafile) # Remove before generating output
+  filename << DOTJSON if not filename.end_with?(DOTJSON)
   submission_data = JSON.pretty_generate(formdata) + "\n"
   _div.well do
     _p.lead "Submitting your survey data to: #{filename}"
@@ -119,7 +119,7 @@ def submit_survey(formdata: {})
   _div.transcript do
     Dir.mktmpdir do |tmpdir|
       ASF::SVN.svn_!('checkout',[get_survey_root(), tmpdir],_,{depth: 'files', user: $USER, password: $PASSWORD})
-
+      filename = File.join(tmpdir, filename) # Use the temporary checkout version
       survey_data = JSON.parse(File.read(filename), :symbolize_names => true)
       # Add user data (may overwrite existing entry!)
       survey_data[$USER.to_sym] = formdata
