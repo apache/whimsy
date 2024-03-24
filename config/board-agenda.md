@@ -71,17 +71,17 @@ Debugging
 ---------
 
 The server is a straightforward Sinatra/Rack application.  Most of the logic
-can be found in [routes.rb](../routes.rb), [models/](../models/), and
-[views/actions/](../views/actions/).  Parsing the agenda itself is done in
+can be found in [routes.rb](../www/board/agenda/routes.rb), [models/](../www/board/agenda/models), and
+[views/actions/](../www/board/agenda/views/actions).  Parsing the agenda itself is done in
 [agenda.rb](../lib/whimsy/asf/agenda.rb) and
-[agenda/](../lib/whimsy/asf/agenda/).
+[agenda/](../lib/whimsy/asf/agenda).
 
 The server provides the client with data in JSON format.  Most importantly, a
 parsed agenda can be seen by going to the agenda page for a given month and
 replacing the trailing `/` with `.json`.
 
 The client itself is JavaScript and is produced by converting the files in the
-[view](../view) directory *except* for the `actions` subdirectory from Ruby to
+[view](../www/board/agenda/views) directory *except* for the `actions` subdirectory from Ruby to
 JavaScript using [ruby2js](https://github.com/rubys/ruby2js).  The generated
 JavaScript makes heavy use of [Vue.js](https://vuejs.org/).
 

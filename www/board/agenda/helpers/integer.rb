@@ -2,12 +2,15 @@
 unless Integer.public_method_defined? :ordinalize
   class Integer
     def ordinalize
-      if self % 10 == 1
-        self.to_s + "st"
-      elsif self % 10 == 2
-        self.to_s + "nd"
+      case self % 100
+      when 11, 12, 13 then self.to_s + 'th'
       else
-        self.to_s + "th"
+        case self % 10
+        when 1 then self.to_s + 'st'
+        when 2 then self.to_s + 'nd'
+        when 3 then self.to_s + 'rd'
+        else self.to_s + 'th'
+        end
       end
     end
   end
