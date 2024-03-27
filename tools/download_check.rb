@@ -395,21 +395,23 @@ def _checkDownloadPage(path, tlp, version)
 
   # Some pages are mainly a single line (e.g. Hop)
   # This make matching the appropriate match context tricky without traversing the DOM
-  body.scan(%r{(^.*?([^<>]+?(nightly|snapshot)[^<>]+?)).*$}i) do |m|
-    m.each do |n|
-      if n.size < 160
-        if n =~ %r{API |/api/|-docs-} # snapshot docs Datasketches (Flink)?
-          W "Found reference to NIGHTLY or SNAPSHOT docs?: #{n}"
-        else
-          # ignore trafficcontrol bugfix message
-          unless n.include? "Fixed TO log warnings when generating snapshots" or
-                 n.include? "Kafka Raft support for snapshots" or
-                 n.include? "zkSnapshotC" or # ZooKeepeer
-                 n.include? "/issues.apache.org/jira/browse/" # Daffodil
-            W "Found reference to NIGHTLY or SNAPSHOT builds: #{n}"
+  if body =~ %r{nightly|snapshot}i # scan can be expensive, so skip if unneeded
+    body.scan(%r{(^.*?([^<>]+?(nightly|snapshot)[^<>]+?)).*$}i) do |m|
+      m.each do |n|
+        if n.size < 160
+          if n =~ %r{API |/api/|-docs-} # snapshot docs Datasketches (Flink)?
+            W "Found reference to NIGHTLY or SNAPSHOT docs?: #{n}"
+          else
+            # ignore trafficcontrol bugfix message
+            unless n.include? "Fixed TO log warnings when generating snapshots" or
+                  n.include? "Kafka Raft support for snapshots" or
+                  n.include? "zkSnapshotC" or # ZooKeepeer
+                  n.include? "/issues.apache.org/jira/browse/" # Daffodil
+              W "Found reference to NIGHTLY or SNAPSHOT builds: #{n}"
+            end
           end
+          break
         end
-        break
       end
     end
   end
