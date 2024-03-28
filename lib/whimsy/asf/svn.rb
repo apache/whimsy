@@ -350,6 +350,9 @@ module ASF
         password = options[:password]
         user = options[:user]
       end
+      if user == 'whimsysvn'
+        cmd[0] = 'whimsysvn' # need wrapper for SVN proxy role
+      end
       unless options[:dryrun] # don't add auth for dryrun
         if password or user == 'whimsysvn' # whimsysvn user does not require password
           cmd << ['--username', user, '--no-auth-cache']
