@@ -199,7 +199,11 @@ def do_diff(initialhash, currenthash, triggerrev)
       subject subject
       body body
     end
-    mail.deliver! if Status.active? or Status.testnode?
+    if Status.active? or Status.testnode?
+      mail.deliver! 
+    else
+      puts stamp "Would have sent: #{subject}"
+    end
   end
 end
 
@@ -247,7 +251,7 @@ if $0 == __FILE__
     exit
   end
 
-  puts stamp "Starting #{File.basename(__FILE__)}"
+  puts stamp "Starting #{File.basename(__FILE__)} Active?: #{Status.active?}"
 
   # show initial start
   previous_revision = File.read(PREVIOUS_REVISION).chomp.sub('r','').to_i
