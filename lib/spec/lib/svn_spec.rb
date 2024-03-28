@@ -328,24 +328,37 @@ describe ASF::SVN do
       end
     end
 
-    it "_svn_build_cmd('help', 'path', {user: 'whimsysvn'}) should include username" do
+    it "_svn_build_cmd('help', 'path', {user: 'whimsysvn'}) should not include username" do
       cmd, stdin = ASF::SVN._svn_build_cmd('help', 'path', {user: 'whimsysvn'})
       expect(stdin).to eq(nil)
-      cmd.shift # don't make assumptions about the exact SVN command
-      expect(cmd).to eq(["help", "--non-interactive", ["--username", "whimsysvn", "--no-auth-cache"], "--", "path"])
+      expect(cmd).to eq(["whimsysvn", "help", "--non-interactive", "--", "path"])
     end
 
-    it "_svn_build_cmd('help', 'path', {user: 'whimsysvn', dryrun: false}) should include username" do
+    it "_svn_build_cmd('help', 'path', {user: 'whimsysvn', dryrun: false}) should not include username" do
       cmd, stdin = ASF::SVN._svn_build_cmd('help', 'path', {user: 'whimsysvn', dryrun: false})
       expect(stdin).to eq(nil)
-      cmd.shift # don't make assumptions about the exact SVN command
-      expect(cmd).to eq(["help", "--non-interactive", ["--username", "whimsysvn", "--no-auth-cache"], "--", "path"])
+      expect(cmd).to eq(["whimsysvn", "help", "--non-interactive", "--", "path"])
     end
     it "_svn_build_cmd('help', 'path', {user: 'whimsysvn', dryrun: true}) should not include username" do
       cmd, stdin = ASF::SVN._svn_build_cmd('help', 'path', {user: 'whimsysvn', dryrun: true})
+      expect(cmd).to eq(["whimsysvn", "help", "--non-interactive", "--", "path"])
+    end
+
+    it "_svn_build_cmd('help', 'path', {user: '_dummy_', password: 'password'}) should include username" do
+      cmd, stdin = ASF::SVN._svn_build_cmd('help', 'path', {user: '_dummy_', password: 'password'})
+      expect(stdin).to eq('password')
+      expect(cmd).to eq(["svn", "help", "--non-interactive", ["--username", "_dummy_", "--no-auth-cache"], ["--password-from-stdin"], "--", "path"])
+    end
+
+    it "_svn_build_cmd('help', 'path', {user: '_dummy_', password: 'password', dryrun: false}) should include username" do
+      cmd, stdin = ASF::SVN._svn_build_cmd('help', 'path', {user: '_dummy_', password: 'password', dryrun: false})
+      expect(stdin).to eq('password')
+      expect(cmd).to eq(["svn", "help", "--non-interactive", ["--username", "_dummy_", "--no-auth-cache"], ["--password-from-stdin"], "--", "path"])
+    end
+    it "_svn_build_cmd('help', 'path', {user: '_dummy_', dryrun: true}) should not include username" do
+      cmd, stdin = ASF::SVN._svn_build_cmd('help', 'path', {user: '_dummy_', dryrun: true})
       expect(stdin).to eq(nil)
-      cmd.shift # don't make assumptions about the exact SVN command
-      expect(cmd).to eq(["help", "--non-interactive", "--", "path"])
+      expect(cmd).to eq(["svn", "help", "--non-interactive", "--", "path"])
     end
 
     it "_svn_build_cmd('help', 'path', {_error: true})  should raise error" do
