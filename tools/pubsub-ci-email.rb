@@ -80,19 +80,19 @@ class PubSub
         puts stamp "Done with start" if debug
       rescue Errno::ECONNREFUSED => e
         @restartable = true
-        $stderr.puts stamp e.inspect
+        puts stamp e.inspect
         sleep 3
       rescue StandardError => e
-        $stderr.puts stamp e.inspect
-        $stderr.puts stamp e.backtrace
+        puts stamp e.inspect
+        puts stamp e.backtrace
       end
       puts stamp "Done with thread" if debug
     end # thread
     puts stamp "Pubsub thread started #{url} ..."
     ps_thread.join
-    puts stamp "Pubsub thread finished %s..." % (@updated ? '(updated) ' : '')
+    puts stamp "Pubsub thread finished %s..." % (@updated ? '(code updated) ' : '')
     if @restartable and ! ARGV.include? '--prompt'
-      $stderr.puts stamp 'restarting'
+      puts stamp 'restarting'
 
       # relaunch script after a one second delay
       sleep 1
