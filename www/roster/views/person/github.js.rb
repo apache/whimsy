@@ -8,7 +8,7 @@ class PersonGitHub < Vue
 
     _div.row data_edit: 'github' do
       _div.name do
-        _ 'GitHub username(s) (user-provided)'
+        _ 'FIELD OBSOLETE: see instead: https://gitbox.apache.org/boxer/'
         _br
         _a 'Link GitHub username to ASF id', href: 'https://gitbox.apache.org/boxer/'
       end
@@ -56,4 +56,3 @@ class PersonGitHub < Vue
     end
   end
 end
-

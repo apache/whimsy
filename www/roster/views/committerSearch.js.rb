@@ -51,7 +51,6 @@ class CommitterSearch < Vue
             person.id.include? part or
             person.name.downcase().include? part or
             person.mail.any? {|mail| mail.include? part} or
-            person.githubUsername.any? {|ghun| ghun.downcase().include? part}
           else
             person.name.downcase().include? part or
             person.mail.include? part
@@ -101,7 +100,6 @@ class CommitterSearch < Vue
                 _th 'id'
                 _th 'public name'
                 _th 'email'
-                _th 'githubUsername'
                 if @@notinavail
                   _th 'ICLA'
                 end
@@ -133,11 +131,6 @@ class CommitterSearch < Vue
                     _td person.mail
                   end
 
-                  if person.githubUsername
-                    _td person.githubUsername.join(', ')
-                  else
-                    _td ''
-                  end
                   if @@notinavail
                     # iclapath already ends in /
                     _td { _a person.claRef, href: "#{@@iclapath}#{person.iclaFile}" }
