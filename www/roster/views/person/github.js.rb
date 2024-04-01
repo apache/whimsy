@@ -8,7 +8,10 @@ class PersonGitHub < Vue
 
     _div.row data_edit: 'github' do
       _div.name do
-        _ 'GitHub username(s) (user-provided)'
+        _ 'GitHub username(s) '
+        _b '(user-provided)'
+        _br
+        _b 'N.B. not synched with the linked id'
         _br
         _a 'Link GitHub username to ASF id', href: 'https://gitbox.apache.org/boxer/'
       end
@@ -49,7 +52,7 @@ class PersonGitHub < Vue
                 end
               end
             end
-            _ '(might not be linked to ASF id)'
+            _ '(user-provided, so might not be the one linked to the ASF id)'
           end
         end
       end
