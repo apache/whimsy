@@ -16,7 +16,6 @@ class PMCMembers < Vue
         _tr do
           _th if @@auth
           _th 'id', data_sort: 'string'
-          _th 'githubUsername', data_sort: 'string'
           _th.sorting_asc 'public name', data_sort: 'string-ins'
           _th 'starting date', data_sort: 'string'
           _th 'status - click cell for actions', data_sort: 'string'
@@ -182,13 +181,11 @@ class PMCMember < Vue
         _td { _b { _a @@person.id, href: "committer/#{@@person.id}", style: style }
               _a ' (*)', href: "committee/#{@@committee.id}#crosscheck", style: style if @@person.notSubbed
             }
-        _td @@person.githubUsername, style: style
         _td { _b @@person.name, style: style }
       elsif @@person.member
         _td { _i { _a @@person.id, href: "committer/#{@@person.id}", style: style }
               _a ' (*)', href: "committee/#{@@committee.id}#crosscheck", style: style if @@person.notSubbed
             }
-        _td @@person.githubUsername, style: style
         _td { _i @@person.name, style: style
               _ ' ('
               _ @@person.member.sub(%r{( \(Non-voting\))? Member}, '').sub(%r{^Emeritus}, 'ASF Emeritus'), style: style
@@ -198,7 +195,6 @@ class PMCMember < Vue
         _td { _a @@person.id, href: "committer/#{@@person.id}", style: style
               _a ' (*)', href: "committee/#{@@committee.id}#crosscheck", style: style if @@person.notSubbed
             }
-        _td @@person.githubUsername, style: style
         _td @@person.name, style: style
       end
 
