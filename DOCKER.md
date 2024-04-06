@@ -132,6 +132,24 @@ To correct this, do the following:
 
 Adjust as necessary if using local (private) SVN repos
 
+There is no support for using a whimsysvn proxy.
+If a developer needs such access, they should use a local SVN repository.
+
+Using a local SVN repository
+----------------------------
+Create a directory called REPO (must agree with docker-config/whimsy.conf) under the whimsy parent directory
+(i.e. alonside the gems/ directory)
+Set up 3 local SVN repositories under the REPO directory using `svnadmin create` with the names: asf, private, infra
+Under each of these, create the directories and files you need.
+
+Add the following entry to the .whimsy file: `:svn_base: http://localhost/repos/`
+The repositories can then be found at the following locations in Docker:
+- http://localhost/repos/asf/
+- http://localhost/repos/infra/
+- http://localhost/repos/private/
+
+Note: these will be checked out under /srv/svn in Docker.
+
 Testing email
 -------------
 
