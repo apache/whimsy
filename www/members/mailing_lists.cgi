@@ -19,14 +19,14 @@ FLAGS = %{
 -Mu allow subscribers to post, reject all others (subonly)
 -MU allow anyone to post (open)
 
--mz moderate after checking sender is known
--Mz unmoderated, but requires sender to be known
+-mz reject if it is not from an apache.org address, then moderate
+-Mz reject if sender is not an apache.org address or in LDAP
 
 -s subscriptions are moderated (usually means the list is private)
 
 -x check mime-type, size etc
 -y send copy to security@apache.org
--z check that sender address is known (i.e. @apache.org or in LDAP)
+-z sender/from address checking: see above
 }
 #  announce@a.o: mUxYz
 
