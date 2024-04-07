@@ -106,6 +106,7 @@ _html do
         _thead_ do
           _tr do
             _th 'list', data_sort: 'string'
+            _th 'domain', data_sort: 'string'
             _th "flags #{filter}", data_sort: 'string'
             _th 'Type (mu)', data_sort: 'string'
             _th 'mod count', data_sort: 'int'
@@ -122,8 +123,11 @@ _html do
             next if listfilter and ! lad.include? listfilter
             mu = flags.tr('^muMU', '')
             _tr do
+              _td data_sort_value: "#{list}-#{domain}" do
+                _a list, href: "https://lists.apache.org/list.html?#{lad}", target: '_blank'
+              end
               _td data_sort_value: "#{domain}-#{list}" do
-                _a lad, href: "https://lists.apache.org/list.html?#{lad}", target: '_blank'
+                _a domain, href: "https://lists.apache.org/list.html?#{lad}", target: '_blank'
               end
               _td flags
               _td do
