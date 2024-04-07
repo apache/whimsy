@@ -64,7 +64,7 @@ class Email < Vue
 
           The board report for #{@@item.title} has not yet been submitted for
           this month's board meeting. If you or another member of the PMC are
-          unable to get it in by fourty-eight hours before meeting time, please
+          unable to get it in by forty-eight hours before meeting time, please
           let the board know, and plan to report next month.
 
             https://www.apache.org/foundation/board/reporting#how
