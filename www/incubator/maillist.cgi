@@ -4,6 +4,7 @@ PAGETITLE = "Incubator Podling Mailing Lists" # Wvisible:incubator mail
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 
 require 'whimsy/asf'
+require 'whimsy/asf/mlist' # not loaded by default
 require 'wunderbar/bootstrap'
 
 _html do
@@ -20,7 +21,7 @@ _html do
         _a 'https://whimsy.apache.org/test/dataflow.cgi#/lib/whimsy/asf/podlings.rb', href: '/test/dataflow.cgi#/lib/whimsy/asf/podlings.rb'
       }
     ) do
-      lists = ASF::Mail.lists
+      lists = ASF::MLIST
 
       _table.table do
         _tr do
@@ -42,7 +43,7 @@ _html do
 
             _td podling.status
             _td podling.reporting.join(', ')
-            _td lists.select {|list| podling.mail_list?(list) }.join(', ')
+            _td ASF::MLIST.domain_lists(podling.name, true).keys.join(', ')
           end
         end
       end
