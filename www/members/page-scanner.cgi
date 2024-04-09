@@ -22,7 +22,7 @@ if qs =~ %r{^url=(https?://.+)}
   if status.success?
     puts out
   else
-    puts err.scan(/^Error:.+/) # Keep only the error line
+    puts err.scan(/^Error:.+/).first || err # Show only the Error line if present
   end
   print "=====\n"
 else
