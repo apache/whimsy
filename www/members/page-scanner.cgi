@@ -14,6 +14,8 @@ qs = ENV['QUERY_STRING']
 if qs =~ %r{^url=(https?://.+)}
   url = $1
   print "Checking the page #{url}\n\n"
+  puts "The following 3rd party references were found."
+  puts "They have not been checked against the list of allowed references."
   print "=====\n"
   cmd = ['node', '/srv/whimsy/tools/scan-page.js', url, 'all']
   out, err, status = Open3.capture3(*cmd)
