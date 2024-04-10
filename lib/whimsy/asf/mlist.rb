@@ -277,6 +277,24 @@ module ASF
       end
     end
 
+    # Parse the marker files: modpost, modsub, remote
+    # Return hash: key="domain list", value=hash containing :modsub, :modpost, :remote
+    # if the list has the corresponding file
+    # BETA: API may change!
+    def self.parse_markers
+      hash = Hash.new {|h,k| h[k] = Hash.new}
+      File.open(File.join(LIST_BASE, 'list-modsub')).each do |line|
+        hash[line.chomp][:modsub] = 1
+      end
+      File.open(File.join(LIST_BASE, 'list-modpost')).each do |line|
+        hash[line.chomp][:modpost] = 1
+      end
+      File.open(File.join(LIST_BASE, 'list-remote')).each do |line|
+        hash[line.chomp][:remote] = 1
+      end
+      hash
+    end
+
     private
 
     # return the archiver type as array: [:MBOX|:PONY|:MINO|:MAIL_ARCH|:MARKMAIL|:WHIMSY, 'public'|'private'|'alias'|'direct']
@@ -444,6 +462,8 @@ end
 if __FILE__ == $0
   $LOAD_PATH.unshift '/srv/whimsy/lib'
   require 'whimsy/asf'
+  p ASF::MLIST.parse_markers
+  exit
   domain = ARGV.shift || 'whimsical'
   mlist = ASF::Committee.find(domain).mail_list
   p mlist
