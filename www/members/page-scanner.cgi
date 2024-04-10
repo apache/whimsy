@@ -4,6 +4,7 @@ PAGETITLE = "ASF Page Asset Checker - ALPHA"
 # very rudimentary page asset checker - shows references to non-ASF assets
 
 require 'open3'
+require_relative '../../tools/asf-site-check'
 
 # usage: whimsy.apache.org/members/page-scanner?url=http://apache.org/
 
@@ -14,13 +15,17 @@ qs = ENV['QUERY_STRING']
 if qs =~ %r{^url=(https?://.+)}
   url = $1
   print "Checking the page #{url}\n\n"
-  puts "The following 3rd party references were found."
-  puts "They have not been checked against the list of allowed references."
+  puts "The following references were found to hosts other than apache.org and apachecon.com"
+  puts "The first column shows if the host is recognised as being under ASF control according to"
+  puts "https://privacy.apache.org/policies/asf-domains"
   print "=====\n"
   cmd = ['node', '/srv/whimsy/tools/scan-page.js', url, 'all']
   out, err, status = Open3.capture3(*cmd)
   if status.success?
-    puts out
+    out.split("\n").each do |url|
+      print ASFDOMAIN.asfurl?(url) ? 'OK ' : 'NO '
+      puts url
+    end
   else
     puts err.scan(/^Error:.+/).first || err # Show only the Error line if present
   end
