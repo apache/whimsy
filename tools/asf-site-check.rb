@@ -56,7 +56,8 @@ module ASFDOMAIN
   def self.asfhost?(host)
     return true if ASF_DOMAINS.include? host
     # This assumes all ASF domains are of the form a.b
-    return host =~ %r{\.(\w+\.\w+)\z} && ASF_DOMAINS.include?($1)
+    # (return false rather than nil if RE does not match)
+    return (host =~ %r{\.(\w+\.\w+)\z} && ASF_DOMAINS.include?($1)) || false
   end
   # check if URL is known to be under ASF control
   # extracts hostname and calls asfhost?
