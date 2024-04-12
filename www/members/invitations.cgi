@@ -115,6 +115,7 @@ def match_person(hash, id, name, mails)
   return nil
 end
 
+meeting_end = ASF::MeetingUtil.meeting_end
 remain = ASF::MeetingUtil.application_time_remaining
 
 # produce HTML output of reports, highlighting ones that have not (yet)
@@ -158,6 +159,8 @@ _html do
             _b "Applications close in #{remain[:days]} days and #{remain[:hours]} hours"
           else
             _b "Applications can no longer be accepted, sorry."
+              _ "The meeting ended at #{Time.at(meeting_end).getutc.strftime('%Y-%m-%d %H:%M %Z')}."
+              _ "This was #{remain[:days]} days and #{remain[:hours]} hours ago."
           end
         end
       }
