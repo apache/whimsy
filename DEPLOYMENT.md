@@ -129,9 +129,8 @@ and running - these are only needed for a new deployment.
  Using the `www-data` user, copy over the following directories from
    the previous whimsy-vm server:
    * `/srv/agenda`
-   * `/srv/icla`
    * `/srv/gpg` - this contains the public key ring used to check ICLA signatures
-   *  `/srv/mail` - Note that the /srv/mail/* directories will in general be different between hosts
+   * `/srv/mail` - Note that the /srv/mail/* directories will in general be different between hosts
      This is because the final delivery routes will vary.
      However, rather than try and merge the files, it is simpler to do a full copy.
 
