@@ -55,9 +55,9 @@ if (!isASFhost(inithost)) {
     }
   });
   let result = await page.goto(target);
-  let status = result._status; // now seems to be null if it completed OK?
+  let status = result.status();
   if (status && status != 200) {
-    let url = result._url;
+    let url = result.url();
     let error = `Status ${status} for ${url}`;
     throw new Error(error);
   }
