@@ -12,10 +12,10 @@ const inithost = new URL(target).host;
 const option = process.argv[3] || '';
 
 function isASFhost(host) {
-    return host == '' || host == 'apache.org' || host.endsWith('.apache.org') || host.endsWith('.apachecon.com');
+  return host == '' || host == 'apache.org' || host.endsWith('.apache.org') || host.endsWith('.apachecon.com');
 }
 if (!isASFhost(inithost)) {
-    throw new Error("Only ASF hosts are supported - saw " + inithost);
+  throw new Error("Only ASF hosts are supported - saw " + inithost);
 }
 
 (async () => {
@@ -31,27 +31,27 @@ if (!isASFhost(inithost)) {
 
     const url = interceptedRequest.url();
     if (url == target) {
-        // must allow this through
-        interceptedRequest.continue();
+      // must allow this through
+      interceptedRequest.continue();
     } else {
-        let host = new URL(url).host
-        if (!isASFhost(host)) {
-            // don't visit non-ASF hosts unless requested
-            if (option == 'all') {
-                console.log(url);
-                interceptedRequest.continue();
-            } else {
-                if (option == 'showurl') {
-                  console.log(url);
-                } else {
-                  console.log(host);
-                }
-                interceptedRequest.abort();
-            }
+      let host = new URL(url).host
+      if (!isASFhost(host)) {
+        // don't visit non-ASF hosts unless requested
+        if (option == 'all') {
+          console.log(url);
+          interceptedRequest.continue();
         } else {
-            // Need to visit at least an initial redirect
-            interceptedRequest.continue();
+          if (option == 'showurl') {
+            console.log(url);
+          } else {
+            console.log(host);
+          }
+          interceptedRequest.abort();
         }
+      } else {
+        // Need to visit at least an initial redirect
+        interceptedRequest.continue();
+      }
     }
   });
   let result = await page.goto(target);
