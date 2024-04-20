@@ -6,7 +6,7 @@ module.paths.push('/usr/lib/node_modules')
 
 const puppeteer = require('puppeteer');
 
-const target = process.argv[2] || 'http://apache.org/';
+const target = process.argv[2] || 'https://apache.org/';
 const inithost = new URL(target).host;
 
 const option = process.argv[3] || '';
@@ -39,6 +39,14 @@ if (!isASFhost(inithost)) {
         // don't visit non-ASF hosts unless requested
         if (option == 'all') {
           console.log(url);
+          interceptedRequest.continue();
+        } else if (option == 'allref') {
+          let iniurl = interceptedRequest.initiator().url;
+          if (iniurl && !iniurl.startsWith(target)) { // second level
+            console.log(url + ' <= ' + iniurl);
+          } else {
+            console.log(url);
+          }
           interceptedRequest.continue();
         } else {
           if (option == 'showurl') {
