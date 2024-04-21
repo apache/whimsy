@@ -371,7 +371,7 @@ if option != :user
   snippet += "PassengerUser #{user}\nPassengerGroup #{group}\n"
 end
 
-# If the passenger_conf doesn't exist or it doesn't match our expected, update/create it.
+# If the passenger_conf doesn't exist or it doesn't match our expected, update or create it.
 if (not File.exist?(passenger_conf)) or (File.exist?(passenger_conf) and File.read(passenger_conf) != snippet)
   sudo do
     color "$ sudo edit #{passenger_conf}"
