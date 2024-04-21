@@ -371,7 +371,8 @@ if option != :user
   snippet += "PassengerUser #{user}\nPassengerGroup #{group}\n"
 end
 
-if !File.exist?(passenger_conf) or File.read(passenger_conf) != snippet
+# If the passenger_conf doesn't exist or it doesn't match our expected, update/create it.
+if (not File.exist?(passenger_conf)) or (File.exist?(passenger_conf) and File.read(passenger_conf) != snippet)
   sudo do
     color "$ sudo edit #{passenger_conf}"
     File.write passenger_conf, snippet unless $dry_run
@@ -398,7 +399,7 @@ elsif force[:bundler]
   ARGS.push '--no-bundle'
 end
 
-### Installl gems
+### Install gems
 
 unless $root
   if force[:gems] or not File.exist?("#{WHIMSY}/Gemfile.lock")
