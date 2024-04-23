@@ -18,6 +18,10 @@ if (!isASFhost(inithost)) {
   throw new Error("Only ASF hosts are supported - saw " + inithost);
 }
 
+function getHost(url) {
+  return new URL(url).host;
+}
+
 (async () => {
   // new fails with:
   // Error: Failed to launch the browser process!
@@ -41,8 +45,12 @@ if (!isASFhost(inithost)) {
           console.log(url);
           interceptedRequest.continue();
         } else if (option == 'allref') {
-          let iniurl = interceptedRequest.initiator().url;
-          if (iniurl && !iniurl.startsWith(target)) { // second level
+          ini = interceptedRequest.initiator();
+          let iniurl = ini.url;
+          if (!iniurl && ini.stack) {
+            iniurl = ini.stack.callFrames[0].url;
+          }
+          if (iniurl && inithost != getHost(iniurl)) { // second level
             console.log(url + ' <= ' + iniurl);
           } else {
             console.log(url);
