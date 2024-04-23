@@ -327,7 +327,7 @@ if force[:prune]
   end
 
   run 'docker', 'container', 'prune', '--force'
-  run 'docker', 'imagea', 'prune', '--force'
+  run 'docker', 'image', 'prune', '--force'
   exit
 end
 
