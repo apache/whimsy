@@ -82,6 +82,15 @@ def sudo
   end
 end
 
+def findDocker
+  if Dir.exist? "#{Dir.home}/Applications/Docker.app"
+    return "#{Dir.home}/Applications/Docker.app"
+  elsif Dir.exist? '/Applications/Docker.app'
+    return '/Applications/Docker.app'
+  end
+  return nil
+end
+
 ### Parse options to determine how whimsy code is to be run
 
 option = :www
@@ -178,7 +187,7 @@ sudo_user = ENV['SUDO_USER'] ?
 
 ### Install Homebrew
 
-unless $root and (option != :docker or not Dir.exist? '/Applications/Docker.app')
+unless $root and (option != :docker or not findDocker)
   if `which brew`.empty?
     script = 'https://raw.githubusercontent.com/Homebrew/install/master/install'
     color %($ ruby -e "$(curl -fsSL #{script})")
@@ -334,12 +343,7 @@ if force[:prune]
 end
 
 if option == :docker
-  dockerapp = nil
-  if Dir.exist? "#{Dir.home}/Applications/Docker.app"
-    dockerapp = "#{Dir.home}/Applications/Docker.app"
-  elsif Dir.exist? '/Applications/Docker.app'
-    dockerapp = '/Applications/Docker.app'
-  end
+  dockerapp = findDocker
   unless dockerapp
     dockerapp = '/Applications/Docker.app'
     brew 'cask', 'install', 'docker'
