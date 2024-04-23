@@ -5,7 +5,8 @@ Docker execution instructions
 check out the [setupmymac script](./SETUPMYMAC.md), which automates
 configuring and keeping updated a local whimsy instance with Docker.
 
-This is experimental at this point.
+This is experimental at this point, and may not work if you have already
+used it to set up a local macOS installation.
 
 Do *NOT* proceed unless you are comfortable with the notion of containers,
 images, Dockerfiles, Volumes, Port Forwarding, and likely Docker Compose.
@@ -56,6 +57,9 @@ Installation instructions
     * The `svn` and `git` sub-directories cannot be links to another part of
       host file system outside of your home directory as those files will not
       be visible to the container.
+    * The /srv/gems directory cannot be shared between macOS and the container.
+      This is because some Gems have native code, and the bundler versions are
+      unlikely to be the same.
 * `cd` into that directory
 * `git clone git@github.com:apache/whimsy.git` OR
 * `git clone https://github.com/apache/whimsy.git` (whichever works best for you)
@@ -65,7 +69,7 @@ Installation instructions
 There is a sample template `whimsy/config/bash_aliases.template` to get you started
 * `mkdir apache2_logs` if required - this will be used for the server logs (makes it easier to review them)
 * `cd whimsy`
-* Start Docker if necessary: `$ open /Applications/Docker.app`
+* Start Docker if necessary: `$ open [~]/Applications/Docker.app`
 * `rake docker:update` # this runs docker:build and updates any Gems
 * If you are using a local copy of SVN, you will need to start the server and run `rake svn:update` from a shell
 * Otherwise you can run `rake svn:update` externally
