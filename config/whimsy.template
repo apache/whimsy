@@ -28,4 +28,6 @@
 # Optionally define httpd_dn in case you want to use a different role for httpd authentication
 
 # :whimsy_dn: cn=<rolename>,ou=users,ou=services,dc=apache,dc=org
+# Or you can use your personal credentials:
+# :whimsy_dn: uid=<availid>,ou=people,dc=apache,dc=org
 # :httpd_dn:  cn=<rolename>,ou=users,ou=services,dc=apache,dc=org
