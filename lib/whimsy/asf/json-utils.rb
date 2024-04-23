@@ -47,7 +47,15 @@ module ASFJSON
         out.puts [bcj, key, v1, '=>', v2].inspect
       when 'Array'
         v1, v2 = args
-        out.puts  [bcj, key, 'Dropped', v1-v2, 'Added', v2-v1].inspect
+        dropped = v1 - v2
+        added = v2 - v1
+        if dropped.size == 0
+          out.puts  [bcj, key, 'Added', v2-v1].inspect
+        elsif added.size == 0
+          out.puts  [bcj, key, 'Dropped', v1-v2].inspect
+        else
+          out.puts  [bcj, key, 'Dropped', v1-v2, 'Added', v2-v1].inspect
+        end
       when 'Dropped'
         out.puts  [bcj, 'Dropped', key, args].inspect
       when 'Added'
