@@ -66,6 +66,8 @@ def brew *args
   run 'brew', *args
 end
 
+# TODO: this does not work well for dry-run;
+# the script can be called multiple times
 # Switch to root
 def sudo
   if $root
@@ -332,19 +334,27 @@ if force[:prune]
 end
 
 if option == :docker
-  unless Dir.exist? '/Applications/Docker.app'
+  dockerapp = nil
+  if Dir.exist? "#{Dir.home}/Applications/Docker.app"
+    dockerapp = "#{Dir.home}/Applications/Docker.app"
+  elsif Dir.exist? '/Applications/Docker.app'
+    dockerapp = '/Applications/Docker.app'
+  end
+  unless dockerapp
+    dockerapp = '/Applications/Docker.app'
     brew 'cask', 'install', 'docker'
   end
 
   if `which docker-compose`.empty?
-    run 'open /Applications/Docker.app'
+    run dockerapp
   end
 
   unless system 'docker info > /dev/null 2>&1'
-    run 'open /Applications/Docker.app'
+    run dockerapp
   end
 
   unless $root
+    # TODO: this is wrong if Docker is to be used alongside a local install
     Dir.chdir '/srv/whimsy' do
       run 'rake docker:update'
     end
