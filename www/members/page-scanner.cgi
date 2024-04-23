@@ -45,6 +45,7 @@ if qs =~ %r{^url=(https?://[^&]+)(?:&(.+))?}
       puts ""
       puts "Transitive references:"
       extras.each do |k, v|
+        puts "" #separator
         puts "Loaded by: "+k
         v.each do |url,_|
           print ASFDOMAIN.asfurl?(url) ? 'OK ' : 'NO '
