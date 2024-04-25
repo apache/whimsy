@@ -7,6 +7,7 @@
 #
 # Makes no value judgements.  Simply extracts raw data for offline analysis.
 $LOAD_PATH.unshift '/srv/whimsy/lib'
+require 'set'
 require 'net/http'
 require 'nokogiri'
 require 'json'
@@ -66,7 +67,7 @@ end
 # Parse an Apache project website and return text|urls that match our checks
 # @return Hash of symbols: text|url found from a check made
 # @see SiteStandards for definitions of what we should scan for (in general)
-def parse(id, site, name)
+def parse(id, site, name, podling=false)
   data = {}
   # force https to avoid issue with cache (sites should use https anyway)
   site.sub!(%r{^http:},'https:')
@@ -102,8 +103,9 @@ def parse(id, site, name)
   end
   data[:uri] = uri.to_s
 
+  subpages = Set.new
   # FIRST: scan each link's a_href to see if we need to capture it
-  # also capture script src for events
+  # also capture script src for events, and some page refs for podlings
   doc.traverse do |a|
 
     if a.name == 'script'
@@ -157,6 +159,16 @@ def parse(id, site, name)
         end
       end
     end
+    unless a_href =~ %r{^(#|mailto:)}
+      begin
+        site2 = URI.join(site,a_href.gsub(' ','+'))
+        if site2.host == uri.host and site2.path.size > 2
+          subpages.add site2.to_s 
+        end
+      rescue StandardError
+        $stderr.puts "Bad a_href #{a_href}"
+      end
+    end
   end
 
   # SECOND: scan each text node to match and capture
@@ -183,6 +195,28 @@ def parse(id, site, name)
       data[:disclaimer] = t
     end
   end
+
+  # Brief scan of initial sub-pages to look for disclaimers
+  # TODO also look for a download page?
+  if podling
+    hasdisclaimer = 0
+    nodisclaimer = []
+    subpages.each do |subpage|
+      begin
+        uri, response, status = $cache.get(subpage)
+        if response =~ SiteStandards::PODLING_CHECKS['disclaimer'][SiteStandards::CHECK_CAPTURE]
+          hasdisclaimer += 1
+        else
+          nodisclaimer << subpage
+        end
+      rescue URI::InvalidURIError
+      end
+    end
+    if nodisclaimer.size > 0
+      data[:disclaimers] = [hasdisclaimer, nodisclaimer]
+    end
+  end
+
   # THIRD: see if an image has been uploaded
   data[:image] = ASF::SiteImage.find(id)
 
@@ -299,10 +333,11 @@ puts "Started: #{Time.now}"  # must agree with site-scan monitor
 # If additional projname|podlingname are provided, only scans those sites
 if ARGV.first =~ /^https?:\/\/\w/
   # Scan a single URL provided by user
-  site = ARGV.shift
+  podling = ARGV.delete('--podling')
+  site = ARGV.shift.dup # needs to be unfrozen
   name = ARGV.shift || site[/\/(\w[^.]*)/, 1].capitalize
   output_projects = ARGV.shift
-  results[name] = parse(name, site, name)
+  results[name] = parse(name, site, name, podling)
 else
   # Gather output filenames (if any) and scan various projects
   if ARGV.first =~ %r{[./]} # have we a file name?
@@ -335,7 +370,7 @@ else
       if ARGV.length > 0
         next unless ARGV.include? podling.name
       end
-      podlings[podling.name] = parse(podling.name, podling.podlingStatus[:website], podling.display_name)
+      podlings[podling.name] = parse(podling.name, podling.podlingStatus[:website], podling.display_name, true)
     end
   end
 end
