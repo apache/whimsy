@@ -7,7 +7,6 @@
 #
 # Makes no value judgements.  Simply extracts raw data for offline analysis.
 $LOAD_PATH.unshift '/srv/whimsy/lib'
-require 'set'
 require 'net/http'
 require 'nokogiri'
 require 'json'
@@ -103,7 +102,7 @@ def parse(id, site, name, podling=false)
   end
   data[:uri] = uri.to_s
 
-  subpages = Set.new
+  subpages = Hash.new
   # FIRST: scan each link's a_href to see if we need to capture it
   # also capture script src for events, and some page refs for podlings
   doc.traverse do |a|
@@ -167,7 +166,7 @@ def parse(id, site, name, podling=false)
           site2 = URI.join(site,a_href.gsub(' ','%20')) # HACK
         end
         if site2.host == uri.host and site2.path.size > 2
-          subpages.add site2.to_s 
+          subpages[site2.to_s] = a
         end
       rescue StandardError => e
         $stderr.puts "#{id}: Bad a_href #{a_href} #{e}"
@@ -205,7 +204,7 @@ def parse(id, site, name, podling=false)
   if podling
     hasdisclaimer = 0
     nodisclaimer = []
-    subpages.each do |subpage|
+    subpages.each do |subpage, anchor|
       begin
         uri, response, status = $cache.get(subpage)
         if uri&.to_s == subpage or uri&.to_s == subpage + '/'
@@ -219,6 +218,8 @@ def parse(id, site, name, podling=false)
           else
             nodisclaimer << subpage
           end
+        else
+          $stderr.puts "#{id} #{subpage} => #{uri} #{status} '#{anchor.text.strip}'"
         end
       rescue URI::InvalidURIError
       end
