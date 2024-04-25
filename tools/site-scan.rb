@@ -161,7 +161,11 @@ def parse(id, site, name, podling=false)
     end
     unless a_href =~ %r{^(#|mailto:)}
       begin
-        site2 = URI.join(site,a_href.gsub(' ','+'))
+        if a_href =~ %r{^https?://} # no need to rebase this
+          site2 = a_href
+        else
+          site2 = URI.join(site,a_href.gsub(' ','%20')) # HACK
+        end
         if site2.host == uri.host and site2.path.size > 2
           subpages.add site2.to_s 
         end
