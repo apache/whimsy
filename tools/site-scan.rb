@@ -169,8 +169,8 @@ def parse(id, site, name, podling=false)
         if site2.host == uri.host and site2.path.size > 2
           subpages.add site2.to_s 
         end
-      rescue StandardError
-        $stderr.puts "#{id}: Bad a_href #{a_href}"
+      rescue StandardError => e
+        $stderr.puts "#{id}: Bad a_href #{a_href} #{e}"
       end
     end
   end
