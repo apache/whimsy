@@ -42,8 +42,8 @@ class Cache
   #
   # Returns:
   # - uri (after redirects)
-  # - content
-  # - status: nocache, recent, updated, missing or no last mod/etag
+  # - content - or response if status is error
+  # - status: nocache, recent, updated, unchanged, error, cachemiss or no last mod/etag
   def get(url)
     if not @enabled
       uri, res = fetch(url)
