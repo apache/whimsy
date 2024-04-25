@@ -166,7 +166,7 @@ def parse(id, site, name, podling=false)
           subpages.add site2.to_s 
         end
       rescue StandardError
-        $stderr.puts "Bad a_href #{a_href}"
+        $stderr.puts "#{id}: Bad a_href #{a_href}"
       end
     end
   end
