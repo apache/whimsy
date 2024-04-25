@@ -488,8 +488,10 @@ def _checkDownloadPage(path, tlp, version)
 
   hasGPGverify = false
   # Check if GPG verify has two parameters
-  body.scan(%r{^.+gpg --verify.+$}) { |m|
+  body.scan(%r{gpg --verify.+$}) { |m|
     hasGPGverify = true
+    # Hack to tidy matched text: drop spans and truncate at <br> or <div>
+    m.gsub!(%r{<span [^>]+>|</span>}, '').sub!(%r{(<div|<br).+},'')
     unless m =~ %r{gpg --verify\s+\S+\.asc\s+\S+}
       W "gpg verify should specify second param: #{m.strip} see:\nhttps://www.apache.org/info/verification.html#specify_both"
     end
