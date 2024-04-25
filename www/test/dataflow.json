@@ -19,7 +19,7 @@
     "maintainer": "/www/roster/public_committee_info.rb",
     "sources": [
       "/lib/whimsy/asf/committee.rb",
-      "private/committers/board/committee-info.yml"
+      "private/committers/board/committee-info.yaml"
     ]
   },
   "https://whimsy.apache.org/public/icla-info.json": {

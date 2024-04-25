@@ -305,9 +305,9 @@ module ASF
       contents
     end
 
-    # record termination date in committee-info.yml
+    # record termination date in committee-info.yaml
     # Params:
-    # - input: the contents of committee-info.yml
+    # - input: the contents of committee-info.yaml
     # - pmc: the pmc name
     # - yyyymm: YYYY-MM retirement date
     #  Returns: the updated contents
