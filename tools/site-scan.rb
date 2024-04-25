@@ -208,7 +208,11 @@ def parse(id, site, name, podling=false)
     subpages.each do |subpage|
       begin
         uri, response, status = $cache.get(subpage)
-        puts "#{id} #{subpage} => #{uri} #{status}" # uri might be nil
+        if uri&.to_s == subpage or uri&.to_s == subpage + '/'
+          puts "#{id} #{uri} #{status}"
+        else
+          puts "#{id} #{subpage} => #{uri} #{status}"
+        end
         if %w{unchanged recent updated}.include? status
           if response =~ SiteStandards::PODLING_CHECKS['disclaimer'][SiteStandards::CHECK_CAPTURE]
             hasdisclaimer += 1
