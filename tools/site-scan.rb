@@ -162,7 +162,7 @@ def parse(id, site, name, podling=false)
     unless a_href =~ %r{^(#|mailto:)}
       begin
         if a_href =~ %r{^https?://} # no need to rebase this
-          site2 = a_href
+          site2 = URI.parse(a_href) # needs to be a URI
         else
           site2 = URI.join(site,a_href.gsub(' ','%20')) # HACK
         end
