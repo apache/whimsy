@@ -204,10 +204,13 @@ def parse(id, site, name, podling=false)
     subpages.each do |subpage|
       begin
         uri, response, status = $cache.get(subpage)
-        if response =~ SiteStandards::PODLING_CHECKS['disclaimer'][SiteStandards::CHECK_CAPTURE]
-          hasdisclaimer += 1
-        else
-          nodisclaimer << subpage
+        puts "#{id} #{uri} #{status}"
+        if %w{unchanged recent updated}.include? status
+          if response =~ SiteStandards::PODLING_CHECKS['disclaimer'][SiteStandards::CHECK_CAPTURE]
+            hasdisclaimer += 1
+          else
+            nodisclaimer << subpage
+          end
         end
       rescue URI::InvalidURIError
       end
