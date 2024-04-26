@@ -163,7 +163,7 @@ def parse(id, site, name, podling=false)
         if a_href =~ %r{^https?://} # no need to rebase this
           site2 = URI.parse(a_href.gsub(' ','%20').gsub('|', '%7C')) # needs to be a URI
         else
-          site2 = URI.join(site,a_href.gsub(' ','%20').gsub('|', '%7C') # HACK
+          site2 = URI.join(site,a_href.gsub(' ','%20').gsub('|', '%7C')) # HACK
         end
         if site2.host == uri.host and site2.path.size > 2
           subpages[site2.to_s] = a
