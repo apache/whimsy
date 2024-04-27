@@ -282,7 +282,8 @@ def get_links(path, body, checkSpaces=false)
     if href =~ %r{^?Preferred=https?://}
       href = path + URI.decode_www_form_component(href)
     end
-    text = node.text.gsub(/[[:space:]]+/, ' ').strip
+    # Strip spurious text from link (age, baremaps)
+    text = node.text.gsub(/[[:space:]]+/, ' ').sub('(opens in a new tab)', '').sub('➚', '').strip  
     [href, text] unless href =~ %r{/httpcomponents.+/xdoc/downloads.xml} # breadcrumb link to source
   }.select {|x, _y| x =~ %r{^(https?:)?//} }
 end
@@ -581,15 +582,13 @@ def _checkDownloadPage(path, tlp, version)
       else
         E "Bug: found hash #{h} for missing artifact #{stem}"
       end
-      t.sub!('➚', '') # age
-      t.strip!
       next if t == '' # empire-db
       tmp = text2ext(t)
       next if ext == tmp # i.e. link is just the type or [TYPE]
       next if ext == 'sha' and tmp == 'sha1' # historic
       next if %w(sha256 md5 mds sha512 sha1).include?(ext) and %w(SHA digest Digest CheckSum checksums).include?(t) # generic
       next if ext == 'mds' and (tmp == 'hashes' or t == 'Digests')
-      if base != t
+      unless base == t or h == t # Allow for full path to sig/hash
         if t == 'Download' # MXNet
           W "Mismatch: #{h} and '#{t}'"
         elsif not %w{checksum Hash}.include? t
