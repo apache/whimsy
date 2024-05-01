@@ -160,7 +160,7 @@ _html do
           else
             _b "Applications can no longer be accepted, sorry."
               _ "The meeting ended at #{Time.at(meeting_end).getutc.strftime('%Y-%m-%d %H:%M %Z')}."
-              _ "This was #{remain[:days]} days and #{remain[:hours]} hours ago."
+              _ "Applications closed #{remain[:days]} days and #{remain[:hours]} hours ago."
           end
         end
       }
