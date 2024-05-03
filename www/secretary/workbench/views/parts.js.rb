@@ -543,6 +543,18 @@ class Parts < Vue
     }
   end
 
+  # delete a message (keeping attachments)
+  def delete_message(event)
+    @busy = true
+    pathname = window.parent.location.pathname
+    HTTP.delete(pathname).then {
+      window.parent.location.href = '../..'
+    }.catch {|error|
+      alert error
+      @busy = false
+    }
+  end
+
   # delete an attachment
   def delete_attachment(event)
     data = {
@@ -736,7 +748,7 @@ class Parts < Vue
   # tasklist completion events
   def status_update(event)
     if event.data.status == 'complete'
-      self.delete_attachment(event)
+      self.delete_message(event)
     elsif event.data.status == 'keep'
       @selected = nil
       @form = :categorize
