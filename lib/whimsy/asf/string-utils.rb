@@ -58,13 +58,12 @@ module ASFString
 
   # fix encoding errors
   def self.fix_encoding(text)
-    result = text
-
-    if encoding == Encoding::BINARY
-      result = encode('utf-8', invalid: :replace, undef: :replace)
+  
+    if text.encoding == Encoding::BINARY
+      return text.encode('utf-8', invalid: :replace, undef: :replace)
     end
+    return text
 
-    result
   end
 end
 
@@ -79,4 +78,7 @@ if __FILE__ == $0
   # puts txt
   puts ASFString.word_wrap(txt)
   puts ASFString.reflow(txt)
+  text="\x05\x00\x68\x65\x6c\x6c\x6f"
+  text.force_encoding(Encoding::BINARY)
+  puts ASFString.fix_encoding(text)
 end
