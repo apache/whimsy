@@ -1,10 +1,16 @@
 version = File.read(File.expand_path('../asf.version', __FILE__)).strip
+ldapversion = 
+begin
+  File.read(File.expand_path('../asfldap.version', __FILE__)).strip
+rescue Exception => e
+  nil
+end
 
 Gem::Specification.new do |s|
 
   # Change these as appropriate
   s.name           = "whimsy-asf"
-  s.license        = 'Apache License, Version 2.0'
+  s.license        = 'Apache-2.0'
   s.version        = version
   s.summary        = "Whimsy 'model' of the ASF"
   s.author         = "Sam Ruby"
@@ -23,7 +29,7 @@ Gem::Specification.new do |s|
   # relevant versions
   s.add_dependency("nokogiri")
   s.add_dependency("rack")
-  s.add_dependency("ruby-ldap")
+  s.add_dependency("ruby-ldap", ldapversion)
   s.add_dependency("tzinfo")
   s.add_dependency("tzinfo-data")
   s.add_dependency("wunderbar")

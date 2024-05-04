@@ -1,10 +1,17 @@
 source 'https://rubygems.org'
 
+ldapversion = 
+begin
+  File.read(File.expand_path('../../asfldap.version', __FILE__)).strip
+rescue Exception => e
+  nil
+end
+
 # lib needs these at run-time
 gem 'json'
 gem 'nokogiri'
 gem 'rake'
-gem 'ruby-ldap'
+gem 'ruby-ldap', ldapversion
 gem 'wunderbar'
 gem 'pdf-reader'
 
