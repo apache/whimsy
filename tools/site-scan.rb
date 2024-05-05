@@ -334,7 +334,7 @@ end
 # Main execution begins here
 results = {}
 podlings = {}
-$cache = Cache.new(dir: 'site-scan')
+$cache = Cache.new(dir: ENV['SITE_SCAN_CACHE'] || 'site-scan')
 $verbose = ARGV.delete '--verbose'
 $saveparse = ARGV.delete '--saveparse'
 $skipresourcecheck = ARGV.delete '--noresource'
