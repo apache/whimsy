@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-ldapversion = 
+ldapversion =
 begin
   File.read(File.expand_path('../../asfldap.version', __FILE__)).strip
 rescue Exception => e
