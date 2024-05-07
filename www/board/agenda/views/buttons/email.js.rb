@@ -45,7 +45,7 @@ class Email < Vue
     cc = "#{mail_list},#{@@item.cc}"
 
     if @@item.missing
-      subject = "[REMINDER] Please submit the #{@@item.title} Board Report"
+      subject = "[REMINDER] #{@@item.title} Please submit your Board Report"
       if @@item.attach =~ /^\d/
         body = %{
           Dear #{@@item.owner},
