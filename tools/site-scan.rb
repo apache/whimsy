@@ -212,7 +212,7 @@ def parse(id, site, name, podling=false)
         else
           puts "#{id} #{subpage} => #{uri} #{status}"
         end
-        if %w{unchanged recent updated}.include? status
+        unless status == 'error'
           if response =~ SiteStandards::PODLING_CHECKS['disclaimer'][SiteStandards::CHECK_CAPTURE]
             hasdisclaimer += 1
           else
