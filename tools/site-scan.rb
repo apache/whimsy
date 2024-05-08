@@ -339,6 +339,11 @@ $verbose = ARGV.delete '--verbose'
 $saveparse = ARGV.delete '--saveparse'
 $skipresourcecheck = ARGV.delete '--noresource'
 
+k = ARGV.select {|k| k.start_with? '-'}
+if k.size > 0
+  raise "Unexpected options: #{k} (valid: verbose, saveparse, noresource)"
+end
+
 puts "Started: #{Time.now}"  # must agree with site-scan monitor
 
 # USAGE:
