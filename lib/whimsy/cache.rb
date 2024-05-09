@@ -61,8 +61,7 @@ class Cache
     if data and (lastmod or etag)
       cond = {}
       cond['If-Modified-Since'] = lastmod if lastmod
-      # Allow for Apache Bug 45023
-      cond['If-None-Match'] = etag.gsub(/-gzip"$/,'"') if etag
+      cond['If-None-Match'] = etag if etag
       uri, res = fetch(url, cond)
       if res.is_a?(Net::HTTPSuccess)
         write_cache(url, res)
@@ -111,6 +110,7 @@ class Cache
       options.each do |k,v|
         request[k] = v
       end
+      Wunderbar.debug "Request: #{request.to_hash.inspect}"
       response = http.request(request)
       Wunderbar.debug "Headers: #{response.to_hash.inspect}"
       Wunderbar.debug response.code
