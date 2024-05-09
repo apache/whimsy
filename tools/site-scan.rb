@@ -199,12 +199,11 @@ def parse(id, site, name, podling=false)
     end
   end
 
-  # Brief scan of initial sub-pages to look for disclaimers
-  # TODO also look for a download page?
-  if podling
-    hasdisclaimer = 0
-    nodisclaimer = []
-    subpages.each do |subpage, anchor|
+  # Brief scan of initial sub-pages to look for disclaimers and downloads
+  hasdisclaimer = 0
+  nodisclaimer = []
+  subpages.each do |subpage, anchor|
+    if podling
       begin
         uri, response, status = $cache.get(subpage)
         if uri&.to_s == subpage or uri&.to_s == subpage + '/'
@@ -224,12 +223,15 @@ def parse(id, site, name, podling=false)
           end
         end
       rescue URI::InvalidURIError
+        # ignore
       end
     end
-    if nodisclaimer.size > 0
-      data[:disclaimers] = [hasdisclaimer, nodisclaimer]
-    end
   end
+  if nodisclaimer.size > 0
+    data[:disclaimers] = [hasdisclaimer, nodisclaimer]
+  end
+  # Show potential download pages
+  data[:downloads] = subpages.select{|k,_v| k =~ %r{download|release|install|dlcdn\.apache\.org|dyn/closer}i}
 
   # THIRD: see if an image has been uploaded
   data[:image] = ASF::SiteImage.find(id)
