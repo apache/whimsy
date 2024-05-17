@@ -67,6 +67,7 @@ end
 # @return Hash of symbols: text|url found from a check made
 # @see SiteStandards for definitions of what we should scan for (in general)
 def parse(id, site, name, podling=false)
+  show_anyway = Time.now.gmtime.strftime("%H") == '00' # show suppressed errors once a day
   data = {}
   # force https to avoid issue with cache (sites should use https anyway)
   site.sub!(%r{^http:},'https:')
@@ -169,7 +170,9 @@ def parse(id, site, name, podling=false)
           subpages[site2.to_s] = a
         end
       rescue StandardError => e
-        $stderr.puts "#{id}: Bad a_href #{a_href} #{e}"
+        unless show_anyway or %w(a_href).include?('fineract.gateway.scarf.sh/{version}') # reported, but not yet fixed, so suppress noise
+          $stderr.puts "#{id}: Bad a_href #{a_href} #{e}"
+        end
       end
     end
   end
@@ -218,7 +221,7 @@ def parse(id, site, name, podling=false)
             nodisclaimer << subpage
           end
         else
-          unless %w(nlpcraft teaclave).include? id # reported, but not yet fixed, so suppress noise
+          unless show_anyway or %w(nlpcraft teaclave).include? id # reported, but not yet fixed, so suppress noise
             $stderr.puts "#{id} #{subpage} => #{uri} #{status} '#{anchor.text.strip}'"
           end
         end
