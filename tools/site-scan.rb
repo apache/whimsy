@@ -170,7 +170,7 @@ def parse(id, site, name, podling=false)
           subpages[site2.to_s] = a
         end
       rescue StandardError => e
-        if show_anyway or !%w(a_href).include?('fineract.gateway.scarf.sh/{version}') # reported, but not yet fixed, so suppress noise
+        if show_anyway or !a_href.include?('fineract.gateway.scarf.sh/{version}') # reported, but not yet fixed, so suppress noise
           $stderr.puts "#{id}: Bad a_href #{a_href} #{e}"
         end
       end
