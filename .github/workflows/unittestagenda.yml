@@ -33,6 +33,11 @@ jobs:
         sudo apt-get install libsasl2-dev
         sudo apt-get install libyaml-dev # seems to be needed for installing ruby since psych 5.0.0 release
       if:  runner.os != 'macOS'
+    # Default host no longer includes subversion
+    - name: setup macos
+      run: |
+        brew install subversion
+      if: ${{ runner.os == 'macOS' }}
     - uses: actions/setup-node@v3
       with:
         node-version: 'v21.4.0' # works on macOS
