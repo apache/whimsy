@@ -78,7 +78,7 @@ class VueServer
     process.env.VUE_ENV = 'server'
 
     Vue = require('vue')
-    Vue.config.productionTip = false
+    # Vue.config.productionTip = false
 
     # render a response, using server side rendering
     def Vue.renderResponse(component, response)
