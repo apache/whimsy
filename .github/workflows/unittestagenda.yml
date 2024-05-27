@@ -14,9 +14,9 @@ permissions:  # added using https://github.com/step-security/secure-workflows
 jobs:
   test:
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
-        os: [ubuntu-20.04, macos-13]
+        os: [ubuntu-20.04, macos-latest]
         ruby: [2.7]
         # os: [ubuntu-20.04, ubuntu-22.04]
         # ruby: [2.7, 3.1]
@@ -50,10 +50,9 @@ jobs:
     - name: setup agenda 2
       # need to run the ruby that has all the gems installed
       run: |
-        sudo mkdir -p /srv
-        sudo bash -c 'printf "\n\n\n" >/srv/ldap.txt'
-        ls -l /srv
+        bash -c 'printf "\n\n\n" >.ldap.txt'
         echo ":ldap: ldaps://ldap-us.apache.org:636" >> .whimsy
+        echo ":ldap_creds: $PWD/.ldap.txt" >> .whimsy
         sudo $(which ruby) -I $PWD/lib -r whimsy/asf -e "ASF::LDAP.configure"
     - name: show environ
       run: |
