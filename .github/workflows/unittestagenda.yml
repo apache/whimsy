@@ -55,10 +55,9 @@ jobs:
     - name: setup agenda 2
       # need to run the ruby that has all the gems installed
       run: |
-        sudo mkdir -p /srv
-        sudo bash -c 'printf "\n\n\n" >/srv/ldap.txt'
-        ls -l /srv
+        bash -c 'printf "\n\n\n" >.ldap.txt'
         echo ":ldap: ldaps://ldap-us.apache.org:636" >> .whimsy
+        echo ":ldap_creds: $PWD/.ldap.txt" >> .whimsy
         sudo $(which ruby) -I $PWD/lib -r whimsy/asf -e "ASF::LDAP.configure"
     - name: show environ
       run: |
