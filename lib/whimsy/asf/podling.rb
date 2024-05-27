@@ -285,6 +285,16 @@ module ASF
       ASF::Project.find(id).hasLDAP?
     end
 
+    # base name used in constructing mailing list name.
+    def mail_list
+      case name.downcase
+      when 'odftoolkit'
+        'odf'
+      else
+        name.downcase
+      end
+    end
+    
     # development mailing list associated with a given podling
     def dev_mail_list
       case name
