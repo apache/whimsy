@@ -9,7 +9,7 @@
     "jsdom": "^22.0.0",
     "jsdom-global": "^3.0.2",
     "jquery": "^3.2.1",
-    "vue": "^2.7.16",
-    "vue-server-renderer": "^2.7.16"
+    "vue": "^3.1.0",
+    "@vue/compat": "^3.1.0"
   }
 }
