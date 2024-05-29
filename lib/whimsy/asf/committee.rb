@@ -110,6 +110,8 @@ module ASF
     # list names (e.g. dev, private) and <tt>.apache.org</tt> is to be
     # appended.  In some cases, the name contains an <tt>@</tt> sign and
     # is the full name for the mail list.
+    # TODO: this is awkward to use as some non-PMCs have their own domain and some don't
+    # Should probably be replaced by mail_private and mail_dev
     def mail_list
       case name.downcase
       when 'comdev'
@@ -121,8 +123,8 @@ module ASF
 
       when 'brand'
         'trademarks@apache.org'
-      when 'infrastructure'
-        'infra'
+      when 'infrastructure', 'infra'
+        'private@infra.apache.org'
       when 'dataprivacy'
         'privacy@apache.org'
       when 'legalaffairs' # Not sure what uses this
@@ -132,10 +134,9 @@ module ASF
       when 'fundraising'
         'fundraising-private@apache.org'
       when 'marketingandpublicity'
-        'press@apache.org'
-      # now using private@tac.apache.org
-      # when 'tac'
-      #   'travel-assistance@apache.org'
+        'markpub@apache.org'
+      when 'tac', 'diversity'
+         "private@#{name.downcase}.apache.org"
       when 'w3crelations'
         'w3c@apache.org'
       when 'concom'
