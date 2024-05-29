@@ -61,7 +61,7 @@ end
 file 'package-lock.json' => 'package.json' do
   sh 'npm install'
   sh 'touch package-lock.json'
-  sh 'npm audit fix --force' # as advised in GH action log
+  sh 'npm audit fix --force' unless ENV['SKIP_AUDIT'] # as advised in GH action log
 end
 
 file 'test/work' do
