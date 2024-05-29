@@ -104,6 +104,7 @@ describe ASF::MLIST do
         expect(list.class).to eq(String)
         expect(dom).to match(/^[a-z.0-9-]+\.[a-z]+$/)
         next if list == 'commits.deprecated' # allow for unusual list name
+        next if list == '_test_ephemeral_' # allow for unusual list name
         expect(list).to match(/^[a-z0-9-]+$/)
       end
     end
