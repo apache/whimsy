@@ -206,7 +206,7 @@ if ARGV.length >= 2
       end
     else
       unless active.include? key
-        Wunderbar.warn "Has '#{key}'' retired? Could not find it in committee-info.txt!"
+        Wunderbar.warn "Checking committee-info.yml: has '#{key}'' retired? Could not find it in committee-info.txt!"
       end
     end
   end
