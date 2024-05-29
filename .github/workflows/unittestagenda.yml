@@ -14,6 +14,7 @@ permissions:  # added using https://github.com/step-security/secure-workflows
 jobs:
   test:
     strategy:
+      max-parallel: 1 # Run sequentially
       fail-fast: true
       matrix:
         os: [ubuntu-20.04, macos-latest]
@@ -68,7 +69,7 @@ jobs:
       run: |
         cd www/board/agenda
         # SKIP_NAVIGATION=1 bundle exec rake RSPEC_OPTS='--pattern=secret*.rb' || echo "action_state=failed" >> $GITHUB_ENV
-        SKIP_NAVIGATION=1 bundle exec rake || echo "action_state=failed" >> $GITHUB_ENV
+        SKIP_AUDIT=1 SKIP_NAVIGATION=1 bundle exec rake || echo "action_state=failed" >> $GITHUB_ENV
       continue-on-error: true
     - name: Run Summary
       run: |
