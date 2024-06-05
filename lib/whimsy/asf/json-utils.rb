@@ -13,18 +13,16 @@ module ASFJSON
     bc ||= ['root']
     h1.each do |k, v1|
       v2 = h2[k]
-      if v2.nil?
+      if !h2.include? k
         yield [bc, 'Dropped', k, v1]
       elsif v1 != v2
         case v1.class.to_s
-        when 'String', 'Integer'
-          yield [bc, 'Scalar', k, [v1, v2]]
         when 'Array'
           yield [bc, 'Array', k, [v1, v2]]
         when 'Hash'
           self.cmphash v1, v2, [bc,k].flatten, &block
-        else
-          raise ArgumentError.new "#{bc.join('.')} #{k} Unexpected class #{v1.class}"
+        else # treat as scalar
+          yield [bc, 'Scalar', k, [v1, v2]]
         end
       end
     end
@@ -77,4 +75,5 @@ if __FILE__ == $0
   out = StringIO.new
   ASFJSON.compare_json(old_json, new_json, out=out)
   puts out.string
+
 end
