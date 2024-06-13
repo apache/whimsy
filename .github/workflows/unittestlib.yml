@@ -24,16 +24,16 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - name: setup non-macOS # needed for installing ruby-ldap
+      if: ${{ runner.os != 'macOS' }}
       run: |
         sudo apt-get update
         sudo apt-get install libldap2-dev
         sudo apt-get install libsasl2-dev
         sudo apt-get install libyaml-dev # seems to be needed for installing ruby since psych 5.0.0 release
-      if: ${{ runner.os != 'macOS' }}
     - name: setup macos
+      if: ${{ runner.os == 'macOS' }}
       run: |
         brew install subversion
-      if: ${{ runner.os == 'macOS' }}
     - uses: actions/checkout@v4
       with:
         persist-credentials: false
