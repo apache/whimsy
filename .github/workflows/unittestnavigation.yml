@@ -16,11 +16,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - name: setup Ubuntu missing header files
+      if:  matrix.os == 'ubuntu-20.04'
       run: |
         sudo apt-get install libldap2-dev
         sudo apt-get install libsasl2-dev
         sudo apt-get install libyaml-dev # psych 5.0.0
-      if:  matrix.os == 'ubuntu-20.04'
     - uses: actions/setup-node@v4
       with:
         node-version: '18.16.0'
