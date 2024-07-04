@@ -19,7 +19,7 @@ if qs =~ %r{^url=(https?://[^&]+)(?:&(.+))?}
   # we only want full URLs
   option = 'allref' unless %w{all showurl}.include? option
   print "Checking the page #{url}\n\n"
-  puts "The following references were found to hosts other than apache.org and apachecon.com"
+  puts "The following references were found to hosts other than apache.org, openoffice.org and apachecon.com"
   puts "The first column shows if the host is recognised as being under ASF control according to"
   puts "https://privacy.apache.org/policies/asf-domains"
   print "=====\n"
