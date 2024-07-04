@@ -11,8 +11,14 @@ const inithost = new URL(target).host;
 
 const option = process.argv[3] || '';
 
+// TODO: this list is not complete
 function isASFhost(host) {
-  return host == '' || host == 'apache.org' || host.endsWith('.apache.org') || host.endsWith('.apachecon.com');
+  return host == '' || 
+         host == 'apache.org' ||
+         host == 'apachecon.com' ||
+         host == 'openoffice.org' ||
+         host.endsWith('.apache.org') ||
+         host.endsWith('.apachecon.com');
 }
 if (!isASFhost(inithost)) {
   throw new Error("Only ASF hosts are supported - saw " + inithost);
