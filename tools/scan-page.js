@@ -18,6 +18,7 @@ function isASFhost(host) {
          host == 'apachecon.com' ||
          host == 'openoffice.org' ||
          host.endsWith('.apache.org') ||
+         host.endsWith('.openoffice.org') ||
          host.endsWith('.apachecon.com');
 }
 if (!isASFhost(inithost)) {
