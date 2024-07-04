@@ -71,10 +71,13 @@ task :update, [:command] do |_task, args|
       Dir.chdir dir do
         contents = [
           "source 'https://rubygems.org'",
+          "ldapversion = nil", # Needed for initial gem setup
           gems.values
         ].join("\n")
         File.write "Gemfile", contents
+        puts "* Preloading gems..."
         system!('bundle', 'install') or raise "Bundler failed"
+        puts "* ... done"
       end
     end
   end
@@ -93,6 +96,7 @@ task :update, [:command] do |_task, args|
       locktime = File.mtime('Gemfile.lock') rescue Time.at(0)
 
       bundler = 'bundle' unless File.exist?(bundler)
+      puts "* Processing #{gemfile}"
       system!(bundler, args.command || 'update') or raise "Bundler failed"
 
       # if new gems were installed and this directory contains a passenger
