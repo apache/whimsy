@@ -76,7 +76,8 @@ _html do
       content.split("\n\n").each do |app|
         _pre app
 
-        path = app[/\A(\/.*):/, 1]
+        # e.g. /x1/srv/whimsy/www/roster (production):
+        path = app[/\A(\/\S+)/, 1]
         if user.asf_chair_or_member?
           restart = File.join(path, "tmp/restart.txt") if path
           if restart and File.exist? restart
