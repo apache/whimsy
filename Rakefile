@@ -76,7 +76,7 @@ task :update, [:command] do |_task, args|
         ].join("\n")
         File.write "Gemfile", contents
         puts "* Preloading gems..."
-        system!('bundle', 'install') or raise "Bundler failed"
+        system!('bundle', 'install')
         puts "* ... done"
       end
     end
@@ -97,7 +97,7 @@ task :update, [:command] do |_task, args|
 
       bundler = 'bundle' unless File.exist?(bundler)
       puts "* Processing #{gemfile}"
-      system!(bundler, args.command || 'update') or raise "Bundler failed"
+      system!(bundler, args.command || 'update')
 
       # if new gems were installed and this directory contains a passenger
       #  application, restart it
