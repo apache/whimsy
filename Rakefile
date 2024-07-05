@@ -75,14 +75,15 @@ task :update, [:command] do |_task, args|
           gems.values
         ].join("\n")
         File.write "Gemfile", contents
-        puts "* Preloading gems..."
+        $stderr.puts "* Preloading gems..."
         system!('bundle', 'install')
-        puts "* ... done"
+        $stderr.puts "* ... done"
       end
     end
   end
 
   # update gems
+  $stderr.puts "* Update Gems" # use stderr so output appears in syslog
   Dir['**/Gemfile'].each do |gemfile|
     Dir.chdir File.dirname(gemfile) do
       ruby = File.read('Gemfile')[/^ruby ['"](.*?)['"]/, 1]
@@ -96,12 +97,13 @@ task :update, [:command] do |_task, args|
       locktime = File.mtime('Gemfile.lock') rescue Time.at(0)
 
       bundler = 'bundle' unless File.exist?(bundler)
-      puts "* Processing #{gemfile}"
+      $stderr.puts "* Processing #{gemfile}"
       system!(bundler, args.command || 'update')
 
       # if new gems were installed and this directory contains a passenger
       #  application, restart it
       if (File.mtime('Gemfile.lock') rescue Time.at(0)) != locktime
+        $stderr.puts "* Gemfile.lock was updated"
         if File.exist?('tmp/restart.txt')
           FileUtils.touch 'tmp/.restart.txt'
           FileUtils.chmod 0o777, 'tmp/.restart.txt'
