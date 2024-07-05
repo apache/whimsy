@@ -25,3 +25,5 @@ gem 'escape'
 gem 'pdf-reader'
 
 gem 'net-smtp', require: false unless RUBY_VERSION =~ /^2/ # for Ruby 3.1
+
+gem 'ffi', '1.16.3' # HACK to get round bundle update issue

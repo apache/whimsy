@@ -30,3 +30,5 @@ group :demo do
   gem 'puma'
   gem 'listen'
 end
+
+gem 'ffi', '1.16.3' # HACK to get round bundle update issue
