@@ -52,7 +52,7 @@ class EmeritusRequest < Vue
         @members.each do |member|
           availid = member.id
           name = member.name
-          names = name.downcase().split(' ') # N.B. split parameter is required by Javascript
+          names = name.downcase().split(' ') # N.B. split parameter is required by JavaScript
           if search.any? { |part| names.include? part or availid == part}
             _li do
               _input type: :radio, name: 'search', id: availid, onClick: lambda {

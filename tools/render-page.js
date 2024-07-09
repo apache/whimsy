@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-// @(#) render a page that uses Javascript
+// @(#) render a page that uses JavaScript
 
 module.paths.push('/usr/lib/node_modules')
 
