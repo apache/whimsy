@@ -17,7 +17,7 @@ and crazy ideas alike.  Comments appreciated.
     - [lib/whimsy/asf/committee.rb](lib/whimsy/asf/committee.rb) - maps PMC names within Committee @@aliases
     - [lib/whimsy/asf/site.rb](lib/whimsy/asf/site.rb) - maps URLs for groups within Site @@default
     - [lib/whimsy/asf/mail.rb](lib/whimsy/asf/mail.rb) - maps mail list names within Committee.mail_list
-    - [lib/whimsy/asf/podlings.rb](lib/whimsy/asf/podlings.rb) - maps mail list names within *_mail_list
+    - [lib/whimsy/asf/podling.rb](lib/whimsy/asf/podling.rb) - maps mail list names within *_mail_list
 
 - [ ] Improve code sharing between www/roster and www/board with lib/whimsy,
       as above regexes, and improving themes.rb use
