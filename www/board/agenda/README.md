@@ -267,7 +267,7 @@ Viewing Source (this time, Actual Code)
    [views/layout/footer.js.rb](views/layout/footer.js.rb).
 
  * Should you ever happen to look for the main routing functions, they
-   are [routing.rb](routing.rb) on the server and
+   are [routes.rb](routes.rb) on the server and
    [views/router.js.rb](views/router.js.rb) on the client.
 
 Testing
