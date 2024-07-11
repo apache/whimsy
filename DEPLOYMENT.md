@@ -82,8 +82,11 @@ and running - these are only needed for a new deployment.
 
  * Ensure that the IP address is static, and has been added to the list of allowed mail relays
 
-  * Set up a new SSL cert: this can be done using some files that should be set up by Puppet. You will need root access to whimsy.apache.org as well in order to set up the challenge.
-    * run /root/getcert.sh; this will prompt for input using /root/authenticator.sh and cleanup using /root/cleanup.sh
+ * Optionally set up an initial SSL certificate just for the new node, i.e. excluding whimsy.apache.org. This is to allow for initial testing.
+   * run `certbot certonly` from root, select option (2) - standalone.
+   * restart apache
+ * Set up a new SSL cert (also works if the individual node cert has already been set up): this can be done using some files that should be set up by Puppet. You will need root access to whimsy.apache.org as well in order to set up the challenge.
+   * run /root/getcert.sh; this will prompt for input using /root/authenticator.sh and cleanup using /root/cleanup.sh
 
  * The SVN settings should now be set up in whimsy-vm5 and later (Puppet 6)
 
