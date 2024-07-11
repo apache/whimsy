@@ -96,7 +96,7 @@ Agenda.update(@agenda, @message, auth: alternate_credentials) do |agenda|
     # insert into agenda
     agenda[/\n() 9\. .*Action Items/, 1] = "#{title}#{@report}\n\n"
 
-  elsif @attach.start_with? '+'
+  elsif @attach&.start_with? '+'
     pmc_reports = parsed.select {|section| section[:attach] =~ /^[A-Z]/}
     attach = pmc_reports.last[:attach].succ
     pmc = ASF::Committee.find(@attach[1..-1])
