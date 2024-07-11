@@ -21,6 +21,9 @@ jobs:
         exclude:
           - os: ubuntu-22.04
             ruby: 2.7
+        include:
+          - os: ubuntu-24.04
+            ruby: 3.2
     runs-on: ${{ matrix.os }}
     steps:
     - name: setup non-macOS # needed for installing ruby-ldap
