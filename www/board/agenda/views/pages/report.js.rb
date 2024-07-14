@@ -324,7 +324,7 @@ class Report < Vue
 
   # expand president's attachments
   def president_attachments(text)
-    match = text.match(/Additionally, please see Attachments (\d) through (\d)/)
+    match = text.match(/Additionally, please see Attachments (\d) through (\d\d?)\./)
     if match
       agenda = Agenda.index
       for i in 0...agenda.length

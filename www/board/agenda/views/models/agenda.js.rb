@@ -32,7 +32,7 @@ class Agenda
     # remove president attachments from the normal flow
     @@index.each do |pres|
       match = (pres.title == 'President' and pres.text and pres.text.
-        match(/Additionally, please see Attachments (\d) through (\d)/))
+        match(/Additionally, please see Attachments (\d) through (\d\d?)\./))
       next unless match
 
       # find first and last president report; update shepherd along the way

@@ -419,7 +419,7 @@ class Post < Vue
     if not @edited
       text = @report || @@item.text || ''
       if @@item.title == 'President'
-        text.sub! /\s*Additionally, please see Attachments \d through \d\./, ''
+        text.sub! /\s*Additionally, please see Attachments \d through \d\d?\./, ''
       end
 
       @report = text
