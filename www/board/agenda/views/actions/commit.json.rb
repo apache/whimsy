@@ -167,7 +167,7 @@ Agenda.update(agenda_file, @message) do |agenda|
 
   # apply operations comments to the President's report
   operations = Range.new(*agenda.scan(
-    /\s*Additionally, please see Attachments (\d) through (\d)\./).first)
+    /\s*Additionally, please see Attachments (\d) through (\d+)\./).first)
   operations.each do |attachment|
     if comments.include? attachment
       office = agenda[
