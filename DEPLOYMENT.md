@@ -90,6 +90,9 @@ and running - these are only needed for a new deployment.
 
  * The SVN settings should now be set up in whimsy-vm5 and later (Puppet 6)
 
+ * check reporter.apache.org is reachable (depends on which datacenter it is in; see INFRA-25403):
+   * `curl -I https://reporter.apache.org`
+   * If not, try enabling the hostname override in whimsy-vmN.yaml
  * check that board-agenda-websocket.service is running:
    * `sudo systemctl status board-agenda-websocket.service` - this should show the service is running and has been up for some while
    * `curl -N localhost:34234` - should produce 'curl: (52) Empty reply from server' or similar
