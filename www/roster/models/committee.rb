@@ -184,6 +184,7 @@ class Committee
     ret = {
       id: id,
       chair: pmc.chair&.id,
+      chairname: pmc.chair.public_name,
       pmc_chair: pmc_chair,
       display_name: pmc.display_name,
       description: pmc.description,
