@@ -83,7 +83,7 @@ _html do
 
             if not pmc.established
               _td ''
-              _ td ''
+              _td ''
               _td.issue 'Not in committee-info.txt'
             else
               if pmc.established =~ /^(\d\d)\/(\d{4})(.*)$/
