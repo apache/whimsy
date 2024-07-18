@@ -191,17 +191,8 @@ def do_diff(initialhash, currenthash, triggerrev)
     joindate = args[:date]
     mail_list = "private@#{cttee.mail_list}.apache.org"
     change_text = TYPES[type] || type # 'added to|dropped from'
-    # The email currently only goes to notifications@whimsical.
-    # To enable actual reporting, change the following:
-    # - remote [TEST] from the subject
-    # - remove the first 3 lines of the email body
-    # - uncomment the 'to "board@apache.org,#{mail_list}"' line below
-    subject = "[TEST][NOTICE] #{username} (#{userid}) #{change_text} #{ctteename} in #{currentrev}"
+    subject = "[NOTICE] #{username} (#{userid}) #{change_text} #{ctteename} in #{currentrev}"
     body = <<~EOD
-    This is a TEST email
-    ====================
-    To: board@apache.org,#{mail_list}
-    
     On #{currentdate} #{username} (#{userid}) was #{change_text} the
     #{ctteename} PMC by #{currentcommittername} (#{currentcommitter}).
 
@@ -220,8 +211,7 @@ def do_diff(initialhash, currenthash, triggerrev)
     mail = Mail.new do
       from "#{currentcommittername} <#{currentcommitter}@apache.org>"
       sender "notifications@whimsical.apache.org"
-      # Uncomment the following line when going live
-      # to "board@apache.org,#{mail_list}"
+      to "board@apache.org,#{mail_list}"
       bcc 'notifications@whimsical.apache.org' # keep track of mails
       subject subject
       body body
