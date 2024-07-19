@@ -526,7 +526,7 @@ module ASF
         # Now weed out the malformed lines
         m = line.match(/^[ \t]+(\w.*?)[ \t][ \t]+(.*)[ \t]+<(.*?)@apache\.org>/)
         if m
-          committee, name, id = m.captures
+          committee, name, id = m.captures # committee may not be canonical here
           unless list[committee].chairs.any? {|chair| chair[:id] == id}
             list[committee].chairs << {name: name, id: id}
           end
@@ -534,6 +534,11 @@ module ASF
           # not possible to determine where one name starts and the other begins
           Wunderbar.warn "Missing separator before chair name in: '#{line}'"
         end
+      end
+      # Any duplicates?
+      dupes = list.group_by{|x| x.first.downcase}.select{|k,v|v.size!=1}
+      if dupes.size > 0
+        Wunderbar.warn "Dulicate chairs: #{dupes}}"
       end
       # Extract the non-PMC committees (e-mail address may be absent)
       # first drop leading text (and Officers) so we only match non-PMCs
