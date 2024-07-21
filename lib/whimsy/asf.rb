@@ -1,4 +1,5 @@
 require_relative 'asf/config'
+require 'wunderbar'
 require_relative 'asf/svn'
 require_relative 'asf/ldap'
 require_relative 'asf/committee'
