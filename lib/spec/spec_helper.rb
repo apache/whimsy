@@ -32,6 +32,17 @@ if ENV['RAKE_TEST'] == 'TRUE' or not (ASF::SVN.find('apmail_bin') and ASF::SVN.f
   ASF::SVN[SAMPLE_SVN_NAME] = File.expand_path('../test/svn/minutes', __dir__)
   ASF::Config[:subscriptions] = File.expand_path('../test/subscriptions', __dir__)
   ASF::SVN['incubator-podlings'] = File.expand_path('../test/svn/incubator-podlings', __dir__)
+  # Ensure we can get a date for CI.txt in TEST mode
+  # (avoids need to add the file to a local SVN repo)
+  ASF::SVN.instance_eval do
+    alias getInfoItem_old getInfoItem
+    def getInfoItem(path, item, user=nil, password=nil)
+      if item == 'last-changed-date' and path.end_with?('committee-info.txt')
+        return File.mtime(path).to_s
+      end
+      getInfoItem_old(path, item,user,password)
+    end
+  end
 else
   TEST_DATA = false
 end
