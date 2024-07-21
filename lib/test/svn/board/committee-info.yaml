@@ -6,7 +6,6 @@
 
 :cttees:
   comdev:
-    :name: Community Development
     :site: http://community.apache.org/
     :description: Resources to help people become involved with Apache projects
 
@@ -17,7 +16,6 @@
     :name: Avalon
     :description: Java software for component and container programming
   httpd:
-    :name: HTTP Server
     :site: http://httpd.apache.org/
     :description: Apache Web Server (httpd)
   jakarta:
