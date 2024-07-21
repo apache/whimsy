@@ -175,6 +175,7 @@ module ASF
         @committee_mtime = File.mtime(file)
         @@svn_change = Time.parse(ASF::SVN.getInfoItem(file, 'last-changed-date')).gmtime
 
+        Wunderbar.debug "Parsing CI file"
         @nonpmcs, @officers, @committee_info = parse_committee_info_nocache(File.read(file))
       end
       @committee_info
@@ -795,4 +796,10 @@ module ASF
     end
 
   end
+
+  # ensure the CI data is pre-loaded
+  # If this is not done, the first committee instance may be incomplete
+  Wunderbar.debug "Initialising CI file"
+  ASF::Committee.load_committee_info
+
 end

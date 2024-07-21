@@ -24,6 +24,14 @@ describe ASF::Committee do
     Wunderbar.logger = nil # ensure we see warnings
   }
   describe "ASF::Committee::site" do
+    it "should return correct display_name initially" do
+      httpd = ASF::Committee['httpd']
+      expect(httpd.display_name).to eq('HTTP Server')
+    end
+    it "should return correct display_name subsequently" do
+      httpd = ASF::Committee['httpd']
+      expect(httpd.display_name).to eq('HTTP Server')
+    end
     it "should return string for 'httpd'" do
       res = ASF::Committee.find('HTTP Server').site
       expect(res).to match(%r{https?://httpd\.apache\.org/?})
