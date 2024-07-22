@@ -17,8 +17,9 @@
 lib = File.expand_path('..', __dir__)
 $LOAD_PATH.unshift lib unless $LOAD_PATH.include? lib
 
-require 'whimsy/asf'
 require 'whimsy/asf/config' # must be loaded before updating config
+require 'whimsy/asf/svn' # must be loaded before updating config
+# Don't load 'whimsy/asf' here as some classes may depend on overrides below
 
 SAMPLE_SVN_NAME = 'minutes' # name of checkout of public SVN dir
 SAMPLE_SVN_URL_RE = %r{https://.+/minutes}
