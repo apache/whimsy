@@ -164,9 +164,9 @@ module ASF
         @nonpmcs, @officers, @committee_info = parse_committee_info_nocache(contents)
       else
         board = ASF::SVN.find('board')
-        return unless board
+        raise ArgumentError.new("Could not find 'board' checkout") unless board
         file = File.join(board, 'committee-info.txt')
-        return unless File.exist? file
+        raise ArgumentError.new("Could not find #{file}") unless File.exist? file
 
         if @committee_mtime and File.mtime(file) <= @committee_mtime
           return @committee_info if @committee_info
