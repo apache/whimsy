@@ -50,6 +50,10 @@ class Parts < Vue
       }
     }
 
+    _ul do
+      _li "\u2716 delete this email", onMousedown: self.delete_message
+    end
+
     # locate corresponding signature file (if any)
     signature = CheckSignature.find(decodeURIComponent(@selected), @attachments)
 
@@ -602,6 +606,7 @@ class Parts < Vue
       self.hideMenu()
     }
   end
+
 
   # rotate an attachment
   def rotate_attachment(event)
