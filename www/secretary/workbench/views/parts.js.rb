@@ -51,6 +51,10 @@ class Parts < Vue
     }
 
     _ul do
+      _li "undelete this email", onMousedown: self.undelete_message
+    end
+
+    _ul do
       _li "\u2716 delete this email", onMousedown: self.delete_message
     end
 
@@ -552,6 +556,18 @@ class Parts < Vue
     @busy = true
     pathname = window.parent.location.pathname
     HTTP.delete(pathname).then {
+      window.parent.location.href = '../..'
+    }.catch {|error|
+      alert error
+      @busy = false
+    }
+  end
+
+  # undelete a message
+  def undelete_message(event)
+    @busy = true
+    pathname = window.parent.location.pathname
+    HTTP.patch(pathname, status: nil).then {
       window.parent.location.href = '../..'
     }.catch {|error|
       alert error
