@@ -64,7 +64,7 @@ get '/' do
   archives = Dir[File.join(ARCHIVE, '*.yml')].select {|name| name =~ %r{/\d{6}\.yml$}}
   @mbox = archives.empty? ? nil : File.basename(archives.max, '.yml')
   if @mbox
-    @mbox = [Date.today.strftime('%Y%m'), @mbox].min
+    @mbox = [Date.today.strftime('%Y%m'), @mbox].min # Exclude future-dated entries
     @messages = Mailbox.new(@mbox).client_headers.select do |message|
       message[:status] != :deleted
     end
