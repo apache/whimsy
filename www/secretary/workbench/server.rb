@@ -112,6 +112,13 @@ get %r{/(\d{6})/deleted} do |mbox|
   _html :deleted
 end
 
+# display all messages
+get %r{/(\d{6})/all} do |mbox|
+  @mbox = mbox
+  @messages = Mailbox.new(@mbox).client_headers
+  _html :all
+end
+
 # retrieve a single message
 get %r{/(\d{6})/(\w+)/} do |month, hash|
   @message = Mailbox.new(month).headers[hash]
