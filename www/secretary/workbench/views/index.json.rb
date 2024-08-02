@@ -19,4 +19,10 @@ if index
     mbox: (File.basename(prevmbox, '.yml') if prevmbox),
     messages: Mailbox.new(@mbox).client_headers
   }
+else
+  # ensure we return something usable
+  {
+    mbox: nil,
+    messages: []
+  }
 end
