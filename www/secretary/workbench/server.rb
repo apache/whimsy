@@ -230,6 +230,8 @@ end
 
 # reparse an existing message
 get %r{/(\d{6})/(\w+)/_reparse_} do |month, hash|
+  return [503, UNAVAILABLE] if UNAVAILABLE
+
   mailbox = Mailbox.new(month)
   message = mailbox.find(hash)
   pass unless message
