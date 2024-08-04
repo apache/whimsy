@@ -54,9 +54,7 @@ class Parts < Vue
       _li "undelete this email", onMousedown: self.undelete_message
     end
 
-    _ul do
-      _li "\u2716 delete this email", onMousedown: self.delete_message
-    end
+    _p "(Use [ctrl|meta] + [delete|backspace] to delete this email)"
 
     # locate corresponding signature file (if any)
     signature = CheckSignature.find(decodeURIComponent(@selected), @attachments)
