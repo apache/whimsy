@@ -157,8 +157,8 @@ class Mailbox
   # return headers (server view)
   #
   def headers
-    messages = YAML.load_file(yaml_file) rescue {}
-    messages.delete :mtime
+    messages = YAML.load_file(yaml_file) || {} rescue {}
+    messages.delete :mtime # TODO: is this needed?
     messages.each do |_key, value|
       value[:source] = @name
     end
