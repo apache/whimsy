@@ -15,6 +15,8 @@ _html do
     _a 'Deleted messages', href: 'deleted'
     _ '-'
     _a 'All messages', href: 'all'
+    _ '-'
+    _a 'Pending messages', href: 'pending'
   end
 
   _div_.index!

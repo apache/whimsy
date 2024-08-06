@@ -118,6 +118,21 @@ get %r{/(\d{6})/deleted} do |mbox|
   _html :deleted
 end
 
+get '/pending' do
+  current = Mailbox.allmailboxes.last
+  redirect to("/#{current}/pending")
+end
+
+# display pending messages
+get %r{/(\d{6})/pending} do |mbox|
+  @mbox = mbox
+  @prv, @nxt = Mailbox.prev_next(mbox)
+  @messages = Mailbox.new(@mbox).client_headers.reject do |message|
+    message[:status] == :deleted
+  end
+  _html :pending
+end
+
 get '/all' do
   current = Mailbox.allmailboxes.last
   redirect to("/#{current}/all")
