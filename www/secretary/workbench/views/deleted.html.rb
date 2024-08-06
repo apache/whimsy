@@ -1,5 +1,12 @@
 _html do
-  _h1.bg_danger 'Deleted messages'
+  _h1.bg_danger "Deleted messages for #{@mbox}"
+  _a 'Workbench', href: '..'
+  if @prv
+    _a 'Previous', href: "../#{@prv}/deleted"
+  end
+  if @nxt
+    _a 'Next', href: "../#{@nxt}/deleted"
+  end
   _table.table do
     _thead do
       _tr do

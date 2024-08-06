@@ -1,5 +1,12 @@
 _html do
-  _h1 'All messages'
+  _h1 "All messages for #{@mbox}"
+  _a 'Workbench', href: '..'
+  if @prv
+    _a 'Previous', href: "../#{@prv}/all"
+  end
+  if @nxt
+    _a 'Next', href: "../#{@nxt}/all"
+  end
   _table.table do
     _thead do
       _tr do

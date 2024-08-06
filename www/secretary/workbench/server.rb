@@ -103,18 +103,30 @@ get %r{/(\d{6})} do |mbox|
   _json :index # This invokes workbench/views/index.json.rb
 end
 
+get '/deleted' do
+  current = Mailbox.allmailboxes.last
+  redirect to("/#{current}/deleted")
+end
+
 # display deleted messages
 get %r{/(\d{6})/deleted} do |mbox|
   @mbox = mbox
+  @prv, @nxt = Mailbox.prev_next(mbox)
   @messages = Mailbox.new(@mbox).client_headers.select do |message|
     message[:status] == :deleted
   end
   _html :deleted
 end
 
+get '/all' do
+  current = Mailbox.allmailboxes.last
+  redirect to("/#{current}/all")
+end
+
 # display all messages
 get %r{/(\d{6})/all} do |mbox|
   @mbox = mbox
+  @prv, @nxt = Mailbox.prev_next(mbox)
   @messages = Mailbox.new(@mbox).client_headers
   _html :all
 end

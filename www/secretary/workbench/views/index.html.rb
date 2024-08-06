@@ -12,6 +12,9 @@ _html do
     _h1.bg_success do
       _a 'ASF Secretary Mail', href: '.'
     end
+    _a 'Deleted messages', href: 'deleted'
+    _ '-'
+    _a 'All messages', href: 'all'
   end
 
   _div_.index!
