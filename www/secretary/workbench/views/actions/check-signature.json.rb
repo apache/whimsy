@@ -105,7 +105,7 @@ def validate_sig(attachment, signature, msgid)
             '--batch', '--import', tmpfile
           # For later analysis
           Wunderbar.warn "#{gpg} --import #{tmpfile} rc=#{rc} out=#{out} err=#{err}"
-          if err.include?('imported: 1') or err.include?('processed: 1') # downloaded key is valid; store it for posterity
+          if err.include?('imported: 1') or err.include?('unchanged: 1') # downloaded key is valid; store it for posterity
             Dir.mktmpdir do |tmpdir|
               container = ASF::SVN.svnpath!('iclas', '__keys__')
               ASF::SVN.svn!('checkout',[container, tmpdir], {depth: 'empty', env: env})
