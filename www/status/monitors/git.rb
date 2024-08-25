@@ -144,13 +144,14 @@ def show(name,value)
 end
 
 # for debugging purposes
-if __FILE__ == $0
-  response = Monitor.git(nil) # must agree with method name above
-  data = response[:data]
-  data.each do |k,v|
-    puts "#{k} #{data[k][:level]} #{data[k][:title] or data[k][:data] }"
-  end
-end
+# Temporarily disable; seems to cause hang TODO FIX
+# if __FILE__ == $0
+#   response = Monitor.git(nil) # must agree with method name above
+#   data = response[:data]
+#   data.each do |k,v|
+#     puts "#{k} #{data[k][:level]} #{data[k][:title] or data[k][:data] }"
+#   end
+# end
 
 # test data
 __END__
