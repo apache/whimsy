@@ -83,14 +83,17 @@ def validate_sig(attachment, signature, msgid)
   # run gpg verify command
   # TODO: may need to drop the keyid-format parameter when gpg is updated as it might
   # reduce the keyid length from the full fingerprint
-  out, err, rc = Open3.capture3 gpg,
-    '--keyid-format', 'long', # Show a longer id
-    '--verify', signature.path, attachment.path
+
+  # Temp test - could be made permanent:
+  # Ignore existing cached keys, so we always fetch the current key
+  # out, err, rc = Open3.capture3 gpg,
+  #   '--keyid-format', 'long', # Show a longer id
+  #   '--verify', signature.path, attachment.path
 
   # if key is not found, fetch and try again
-  if
-    err.include? "gpg: Can't check signature: No public key" or
-    err.include? "gpg: Can't check signature: public key not found"
+  if true # IGNORE existing entries
+    # err.include? "gpg: Can't check signature: No public key" or
+    # err.include? "gpg: Can't check signature: public key not found"
   then
     # extract and fetch key
     keyid = err[/[RD]SA key (ID )?(\w+)/,2]
