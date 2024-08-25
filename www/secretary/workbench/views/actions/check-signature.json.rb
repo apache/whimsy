@@ -80,21 +80,17 @@ def validate_sig(attachment, signature, msgid)
   gpg = `which gpg2`.chomp
   gpg = `which gpg`.chomp if gpg.empty?
 
-  # run gpg verify command
+  # run gpg verify command - this is needed to determine the key-id
   # TODO: may need to drop the keyid-format parameter when gpg is updated as it might
   # reduce the keyid length from the full fingerprint
   out, err, rc = Open3.capture3 gpg,
     '--keyid-format', 'long', # Show a longer id
     '--verify', signature.path, attachment.path
 
-  # if key is not found, fetch and try again
-  if
-    err.include? "gpg: Can't check signature: No public key" or
-    err.include? "gpg: Can't check signature: public key not found"
+  # Look for the keyid so we can fetch the current key
+  keyid = err[/[RD]SA key (ID )?(\w+)/,2]
+  if keyid
   then
-    # extract and fetch key
-    keyid = err[/[RD]SA key (ID )?(\w+)/,2]
-
     # Try to fetch the key
     Dir.mktmpdir do |dir|
       found = false
