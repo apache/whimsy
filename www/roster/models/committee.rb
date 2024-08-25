@@ -7,8 +7,7 @@ class Committee
     return unless pmc.pmc? # Only show PMCs
     owners = pmc.owners
     committers = pmc.committers
-    return if owners.empty? and committers.empty?
-
+    # These may be empty if there is no matching LDAP group, e.g. during initial setup
     ASF::Committee.load_committee_info
     # We'll be needing the mail data later
     ASF::Person.preload(['cn', 'mail', 'asf-altEmail', 'githubUsername'], (owners + committers).uniq)
