@@ -20,6 +20,12 @@ require 'json'
 require 'time'
 require 'thread'
 
+# for debugging purposes must include status
+if __FILE__ == $0
+  $LOAD_PATH.unshift '/srv/whimsy/lib'
+  require 'whimsy/asf/status'
+end
+
 class Monitor
   # match http://getbootstrap.com/components/#alerts
   LEVELS = %w(success info warning danger fatal)
