@@ -78,7 +78,7 @@ class ASF::Board::Agenda
           summary[PMCS_KEY][r[TITLE_KEY]][REPORT_LEN] = r['report'].length if r['report']
         end
       end
-      actions = agenda.select{ |v| v.has_key?(INDEX_KEY) && v[INDEX_KEY] == "Action Items" }[0][ACTIONS_KEY]
+      actions = agenda.select{ |v| v.has_key?(INDEX_KEY) && v[INDEX_KEY] == 'Action Items' }[0][ACTIONS_KEY]
       if actions
         summary[ACTIONS_KEY] = Hash.new{|h,k| h[k] = [] }
         actions.each do |r|
@@ -89,7 +89,7 @@ class ASF::Board::Agenda
       summary[STATS_KEY] = {}
       summary[STATS_KEY]['specialorders'] = agenda.select{ |v| /\A7/ =~ v[ATTACH_KEY] }.length
       summary[STATS_KEY]['discusstextlen'] = agenda.select{ |v|
-        v[INDEX_KEY] == "Discussion Items" || /\A8[A-Z]/ =~ v[ATTACH_KEY]
+        v[INDEX_KEY] == 'Discussion Items' || /\A8[A-Z]/ =~ v[ATTACH_KEY]
       }.map {|v| v['text'].length}.sum
       totapprovals = 0
       totcommentlen = 0

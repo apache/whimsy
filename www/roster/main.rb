@@ -430,10 +430,10 @@ end
 
 # for debugging purposes
 get '/env' do
-  Wunderbar.info "Info"
-  Wunderbar.warn "Warn"
-  Wunderbar.error "Error"
-  Wunderbar.fatal "Fatal"
+  Wunderbar.info 'Info'
+  Wunderbar.warn 'Warn'
+  Wunderbar.error 'Error'
+  Wunderbar.fatal 'Fatal'
   content_type 'text/plain'
 
   asset = {
@@ -462,7 +462,7 @@ get '/env' do
     line: __LINE__ # temp
   }
 
-  $stderr.puts "Stderr" # debug
+  $stderr.puts 'Stderr' # debug
   JSON.pretty_generate(env: env, ENV: ENV.to_h, asset: asset)
 end
 

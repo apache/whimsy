@@ -52,7 +52,7 @@ class Footer < Vue
             prefix = ''
           end
 
-          link ||= {href: "flagged", title: 'Flagged'}
+          link ||= {href: 'flagged', title: 'Flagged'}
         end
       elsif
         meeting_day and @@item.attach =~ /\d/ and
@@ -121,7 +121,7 @@ class Footer < Vue
             link = link.next
           end
         end
-        link ||= {href: "flagged", title: 'Flagged'}
+        link ||= {href: 'flagged', title: 'Flagged'}
       elsif
         meeting_day and link and
         @@item.attach =~ /^\d[A-Z]/ and link.attach =~ /^\d/

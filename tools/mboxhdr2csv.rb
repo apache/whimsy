@@ -362,9 +362,9 @@ module MboxUtils
   # Side effect: writes out f.chomp(ext).json files
   # @note writes string VERSION for differentiating from other *.json
   def scan_dir_mbox2stats(dir, ext = MBOX_EXT)
-    Dir[File.join(dir, "**", "*#{ext}")].sort.each do |f|
+    Dir[File.join(dir, '**', "*#{ext}")].sort.each do |f|
       mails, errs = mbox2stats(f)
-      File.open("#{f.chomp(ext)}.json", "w") do |fout|
+      File.open("#{f.chomp(ext)}.json", 'w') do |fout|
         fout.puts JSON.pretty_generate([VERSION, mails, errs])
       end
     end
@@ -377,7 +377,7 @@ module MboxUtils
   def scan_dir_stats2csv(dir, outname, ext = '.json')
     errors = []
     jzons = []
-    Dir[File.join(dir, "**", "*#{ext}")].sort.each do |f|
+    Dir[File.join(dir, '**', "*#{ext}")].sort.each do |f|
       begin
         tmp = JSON.parse(File.read(f))
         if tmp[0].kind_of?(String) && tmp[0].start_with?(VERSION)
@@ -393,7 +393,7 @@ module MboxUtils
     puts "#{__method__} processing #{jzons.length} mbox json files"
     # Write out headers and the first array in new csv
     csvfile = File.join(dir, outname)
-    csv = CSV.open(csvfile, "w", headers: %w( year month day weekday hour zone listid who subject lines links committer messageid inreplyto ), write_headers: true)
+    csv = CSV.open(csvfile, 'w', headers: %w( year month day weekday hour zone listid who subject lines links committer messageid inreplyto ), write_headers: true)
     jzons.shift[0].each do |m|
       csv << [ m['y'], m['m'], m['d'], m['w'], m['h'], m['z'], m['listid'], m['who'], m['subject'], m['lines'], m['links'], m['committer'], m['messageid'], m['inreplyto']  ]
     end
@@ -432,7 +432,7 @@ def optparse
     opts.on('-oOUTPUT.CSV', '--output OUTPUT.CSV', "Filename to output rows into; default #{DEFAULT_OUTPUT}") do |o|
       options[:output] = o
     end
-    opts.on('-j', '--json', "Process .mbox to .json (optional)") do
+    opts.on('-j', '--json', 'Process .mbox to .json (optional)') do
       options[:json] = true
     end
     begin
@@ -463,5 +463,5 @@ if __FILE__ == $PROGRAM_NAME
       puts "ERROR: #{e}"
     end
   end
-  puts "END"
+  puts 'END'
 end

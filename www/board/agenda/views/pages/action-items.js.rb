@@ -91,7 +91,7 @@ class ActionItems < Vue
           Vue.createElement('span', options) do
             # highlight missing action item status updates
             if pending
-              _span "Status: "
+              _span 'Status: '
               pending.status.split("\n").each do |line|
                 match = line.match(/^( *)(.*)/)
                 _span match[1]
@@ -165,7 +165,7 @@ class ActionItems < Vue
             end
 
             _ "* #{action.owner}: #{action.text.gsub("\n", "\n        ")}\n"
-            _ "      [ "
+            _ '      [ '
             if action.item
               _Link text: action.item.title, href: action.item.href,
                 class: action.item.color

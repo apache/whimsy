@@ -33,13 +33,13 @@ module ICLAParser
       'Individual Contributor',
       'License Agreement',
       '("Agreement") V2.0',
-      "as \"Not a Contribution.\"",
-      "inaccurate in any respect.",
-      "for your records.",
-      "1. Definitions.",
-      "Contributions and such derivative works.",
-      "litigation is filed.",
-      "Contributions."
+      'as "Not a Contribution."',
+      'inaccurate in any respect.',
+      'for your records.',
+      '1. Definitions.',
+      'Contributions and such derivative works.',
+      'litigation is filed.',
+      'Contributions.'
     ]
 
     def initialize(fontdict)
@@ -164,9 +164,9 @@ module ICLAParser
         # In particular info[:Producer] may have odd characters
         val = reader.public_send(i)
         if val.instance_of? String
-          metadata[i] = val.encode("utf-8", "utf-8", :invalid => :replace)
+          metadata[i] = val.encode('utf-8', 'utf-8', :invalid => :replace)
         elsif val.instance_of? Hash
-          metadata[i] = val.transform_values {|v| v.encode("utf-8", "utf-8", :invalid => :replace)}
+          metadata[i] = val.transform_values {|v| v.encode('utf-8', 'utf-8', :invalid => :replace)}
         else
           metadata[i] = val.class
         end
@@ -240,7 +240,7 @@ module ICLAParser
           each do |k|
             data[:text] << k.
             sort_by {|l| l[:x]}. # sort by X ascending
-            map {|v| v[:Contents]}.join(", ")
+            map {|v| v[:Contents]}.join(', ')
           end
       end
       if metadata[:dataSource].size == 0 or ((data[:text].size rescue 0) <= 1 and data.size < 3) # No annotations found or not useful

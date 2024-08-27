@@ -62,7 +62,7 @@ _html do
         end
         _p do
           _span.text_danger 'BETA SOFTWARE: double-check the command first. '
-          _a "Feedback welcome!", href: "mailto:dev@whimsical.apache.org?Subject=Feedback on moderation helper app"
+          _a 'Feedback welcome!', href: 'mailto:dev@whimsical.apache.org?Subject=Feedback on moderation helper app'
         end
         _p do
           _span '** If you are not a moderator, you can contact them by emailing <list>-owner@<tlp>.apache.org **'
@@ -121,13 +121,13 @@ _html do
             _tr do
               _td do
                 _label do
-                  _input type: "radio", name: "cmd", value: "list", required: true, checked: (@cmd == "list")
+                  _input type: 'radio', name: 'cmd', value: 'list', required: true, checked: (@cmd == 'list')
                   _ 'list (current subscribers)'
                 end
               end
               _td do
                 _label do
-                  _input type: "radio", name: "cmd", value: "subscribe", required: true, checked: (@cmd == "subscribe")
+                  _input type: 'radio', name: 'cmd', value: 'subscribe', required: true, checked: (@cmd == 'subscribe')
                   _ 'subscribe (normal subscription: can post and gets messages)'
                 end
               end
@@ -135,13 +135,13 @@ _html do
             _tr do
               _td do
                 _label do
-                  _input type: "radio", name: "cmd", value: "log", required: true, checked: (@cmd == "log")
+                  _input type: 'radio', name: 'cmd', value: 'log', required: true, checked: (@cmd == 'log')
                   _ 'log (history of subscription changes)'
                 end
               end
               _td do
                 _label do
-                  _input type: "radio", name: "cmd", value: "unsubscribe", required: true, checked: (@cmd == "unsubscribe" || @cmd == nil)
+                  _input type: 'radio', name: 'cmd', value: 'unsubscribe', required: true, checked: (@cmd == 'unsubscribe' || @cmd == nil)
                   _ 'unsubscribe (from list)'
                 end
               end
@@ -149,13 +149,13 @@ _html do
             _tr do
               _td do
                 _label do
-                  _input type: "radio", name: "cmd", value: "allow-list", required: true, checked: (@cmd == "allow-list")
+                  _input type: 'radio', name: 'cmd', value: 'allow-list', required: true, checked: (@cmd == 'allow-list')
                   _ 'allow-list (currently allowed to post)'
                 end
               end
               _td do
                 _label do
-                  _input type: "radio", name: "cmd", value: "allow-subscribe", required: true, checked: (@cmd == "allow-subscribe")
+                  _input type: 'radio', name: 'cmd', value: 'allow-subscribe', required: true, checked: (@cmd == 'allow-subscribe')
                   _ 'allow-subscribe (allow posting without getting messages - e.g. for bots)'
                 end
               end
@@ -163,13 +163,13 @@ _html do
             _tr do
               _td do
                 _label do
-                  _input type: "radio", name: "cmd", value: "allow-log", required: true, checked: (@cmd == "allow-log")
+                  _input type: 'radio', name: 'cmd', value: 'allow-log', required: true, checked: (@cmd == 'allow-log')
                   _ 'allow-log (history of subscriptions to allow list)'
                 end
               end
               _td do
                 _label do
-                  _input type: "radio", name: "cmd", value: "allow-unsubscribe", required: true, checked: (@cmd == "allow-unsubscribe")
+                  _input type: 'radio', name: 'cmd', value: 'allow-unsubscribe', required: true, checked: (@cmd == 'allow-unsubscribe')
                   _ 'allow-unsubscribe (drop allow posting)'
                 end
               end
@@ -177,13 +177,13 @@ _html do
             _tr do
               _td do
                 _label do
-                  _input type: "radio", name: "cmd", value: "deny-list", required: true, checked: (@cmd == "deny-list")
+                  _input type: 'radio', name: 'cmd', value: 'deny-list', required: true, checked: (@cmd == 'deny-list')
                   _ 'deny-list (list those currently denied to post)'
                 end
               end
               _td do
                 _label do
-                  _input type: "radio", name: "cmd", value: "deny-subscribe", required: true, checked: (@cmd == "deny-subscribe")
+                  _input type: 'radio', name: 'cmd', value: 'deny-subscribe', required: true, checked: (@cmd == 'deny-subscribe')
                   _ 'deny-subscribe (prevent subscriber from posting)'
                 end
               end
@@ -191,13 +191,13 @@ _html do
             _tr do
               _td do
                 _label do
-                  _input type: "radio", name: "cmd", value: "deny-log", required: true, checked: (@cmd == "deny-log")
+                  _input type: 'radio', name: 'cmd', value: 'deny-log', required: true, checked: (@cmd == 'deny-log')
                   _ 'deny-log (history of deny subscriptions)'
                 end
               end
               _td do
                 _label do
-                  _input type: "radio", name: "cmd", value: "deny-unsubscribe", required: true, checked: (@cmd == "deny-unsubscribe")
+                  _input type: 'radio', name: 'cmd', value: 'deny-unsubscribe', required: true, checked: (@cmd == 'deny-unsubscribe')
                   _ 'deny-unsubscribe (remove from list of denied posters)'
                 end
               end
@@ -205,13 +205,13 @@ _html do
             _tr do
               _td do
                 _label do
-                  _input type: "radio", name: "cmd", value: "sendsubscribertomod-list", required: true, checked: (@cmd == "sendsubscribertomod-subscribe")
+                  _input type: 'radio', name: 'cmd', value: 'sendsubscribertomod-list', required: true, checked: (@cmd == 'sendsubscribertomod-subscribe')
                   _ 'sendsubscribertomod-list (list of moderated subscribers)'
                 end
               end
               _td do
                 _label do
-                  _input type: "radio", name: "cmd", value: "sendsubscribertomod-subscribe", required: true, checked: (@cmd == "sendsubscribertomod-subscribe")
+                  _input type: 'radio', name: 'cmd', value: 'sendsubscribertomod-subscribe', required: true, checked: (@cmd == 'sendsubscribertomod-subscribe')
                   _ 'sendsubscribertomod-subscribe (add to list of moderated subscribers - ask INFRA to enable this for the list)'
                 end
               end
@@ -219,13 +219,13 @@ _html do
             _tr do
               _td do
                 _label do
-                  _input type: "radio", name: "cmd", value: "sendsubscribertomod-log", required: true, checked: (@cmd == "sendsubscribertomod-subscribe")
+                  _input type: 'radio', name: 'cmd', value: 'sendsubscribertomod-log', required: true, checked: (@cmd == 'sendsubscribertomod-subscribe')
                   _ 'sendsubscribertomod-log (history of moderated subscribers)'
                 end
               end
               _td do
                 _label do
-                  _input type: "radio", name: "cmd", value: "sendsubscribertomod-unsubscribe", required: true, checked: (@cmd == "sendsubscribertomod-unsubscribe")
+                  _input type: 'radio', name: 'cmd', value: 'sendsubscribertomod-unsubscribe', required: true, checked: (@cmd == 'sendsubscribertomod-unsubscribe')
                   _ 'sendsubscribertomod-unsubscribe (remove from list of moderated subscribers)'
                 end
               end

@@ -8,7 +8,7 @@ require 'whimsy/asf/config'
 require 'whimsy/asf/svn'
 
 def stamp(*s)
-  "%s: %s" % [Time.now.gmtime.to_s, s.join(' ')]
+  '%s: %s' % [Time.now.gmtime.to_s, s.join(' ')]
 end
 
 # need to fetch all topics to ensure mixed commits are seen
@@ -17,7 +17,7 @@ PUBSUB_URL = 'https://pubsub.apache.org:2070/svn'
 class PubSub
 
   require 'fileutils'
-  ALIVE = File.join("/tmp", "#{File.basename(__FILE__)}.alive") # TESTING ONLY
+  ALIVE = File.join('/tmp', "#{File.basename(__FILE__)}.alive") # TESTING ONLY
 
   @restartable = false
   @updated = false
@@ -60,22 +60,22 @@ class PubSub
                   yield event
                 end
               else
-                puts stamp "Partial chunk" if debug
+                puts stamp 'Partial chunk' if debug
               end
               unless mtime == File.mtime(__FILE__)
-                puts stamp "File updated" if debug
+                puts stamp 'File updated' if debug
                 @updated = true
                 done = true
               end
               break if done
             end # reading chunks
-            puts stamp "Done reading chunks" if debug
+            puts stamp 'Done reading chunks' if debug
             break if done
           end # read response
-          puts stamp "Done reading response" if debug
+          puts stamp 'Done reading response' if debug
           break if done
         end # net start
-        puts stamp "Done with start" if debug
+        puts stamp 'Done with start' if debug
       rescue Errno::ECONNREFUSED => e
         @restartable = true
         $stderr.puts stamp e.inspect
@@ -84,11 +84,11 @@ class PubSub
         $stderr.puts stamp e.inspect
         $stderr.puts stamp e.backtrace
       end
-      puts stamp "Done with thread" if debug
+      puts stamp 'Done with thread' if debug
     end # thread
     puts stamp "Pubsub thread started #{url} ..."
     ps_thread.join
-    puts stamp "Pubsub thread finished %s..." % (@updated ? '(updated) ' : '')
+    puts stamp 'Pubsub thread finished %s...' % (@updated ? '(updated) ' : '')
     if @restartable
       $stderr.puts stamp 'restarting'
 
@@ -130,7 +130,7 @@ if $0 == __FILE__
       $hits += 1
       log = event['commit']['log'].sub(/\n.*/m, '') # keep only first line
       id = event['commit']['id']
-      puts ""
+      puts ''
       puts stamp id, path, log
       matches = Hash.new{|h, k| h[k] = Array.new} # key alias, value = array of matching files
       watching = WATCH[path]
@@ -164,7 +164,7 @@ if $0 == __FILE__
       if File.exist? '/srv/svn/pubsub2rake.trace'
         log = event['commit']['log'].sub(/\n.*/m, '') # keep only first line
         id = event['commit']['id']
-        puts ""
+        puts ''
         puts stamp id, path, 'DBG', log
       end
     end # possible match
@@ -210,7 +210,7 @@ if $0 == __FILE__
   end
 
   if File.exist? pubsub_URL
-    puts "** Unit testing **"
+    puts '** Unit testing **'
     File.open(pubsub_URL).each_line do |line|
       event = nil
       begin

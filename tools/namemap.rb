@@ -188,7 +188,7 @@ module NameMap
           end
         end
       else # No id match, log it
-        matches[cid] = "NONE:no id match found"
+        matches[cid] = 'NONE:no id match found'
       end
     end
 

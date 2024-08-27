@@ -48,9 +48,9 @@ _html lang: 'en', _width: '80' do
           _div_.collapse.navbar_collapse.mainnav_collapse! do
             _div_! style: 'line-height:20px; padding-top:5px; float:left' do
               _a 'Home', href: 'https://www.apache.org/'
-              _ " » "
+              _ ' » '
               _a 'Legal', href: 'https://www.apache.org/legal/'
-              _ " » "
+              _ ' » '
               _a 'ICLA', href: '/project/icla/'
             end
 
@@ -355,7 +355,7 @@ _html lang: 'en', _width: '80' do
           _div_.col_lg_12 do
             _p_!.text_center do
               _ "Copyright © #{Date.today.year} The Apache Software Foundation, Licensed " +
-                "under the "
+                'under the '
               _a.white 'Apache License, Version 2.0',
                 href: 'http://www.apache.org/licenses/LICENSE-2.0'
               _ '.'

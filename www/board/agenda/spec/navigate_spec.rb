@@ -15,8 +15,8 @@ if ENV['TEST_AO_PAGE'] # code to test chromedriver only
 end
 
 feature 'navigation', js: true do
-  it "should navigate to the Cocoon report and back" do
-    skip "headless browser test not run" if ENV['SKIP_NAVIGATION']
+  it 'should navigate to the Cocoon report and back' do
+    skip 'headless browser test not run' if ENV['SKIP_NAVIGATION']
 
     visit '/2015-02-18/Clerezza'
     expect(page).to have_content('Clerezza') # basic test

@@ -100,11 +100,11 @@ def StatusMonitor.git(previous_status)
     show 'lines', lines
     if lines.empty?
       if not data
-        title = "partial response"
+        title = 'partial response'
         level = 'warning'
         seen_level[level] = true
       elsif data.is_a? String
-        title = "No files updated"
+        title = 'No files updated'
       end
 
       data << revision if revision and data.instance_of? Array
@@ -125,7 +125,7 @@ def StatusMonitor.git(previous_status)
       # Save a copy of the log; append the severity so can track more problems
       file = File.basename(log)
       if __FILE__ == $0 # unit test
-        puts "Would copy log to " + File.join(archive, file + '.' + lvl)
+        puts 'Would copy log to ' + File.join(archive, file + '.' + lvl)
       else
         FileUtils.copy log, File.join(archive, file + '.' + lvl), preserve: true
       end

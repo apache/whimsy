@@ -81,7 +81,7 @@ module ParseMail
           MessageId: mail.message_id, # could be nil
           EnvelopeFrom: mail.envelope_from,
           EnvelopeDate: mail.envelope_date.to_s, # effectively the delivery date to the mailing list
-          InReplyTo: mail["In-Reply-To"]&.decoded, # will be nil if not present
+          InReplyTo: mail['In-Reply-To']&.decoded, # will be nil if not present
         }
         data[name] = entry
       end
@@ -90,7 +90,7 @@ module ParseMail
     log :INFO, "Found #{entries} files, with #{dupes} duplicates, giving #{data.size} new entries"
 
     if data.size == 0
-      log :INFO, "No new entries found, updating last date"
+      log :INFO, 'No new entries found, updating last date'
       FileUtils.touch yamlfile # needed to skip processing next time
       # Should not happen often, an updated dir should result in updating the yaml
     else

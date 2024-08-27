@@ -17,8 +17,8 @@ _html do
 
       _p do
         _ 'Click on column names to sort.'
-        _{"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"}
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZ".each_char do |c|
+        _{'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'}
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.each_char do |c|
           _a c, href: "ppmc/##{c}"
         end
       end
@@ -58,7 +58,7 @@ _html do
                 if project_names.include? ppmc.name
                   _ ppmc.description
                 else
-                  _ ppmc.description + " (not in ldap)"
+                  _ ppmc.description + ' (not in ldap)'
                 end
               end
             end

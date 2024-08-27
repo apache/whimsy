@@ -16,7 +16,7 @@ htmlEscape.replacement = {'&' => '&amp;', '<' => '&lt;', '>' => '&gt;'}
 # escape a string so that it can be used as a regular expression
 def escapeRegExp(string)
   # https://developer.mozilla.org/en/docs/Web/JavaScript/Guide/Regular_Expressions
-  return string.gsub(/([.*+?^=!:${}()|\[\]\/\\])/, "\\$1");
+  return string.gsub(/([.*+?^=!:${}()|\[\]\/\\])/, '\\$1');
 end
 
 # Replace http[s] links in text with anchor tags
@@ -28,7 +28,7 @@ end
 
 hotlink.regexp = Regexp.new(/(^|[\s.:;?\-\]<\(])
   (https?:\/\/[-\w;\/?:@&=+$.!~*'()%,#]+[\w\/])
-  (?=$|[\s.:;,?\-\[\]&\)])/x, "g")
+  (?=$|[\s.:;,?\-\[\]&\)])/x, 'g')
 
 #
 # Requests to the server
@@ -129,7 +129,7 @@ def retrieve(target, type, &block)
 
   if target =~ /^https?:/
     xhr.open('GET', target, true)
-    xhr.setRequestHeader("Accept", "application/json") if type == :json
+    xhr.setRequestHeader('Accept', 'application/json') if type == :json
   else
     xhr.open('GET', "../#{type}/#{target}", true)
   end

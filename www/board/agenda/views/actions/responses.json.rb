@@ -5,7 +5,7 @@
 require 'date'
 
 maildir = '/srv/mail/board/'
-start = maildir + (Date.today - 365).strftime("%Y%m")
+start = maildir + (Date.today - 365).strftime('%Y%m')
 
 responses = {}
 

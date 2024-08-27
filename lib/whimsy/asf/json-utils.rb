@@ -68,8 +68,8 @@ end
 
 if __FILE__ == $0
   require 'stringio'
-  old_file = ARGV.shift or raise ArgumentError.new "Old file!"
-  new_file = ARGV.shift or raise ArgumentError.new "New file!"
+  old_file = ARGV.shift or raise ArgumentError.new 'Old file!'
+  new_file = ARGV.shift or raise ArgumentError.new 'New file!'
   old_json = JSON.parse(File.read(old_file))
   new_json = JSON.parse(File.read(new_file))
   out = StringIO.new

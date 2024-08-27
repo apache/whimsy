@@ -5,12 +5,12 @@
 require_relative 'spec_helper'
 require_relative 'vue_server'
 
-describe "forms", type: :feature, server: :vue do
+describe 'forms', type: :feature, server: :vue do
   #
   # Comment form
   #
-  describe "comment form" do
-    it "has an add-comment form with a disabled Save button" do
+  describe 'comment form' do
+    it 'has an add-comment form with a disabled Save button' do
       on_vue_server do
         class TestCommentForm < Vue
           def render
@@ -31,7 +31,7 @@ describe "forms", type: :feature, server: :vue do
         text: 'Save'
     end
 
-    it "should enable Save button after input" do
+    it 'should enable Save button after input' do
       on_vue_server do
         item = {}
         server = {pending: {}, initials: 'sr'}
@@ -58,8 +58,8 @@ describe "forms", type: :feature, server: :vue do
   #
   # Post form
   #
-  describe "post form" do
-    it "should indicate when a reflow is needed" do
+  describe 'post form' do
+    it 'should indicate when a reflow is needed' do
       parsed = Agenda.parse 'board_agenda_2015_02_18.txt', :quick
       @item = parsed.find {|item| item['title'] == 'Executive Vice President'}
       on_vue_server do
@@ -79,7 +79,7 @@ describe "forms", type: :feature, server: :vue do
         text: 'Reflow'
     end
 
-    it "should perform a reflow" do
+    it 'should perform a reflow' do
       parsed = Agenda.parse 'board_agenda_2015_02_18.txt', :quick
       @item = parsed.find {|item| item['title'] == 'Executive Vice President'}
       on_vue_server do
@@ -106,8 +106,8 @@ describe "forms", type: :feature, server: :vue do
   #
   # Commit form
   #
-  describe "commit form" do
-    it "should generate a default commit message" do
+  describe 'commit form' do
+    it 'should generate a default commit message' do
       @parsed = Agenda.parse 'board_agenda_2015_02_18.txt', :quick
       on_vue_server do
         Agenda.load(@parsed)

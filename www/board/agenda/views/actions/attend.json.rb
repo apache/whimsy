@@ -3,9 +3,9 @@
 #
 
 if @action == 'regrets'
-  message = "Regrets for the meeting."
+  message = 'Regrets for the meeting.'
 else
-  message = "I plan to attend the meeting."
+  message = 'I plan to attend the meeting.'
 end
 
 Agenda.update(@agenda, message) do |agenda|

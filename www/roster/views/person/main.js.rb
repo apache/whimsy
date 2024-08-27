@@ -41,7 +41,7 @@ class Person < Vue
               if @committer.privateNosub
                 if @committer.privateNosub.include? pmc
                   noPMCsub = true
-                  _b " (*)"
+                  _b ' (*)'
                 end
               end
               if @committer.chairOf.include? pmc
@@ -117,9 +117,9 @@ class Person < Vue
             next if group == 'apldap'
 
             if group == 'committers'
-              _li {_a group, href: "committer/"}
+              _li {_a group, href: 'committer/'}
             elsif group == 'member'
-              _li {_a group, href: "members"}
+              _li {_a group, href: 'members'}
             else
               _li {_a group, href: "group/#{group}"}
             end
@@ -194,7 +194,7 @@ class Person < Vue
             _li do
               _a list_name, href: 'https://lists.apache.org/list.html?' +
                 list_name
-              _span " as "
+              _span ' as '
               _span @committer.moderates[list_name].join(', ')
             end
           end
@@ -212,7 +212,7 @@ class Person < Vue
             _li do
               _a list_email[0],
                 href: 'https://lists.apache.org/list.html?' + list_email[0]
-              _span " as "
+              _span ' as '
               _span list_email[1]
             end
           end
@@ -230,7 +230,7 @@ class Person < Vue
             _li do
               _a list_email[0],
                 href: 'https://lists.apache.org/list.html?' + list_email[0]
-              _span " as "
+              _span ' as '
               _span list_email[1]
             end
           end

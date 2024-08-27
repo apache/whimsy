@@ -22,7 +22,7 @@ _html do
         _tr do
           _td msg[:status].to_s
           _td do
-            _a time, href: "../%s" % msg[:href], title: time
+            _a time, href: '../%s' % msg[:href], title: time
           end
           _td msg[:from]
           _td msg[:subject]

@@ -21,17 +21,17 @@ require 'whimsy/asf/yaml'
 describe YamlFile do
   tmpdir = Dir.mktmpdir
   tmpname = File.join(tmpdir, 'yaml_spec1.yaml')
-  describe "YamlFile.read" do
-    it "should fail ENOENT" do
+  describe 'YamlFile.read' do
+    it 'should fail ENOENT' do
       expect do
         YamlFile.read(tmpname)
       end.to raise_error(Errno::ENOENT)
     end
   end
-  describe "YamlFile.update_section" do
+  describe 'YamlFile.update_section' do
     tmpdir = Dir.mktmpdir
     tmpname = File.join(tmpdir, 'yaml_spec1.yaml')
-    it "should fail ENOENT" do
+    it 'should fail ENOENT' do
       expect do
         YamlFile.update_section(tmpname, nil) {|yaml| yaml}
       end.to raise_error(Errno::ENOENT)
@@ -40,18 +40,18 @@ describe YamlFile do
     workfile = File.join(tmpdir, 'yaml_spec2.yaml')
     FileUtils.cp testfile, workfile
     # Check copied file is OK
-    it "read should return 3 entries" do
+    it 'read should return 3 entries' do
       yaml = YamlFile.read(workfile)
       expect(yaml.size).to equal(3)
     end
-    it "should fail with missing section and not update file" do
+    it 'should fail with missing section and not update file' do
       mtime = File.mtime workfile
       expect do
         YamlFile.update_section(workfile, 'none') {|yaml| yaml}
       end.to raise_error(ArgumentError)
       expect(File.mtime(workfile)).to eql(mtime)
     end
-    it "should find 2 entries and touch file" do
+    it 'should find 2 entries and touch file' do
       mtime = File.mtime workfile
       YamlFile.update_section(workfile, :key1) do |yaml|
         expect(yaml.size).to eql(2)
@@ -60,14 +60,14 @@ describe YamlFile do
       expect(File.mtime(workfile)).to be > mtime
     end
     # check it is still OK after dummy update
-    it "read should return 3 entries" do
+    it 'read should return 3 entries' do
       yaml = YamlFile.read(workfile)
       expect(yaml.size).to equal(3)
     end
-    it "should be unchanged" do
+    it 'should be unchanged' do
       expect(File.read(testfile)).to eql(File.read(workfile))
     end
-    it "should not touch file if nil returned" do
+    it 'should not touch file if nil returned' do
       mtime = File.mtime workfile
       YamlFile.update_section(workfile, :key1) do |yaml|
         expect(yaml.size).to eql(2)
@@ -76,9 +76,9 @@ describe YamlFile do
       expect(File.mtime(workfile)).to eql(mtime)
     end
   end
-  describe "YamlFile.update" do
+  describe 'YamlFile.update' do
     tmpname = File.join(tmpdir, 'yaml_spec3.yaml')
-    it "should create empty file" do
+    it 'should create empty file' do
       YamlFile.update(tmpname) do |yaml|
         expect(yaml.class).to equal(Hash)
         expect(yaml.size).to equal(0)
@@ -87,11 +87,11 @@ describe YamlFile do
         yaml
       end
     end
-    it "read should return single entry" do
+    it 'read should return single entry' do
       yaml = YamlFile.read(tmpname)
       expect(yaml.size).to equal(1)
     end
-    it "read not change the file time-stamp" do
+    it 'read not change the file time-stamp' do
       mtime1 = File.mtime(tmpname)
       YamlFile.update(tmpname) do |yaml|
         expect(yaml.class).to equal(Hash)

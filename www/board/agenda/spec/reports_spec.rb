@@ -5,7 +5,7 @@
 require_relative 'spec_helper'
 
 feature 'report' do
-  it "should show the President report" do
+  it 'should show the President report' do
     visit '/2015-02-18/President'
 
     # header
@@ -32,7 +32,7 @@ feature 'report' do
      text: 'Treasurer'
   end
 
-  it "should show the Avro report" do
+  it 'should show the Avro report' do
     visit '/2015-02-18/ACE'
 
     # header
@@ -74,14 +74,14 @@ feature 'report' do
       "#post-report-message[value='Edit ACE Report']"
   end
 
-  it "should show pending comments" do
+  it 'should show pending comments' do
     visit '/2015-01-21/Avro'
     expect(page).to have_selector 'h5#pending', text: 'Pending Comment'
     expect(page).to have_selector 'div.commented pre', text: 'jt: Nice report!'
     expect(page).to have_selector 'button', text: 'edit comment'
   end
 
-  it "should show missing reports" do
+  it 'should show missing reports' do
     visit '/2015-02-18/DirectMemory'
     expect(page).to have_selector 'pre em', text: 'Missing'
     expect(page).not_to have_selector 'dt', text: 'Approved'
@@ -104,7 +104,7 @@ feature 'report' do
       "#post-report-message[value='Post DirectMemory Report']"
   end
 
-  it "should show action items" do
+  it 'should show action items' do
     visit '/2015-01-21/DirectMemory'
     expect(page).to have_selector 'pre.report',
       text: '* Sam: Follow up with a more complete report next month'
@@ -112,7 +112,7 @@ feature 'report' do
       text: 'Action Items'
   end
 
-  it "should show draft minutes" do
+  it 'should show draft minutes' do
     visit '/2015-02-18/Drill'
 
     expect(page).to have_selector 'h4', text: 'Minutes'
@@ -121,7 +121,7 @@ feature 'report' do
   end
 
 
-  it "should show reports with warnings" do
+  it 'should show reports with warnings' do
     visit '/2015-01-21/Change-Labs-Chair'
 
     expect(page).to have_selector '.navbar-fixed-top.missing .navbar-brand',

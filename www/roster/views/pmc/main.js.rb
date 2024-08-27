@@ -13,23 +13,23 @@ class PMC < Vue
 
     # add jump links to main sections of page using Bootstrap nav element
     _ul.nav.nav_pills do
-      _li role: "presentation" do
+      _li role: 'presentation' do
         _a 'PMC', :href => "committee/#{@committee.id}#pmc"
       end
-      _li role: "presentation" do
+      _li role: 'presentation' do
         _a 'Committers', :href => "committee/#{@committee.id}#committers"
       end
-      _li role: "presentation" do
+      _li role: 'presentation' do
         if @committee.moderators
           _a 'Mail List Info', :href => "committee/#{@committee.id}#mail"
         else
           _a 'Mail Lists', :href => "committee/#{@committee.id}#mail"
         end
       end
-      _li role: "presentation" do
+      _li role: 'presentation' do
         _a 'Reporting Schedule', :href => "committee/#{@committee.id}#reporting"
       end
-      _li role: "presentation" do
+      _li role: 'presentation' do
         _a 'Links', :href => "committee/#{@committee.id}#links"
       end
     end

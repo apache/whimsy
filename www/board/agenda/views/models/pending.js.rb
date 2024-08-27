@@ -119,7 +119,7 @@ class Pending
 
   # offline storage using IndexDB
   def self.dbopen(&block)
-    request = indexedDB.open("whimsy/board/agenda", 1)
+    request = indexedDB.open('whimsy/board/agenda', 1)
 
     def request.onerror(event)
       console.log 'pending database not available'
@@ -139,8 +139,8 @@ class Pending
   # is no data, or if the data is for another month's agenda
   def self.dbget(&block)
     self.dbopen do |db|
-      tx = db.transaction("pending", :readonly)
-      store = tx.objectStore("pending")
+      tx = db.transaction('pending', :readonly)
+      store = tx.objectStore('pending')
       request = store.get('pending')
 
       def request.onerror(event)
@@ -160,8 +160,8 @@ class Pending
   # update pending value.
   def self.dbput(value)
     self.dbopen do |db|
-      tx = db.transaction("pending", :readwrite)
-      store = tx.objectStore("pending")
+      tx = db.transaction('pending', :readwrite)
+      store = tx.objectStore('pending')
       request = store.put(key: 'pending', agenda: Agenda.date, value: value)
 
       def request.onerror(event)

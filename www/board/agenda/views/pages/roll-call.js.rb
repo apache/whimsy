@@ -120,7 +120,7 @@ class RollCall < Vue
   # scroll walkon input field towards the center of the screen
   def updated()
     if RollCall.lockFocus and @guest.length >= 3
-      walkon = document.getElementsByClassName("walkon")[0]
+      walkon = document.getElementsByClassName('walkon')[0]
       offset = walkon.offsetTop + walkon.offsetHeight/2 - window.innerHeight/2
       jQuery('html, body').animate({scrollTop: offset}, :slow)
     end

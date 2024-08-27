@@ -48,7 +48,7 @@ def getURI(uri, file)
   # The pool needs a special CA cert
   Net::HTTP.start(uri.host, uri.port, opts ) do |https|
     https.request_get(uri.request_uri) do |res|
-      unless res.code == "200"
+      unless res.code == '200'
         raise Exception.new("Get #{uri} failed with #{res.code}: #{res.message}")
       end
       cl = res.content_length
@@ -58,9 +58,9 @@ def getURI(uri, file)
           raise Exception.new("Content-Length: #{cl} > #{MAX_KEY_SIZE}")
         end
       else
-        Wunderbar.warn "Content-Length not provided, continuing"
+        Wunderbar.warn 'Content-Length not provided, continuing'
       end
-      File.open(file, "w") do |f|
+      File.open(file, 'w') do |f|
         # Save the data directly; don't store in memory
         res.read_body do |segment|
           f.write segment
@@ -186,7 +186,7 @@ end
 
 # Allow direct testing
 if $0 == __FILE__
-  yyyymmid = ARGV.shift or fail "Need yyyymm/msgid"
+  yyyymmid = ARGV.shift or fail 'Need yyyymm/msgid'
   att = ARGV.shift || 'icla.pdf'
   sig = ARGV.shift || att + '.asc'
   @message = "/secretary/workbench/#{yyyymmid}/"

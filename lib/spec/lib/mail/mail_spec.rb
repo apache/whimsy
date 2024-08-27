@@ -21,8 +21,8 @@ require 'whimsy/asf'
 
 describe ASF::Mail do
 
-  describe "ASF::Mail.to_canonical" do
-    it "should return address unaltered for invalid emails" do
+  describe 'ASF::Mail.to_canonical' do
+    it 'should return address unaltered for invalid emails' do
       email = 'textwithnoATsign'
       expect(ASF::Mail.to_canonical(email)).to eq(email)
       email = 'textwithtrailing@'
@@ -30,13 +30,13 @@ describe ASF::Mail do
       email = '@textwithleadingAT'
       expect(ASF::Mail.to_canonical(email)).to eq(email)
     end
-    it "should return address with downcased domain for valid emails" do
+    it 'should return address with downcased domain for valid emails' do
       expect(ASF::Mail.to_canonical('ABC@DEF')).to eq('ABC@def')
     end
-    it "should return address with downcased domain and canonicalised name for GMail emails" do
+    it 'should return address with downcased domain and canonicalised name for GMail emails' do
       expect(ASF::Mail.to_canonical('A.B.C+123@GMail.com')).to eq('abc@gmail.com')
     end
-    it "should return address with downcased domain and canonicalised name for Googlemail emails" do
+    it 'should return address with downcased domain and canonicalised name for Googlemail emails' do
       expect(ASF::Mail.to_canonical('A.B.C+123@Googlemail.com')).to eq('abc@gmail.com')
     end
   end

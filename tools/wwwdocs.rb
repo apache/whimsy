@@ -5,7 +5,7 @@
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'wunderbar'
 require 'whimsy/asf'
-SCANDIR = "../www"
+SCANDIR = '../www'
 ISERR = '!'
 AUTHMAP = { # From whimsy-vm4.apache.org.yaml
   'ASF Committers' => 'text-muted',
@@ -16,7 +16,7 @@ AUTHMAP = { # From whimsy-vm4.apache.org.yaml
 }
 AUTHPUBLIC = 'glyphicon-eye-open'
 ASFSVN = /ASF::SVN/
-SCANDIRSVN = "../"
+SCANDIRSVN = '../'
 WWWAUTH = /WWW-Authenticate: Basic realm/
 CONSTANT_DEF = /(?<matchconst>[A-Z_]+)\s+=\s+['"](?<matchval>[^#]+)['"]/ # Attempt to capture CONSTANT = "value"
 

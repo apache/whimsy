@@ -30,27 +30,27 @@ options.timeout = 900
 opt_parser = OptionParser.new do |opts|
   opts.banner = "Usage: #{File.basename(__FILE__)} [options]"
 
-  opts.on "-h", "--host HOST", 'Host to listen on' do |host|
+  opts.on '-h', '--host HOST', 'Host to listen on' do |host|
     options.host = host
   end
 
-  opts.on "-p", "--port PORT", 'Port to listen on' do |port|
+  opts.on '-p', '--port PORT', 'Port to listen on' do |port|
     options.port = port
   end
 
-  opts.on "-k", "--key KEY", 'Private key' do |key|
+  opts.on '-k', '--key KEY', 'Private key' do |key|
     options.privkey = key
   end
 
-  opts.on "-c", "--chain CHAIN", 'Certificate Chain' do |chain|
+  opts.on '-c', '--chain CHAIN', 'Certificate Chain' do |chain|
     options.chain = chain
   end
 
-  opts.on "--kill [SIGNAL]", 'Kill existing process' do |signal|
+  opts.on '--kill [SIGNAL]', 'Kill existing process' do |signal|
     options.kill = signal || 'INT'
   end
 
-  opts.on '-t', "--timeout [900]", 'inactivity timeout' do |timeout|
+  opts.on '-t', '--timeout [900]', 'inactivity timeout' do |timeout|
     options.timeout = timeout.to_i
   end
 end

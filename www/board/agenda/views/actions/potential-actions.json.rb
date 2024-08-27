@@ -11,7 +11,7 @@ else
    select {|file| file <= today}.sort.last
 end
 
-raise IOError.new("No previous agenda found") unless base
+raise IOError.new('No previous agenda found') unless base
 
 parsed = ASF::Board::Agenda.parse(IO.read(base), true)
 actions = parsed.find {|item| item['title'] == 'Action Items'}['actions']

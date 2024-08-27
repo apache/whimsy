@@ -92,7 +92,7 @@ class Cache
     begin
       FileUtils.mkdir_p path
       Wunderbar.info "Created the cache #{path}"
-      raise Exception.new("Not writable") unless File.writable?(path)
+      raise Exception.new('Not writable') unless File.writable?(path)
     rescue Exception => e
       Wunderbar.warn "Could not create the cache #{path} - #{e}"
       @enabled = false

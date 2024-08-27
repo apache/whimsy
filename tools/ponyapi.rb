@@ -12,10 +12,10 @@ require 'cgi'
 module PonyAPI
   PONYHOST = ENV['PONYHOST'] || 'https://lists.apache.org/'
   PONYSTATS = PONYHOST + 'api/stats.lua?list=%{list}&domain=%{domain}&d=%{year}-%{month}' # board&domain=apache.org&d=2017-04 becomes board-apache-org-201704-stats.json
-  STATSMBOX = "%{list}-%{domNoDot}-%<year>.04d%<month>.02d-stats.json" # used to generate output file name
-  SUMMARYJSON = "%{list}-%{domNoDot}-%<year>.04d%<month>.02d-summary.json" # used to generate output file name
+  STATSMBOX = '%{list}-%{domNoDot}-%<year>.04d%<month>.02d-stats.json' # used to generate output file name
+  SUMMARYJSON = '%{list}-%{domNoDot}-%<year>.04d%<month>.02d-summary.json' # used to generate output file name
   PONYMBOX  = PONYHOST + 'api/mbox.lua?list=%{list}@%{domain}&date=%{year}-%{month}' # board@apache.org&date=2016-06 becomes board-apache-org-201707.mbox
-  FILEMBOX  = "%{list}-%{domNoDot}-%<year>.04d%<month>.02d.mbox" # used to generate output file name
+  FILEMBOX  = '%{list}-%{domNoDot}-%<year>.04d%<month>.02d.mbox' # used to generate output file name
   PONYPREFS = PONYHOST + 'api/preferences.lua' # => preferences.json
 
   extend self
@@ -207,7 +207,7 @@ module PonyAPI
 
   def get_cookie()
     unless $stdin.isatty
-      puts "WARN:Input is not a tty; cannot prompt for a cookie"
+      puts 'WARN:Input is not a tty; cannot prompt for a cookie'
       return nil
     end
     require 'io/console'

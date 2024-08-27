@@ -336,8 +336,8 @@ class Post < Vue
   # set focus, scroll
   def reposition()
     # set focus once modal is shown
-    title = document.getElementById("post-report-title")
-    text = document.getElementById("post-report-text")
+    title = document.getElementById('post-report-title')
+    text = document.getElementById('post-report-text')
 
     if title || text
       (title || text).focus()
@@ -403,17 +403,17 @@ class Post < Vue
     when 'post item', 'Discussion Item'
       @header = 'Add Discussion Item'
       @label = 'text'
-      @message = "Add Discussion Item"
+      @message = 'Add Discussion Item'
 
     when 'post items'
       @header = 'Post Discussion Items'
       @label = 'text'
-      @message = "Post Discussion Items"
+      @message = 'Post Discussion Items'
 
     when 'edit items'
       @header = 'Edit Discussion Items'
       @label = 'text'
-      @message = "Edit Discussion Items"
+      @message = 'Edit Discussion Items'
     end
 
     if not @edited

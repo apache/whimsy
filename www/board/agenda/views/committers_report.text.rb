@@ -68,7 +68,7 @@ end
 
 # Find out the date of the next board report
 next_meeting = ASF::Board.nextMeeting
-@next_meeting = next_meeting.day.ordinalize + " of " +
+@next_meeting = next_meeting.day.ordinalize + ' of ' +
   next_meeting.strftime('%B')
 
 # author of the email

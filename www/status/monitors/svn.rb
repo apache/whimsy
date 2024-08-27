@@ -47,7 +47,7 @@ def StatusMonitor.svn(previous_status)
 
     lines.reject! do |line|
       line =~ %r{Updating '.+':} or
-      line == "Summary of updates:" or
+      line == 'Summary of updates:' or
       # must agree with Rakefile/PREFIX
       line.start_with?('#!: ') or
       line =~ REV_RE # this was processed above
@@ -62,13 +62,13 @@ def StatusMonitor.svn(previous_status)
 
     if lines.empty?
       if not data
-        title = "partial response"
+        title = 'partial response'
         level = 'warning'
         seen_level[level] = true
       elsif data.is_a? String # only saw revision message
-        title = "No files updated"
+        title = 'No files updated'
       elsif data.length == 1
-        title = "1 file updated"
+        title = '1 file updated'
       else
         title = "#{data.length} files updated"
       end

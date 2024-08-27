@@ -200,7 +200,7 @@ module ASF
       return "apachecon-#{list}" if dom == 'apachecon.com'
       return list if dom == 'apache.org'
 
-      dom.sub(".apache.org", '-') + list
+      dom.sub('.apache.org', '-') + list
     end
 
     # Convert dom, list to form used in mail_list_autosub.yml

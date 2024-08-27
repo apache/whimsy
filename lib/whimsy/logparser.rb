@@ -58,7 +58,7 @@ module LogParser
   TRUNCATE = 6 # Ensure consistency in keys
   TIME_OFFSET = 10_000_000.0 # Offset milliseconds slightly for array entries
   # Ignore error lines from other tools with long tracebacks
-  IGNORE_TRACEBACKS = ["rack.rb", "asf/themes", "phusion_passenger"]
+  IGNORE_TRACEBACKS = ['rack.rb', 'asf/themes', 'phusion_passenger']
 
   # Read a text or .gz file
   # @param f filename: .log or .log.gz

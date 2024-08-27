@@ -38,7 +38,7 @@ class Commit < Vue
   # autofocus on comment text
   def mounted()
     jQuery('#commit-form').on 'shown.bs.modal' do
-      document.getElementById("commit-text").focus()
+      document.getElementById('commit-text').focus()
     end
   end
 

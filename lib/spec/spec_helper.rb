@@ -27,7 +27,7 @@ SAMPLE_SVN_URL_RE = %r{https://.+/minutes}
 # Override with test data if there is no checkout available (allows local use)
 if ENV['RAKE_TEST'] == 'TRUE' or not (ASF::SVN.find('apmail_bin') and ASF::SVN.find('board'))
   TEST_DATA = true # Test data is smaller so some tests need adjusting
-  puts "Overriding data directories"
+  puts 'Overriding data directories'
   ASF::SVN['apmail_bin'] = File.expand_path('../test/svn/apmail_bin', __dir__)
   ASF::SVN['board'] = File.expand_path('../test/svn/board', __dir__)
   ASF::SVN[SAMPLE_SVN_NAME] = File.expand_path('../test/svn/minutes', __dir__)
@@ -49,7 +49,7 @@ else
 end
 
 def set_svnroot # ensure can access svn directory listing files
-  ASF::Config.setsvnroot File.expand_path("../test/svn/*", __dir__)
+  ASF::Config.setsvnroot File.expand_path('../test/svn/*', __dir__)
 end
 
 def set_cache(restore=nil) # ensure can access test version of iclas.txt
@@ -58,7 +58,7 @@ def set_cache(restore=nil) # ensure can access test version of iclas.txt
   if restore
     config[:cache] = restore
   else
-    source = File.expand_path("../test/svn/", __dir__)
+    source = File.expand_path('../test/svn/', __dir__)
     FileUtils.touch File.join(source,'iclas.txt') # ensure it is marked as up-to-date
     config[:cache] = source
   end
@@ -66,7 +66,7 @@ def set_cache(restore=nil) # ensure can access test version of iclas.txt
 end
 
 def set_svn(name)
-  ASF::SVN[name] = File.expand_path(File.join("..", "test", "svn", name), __dir__)
+  ASF::SVN[name] = File.expand_path(File.join('..', 'test', 'svn', name), __dir__)
 end
 
 if TEST_DATA

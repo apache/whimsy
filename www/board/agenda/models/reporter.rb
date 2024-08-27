@@ -44,7 +44,7 @@ class Reporter
         request = Net::HTTP::Get.new(uri)
         request.basic_auth env.user, env.password
         response = http.request(request)
-        if response.code == "200"
+        if response.code == '200'
           report_status.merge! JSON.parse(response.body)['report_status']
         else
           Wunderbar.error "Failed to fetch #{uri}: #{response.code}"

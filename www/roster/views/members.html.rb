@@ -69,7 +69,7 @@ _html do
           _' detail page.'
         }
       ) do
-        _table.table.table_hover id: "members" do
+        _table.table.table_hover id: 'members' do
           _thead do
             _tr do
               _th 'Id', data_sort: 'string'

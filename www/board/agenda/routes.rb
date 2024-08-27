@@ -440,7 +440,7 @@ end
 # get list of committers (for use in roll-call)
 get '/json/committers' do
   _json do
-    members = ASF.search_one(ASF::Group.base, "cn=member", 'memberUid').first
+    members = ASF.search_one(ASF::Group.base, 'cn=member', 'memberUid').first
     members = Hash[members.map {|name| [name, true]}]
     ASF.search_one(ASF::Person.base, 'uid=*', ['uid', 'cn']).
       map {|person| {id: person['uid'].first,
@@ -562,15 +562,15 @@ get '/new' do
   else
     draft = {} # allow for missing yml file
   end
-  @minutes = dir("board_agenda_*.txt").
+  @minutes = dir('board_agenda_*.txt').
     map {|file| Date.parse(file[/\d[_\d]+/].gsub('_', '-'))}.
     reject {|date| date >= @meeting.to_date}.
     reject {|date| draft[date.strftime('%B %d, %Y')] == 'approved'}.
     sort
 
   template = File.join(ASF::SVN['foundation_board'], 'templates', 'board_agenda.erb')
-  @disabled = dir("board_agenda_*.txt").
-    include? @meeting.strftime("board_agenda_%Y_%m_%d.txt")
+  @disabled = dir('board_agenda_*.txt').
+    include? @meeting.strftime('board_agenda_%Y_%m_%d.txt')
 
   begin
     @agenda = Erubis::Eruby.new(IO.read(template)).result(binding)
@@ -608,7 +608,7 @@ post %r{/(\d\d\d\d-\d\d-\d\d)/} do |date|
       File.unlink currentpath
       File.symlink agenda, currentpath
     else
-      Wunderbar.warn "current.txt link does not exist, creating it"
+      Wunderbar.warn 'current.txt link does not exist, creating it'
       File.symlink agenda, currentpath
       ASF::SVN.svn!('add', currentpath)
     end
@@ -633,7 +633,7 @@ def auto_remind(date, agenda)
   # draft reminder text
   @reminder = 'reminder1' # reminder template
   @tzlink = ASF::Board.tzlink(ASF::Board::TIMEZONE.utc_to_local(ASF::Board.nextMeeting))
-  reminder = eval(File.read("views/actions/reminder-text.json.rb"))
+  reminder = eval(File.read('views/actions/reminder-text.json.rb'))
 
   # extract data
   @subject = reminder[:subject]
@@ -646,5 +646,5 @@ def auto_remind(date, agenda)
   @meeting = date
   boardchair = ASF::Committee.officers.select{|h| h.name == 'boardchair'}.first.chairs.first[:name]
   @from = "\"#{boardchair}\" <board-chair@apache.org>"
-  eval(File.read("views/actions/send-reminders.json.rb"))
+  eval(File.read('views/actions/send-reminders.json.rb'))
 end

@@ -51,10 +51,10 @@ class Parts < Vue
     }
 
     _ul do
-      _li "undelete this email", onMousedown: self.undelete_message
+      _li 'undelete this email', onMousedown: self.undelete_message
     end
 
-    _p "(Use [ctrl|meta] + [delete|backspace] to delete this email)"
+    _p '(Use [ctrl|meta] + [delete|backspace] to delete this email)'
 
     # locate corresponding signature file (if any)
     signature = CheckSignature.find(decodeURIComponent(@selected), @attachments)
@@ -107,7 +107,7 @@ class Parts < Vue
       _li "\u2716 delete", onMousedown: self.delete_attachment
       _li "\u2709 pdf-ize", onMousedown: self.pdfize
       _li.divider
-      _li "parse pdf", onMousedown: self.pdfparse
+      _li 'parse pdf', onMousedown: self.pdfparse
     end
 
     if @selected and not @menu and @selected !~ /\.(asc|sig)$/
@@ -389,7 +389,7 @@ class Parts < Vue
           _li "\u2716 delete", onMousedown: self.delete_attachment
           _li "\u2709 pdf-ize", onMousedown: self.pdfize
           _li.divider
-          _li "parse pdf", onMousedown: self.pdfparse
+          _li 'parse pdf', onMousedown: self.pdfparse
         end
 
       elsif @form == :mail
@@ -685,8 +685,8 @@ class Parts < Vue
     event.target.disabled = true
 
     jQuery.ajax(
-      type: "POST",
-      url: "../../actions/update-mail",
+      type: 'POST',
+      url: '../../actions/update-mail',
       data: {
         message: window.parent.location.pathname,
         cc: @cc,
@@ -711,7 +711,7 @@ class Parts < Vue
   # Note: the doctype value is passed across as @doctype
   def generic_reject(event)
     form = jQuery(event.target).closest('form')
-    form.attr('action', "../../tasklist/generic_reject")
+    form.attr('action', '../../tasklist/generic_reject')
     form.submit()
   end
 

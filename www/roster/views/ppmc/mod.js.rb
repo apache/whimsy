@@ -4,7 +4,7 @@
 
 class PPMCMod < Vue
   mixin ProjectMod
-  options mod_tag: "ppmcmod", mod_action: 'actions/ppmc'
+  options mod_tag: 'ppmcmod', mod_action: 'actions/ppmc'
 
   def initialize
     @people = []
@@ -50,7 +50,7 @@ class PPMCMod < Vue
             if @@auth.ppmc
               # show add to PPMC button only if every person is not on the PPMC
               if @people.all? {|person| !@@project.owners.include? person.id}
-                _button.btn.btn_primary "Add to PPMC",
+                _button.btn.btn_primary 'Add to PPMC',
                   data_action: 'add ppmc',
                   onClick: self.post, disabled: (@people.empty?)
               end

@@ -98,9 +98,9 @@ if __FILE__ == $0
   puts ret.inspect
   if ret
     if ret.is_a? Errno::EEXIST
-      puts "Already exists!"
+      puts 'Already exists!'
     else
-      puts "Some other error"
+      puts 'Some other error'
     end
   end
   puts File.read(name) unless ret

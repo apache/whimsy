@@ -13,7 +13,7 @@ require 'whimsy/asf/status'
 require 'whimsy/asf/json-utils'
 
 def stamp(*s)
-  "%s: %s" % [Time.now.gmtime.to_s, s.join(' ')]
+  '%s: %s' % [Time.now.gmtime.to_s, s.join(' ')]
 end
 
 def mail_notify(subject, body=nil)
@@ -33,7 +33,7 @@ end
 class PubSub
 
   require 'fileutils'
-  ALIVE = File.join("/tmp", "#{File.basename(__FILE__)}.alive") # TESTING ONLY
+  ALIVE = File.join('/tmp', "#{File.basename(__FILE__)}.alive") # TESTING ONLY
 
   @restartable = false
   @updated = false
@@ -77,22 +77,22 @@ class PubSub
                   yield event # return the event to the caller
                 end
               else
-                puts stamp "Partial chunk" if debug
+                puts stamp 'Partial chunk' if debug
               end
               unless mtime == File.mtime(__FILE__)
-                puts stamp "File updated" if debug
+                puts stamp 'File updated' if debug
                 @updated = true
                 done = true
               end
               break if done
             end # reading chunks
-            puts stamp "Done reading chunks" if debug
+            puts stamp 'Done reading chunks' if debug
             break if done
           end # read response
-          puts stamp "Done reading response" if debug
+          puts stamp 'Done reading response' if debug
           break if done
         end # net start
-        puts stamp "Done with start" if debug
+        puts stamp 'Done with start' if debug
       rescue Errno::ECONNREFUSED => e
         @restartable = true
         except = e
@@ -103,11 +103,11 @@ class PubSub
         puts stamp e.inspect
         puts stamp e.backtrace
       end
-      puts stamp "Done with thread" if debug
+      puts stamp 'Done with thread' if debug
     end # thread
     puts stamp "Pubsub thread started #{url} ..."
     ps_thread.join
-    subject = "Pubsub thread finished %s..." % (@updated ? '(code updated) ' : '')
+    subject = 'Pubsub thread finished %s...' % (@updated ? '(code updated) ' : '')
     puts stamp subject
     mail_notify subject, <<~EOD
     Restartable: #{@restartable}
@@ -167,9 +167,9 @@ def do_diff(initialhash, currenthash, triggerrev)
   before = parse_content(fetch_revision(initialrev))
   after = parse_content(fetch_revision(currentrev))
   if before == after
-    puts stamp "No changes detected"
+    puts stamp 'No changes detected'
   else
-    puts stamp "Analysing changes"
+    puts stamp 'Analysing changes'
   end
   #  N.B. before/after are hashes: committee_name => {roster hash}
   ASFJSON.cmphash(before, after) do |bc, type, key, args|
@@ -219,7 +219,7 @@ def do_diff(initialhash, currenthash, triggerrev)
     EOD
     mail = Mail.new do
       from "#{currentcommittername} <#{currentcommitter}@apache.org>"
-      sender "notifications@whimsical.apache.org"
+      sender 'notifications@whimsical.apache.org'
       # Uncomment the following line when going live
       # to "board@apache.org,#{mail_list}"
       bcc 'notifications@whimsical.apache.org' # keep track of mails
@@ -274,7 +274,7 @@ if $0 == __FILE__
   ASF::Mail.configure
 
   if ARGV.delete('--testchange')
-    handle_change (ARGV.shift or raise "Need change id")
+    handle_change (ARGV.shift or raise 'Need change id')
     exit
   end
 
@@ -324,7 +324,7 @@ if $0 == __FILE__
     user ||= Etc.getlogin
     pubsub_CRED = [user, STDIN.getpass("Password for #{user}: ")]
   else
-    pubsub_CRED = File.read(pubsub_FILE).chomp.split(':') or raise ArgumentError.new "Missing credentials"
+    pubsub_CRED = File.read(pubsub_FILE).chomp.split(':') or raise ArgumentError.new 'Missing credentials'
   end
 
   # Catchup on any missed entries

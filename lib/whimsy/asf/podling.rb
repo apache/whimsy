@@ -448,10 +448,10 @@ module ASF
         begin
           res = Net::HTTP.get_response(URI(query))
           res.value() # Raises error if not OK
-          file = File.new(cache, "wb") # Allow for non-UTF-8 chars
+          file = File.new(cache, 'wb') # Allow for non-UTF-8 chars
           file.write res.body
         rescue StandardError => e
-          Wunderbar.warn "ASF::Podling.namesearch: " + e.message
+          Wunderbar.warn 'ASF::Podling.namesearch: ' + e.message
           FileUtils.touch cache # Don't try again for a while
         end
       end

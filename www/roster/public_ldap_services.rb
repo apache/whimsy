@@ -28,7 +28,7 @@ entries = {}
 groups = ASF::Service.preload # for performance
 
 if groups.empty?
-  Wunderbar.error "No results retrieved, output not created"
+  Wunderbar.error 'No results retrieved, output not created'
   exit 0
 end
 

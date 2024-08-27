@@ -9,7 +9,7 @@ $LOAD_PATH.unshift lib unless $LOAD_PATH.include? lib
 ENV['RACK_ENV'] = 'test'
 ENV['REMOTE_USER'] = 'test'
 require 'capybara/rspec'
-require "selenium-webdriver"
+require 'selenium-webdriver'
 require_relative '../main'
 Capybara.app = Sinatra::Application
 Capybara.javascript_driver = :selenium_chrome_headless
@@ -83,21 +83,21 @@ SEC_ID='secretary_id' # dummy for testing
 
 DUMMY = {
   'ldapsearch -x -LLL -b ou=groups,ou=services,dc=apache,dc=org -s one cn=pmc-chairs member memberUid' =>
-      [{"member" => []}],
+      [{'member' => []}],
     'ldapsearch -x -LLL -b ou=groups,dc=apache,dc=org -s one cn=member memberUid' =>
     [[]],
     'ldapsearch -x -LLL -b ou=groups,ou=services,dc=apache,dc=org -s one cn=board member memberUid' =>
-    [{"member" => []}],
+    [{'member' => []}],
     'ldapsearch -x -LLL -b ou=groups,ou=services,dc=apache,dc=org -s sub cn=asf-secretary dn' =>
-    [["cn=asf-secretary,ou=groups,ou=services,dc=apache,dc=org"]],
+    [['cn=asf-secretary,ou=groups,ou=services,dc=apache,dc=org']],
     'ldapsearch -x -LLL -b ou=groups,ou=services,dc=apache,dc=org -s one cn=asf-secretary member memberUid' =>
-    [{"member"=>["uid=#{SEC_ID},ou=people,dc=apache,dc=org"], "dn"=>["cn=asf-secretary,ou=groups,ou=services,dc=apache,dc=org"]}],
+    [{'member'=>["uid=#{SEC_ID},ou=people,dc=apache,dc=org"], 'dn'=>['cn=asf-secretary,ou=groups,ou=services,dc=apache,dc=org']}],
     'ldapsearch -x -LLL -b ou=groups,ou=services,dc=apache,dc=org -s sub cn=board dn' =>
     [['cn=board,ou=groups,ou=services,dc=apache,dc=org']],
     'ldapsearch -x -LLL -b ou=groups,ou=services,dc=apache,dc=org -s sub cn=pmc-chairs dn' =>
     [[]],
     "ldapsearch -x -LLL -b ou=people,dc=apache,dc=org -s one uid=#{SEC_ID} " =>
-    [{"uid"=>["#{SEC_ID}"], "dn"=>["uid=#{SEC_ID},ou=people,dc=apache,dc=org"]}],
+    [{'uid'=>["#{SEC_ID}"], 'dn'=>["uid=#{SEC_ID},ou=people,dc=apache,dc=org"]}],
 }
 
 

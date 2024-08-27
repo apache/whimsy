@@ -117,7 +117,7 @@ class AdditionalInfo < Vue
                 count -= 1 if date < '2017_11'
 
                 if count == 0
-                  link = "(no responses)"
+                  link = '(no responses)'
                 elsif count == 1
                   link = '(1 response)'
                 else

@@ -72,7 +72,7 @@ if env.password
     # TODO the email address may need fixing
     to "private@#{pmc.mail_list}.apache.org"
     cc cc
-    bcc "root@apache.org"
+    bcc 'root@apache.org'
     subject "#{who} #{action} #{pmc.display_name} #{list}"
     body "Current roster can be found at:\n\n" +
       "  https://whimsy.apache.org/roster/nonpmc/#{pmc.id}\n\n" +

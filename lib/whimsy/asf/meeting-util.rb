@@ -139,12 +139,12 @@ module ASF
           end
         end
       rescue StandardError => e
-        (help ||= "") << "ERROR, could not read LDAP, proxy data may not be correct: #{e.message}"
+        (help ||= '') << "ERROR, could not read LDAP, proxy data may not be correct: #{e.message}"
       end
       if copypasta.empty?
         return help
       else
-        (help ||= "") << "During the meeting, to mark your proxies' attendance, AFTER the 2. Roll Call is called, you may copy/paste the below lines to mark your and your proxies attendance."
+        (help ||= '') << "During the meeting, to mark your proxies' attendance, AFTER the 2. Roll Call is called, you may copy/paste the below lines to mark your and your proxies attendance."
         copypasta.unshift("#{user.id.ljust(max_uid_len)} | #{user.cn}")
         return help, copypasta
       end
@@ -212,7 +212,7 @@ module ASF
         # Assume 6 columns for now
         hyphens=hdr[1].scan(/^(--+ +)(---+ +)(---+ +)(---+ +)(---+ +)(----+ *)$/).first
         hyphens.pop # drop last; don't want to pad that
-        fmt = [hyphens.map{|h| "%%-%ds" % (h.size - 1)},'%s'].join(" ")
+        fmt = [hyphens.map{|h| '%%-%ds' % (h.size - 1)},'%s'].join(' ')
         return [list, hdr, fmt]
       else
         return list
@@ -467,5 +467,5 @@ if __FILE__ == $PROGRAM_NAME
   dir = ARGV[0]
   dir ||= '.'
   ASF::MeetingUtil.annotate_attendance(dir)
-  puts "DONE, check attendance-cohorts.json"
+  puts 'DONE, check attendance-cohorts.json'
 end

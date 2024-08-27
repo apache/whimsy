@@ -26,7 +26,7 @@ def getPerson(name)
 end
 
 describe ASF::EmeritusFiles do
-    it "listnames should return array of size 1" do
+    it 'listnames should return array of size 1' do
         res = ASF::EmeritusFiles.listnames
         expect(res).to be_kind_of(Array)
         expect(res.size).to eq(1)
@@ -61,7 +61,7 @@ describe ASF::EmeritusFiles do
 end
 
 describe ASF::EmeritusReinstatedFiles do
-    it "listnames should return array of size 1" do
+    it 'listnames should return array of size 1' do
         res = ASF::EmeritusReinstatedFiles.listnames
         expect(res).to be_kind_of(Array)
         expect(res.size).to eq(1)
@@ -78,7 +78,7 @@ describe ASF::EmeritusReinstatedFiles do
 end
 
 describe ASF::EmeritusRequestFiles do
-    it "listnames should return array of size 1" do
+    it 'listnames should return array of size 1' do
         res = ASF::EmeritusRequestFiles.listnames
         expect(res).to be_kind_of(Array)
         expect(res.size).to eq(1)
@@ -95,7 +95,7 @@ describe ASF::EmeritusRequestFiles do
 end
 
 describe ASF::EmeritusRescindedFiles do
-    it "listnames should return array of size 1" do
+    it 'listnames should return array of size 1' do
         res = ASF::EmeritusRescindedFiles.listnames
         expect(res).to be_kind_of(Array)
         expect(res.size).to eq(1)

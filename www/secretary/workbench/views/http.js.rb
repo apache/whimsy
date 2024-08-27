@@ -117,7 +117,7 @@ class HTTP
 
       if target =~ /^https?:/
         xhr.open('GET', target, true)
-        xhr.setRequestHeader("Accept", "application/json") if type == :json
+        xhr.setRequestHeader('Accept', 'application/json') if type == :json
       else
         xhr.open('GET', target, true)
       end
@@ -130,9 +130,9 @@ class HTTP
   # common rejection logic
   def self._reject(xhr, reject)
     if not xhr.status
-      reject "Server unavailable"
+      reject 'Server unavailable'
     elsif xhr.status == 404
-      reject "Not found"
+      reject 'Not found'
     else
       console.log xhr.response
       if not xhr.response

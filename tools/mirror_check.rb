@@ -109,7 +109,7 @@ def getHTTPHdrs(url)
   http.request(request)
 end
 
-def check_redirect(base, page, expectedLocation, severity=:W, expectedStatus = "302", log=true)
+def check_redirect(base, page, expectedLocation, severity=:W, expectedStatus = '302', log=true)
   path = base + page
   response = getHTTPHdrs(path)
   if response.code != expectedStatus
@@ -124,7 +124,7 @@ def check_redirect(base, page, expectedLocation, severity=:W, expectedStatus = "
   response
 end
 
-def check_CT(base, page, severity=:E, expectedStatus = "200")
+def check_CT(base, page, severity=:E, expectedStatus = '200')
   path = base + page
   response = getHTTPHdrs(path)
   if response.code != expectedStatus
@@ -151,7 +151,7 @@ def getHTTP(url)
 end
 
 # check page can be read => body
-def check_page(base, page, severity=:E, expectedStatus="200", log=true)
+def check_page(base, page, severity=:E, expectedStatus='200', log=true)
   path = base + page
   response = getHTTP(path)
   code = response.code ||  '?'
@@ -276,9 +276,9 @@ def checkHTTP(base)
   body = check_page(base, '')
   checkHdrFtr(base, body)
   if %r{<(img|IMG) (src|SRC)="/icons/}.match(body)
-    I "Index page has icons as expected"
+    I 'Index page has icons as expected'
   else
-    W "Missing or unexpected img icon tags"
+    W 'Missing or unexpected img icon tags'
   end
   checkIndex(body, :tlps)
 
@@ -286,7 +286,7 @@ def checkHTTP(base)
   checkHdrFtr(base+'incubator/', ibody)
   checkIndex(ibody, :podlings)
 
-  check_page(base, 'harmony/', :E, expectedStatus="404")
+  check_page(base, 'harmony/', :E, expectedStatus='404')
 
   zbody = check_page(base, HTTPDIR)
 # Not sure this is useful on its own anymore
@@ -310,7 +310,7 @@ def checkHTTP(base)
     W "Index page for #{HTTPDIR} does not contain the expected footer text"
   end
 
-  check_page(base,HTTP404,:E, expectedStatus="404")
+  check_page(base,HTTP404,:E, expectedStatus='404')
 
   # Check that archives don't have Content-Encoding
   MIRRORTEST_FILES.each do |file|
@@ -326,8 +326,8 @@ def init
 end
 
 def setup
-  tlps = parseIndexPage(check_page('https://downloads.apache.org/','',:F,"200",log=false))
-  podlings = parseIndexPage(check_page('https://downloads.apache.org/incubator/','',:F,"200",false))
+  tlps = parseIndexPage(check_page('https://downloads.apache.org/','',:F,'200',log=false))
+  podlings = parseIndexPage(check_page('https://downloads.apache.org/incubator/','',:F,'200',false))
   @pages = {:tlps => tlps, :podlings => podlings}
 end
 
@@ -356,9 +356,9 @@ def display
   end
 
   if @fails > 0
-    showList(fatals, "Fatal errors:")
-    showList(errors, "Errors:")
-    showList(warns, "Warnings:")
+    showList(fatals, 'Fatal errors:')
+    showList(errors, 'Errors:')
+    showList(warns, 'Warnings:')
     # Cannot easily copy/paste URLs; use layout suitable for copy/paste into e.g. JIRA issue/e-mail
     _p do
       _ 'Please see the Apache mirror configuration instructions [1] for further details on configuring your mirror server.'
@@ -385,7 +385,7 @@ end
 
 if __FILE__ == $0
   init
-  url = ""+ARGV[0] || "localhost" # easier to test in an IDE
+  url = ''+ARGV[0] || 'localhost' # easier to test in an IDE
   checkHTTP(url)
   # display the test results
   @tests.each { |t| t.map{|k, v| puts "#{k}: - #{v}"}}

@@ -177,7 +177,7 @@ module ASF
         @committee_mtime = File.mtime(file)
         @@svn_change = Time.parse(ASF::SVN.getInfoItem(file, 'last-changed-date')).gmtime
 
-        Wunderbar.debug "Parsing CI file"
+        Wunderbar.debug 'Parsing CI file'
         @nonpmcs, @officers, @committee_info = parse_committee_info_nocache(File.read(file))
       end
       @committee_info
@@ -193,7 +193,7 @@ module ASF
       block = next_month[/(.*#.*\n)+/] || ''
 
       # remove expired entries
-      month = date.strftime("%B")
+      month = date.strftime('%B')
       block.gsub!(/.* # new, monthly through #{month}\n/, '')
 
       # update/remove existing 'missing' entries
@@ -418,7 +418,7 @@ module ASF
         blocks[index + 2].split("\n"),
       ]
 
-      unless slots.any? {|slot| slot.include? "    " + pmc}
+      unless slots.any? {|slot| slot.include? '    ' + pmc}
         # ensure that spacing is uniform
         slots.each {|slot| slot.unshift '' unless slot[0] == ''}
 
@@ -432,7 +432,7 @@ module ASF
         headers = slots[slot].shift(3)
 
         # insert pmc into the reporting schedule
-        slots[slot] << "    " + pmc
+        slots[slot] << '    ' + pmc
 
         # sort entries, case insensitive
         slots[slot].sort_by!(&:downcase)
@@ -801,7 +801,7 @@ module ASF
 
   # ensure the CI data is pre-loaded
   # If this is not done, the first committee instance may be incomplete
-  Wunderbar.debug "Initialising CI file"
+  Wunderbar.debug 'Initialising CI file'
   ASF::Committee.load_committee_info
 
 end

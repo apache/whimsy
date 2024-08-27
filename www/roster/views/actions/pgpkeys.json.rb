@@ -24,7 +24,7 @@ if @pgpkeys  # must agree with pgpkeys.js.rb
   end
   # convert to canonical format
   fprints = fprints.uniq.map do |n| # duplicates not allowed
-   "%s %s %s %s %s  %s %s %s %s %s" % n.scan(/..../)
+   '%s %s %s %s %s  %s %s %s %s %s' % n.scan(/..../)
   end
   # update LDAP
   unless @dryrun

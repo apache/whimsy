@@ -34,7 +34,7 @@ def getText(txt, node, match=/Apache Software Foundation/i)
       newnode = node.parent
     end
     # ensure <br> is treated as a separator when extracting the combined text
-    newnode.css('br').each { |br| br.replace(" ") }
+    newnode.css('br').each { |br| br.replace(' ') }
     txt = squash(newnode.text)
     parent = true
   end
@@ -67,7 +67,7 @@ end
 # @return Hash of symbols: text|url found from a check made
 # @see SiteStandards for definitions of what we should scan for (in general)
 def parse(id, site, name, podling=false)
-  show_anyway = Time.now.gmtime.strftime("%H") == '08' # show suppressed errors once a day
+  show_anyway = Time.now.gmtime.strftime('%H') == '08' # show suppressed errors once a day
   data = {}
   # force https to avoid issue with cache (sites should use https anyway)
   site.sub!(%r{^http:},'https:')
@@ -241,7 +241,7 @@ def parse(id, site, name, podling=false)
 
   # Check for resource loading from non-ASF domains
   if $skipresourcecheck
-    data[:resources] = "Not checked"
+    data[:resources] = 'Not checked'
   else
     cmd = ['node', '/srv/whimsy/tools/scan-page.js', site]
     out, err, status = exec_with_timeout(cmd, 60)

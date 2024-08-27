@@ -94,7 +94,7 @@ class Events
         self.master()
       else
         options = {credentials: 'include'}
-        request = Request.new("../session.json", options)
+        request = Request.new('../session.json', options)
         fetch(request).then do |response|
           response.json().then do |json|
             Server.session = json.session
@@ -201,7 +201,7 @@ class Events
 
     if message.type == :unauthorized
       options = {credentials: 'include'}
-      request = Request.new("../session.json", options)
+      request = Request.new('../session.json', options)
       fetch(request).then do |response|
         response.json().then do |json|
           self.log json
@@ -226,10 +226,10 @@ class Events
     return @@prefix if @@prefix
 
     # determine localStorage variable prefix based on url up to the date
-    base = document.getElementsByTagName("base")[0].href
+    base = document.getElementsByTagName('base')[0].href
     origin = location.origin
     if not origin # compatibility: http://s.apache.org/X2L
-      origin = window.location.protocol + "//" + window.location.hostname +
+      origin = window.location.protocol + '//' + window.location.hostname +
         (window.location.port ? ':' + window.location.port : '')
     end
 

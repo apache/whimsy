@@ -12,7 +12,7 @@ _html do
       breadcrumbs: {
         roster: '.',
         ppmc: 'ppmc/',
-        _new_: "ppmc/_new_"
+        _new_: 'ppmc/_new_'
       }
     ) do
       _div_.main!

@@ -7,12 +7,12 @@
 require_relative 'spec_helper'
 require_relative 'vue_server'
 
-describe "client", type: :feature, server: :vue do
+describe 'client', type: :feature, server: :vue do
   #
   # Agenda model
   #
-  describe "agenda model" do
-    it "should link pages in agenda traversal order" do
+  describe 'agenda model' do
+    it 'should link pages in agenda traversal order' do
       @parsed = Agenda.parse 'board_agenda_2015_02_18.txt', :quick
 
       on_vue_server do

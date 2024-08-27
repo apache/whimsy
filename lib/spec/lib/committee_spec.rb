@@ -23,12 +23,12 @@ describe ASF::Committee do
   before {
     Wunderbar.logger = nil # ensure we see warnings
   }
-  describe "ASF::Committee::site" do
-    it "should return correct display_name initially" do
+  describe 'ASF::Committee::site' do
+    it 'should return correct display_name initially' do
       httpd = ASF::Committee['httpd']
       expect(httpd.display_name).to eq('HTTP Server')
     end
-    it "should return correct display_name subsequently" do
+    it 'should return correct display_name subsequently' do
       httpd = ASF::Committee['httpd']
       expect(httpd.display_name).to eq('HTTP Server')
     end
@@ -43,7 +43,7 @@ describe ASF::Committee do
     end
   end
 
-  describe "ASF::Committee::description" do
+  describe 'ASF::Committee::description' do
     it "should return string for 'httpd'" do
       res = ASF::Committee.find('HTTP Server').description
       expect(res).to match(%r{Apache Web Server})
@@ -54,7 +54,7 @@ describe ASF::Committee do
     end
   end
 
-  describe "ASF::Committee.metadata" do
+  describe 'ASF::Committee.metadata' do
     it "should return hash for 'httpd'" do
       res = ASF::Committee.metadata('httpd')
       expect(res.class).to eq(Hash)
@@ -83,7 +83,7 @@ describe ASF::Committee do
   date_established = Date.parse('1970-01-01')
   established_value = '1970-01' # as per yaml
 
-  describe "ASF::Committee.appendtlpmetadata" do
+  describe 'ASF::Committee.appendtlpmetadata' do
     board = ASF::SVN.find('board')
     file = File.join(board, 'committee-info.yaml')
     input = File.read(file)
@@ -107,7 +107,7 @@ describe ASF::Committee do
     it "should succeed for '#{pmc}'" do
       res = nil
       desc = 'Description of A-B-C'
-      expect { res = ASF::Committee.appendtlpmetadata(input, pmc, desc, date_established) }.to output("").to_stderr
+      expect { res = ASF::Committee.appendtlpmetadata(input, pmc, desc, date_established) }.to output('').to_stderr
       expect(res).not_to eq(input)
       tlps = YAML.safe_load(res, permitted_classes: [Symbol])[:tlps]
       abc = tlps[pmc]
@@ -125,7 +125,7 @@ describe ASF::Committee do
       date_resumed = Time.now
       resumed_value = date_resumed.strftime('%Y-%m')
       res = nil
-      expect { res = ASF::Committee.appendtlpmetadata(input, pmc, 'unused', date_resumed) }.to output("").to_stderr
+      expect { res = ASF::Committee.appendtlpmetadata(input, pmc, 'unused', date_resumed) }.to output('').to_stderr
       expect(res).not_to equal(input)
       tlps = YAML.safe_load(res, permitted_classes: [Symbol])[:tlps]
       updated = tlps[pmc]
@@ -150,7 +150,7 @@ describe ASF::Committee do
       date_resumed = Time.now
       resumed_value = date_resumed.strftime('%Y-%m')
       res = nil
-      expect { res = ASF::Committee.appendtlpmetadata(input, pmc, 'unused', date_resumed) }.to output("").to_stderr
+      expect { res = ASF::Committee.appendtlpmetadata(input, pmc, 'unused', date_resumed) }.to output('').to_stderr
       expect(res).not_to equal(input)
       tlps = YAML.safe_load(res, permitted_classes: [Symbol])[:tlps]
       updated = tlps[pmc]
@@ -167,17 +167,17 @@ describe ASF::Committee do
     end
   end
 
-  describe "ASF::ASF::Committee.record_termination" do
+  describe 'ASF::ASF::Committee.record_termination' do
     cinfoy = File.join(ASF::SVN['board'], 'committee-info.yaml')
     yyyymm = '2020-10'
     data = File.read cinfoy
     yaml = YAML.safe_load(data, permitted_classes: [Symbol])
-    it "should contain HTTPD, but not retired" do
+    it 'should contain HTTPD, but not retired' do
       para = yaml[:tlps]['httpd']
       expect(para).not_to eql(nil)
       expect(para[:retired]).to eql(nil)
     end
-    it "should add retired tag to HTTPD" do
+    it 'should add retired tag to HTTPD' do
       data = ASF::Committee.record_termination(data, 'HTTP Server', yyyymm)
       yaml = YAML.safe_load(data, permitted_classes: [Symbol])
       para = yaml[:tlps]['httpd']
@@ -188,11 +188,11 @@ describe ASF::Committee do
     yaml = YAML.safe_load(data, permitted_classes: [Symbol])
     name = 'XYZXYZ'
     pmc = ASF::Committee.to_canonical(name)
-    it "should not contain XYZXYZ" do
+    it 'should not contain XYZXYZ' do
       para = yaml[:tlps][pmc]
       expect(para).to eql(nil)
     end
-    it "should now contain XYZXYZ" do
+    it 'should now contain XYZXYZ' do
       data = ASF::Committee.record_termination(data, name, yyyymm)
       yaml = YAML.safe_load(data, permitted_classes: [Symbol])
       para = yaml[:tlps][pmc]

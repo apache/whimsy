@@ -14,7 +14,7 @@ sorted = ASF::ICLA.sort(source)
 if source == sorted
   puts 'no change'
 else
-  puts "Writing sorted file"
+  puts 'Writing sorted file'
   File.write(iclas, sorted)
   system 'svn', 'diff', iclas
 end

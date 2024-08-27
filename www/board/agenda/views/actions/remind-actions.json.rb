@@ -45,7 +45,7 @@ template = File.read("#{FOUNDATION_BOARD}/templates/remind-action.erb")
   mail = Mail.new do
     from from
     to "#{person.public_name} <#{person.id}@apache.org>"
-    bcc "board-private@apache.org"
+    bcc 'board-private@apache.org'
     subject 'Action Item reminder'
 
     body Erubis::Eruby.new(template).result(binding)

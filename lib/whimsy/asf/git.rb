@@ -49,7 +49,7 @@ module ASF
             git_over = repo_override[:git]
             if git_over
               require 'wunderbar'
-              Wunderbar.warn("Found override for repository.yml[:git]")
+              Wunderbar.warn('Found override for repository.yml[:git]')
               @@repository_entries[:git].merge!(git_over)
             end
           end

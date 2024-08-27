@@ -4,7 +4,7 @@ require 'wunderbar'
 class Wunderbar::HtmlMarkup
 
   # DEPRECATED Wrap content with nicer fluid margins
-  def _whimsy_content colstyle="col-lg-11"
+  def _whimsy_content colstyle='col-lg-11'
     _div.content.container_fluid do
       _div.row do
         _div class: colstyle do
@@ -67,8 +67,8 @@ class Wunderbar::HtmlMarkup
     _nav.navbar.navbar_default do
       _div.container_fluid do
         _div.navbar_header do
-          _button.navbar_toggle.collapsed type: "button", data_toggle: "collapse", data_target: "#navbar_collapse", aria_expanded: "false" do
-            _span.sr_only "Toggle navigation"
+          _button.navbar_toggle.collapsed type: 'button', data_toggle: 'collapse', data_target: '#navbar_collapse', aria_expanded: 'false' do
+            _span.sr_only 'Toggle navigation'
             _span.icon_bar
             _span.icon_bar
           end
@@ -76,7 +76,7 @@ class Wunderbar::HtmlMarkup
             _img title: 'Whimsy project home', alt: 'Whimsy hat logo', src: '/whimsy.svg', height: 30
           end
         end
-        _div.collapse.navbar_collapse id: "navbar_collapse" do
+        _div.collapse.navbar_collapse id: 'navbar_collapse' do
           _ul.nav.navbar_nav do
             _li do
               _a 'Code', href: 'https://github.com/apache/whimsy/'
@@ -90,7 +90,7 @@ class Wunderbar::HtmlMarkup
           end
           _ul.nav.navbar_nav.navbar_right do
             _li.dropdown do
-              _a.dropdown_toggle href: "#", data_toggle: "dropdown", role: "button", aria_haspopup: "true", aria_expanded: "false" do
+              _a.dropdown_toggle href: '#', data_toggle: 'dropdown', role: 'button', aria_haspopup: 'true', aria_expanded: 'false' do
                 _img title: 'Apache Home', alt: 'Apache feather logo', src: 'https://www.apache.org/img/feather_glyph_notm.png', height: 30
                 _ ' Apache'
                 _span.caret
@@ -150,7 +150,7 @@ class Wunderbar::HtmlMarkup
             end
           end
           _div.col_md_4 do
-            _whimsy_panel relatedtitle, style: "panel-default" do
+            _whimsy_panel relatedtitle, style: 'panel-default' do
               _ul list_style_position: 'inside' do
                 if related
                   related.each do |url, desc|
@@ -206,19 +206,19 @@ class Wunderbar::HtmlMarkup
   # @param n unique number of this item (for nav links)
   # @param itemclass optional panel-success or similar styling
   def _whimsy_accordion_item(listid: 'accordion', itemid: nil, itemtitle: '', n: 0, itemclass: nil)
-    raise ArgumentError.new("itemid must not be nil") if not itemid
+    raise ArgumentError.new('itemid must not be nil') if not itemid
     args = {id: itemid}
     args[:class] = itemclass if itemclass
     _div!.panel.panel_default args do
-      _div!.panel_heading role: "tab", id: "#{listid}h#{n}" do
+      _div!.panel_heading role: 'tab', id: "#{listid}h#{n}" do
         _h4!.panel_title do
-          _a!.collapsed role: "button", data_toggle: "collapse",  aria_expanded: "false", data_parent: "##{listid}", href: "##{listid}c#{n}", aria_controls: "#{listid}c#{n}" do
+          _a!.collapsed role: 'button', data_toggle: 'collapse',  aria_expanded: 'false', data_parent: "##{listid}", href: "##{listid}c#{n}", aria_controls: "#{listid}c#{n}" do
             _ "#{itemtitle} "
             _span.glyphicon.glyphicon_chevron_down id: "#{itemid}-nav"
           end
         end
       end
-      _div!.panel_collapse.collapse id: "#{listid}c#{n}", role: "tabpanel", aria_labelledby: "#{listid}h#{n}" do
+      _div!.panel_collapse.collapse id: "#{listid}c#{n}", role: 'tabpanel', aria_labelledby: "#{listid}h#{n}" do
         _div!.panel_body do
           yield
         end

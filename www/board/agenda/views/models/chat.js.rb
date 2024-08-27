@@ -203,12 +203,12 @@ class Chat
     diff = Agenda.find('Call-to-order').timestamp - Date.new().getTime()
 
     if Minutes.complete
-      "meeting has completed"
+      'meeting has completed'
     elsif Minutes.started
       if @@topic.subtype == :status
         @@topic.text
       else
-        "meeting has started"
+        'meeting has started'
       end
     elsif diff > 86_400_000 * 3/2
       "meeting will start in about #{Math.floor(diff/86_400_000+0.5)} days"
@@ -219,7 +219,7 @@ class Chat
     elsif diff > 90_000
       "meeting will start in about #{Math.floor(diff/60_000+0.5)} minutes"
     else
-      "meeting will start shortly"
+      'meeting will start shortly'
     end
   end
 end

@@ -1,6 +1,6 @@
 # find indicated mailbox in the list of available mailboxes
 # This code is invoked by workbench/server.rb
-available = Dir[File.join(ARCHIVE, "*.yml")].sort
+available = Dir[File.join(ARCHIVE, '*.yml')].sort
 index = available.find_index File.join(ARCHIVE, "#{@mbox}.yml")
 
 # if found, process it

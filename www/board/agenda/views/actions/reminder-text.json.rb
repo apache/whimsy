@@ -21,12 +21,12 @@ dueDate = meeting - 7.days
 view = {
   project: '{{{project}}}',
   link: '{{{link}}}',
-  meetingDate:  meeting.strftime("%a, %d %b %Y at %H:%M %Z"),
-  month: meeting.strftime("%B"),
+  meetingDate:  meeting.strftime('%a, %d %b %Y at %H:%M %Z'),
+  month: meeting.strftime('%B'),
   year: meeting.year.to_s,
   timeZoneInfo: timeZoneInfo,
   dueDate:  dueDate.strftime("%a %b #{dueDate.day.ordinalize}"),
-  agenda: meeting.strftime("https://whimsy.apache.org/board/agenda/%Y-%m-%d/")
+  agenda: meeting.strftime('https://whimsy.apache.org/board/agenda/%Y-%m-%d/')
 }
 
 # perform the substitution

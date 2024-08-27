@@ -99,11 +99,11 @@ if @votelink and not @votelink.empty?
 
 # verify that the link refers to lists.apache.org message on the project list
   if not @votelink=~ /.*lists\.apache\.org.*/
-    _error "Please link to a message via lists.apache.org"
+    _error 'Please link to a message via lists.apache.org'
     return # no point in continuing
   end
   if not @votelink=~ /.*#{pmc.mail_list}(\.incubator)?\.apache\.org.*/
-    _error "Please link to the [RESULT][VOTE] message sent to the private list."
+    _error 'Please link to the [RESULT][VOTE] message sent to the private list.'
     return # no point in continuing
   end
 
@@ -135,15 +135,15 @@ if @noticelink and not @noticelink.empty?
 
   # verify that the link refers to lists.apache.org message on the proper list
   if not @noticelink=~ /.*lists\.apache\.org.*/
-    _error "Please link to a message via lists.apache.org"
+    _error 'Please link to a message via lists.apache.org'
     return # no point in continuing
   end
   if pmc_type == 'PMC' and not @noticelink=~ /.*board@apache\.org.*/
-    _error "Please link to the NOTICE message sent to the board list."
+    _error 'Please link to the NOTICE message sent to the board list.'
     return # no point in continuing
   end
   if pmc_type == 'PPMC' and not @noticelink=~ /.*private@incubator\.apache\.org.*/
-    _error "Please link to the NOTICE message sent to the incubator private list."
+    _error 'Please link to the NOTICE message sent to the incubator private list.'
     return # no point in continuing
   end
 

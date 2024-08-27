@@ -20,7 +20,7 @@ _html do
         time = Time.parse(msg[:time]).to_s
         _tr do
           _td do
-            _a time, href: "../%s" % msg[:href], title: time
+            _a time, href: '../%s' % msg[:href], title: time
           end
           _td msg[:from]
           _td msg[:subject]

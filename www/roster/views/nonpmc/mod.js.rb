@@ -4,7 +4,7 @@
 
 class NonPMCMod < Vue
   mixin ProjectMod
-  options mod_tag: "pmcmod", mod_action: 'actions/nonpmc'
+  options mod_tag: 'pmcmod', mod_action: 'actions/nonpmc'
 
   def initialize
     @people = []
@@ -49,7 +49,7 @@ class NonPMCMod < Vue
 
             # show add to Committee button only if every person is not on the Committee
             if @people.all? {|person| !@@project.members.include? person.id}
-              _button.btn.btn_primary "Add to Committee",
+              _button.btn.btn_primary 'Add to Committee',
                 data_action: 'add pmc info',
                 onClick: self.post, disabled: @people.empty?
             end
@@ -67,7 +67,7 @@ class NonPMCMod < Vue
               data_action: "remove #{remove_from.join(' ')}"
 
             if @people.all? {|person| @@project.members.include? person.id}
-              _button.btn.btn_warning "Remove from Committee only",
+              _button.btn.btn_warning 'Remove from Committee only',
                 data_action: 'remove pmc info',
                 onClick: self.post
             end

@@ -14,13 +14,13 @@ class NonPMC < Vue
 
     # add jump links to main sections of page using Bootstrap nav element
     _ul.nav.nav_pills do
-      _li role: "presentation" do
+      _li role: 'presentation' do
         _a 'Committee', :href => "nonpmc/#{@nonpmc.id}#pmc"
       end
-      _li role: "presentation" do
+      _li role: 'presentation' do
         _a 'Committers', :href => "nonpmc/#{@nonpmc.id}#committers"
       end
-      _li role: "presentation" do
+      _li role: 'presentation' do
         if @nonpmc.moderators
           _a 'Mail List Info', :href => "nonpmc/#{@nonpmc.id}#mail"
         else

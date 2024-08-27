@@ -98,9 +98,9 @@ class Wunderbar::JsonBuilder
         dest.each do |name, file, content_type|
           if docdir == 'iclas' && outfileext # special processing for output name
             if name == docname
-              name = "icla%s" % outfileext
+              name = 'icla%s' % outfileext
             elsif name == docsig
-              name = "icla%s.asc" % outfileext
+              name = 'icla%s.asc' % outfileext
             else
               Wunderbar.warn "Cannot recognise #{name} as #{docname} or #{docsig}"
             end
@@ -132,7 +132,7 @@ class Wunderbar::JsonBuilder
   end
 
   def template(name)
-    path = File.expand_path(File.join("..", "templates", name), __FILE__)
+    path = File.expand_path(File.join('..', 'templates', name), __FILE__)
     ERB.new(File.read(path)).result(binding)
   end
 end

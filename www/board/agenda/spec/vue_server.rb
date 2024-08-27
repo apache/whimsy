@@ -72,7 +72,7 @@ class VueServer
 
   # the server itself
   @@server = proc do
-    _cleanup = require("jsdom-global/register")
+    _cleanup = require('jsdom-global/register')
     delete global.XMLHttpRequest
 
     process.env.VUE_ENV = 'server'
@@ -151,7 +151,7 @@ class VueServer
   end
 end
 
-shared_context "vue_server", server: :vue do
+shared_context 'vue_server', server: :vue do
   #
   # administrivia
   #

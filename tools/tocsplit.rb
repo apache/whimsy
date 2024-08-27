@@ -20,7 +20,7 @@
 
 require 'digest'
 
-file=ARGV.shift or raise "missing file"
+file=ARGV.shift or raise 'missing file'
 TMP=ARGV.shift || '/tmp/tocsplit'
 
 $outn = 100 # so files sort

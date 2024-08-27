@@ -27,7 +27,7 @@ if "#@filename#{fileext}" =~ /\A\w[-\w]*\.?\w*\z/
       _icla = ASF::ICLA.find_matches(@realname.strip)
       if _icla.size > 0
         lines = []
-        lines << "Found possible duplicate ICLAs:"
+        lines << 'Found possible duplicate ICLAs:'
         _icla.each do |i|
           file = ASF::ICLAFiles.match_claRef(i.claRef)
           lines << [i.legal_name, ASF::SVN.svnpath!('iclas', file)]
@@ -182,7 +182,7 @@ if @valid_user and @pmc and not @votelink.empty?
   #                   acreq/new-account-reqs.txt                       #
   ######################################################################
 
-  task "svn commit infra/acreq/new-account-reqs.txt" do
+  task 'svn commit infra/acreq/new-account-reqs.txt' do
     # construct account request line
     @acreq ||= [
       @user,
@@ -216,7 +216,7 @@ if @valid_user and @pmc and not @votelink.empty?
   #                          email root@                               #
   ######################################################################
 
-  task "email root@apache.org" do
+  task 'email root@apache.org' do
     # build mail from template (already includes TO: root)
     mail = Mail.new(template('acreq.erb'))
 

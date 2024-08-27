@@ -32,44 +32,44 @@ describe ASF::ICLAFiles do
   after(:all) do
     set_cache(original)
   end
-  describe "ASF::ICLAFiles.listnames" do
-    it "should return 4 files" do
+  describe 'ASF::ICLAFiles.listnames' do
+    it 'should return 4 files' do
       res = ASF::ICLAFiles.listnames
       expect(res.length).to equal(4)
     end
   end
 
-  describe "ASF::ICLAFiles.matchStem" do
-    it "should return [] for abcd" do
+  describe 'ASF::ICLAFiles.matchStem' do
+    it 'should return [] for abcd' do
       res = ASF::ICLAFiles.matchStem('abcd')
       expect(res).to eq([])
     end
-    it "should return [abc.pdf] for abc" do
+    it 'should return [abc.pdf] for abc' do
       res = ASF::ICLAFiles.matchStem('abc')
       expect(res).to eq(['abc.pdf'])
     end
   end
 
-  describe "ASF::ICLAFiles.Dir?" do
-    it "should return true for ab" do
+  describe 'ASF::ICLAFiles.Dir?' do
+    it 'should return true for ab' do
       res = ASF::ICLAFiles.Dir?('ab')
       expect(res).to eq(true)
     end
-    it "should return false for abc" do
+    it 'should return false for abc' do
       res = ASF::ICLAFiles.Dir?('abc')
       expect(res).to eq(false)
     end
-    it "should return true for abcd" do
+    it 'should return true for abcd' do
       res = ASF::ICLAFiles.Dir?('abcd')
       expect(res).to eq(true)
     end
-    it "should return true for abcde" do
+    it 'should return true for abcde' do
       res = ASF::ICLAFiles.Dir?('abcde')
       expect(res).to eq(true)
     end
   end
 
-  describe "ASF::ICLAFiles.match_claRef" do
+  describe 'ASF::ICLAFiles.match_claRef' do
     it "should return nil for 'xyz'" do
       res = ASF::ICLAFiles.match_claRef('xyz')
       expect(res).to equal(nil)

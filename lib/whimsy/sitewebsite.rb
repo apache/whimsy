@@ -102,7 +102,7 @@ def display_check(col, sites, analysis, checks, tlp = true)
           _br
           _a checks[col][SiteStandards::CHECK_DOC], href: checks[col][SiteStandards::CHECK_POLICY]
         end
-        _li.small " Click column badges to sort"
+        _li.small ' Click column badges to sort'
       else
         _span.text_danger %{WARNING: the site checker may not understand type: #{col},
                             results may not be complete/available.}
@@ -153,11 +153,11 @@ def display_overview(sites, analysis, checks, tlp = true)
     title: "Site Check - All #{tlp ? 'Project' : 'Podling'} Results",
     helpblock: -> {
       _ul.list_inline do
-        _li.small "Data key: "
+        _li.small 'Data key: '
         analysis[1].each do |cls, desc|
           _li.label desc, class: cls
         end
-        _li.small " Click column badges to sort"
+        _li.small ' Click column badges to sort'
       end
     }
   ) do
@@ -202,7 +202,7 @@ end
 # Display an error page if a suburl we're given isn't supported
 def display_error(path)
   _whimsy_panel_table(
-    title: "ERROR - bad url provided",
+    title: 'ERROR - bad url provided',
     helpblock: -> {
       _a href: '../', aria_label: 'Home to site checker' do
         _span.glyphicon.glyphicon_home :aria_hidden

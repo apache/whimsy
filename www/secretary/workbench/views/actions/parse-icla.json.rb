@@ -9,7 +9,7 @@ attachment = URI::RFC2396_Parser.new.unescape(@attachment) # derived from a URI
 
 # WHIMSY-322
 ALIASES = {
-  "solr" => "lucene",
+  'solr' => 'lucene',
 }
 
 if attachment.end_with? '.pdf'

@@ -3,7 +3,7 @@
 # Script to normalise committee-info.txt so there are at least 2 spaces between fields in PMC section
 
 # Default to UTF-8 for IO
-ENV['LANG'] ||= "en_US.UTF-8"
+ENV['LANG'] ||= 'en_US.UTF-8'
 Encoding.default_external = Encoding::UTF_8
 Encoding.default_internal = Encoding::UTF_8
 
@@ -50,5 +50,5 @@ if __FILE__ == $0
     end
 
   end
-  puts "Done"
+  puts 'Done'
 end

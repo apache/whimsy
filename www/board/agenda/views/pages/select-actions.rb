@@ -42,9 +42,9 @@ class CandidateAction < Vue
   def render
     _input type: 'checkbox', checked: !@@action.complete,
       onClick:-> {@@action.complete = !@@action.complete}
-    _span " "
+    _span ' '
     _span @@action.owner
-    _span ": "
+    _span ': '
     _span @@action.text
     _span "\n      [ #{@@action.pmc} #{@@action.date} ]\n      "
     if @@action.status

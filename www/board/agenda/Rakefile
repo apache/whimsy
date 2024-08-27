@@ -54,7 +54,7 @@ namespace :server do
   end
 end
 
-task "touch" do
+task 'touch' do
   sh 'touch', File.expand_path('../tmp/restart.txt', __FILE__)
 end
 

@@ -81,7 +81,7 @@ class AddMinutes < Vue
 
     # autofocus on minute text
     jQuery('#minute-form').on 'shown.bs.modal' do
-      document.getElementById("minute-text").focus()
+      document.getElementById('minute-text').focus()
     end
   end
 

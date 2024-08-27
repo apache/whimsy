@@ -5,7 +5,7 @@
 require_relative 'spec_helper'
 
 feature 'index' do
-  it "should show an index page - without an index page" do
+  it 'should show an index page - without an index page' do
     visit '/2015-02-18/'
 
     # header
@@ -46,7 +46,7 @@ feature 'index' do
       text: 'Select Item Type'
   end
 
-  it "should show an index page - with pending changes" do
+  it 'should show an index page - with pending changes' do
     visit '/2015-01-21/'
 
     # header
@@ -64,7 +64,7 @@ feature 'index' do
   end
 
 
-  it "should show a summary" do
+  it 'should show a summary' do
     visit '/2015-02-18/'
 
     expect(page).to have_selector 'tr.available td', text: '84' # committee

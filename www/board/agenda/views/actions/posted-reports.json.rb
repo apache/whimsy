@@ -9,7 +9,7 @@ require 'mail'
 require 'whimsy/asf/agenda'
 
 # link to board private-arch
-THREAD = "https://lists.apache.org/thread.html/"
+THREAD = 'https://lists.apache.org/thread.html/'
 ARCHIVE = '/srv/mail/board'
 
 if @path and @path =~ /^\d+\/\w+$/

@@ -10,7 +10,7 @@ require 'whimsy/asf'
 # extract action to be performed
 dryrun = ARGV.delete('--dryrun')
 puts 'Dry run:' if dryrun
-action = ARGV.delete('--add') || ARGV.delete("--rm")
+action = ARGV.delete('--add') || ARGV.delete('--rm')
 
 # map arguments provided to people
 people = ARGV.map {|id| ASF::Person[id]}

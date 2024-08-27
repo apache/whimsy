@@ -51,7 +51,7 @@ module ASF
           if repo_override
             svn_over = repo_override[:svn]
             if svn_over
-              Wunderbar.warn("Found override for repository.yml[:svn]")
+              Wunderbar.warn('Found override for repository.yml[:svn]')
               @@repository_entries[:svn].merge!(svn_over)
             end
           end
@@ -192,7 +192,7 @@ module ASF
       unless result
         entry = repo_entry(name)
         if entry
-          raise Exception.new("Unable to find svn checkout for " +
+          raise Exception.new('Unable to find svn checkout for ' +
             "#{@base + entry['url']} (#{name})")
         else
           raise Exception.new("Unable to find svn checkout for #{name}")
@@ -318,7 +318,7 @@ module ASF
             Wunderbar.error "Invalid option #{cmd.inspect}" unless cmd =~ %r{^(--[a-z][a-z=]+|-l\d+|-[a-z])$}
           end
         else
-          raise ArgumentError.new "command must be a String or an Array of Strings"
+          raise ArgumentError.new 'command must be a String or an Array of Strings'
         end
       end
       # build svn command
@@ -536,8 +536,8 @@ module ASF
         end
         # convert auth for use by _svn_build_cmd
         auth.flatten.each_slice(2) do |a, b|
-          options[:user] = b if a == "--username"
-          options[:password] = b if a == "--password"
+          options[:user] = b if a == '--username'
+          options[:password] = b if a == '--password'
         end
       end
 
@@ -1003,8 +1003,8 @@ module ASF
         return nil, "Cannot find URL for '#{name}'"
       end
       listfile, listfiletmp = self.listingNames(name, dir)
-      filerev = "0"
-      svnrev = "?"
+      filerev = '0'
+      svnrev = '?'
       filedates = false
       begin
         open(listfile) do |l|
@@ -1066,7 +1066,7 @@ module ASF
     # The tag should be regarded as opaque
     def self.getlisting(name, tag=nil, trimSlash = true, getEpoch = false, dir = nil)
       listfile, _ = self.listingNames(name, dir)
-      curtag = "%s:%s:%d" % [trimSlash, getEpoch, File.mtime(listfile)]
+      curtag = '%s:%s:%d' % [trimSlash, getEpoch, File.mtime(listfile)]
       if curtag == tag
         return curtag, nil
       else
@@ -1126,8 +1126,8 @@ module ASF
       else
         dir = self.svn_parent
       end
-      return File.join(dir, "%s.txt" % name),
-             File.join(dir, "%s.tmp" % name)
+      return File.join(dir, '%s.txt' % name),
+             File.join(dir, '%s.tmp' % name)
     end
 
     # Get all the SVN entries

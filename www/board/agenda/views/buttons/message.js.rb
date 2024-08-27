@@ -16,7 +16,7 @@ class Message < Vue
 
   # autofocus on the chat message when the page is initially displayed
   def mounted()
-    document.getElementById("chatMessage").focus()
+    document.getElementById('chatMessage').focus()
   end
 
   # send message to server

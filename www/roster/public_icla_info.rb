@@ -25,7 +25,7 @@ if ARGV.length == 2
 
   info_noid = {
     last_updated: ASF::ICLA.svn_change,
-    see_instead: "https://whimsy.apache.org/officers/unlistedclas.cgi",
+    see_instead: 'https://whimsy.apache.org/officers/unlistedclas.cgi',
     non_committers: [] # deprecated
   }
   public_json_output_file(info_noid, ARGV.shift)

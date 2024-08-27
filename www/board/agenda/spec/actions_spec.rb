@@ -18,7 +18,7 @@ feature 'server actions' do
   # Index - split in two so that cleanup occurs after each step
   #
   describe 'index' do
-    it "should post new special orders" do
+    it 'should post new special orders' do
       @agenda = 'board_agenda_2015_02_18.txt'
       @attach = '7?'
       @title = 'Establish Test Project'
@@ -37,7 +37,7 @@ feature 'server actions' do
   # Roll Call
   #
   describe 'roll call' do
-    it "should support adding a guest" do
+    it 'should support adding a guest' do
       @agenda = 'board_agenda_2015_01_21.txt'
       @action = 'attend'
       @name = 'N. E. Member'
@@ -57,7 +57,7 @@ feature 'server actions' do
       expect(rollcall['text']).to match %r{Directors .* Absent:\s+Sam Ruby}
     end
 
-    it "should support moving a director back to attending" do
+    it 'should support moving a director back to attending' do
       @agenda = 'board_agenda_2015_02_18.txt'
       @action = 'attend'
       @name = 'Greg Stein'
@@ -82,7 +82,7 @@ feature 'server actions' do
   # PMC Report
   #
   describe 'pmc report' do
-    it "should post a comment" do
+    it 'should post a comment' do
       @initials = 'xx'
       @agenda = 'board_agenda_2015_01_21.txt'
       @attach = 'Z'
@@ -93,7 +93,7 @@ feature 'server actions' do
       expect(Pending.get('test')['initials']).to eq('xx')
     end
 
-    it "should remove a comment" do
+    it 'should remove a comment' do
       expect(Pending.get('test')['comments']['I']).to eq('Nice report!')
 
       @initials = 'xx'
@@ -105,7 +105,7 @@ feature 'server actions' do
       expect(Pending.get('test')['comments']).not_to include('I')
     end
 
-    it "should reset comments when the agenda changes" do
+    it 'should reset comments when the agenda changes' do
       expect(Pending.get('test')['comments']['I']).to eq('Nice report!')
 
       @initials = 'xx'
@@ -117,7 +117,7 @@ feature 'server actions' do
       expect(Pending.get('test')['comments']).not_to include('I')
     end
 
-    it "should approve a report" do
+    it 'should approve a report' do
       @agenda = 'board_agenda_2015_01_21.txt'
       @initials = 'jt'
       @attach = 'C'
@@ -127,7 +127,7 @@ feature 'server actions' do
       expect(Pending.get('test')['approved']).to include('C')
     end
 
-    it "should unapprove a report which is pending approval" do
+    it 'should unapprove a report which is pending approval' do
       expect(Pending.get('test')['approved']).to include('7')
 
       @agenda = 'board_agenda_2015_01_21.txt'
@@ -139,7 +139,7 @@ feature 'server actions' do
       expect(Pending.get('test')['approved']).not_to include('7')
     end
 
-    it "should unapprove a previously approved report" do
+    it 'should unapprove a previously approved report' do
       expect(Pending.get('test')['unapproved']).not_to include('BM')
 
       @agenda = 'board_agenda_2015_01_21.txt'
@@ -151,7 +151,7 @@ feature 'server actions' do
       expect(Pending.get('test')['unapproved']).to include('BM')
     end
 
-    it "should flag a report" do
+    it 'should flag a report' do
       expect(Pending.get('test')['flagged']).not_to include('J')
 
       @agenda = 'board_agenda_2015_01_21.txt'
@@ -163,7 +163,7 @@ feature 'server actions' do
       expect(Pending.get('test')['flagged']).to include('J')
     end
 
-    it "should unflag a report" do
+    it 'should unflag a report' do
       expect(Pending.get('test')['unflagged']).not_to include('AS')
 
       @agenda = 'board_agenda_2015_02_18.txt'
@@ -175,7 +175,7 @@ feature 'server actions' do
       expect(Pending.get('test')['unflagged']).to include('AS')
     end
 
-    it "should unflag a report which is pending being flagged" do
+    it 'should unflag a report which is pending being flagged' do
       expect(Pending.get('test')['flagged']).to include('H')
 
       @agenda = 'board_agenda_2015_01_21.txt'
@@ -187,7 +187,7 @@ feature 'server actions' do
       expect(Pending.get('test')['flagged']).not_to include('H')
     end
 
-    it "should post/edit a report" do
+    it 'should post/edit a report' do
       @agenda = 'board_agenda_2015_02_18.txt'
       @parsed = Agenda.parse @agenda, :quick
       poi = @parsed.find {|item| item['title'] == 'POI'}
@@ -207,7 +207,7 @@ feature 'server actions' do
   # Queue / Pending
   #
   describe 'pending queue' do
-    it "should commit pending comments and approvals" do
+    it 'should commit pending comments and approvals' do
       @pending = Pending.get('test')
       @parsed = Agenda.parse 'board_agenda_2015_01_21.txt', :quick
       expect(@pending['approved']).to include('7')
@@ -295,8 +295,8 @@ feature 'server actions' do
     end
   end
 
-  describe "action items" do
-    it "should combine existing and captured actions" do
+  describe 'action items' do
+    it 'should combine existing and captured actions' do
       eval(File.read('views/actions/potential-actions.json.rb'))
 
       bval = @actions.find {|action| action[:pmc] == 'BVal'}
@@ -311,7 +311,7 @@ feature 'server actions' do
       expect(wink[:date]).to eq('2015-01-21')
     end
 
-    it "should post action items" do
+    it 'should post action items' do
       eval(File.read('views/actions/potential-actions.json.rb'))
       rave = @actions.find {|action| action[:pmc] == 'Rave'}
       expect(rave[:text]).to match(/require a\n      reflow/)
@@ -329,8 +329,8 @@ feature 'server actions' do
     end
   end
 
-  describe "reminders" do
-    skip "should draft initial reminders" do
+  describe 'reminders' do
+    skip 'should draft initial reminders' do
       @reminder = 'reminder1'
       response = eval(File.read('views/actions/reminder-text.json.rb'))
       expect(response[:subject]).to \
@@ -341,7 +341,7 @@ feature 'server actions' do
       expect(response[:body]).to match(/Wed Feb 11th/)
     end
 
-    skip "should draft final reminders" do
+    skip 'should draft final reminders' do
       @reminder = 'reminder2'
       response = eval(File.read('views/actions/reminder-text.json.rb'))
       expect(response[:subject]).to \

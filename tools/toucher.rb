@@ -28,7 +28,7 @@ listener = Listen.to(*watched) do |modified, added, removed|
   restart = false
   touches = []
   (modified + added + removed).each do |file|
-    restart ||= (File.basename(file) == "Gemfile.lock")
+    restart ||= (File.basename(file) == 'Gemfile.lock')
     watch.each do |path, restarts|
       touches += restarts if file.start_with? path + '/'
     end

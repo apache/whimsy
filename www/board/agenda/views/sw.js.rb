@@ -117,7 +117,7 @@ def latest(event)
           match.clone().text().then do
             fulfill(match)
 
-            request = Request.new(match.url, cache: "no-store")
+            request = Request.new(match.url, cache: 'no-store')
             fetch(request).then do |response|
               if response.ok
                 response.clone().text().then do |after|
@@ -208,7 +208,7 @@ self.addEventListener :fetch do |event|
       # substitute bootstrap.html for html pages
       date =  url.split('/')[0]
       bootstrap_url = "#{scope}#{date}/bootstrap.html"
-      request = Request.new(bootstrap_url, cache: "no-store")
+      request = Request.new(bootstrap_url, cache: 'no-store')
 
       # produce response
       event.respondWith(bootstrap(event, request))
@@ -230,7 +230,7 @@ end
 self.addEventListener :message do |event|
   if event.data.type == :preload
     caches.open('board/agenda').then do |cache|
-      request = Request.new(event.data.url, cache: "no-store")
+      request = Request.new(event.data.url, cache: 'no-store')
       cache.match(request).then do |response|
         unless response
           fetch(request).then do |response|
