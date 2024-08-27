@@ -18,7 +18,7 @@ require 'fileutils'
 # Match revision messages
 REV_RE = %r{^(Checked out|\s*Updated ('[^']+' )?to|At|List updated from \d+ to|List is at) (revision |r)\d+\s*\.$}
 
-def Monitor.svn(previous_status)
+def StatusMonitor.svn(previous_status)
   logdir = File.expand_path('../../../logs', __FILE__)
   archive = File.join(logdir,'archive')
   FileUtils.mkdir(archive) unless File.directory?(archive)
@@ -101,7 +101,7 @@ end
 # for debugging purposes
 if __FILE__ == $0
   if ARGV.first == '__DATA__'
-    response = Monitor.svn(nil) # must agree with method name above
+    response = StatusMonitor.svn(nil) # must agree with method name above
     data = response[:data]
     data.each do |k,v|
       puts "#{k} #{data[k][:level]} #{data[k][:title]} #{data[k][:data]}"

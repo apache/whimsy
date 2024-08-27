@@ -26,7 +26,7 @@ if __FILE__ == $0
   require 'whimsy/asf/status'
 end
 
-class Monitor
+class StatusMonitor
   # match http://getbootstrap.com/components/#alerts
   LEVELS = %w(success info warning danger fatal)
 
@@ -58,7 +58,7 @@ class Monitor
           begin
             # invoke method to determine current status
             previous = baseline[:data][method.to_sym] || {mtime: Time.at(0)}
-            status = Monitor.send(method, previous) || previous
+            status = StatusMonitor.send(method, previous) || previous
 
             # convert non-hashes in proper statuses
             if not status.instance_of? Hash
@@ -193,5 +193,5 @@ end
 
 # for debugging purposes
 if __FILE__ == $0
-  puts JSON.pretty_generate(Monitor.new(ARGV).status)
+  puts JSON.pretty_generate(StatusMonitor.new(ARGV).status)
 end

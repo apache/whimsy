@@ -16,7 +16,7 @@ Danger - File more than 24 hours old or Exception while processing
 require 'fileutils'
 require 'time'
 
-def Monitor.mail_jobs(previous_status)
+def StatusMonitor.mail_jobs(previous_status)
   danger_period = 86_400 # one day
 
 

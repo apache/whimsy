@@ -14,7 +14,7 @@ Info - log is recent and contains only expected content
 
 require 'time'
 
-def Monitor.site_scan(previous_status)
+def StatusMonitor.site_scan(previous_status)
   logdir = File.expand_path('../../www/logs')
   logfile = File.join(logdir, 'site-scan')
   log = File.read(logfile)

@@ -16,7 +16,7 @@ require 'fileutils'
 
 SUMMARY_RE = %r{^ \d+ files? changed(, \d+ insertions?\(\+\))?(, \d+ deletions?\(-\))?$}
 
-def Monitor.git(previous_status)
+def StatusMonitor.git(previous_status)
   logdir = File.expand_path('../../../logs', __FILE__)
   log = File.join(logdir, 'git-pull')
 
@@ -145,7 +145,7 @@ end
 
 # for debugging purposes
 if __FILE__ == $0
-  response = Monitor.git(nil) # must agree with method name above
+  response = StatusMonitor.git(nil) # must agree with method name above
   data = response[:data]
   data.each do |k,v|
     puts "#{k} #{data[k][:level]} #{data[k][:title] or data[k][:data] }"

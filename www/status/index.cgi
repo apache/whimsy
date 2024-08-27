@@ -12,7 +12,7 @@ status = JSON.parse(File.read(json)) rescue {}
 if not status[:mtime] or Time.now - Time.parse(status[:mtime]) > 60
   begin
     require_relative './monitor'
-    status = Monitor.new.status || {}
+    status = StatusMonitor.new.status || {}
   rescue Exception => e
     print "Status: 500 Internal Server Error\r\n"
     print "Context-Type: text/plain\r\n\r\n"

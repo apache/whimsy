@@ -5,7 +5,7 @@
 
 require 'time'
 
-def Monitor.system(previous_status)
+def StatusMonitor.system(previous_status)
   name=:puppet
   status = {}
   status[name] = {
