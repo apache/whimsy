@@ -94,11 +94,11 @@ _html do
             elsif not person.asf_member?
               _td.text_danger id, title: 'Non Member', data_sort_value: '1'
             elsif person.asf_member? != true
-              _td(data_sort_value: '2') {_em id, title: 'Emeritus'}
+              _td(data_sort_value: '2') {_em {_a id, href: "/roster/committer/#{id}", title: 'Emeritus'}}
             elsif not ldap.include? person
               _td(data_sort_value: '3')  {_strong.text_danger id, title: 'Not in LDAP'}
             else
-              _td id
+              _td {_a id, href: "/roster/committer/#{id}"}
             end
             _td email
 
@@ -123,11 +123,12 @@ _html do
           _th 'name'
         end
         missing.sort_by(&:name).each do |person|
+          id = person.id
           _tr do
             if not ldap.include? person
-              _td {_strong.text_danger person.id, title: 'Not in LDAP'}
+              _td {_strong.text_danger {_a id, href: "/roster/committer/#{id}", title: 'Not in LDAP'}}
             else
-              _td person.id
+              _td {_a id, href: "/roster/committer/#{id}"}
             end
             if person.public_name
               _td person.public_name
