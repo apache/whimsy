@@ -334,10 +334,14 @@ URL2TLP['jspwiki-wiki'] = 'jspwiki' # https://jspwiki-wiki.apache.org/Wiki.jsp?p
 URL2TLP['xmlbeans'] = 'poi' # xmlbeans now being maintained by POI
 PMCS = Set.new # is this a TLP?
 ASF::Committee.pmcs.map do |p|
-  site = p.site[%r{//(.+?)\.apache\.org}, 1]
   name = p.name
-  URL2TLP[site] = name unless site == name
   PMCS << name
+  if p.site
+    site = p.site[%r{//(.+?)\.apache\.org}, 1]
+    URL2TLP[site] = name unless site == name
+  else
+    Wunderbar.warn "PMC has no site: #{name}"
+  end
 end
 
 # Convert text reference to extension
