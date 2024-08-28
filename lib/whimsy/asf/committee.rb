@@ -144,7 +144,7 @@ module ASF
         'planners@apachecon.com'
       when 'publicaffairs'
         'public-affairs-private@apache.org'
-      when 'logodevelopment'
+      when 'logodev'
         'logo-dev@apache.org' # their only list as at 2024-08-25
       else
         name.downcase
