@@ -66,7 +66,7 @@ module ASF
     NAMEADDRLEN = 59 # length of name + email address fields (including separator)
 
     # mapping of committee names to canonical names (generally from ldap)
-    # See also www/roster/committee.cgi
+    # See also www/roster/committee.rb
     @@aliases = Hash.new { |_hash, name| name.downcase}
     @@aliases.merge! \
       'brand management'               => 'brand',
@@ -83,6 +83,7 @@ module ASF
       'java community process'         => 'jcp',
       'legal affairs'                  => 'legal',
       'logging services'               => 'logging',
+      'logo development'               => 'logodev',
       'lucene.net'                     => 'lucenenet',
       'open climate workbench'         => 'climate',
       'ocw'                            => 'climate', # is OCW used?
