@@ -151,6 +151,13 @@ module ASF
       end
     end
 
+    # Return the committee private list
+    def private_mail_list
+      ml = mail_list
+      return mail_list if mail_list.include? '@'
+      "private@#{mail_list}.apache.org"
+    end
+
     # load committee info from <tt>committee-info.txt</tt>.  Will not reparse
     # if the file has already been parsed and the underlying file has not
     # changed.
