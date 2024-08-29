@@ -189,7 +189,7 @@ def do_diff(initialhash, currenthash, triggerrev)
     userid = key
     username = args[:name]
     joindate = args[:date]
-    mail_list = "private@#{cttee.mail_list}.apache.org"
+    mail_list = cttee.private_mail_list
     change_text = TYPES[type] || type # 'added to|dropped from'
     # The email currently only goes to notifications@whimsical.
     # To enable actual reporting, change the following:
