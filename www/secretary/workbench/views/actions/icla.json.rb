@@ -147,7 +147,7 @@ task "email #@email" do
     to: "#{@pubname.inspect} <#{@email}>",
     cc: [
       ('secretary@apache.org' unless use_Bcc),
-      ("private@#{@pmc.mail_list}.apache.org" if @pmc), # copy pmc
+      (@pmc.private_mail_list if @pmc), # copy pmc
       (@podling.private_mail_list if @podling) # copy podling
     ],
     bcc: [ ('secretary@apache.org' if use_Bcc)],
@@ -158,7 +158,7 @@ task "email #@email" do
   if @podling
     mail.header['Reply-To'] = @podling.private_mail_list
   elsif @pmc
-    mail.header['Reply-To'] = "private@#{@pmc.mail_list}.apache.org"
+    mail.header['Reply-To'] = @pmc.private_mail_list
   end
 
   # echo email
@@ -222,7 +222,7 @@ if @valid_user and @pmc and not @votelink.empty?
 
     # adjust copy lists
     cc = ["#{@pubname.inspect} <#{@email}>"]
-    cc << "private@#{@pmc.mail_list}.apache.org" if @pmc # copy pmc
+    cc << @pmc.private_mail_list if @pmc # copy pmc
     cc << @podling.private_mail_list if @podling # copy podling
     mail.cc = cc.uniq.map {|email| email}
 

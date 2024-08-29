@@ -223,7 +223,7 @@ class Committer
       response[:chairOf] << cttee if chairs.include?(id)
       # mailing list info is not public ...
       if response[:subscriptions] # did we get access to the mail?
-        pmail = "private@#{pmc.mail_list}.apache.org" rescue ''
+        pmail = pmc.private_mail_list rescue ''
         subbed = false
         subs = response[:subscriptions]
         digs = response[:digests]

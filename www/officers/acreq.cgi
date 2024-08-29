@@ -286,13 +286,12 @@ _html do
                     cc_list = ["operations@apache.org"]
                     requestor = user.id
                   else
-                    pmc_list = ASF::Committee.find(@pmc).mail_list
-                    cc_list = ["private@#{pmc_list}.apache.org"]
+                    cc_list = [ASF::Committee.find(@pmc).private_mail_list]
                     requestor = @pmc[/([\w.-]+)/, 1]
                   end
 
                   if requestor == 'incubator' and not @podling.to_s.empty?
-                    cc_list << "private@#{@podling}.#{pmc_list}.apache.org"
+                    cc_list << ASF::Podling.find(@pmc).private_mail_list
                     requestor = "#{@podling}@incubator"
                   end
 

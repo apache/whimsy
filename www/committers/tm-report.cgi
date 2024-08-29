@@ -193,8 +193,8 @@ def send_form(formdata: {})
   # Build the mail to be sent
   frm = formdata['reporteremail']
   subject = "[FORM] Misuse Report about #{formdata['project']}"
-  pmc_list = ASF::Committee.find(formdata['project']).mail_list
-  cc_list = ["private@#{pmc_list}.apache.org", frm]
+  pmc_list = ASF::Committee.find(formdata['project']).private_mail_list
+  cc_list = [private_mail_list, frm]
   to_list = BRANDLIST
 
   if true # TESTING mode

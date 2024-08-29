@@ -41,7 +41,7 @@ class Committee
     unless analysePrivateSubs # not an ASF member - are we a moderator?
       # TODO match using canonical emails
       user_mail = currentUser.all_mail || []
-      pMods = moderators["private@#{pmc.mail_list}.apache.org"] || []
+      pMods = moderators[pmc.private_mail_list] || []
       analysePrivateSubs = !(pMods & user_mail).empty?
     end
 

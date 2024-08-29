@@ -172,7 +172,7 @@ end
 
 # add user and pmc emails to the response
 _userEmail "#{user.public_name} <#{user.mail.first}>" if user
-_pmcEmail "private@#{pmc.mail_list}.apache.org" if pmc
+_pmcEmail pmc.private_mail_list if pmc
 
 # generate an invitation token
 token = Digest::MD5.hexdigest(@iclaemail)[0..15]
