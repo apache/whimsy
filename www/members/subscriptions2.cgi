@@ -63,6 +63,7 @@ _html do
     ) do
     ldap = ASF.members
 
+    nonASFemails = []
     members = ASF::Member.new.map {|id, _text| ASF::Person.find(id)}
     ASF::Person.preload('cn', members)
     maillist = ASF::Mail.list
@@ -103,7 +104,12 @@ _html do
             else
               _td id
             end
-            _td email
+            if email.end_with? '@apache.org'
+              _td email
+            else
+              _td.text_danger email
+              nonASFemails << email
+            end
 
             if id.include? '*'
               _td ''
@@ -147,6 +153,12 @@ _html do
       _p do
         missing.each do |person|
           _ "#{person.id}@apache.org, "
+        end
+      end
+      _h3_.unsublist! 'Handy List of non-ASF Emails'
+      _p do
+        nonASFemails.each do |email|
+          _ "#{email} "
         end
       end
     end
