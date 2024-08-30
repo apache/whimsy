@@ -24,19 +24,18 @@ def emit_instructions(today, cur_mtg_dir, meeting)
   end
   _p %{
     This form allows you to assign a proxy for the upcoming
-    Member's Meeting on #{meeting_display}. If there is any chance you might not be able
-    to attend the first part of the Member's Meeting on Tuesday in IRC, then
-    please assign an attendance proxy, because that helps the meeting reach
-    quorum more quickly - the meeting can't formally continue without quorum at the start.
-    You can still attend the meeting if you want, and you can revoke a
+    Member's Meeting on #{meeting_display}.  Submitting an attendance proxy will
+    help us reach quorum at the start of the meeting - the meeting can't formally
+    continue without quorum at the start.
+
+    You can still vote and attend the meeting if you want, and you can revoke a
     proxy at any time.
   }
   _p %{
-    If you submit a proxy, you will still be sent board and new member ballots by email
-    during the meeting's 46 hour recess (between Tuesday and Thursday,
-    with two hours for vote counting), so you will still need to
-    cast your votes by checking your mail and clicking the links during the recess. If
-    you won't have internet access the week of the meeting, ask
+    If you submit a proxy, you will still be sent ballots by email to your personal
+    @apache.org email address one week ahead of the meeting.
+    
+    If you won't have internet access for the full week of the meeting, ask
     for how to assign a proxy for your vote ballots as well.
   }
   _p do
@@ -97,9 +96,9 @@ def emit_form(cur_mtg_dir, meeting, volunteers, disabled)
       _p.text_warning %{
           NOTE: you are proxying for other members, so you cannot assign
           someone else to proxy for your attendance.  If it turns out that
-          you will not be able to attend the first half of the IRC meeting
-          on Tuesday, you MUST work with the Board Chair and your proxies
-          to update the proxy records, and get someone else to mark their presence!
+          you will not be able to attend the the IRC meeting on Thursday,
+          you MUST work with the Board Chair and your proxies to update the
+          proxy records, and get someone else to mark their presence!
         }
     else
       _div.well.well_lg do
