@@ -283,7 +283,8 @@ module ASF
 
       # sort and concatenate committees
       committees = committees.sort_by { |name, _chair| name.downcase }.
-        map { |name, chair| "    #{name.ljust(23)} #{chair}" }.
+        # ensure 2 spaces before chair email even if name is long
+        map { |name, chair| "    #{name.ljust(22)}  #{chair}" }.
         join("\n")
 
       # replace committee info in the section, and then replace the
