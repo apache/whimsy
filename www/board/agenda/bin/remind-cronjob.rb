@@ -27,15 +27,15 @@ end
 
 # draft reminder text
 @reminder = ARGV.first || 'reminder1'
-reminder = eval(File.read("views/actions/reminder-text.json.rb"))
+reminder = eval(File.read('views/actions/reminder-text.json.rb'))
 
 # send reminders
 @agenda = File.basename(Dir[File.join(FOUNDATION_BOARD, 'board_agenda_*.txt')].max)
-@from = "Whimsy <no-reply@apache.org>"
+@from = 'Whimsy <no-reply@apache.org>'
 @dryrun = true
 @subject = reminder[:subject]
 @message = reminder[:body]
-response = eval(File.read("views/actions/send-reminders.json.rb"))
+response = eval(File.read('views/actions/send-reminders.json.rb'))
 
 # dump results for debugging purposes
 puts JSON.pretty_generate(response)

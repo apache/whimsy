@@ -9,14 +9,14 @@ def runtest(method_name)
   baseline = JSON.parse(File.read(status_file),{symbolize_names: true}) rescue {}
   baseline[:data] = {} unless baseline[:data].instance_of? Hash
   previous = baseline[:data][method_name.to_sym] || {mtime: Time.at(0)}
-  response = Monitor.send(method_name, previous)
+  response = StatusMonitor.send(method_name, previous)
   if response == previous
-    puts "No change in response"
+    puts 'No change in response'
   elsif response[:data] and response[:data] == previous[:data]
     # main class adds a trailer after the data
-    puts "No change in response data"
+    puts 'No change in response data'
   else
-    puts "Response differs:"
+    puts 'Response differs:'
     puts previous
     puts response
   end

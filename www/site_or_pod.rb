@@ -42,22 +42,22 @@ _html do
     }
   end
   if cgi_for_tlps?
-    other = "/pods/"
-    other_text = "PPMC Podling Website Checker"
+    other = '/pods/'
+    other_text = 'PPMC Podling Website Checker'
   else
-    other = "/site/"
-    other_text = "TLP Website Checker"
+    other = '/site/'
+    other_text = 'TLP Website Checker'
   end
   _body? do
     _whimsy_body(
       title: PAGETITLE,
       subtitle: "Checking #{cgi_for_tlps? ? 'Project' : 'Podling'} Websites For required content",
       related: {
-        "/committers/tools" => "Whimsy Tool Listing",
+        '/committers/tools' => 'Whimsy Tool Listing',
         other => other_text,
-        "https://www.apache.org/foundation/marks/pmcs#navigation" => "Required PMC Links Policy",
-        "https://github.com/apache/whimsy/blob/master/www#{ENV['SCRIPT_NAME']}" => "See This Source Code",
-        "mailto:dev@whimsical.apache.org?subject=[SITE] Website Checker Question" => "Questions? Email Whimsy PMC"
+        'https://www.apache.org/foundation/marks/pmcs#navigation' => 'Required PMC Links Policy',
+        "https://github.com/apache/whimsy/blob/master/www#{ENV['SCRIPT_NAME']}" => 'See This Source Code',
+        'mailto:dev@whimsical.apache.org?subject=[SITE] Website Checker Question' => 'Questions? Email Whimsy PMC'
       },
       helpblock: -> {
         unless cgi_for_tlps?
@@ -76,7 +76,7 @@ _html do
           _ ', '
           _a 'website display code', href: "https://github.com/apache/whimsy/blob/master/www#{ENV['SCRIPT_NAME']}"
           _ ', '
-          _a 'validation checks details', href: "https://github.com/apache/whimsy/blob/master/lib/whimsy/sitewebsite.rb"
+          _a 'validation checks details', href: 'https://github.com/apache/whimsy/blob/master/lib/whimsy/sitewebsite.rb'
           _ ', and '
           _a 'raw JSON data', href: "#{SiteStandards.get_url(false)}#{SiteStandards.get_filename(cgi_for_tlps?)}"
           _ '.'

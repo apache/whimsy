@@ -15,7 +15,7 @@ STATS_ROLLUP = 'stats'
 # @return stats hash of of various statistics from minutes
 def summarize_all(dir = BOARD)
   summaries = Hash.new{|h,k| h[k] = {} }
-  Dir[File.join(dir, 'archived_agendas', "board_agenda_2*.txt")].sort.each do |f|
+  Dir[File.join(dir, 'archived_agendas', 'board_agenda_2*.txt')].sort.each do |f|
     summaries[File.basename(f, '.*')] = ASF::Board::Agenda.summarize(f)
   end
   allpmcs = Set.new()
@@ -34,9 +34,9 @@ def summarize_all(dir = BOARD)
 end
 
 #### Main method - process default files and output JSON
-outfile = "meeting-summary.json"
+outfile = 'meeting-summary.json'
 summaries = summarize_all()
-File.open(outfile, "w") do |f|
+File.open(outfile, 'w') do |f|
   f.puts JSON.pretty_generate(summaries)
 end
 puts "DONE: emitted #{outfile}"

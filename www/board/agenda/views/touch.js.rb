@@ -48,18 +48,18 @@ class Touch
       # process swipe event
       case swipedir
       when 'left'
-        link = document.querySelector("a[rel=next]")
+        link = document.querySelector('a[rel=next]')
         link.click() if link
 
       when 'right'
-        link = document.querySelector("a[rel=prev]")
+        link = document.querySelector('a[rel=prev]')
         link.click() if link
 
       when 'up', 'down'
         path = history.state.path.sub(/[^\/]+\/?$/, '') || '.'
         path = "shepherd/#{Main.item.shepherd}" if path == 'shepherd/queue/'
-        path = "flagged" if path == 'flagged/'
-        path = "queue" if path == 'queue/'
+        path = 'flagged' if path == 'flagged/'
+        path = 'queue' if path == 'queue/'
 
         Main.navigate path
       end

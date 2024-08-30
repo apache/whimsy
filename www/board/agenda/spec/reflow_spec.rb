@@ -5,12 +5,12 @@
 require_relative 'spec_helper'
 require_relative 'vue_server'
 
-describe "reflow", type: :feature, server: :vue do
+describe 'reflow', type: :feature, server: :vue do
   #
   # Comment form
   #
-  describe "incubator rules" do
-    it "handles ordered lists" do
+  describe 'incubator rules' do
+    it 'handles ordered lists' do
       on_vue_server do
         class TestReflow < Vue
           def render
@@ -24,7 +24,7 @@ describe "reflow", type: :feature, server: :vue do
       expect(page.body).to eq "1. a\n2. b"
     end
 
-    it "handles questions and colons" do
+    it 'handles questions and colons' do
       on_vue_server do
         class TestReflow < Vue
           def render
@@ -38,8 +38,8 @@ describe "reflow", type: :feature, server: :vue do
       expect(page.body).to eq "a?\nb:\nc"
     end
 
-    it "leaves long URLs alone" do
-      @line = "[7] http://example.com" + "/foobar" * 12
+    it 'leaves long URLs alone' do
+      @line = '[7] http://example.com' + '/foobar' * 12
 
       on_vue_server do
         line = @line

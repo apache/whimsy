@@ -11,7 +11,7 @@ end
 
 # Run system and abort if it fails
 def system!(*args)
-  system(*args) or raise "system!() failed!"
+  system(*args) or raise 'system!() failed!'
 end
 
 # update gems and restart applications as needed
@@ -56,9 +56,9 @@ task :update, [:command] do |_task, args|
     gemlines = Dir['**/Gemfile'].
       map {|file| File.read file}.join.scan(/^\s*gem\s.*/)
 
-    if File.exist? "asf.gemspec"
+    if File.exist? 'asf.gemspec'
       gemlines +=
-        File.read("asf.gemspec").scan(/add_dependency\((.*)\)/).
+        File.read('asf.gemspec').scan(/add_dependency\((.*)\)/).
         map {|(line)| "gem #{line}"}
     end
 
@@ -71,19 +71,19 @@ task :update, [:command] do |_task, args|
       Dir.chdir dir do
         contents = [
           "source 'https://rubygems.org'",
-          "ldapversion = nil", # Needed for initial gem setup
+          'ldapversion = nil', # Needed for initial gem setup
           gems.values
         ].join("\n")
-        File.write "Gemfile", contents
-        $stderr.puts "* Preloading gems..."
+        File.write 'Gemfile', contents
+        $stderr.puts '* Preloading gems...'
         system!('bundle', 'install')
-        $stderr.puts "* ... done"
+        $stderr.puts '* ... done'
       end
     end
   end
 
   # update gems
-  $stderr.puts "* Update Gems" # use stderr so output appears in syslog
+  $stderr.puts '* Update Gems' # use stderr so output appears in syslog
   Dir['**/Gemfile'].each do |gemfile|
     Dir.chdir File.dirname(gemfile) do
       ruby = File.read('Gemfile')[/^ruby ['"](.*?)['"]/, 1]
@@ -103,7 +103,7 @@ task :update, [:command] do |_task, args|
       # if new gems were installed and this directory contains a passenger
       #  application, restart it
       if (File.mtime('Gemfile.lock') rescue Time.at(0)) != locktime
-        $stderr.puts "* Gemfile.lock was updated"
+        $stderr.puts '* Gemfile.lock was updated'
         if File.exist?('tmp/restart.txt')
           FileUtils.touch 'tmp/.restart.txt'
           FileUtils.chmod 0o777, 'tmp/.restart.txt'
@@ -184,7 +184,7 @@ namespace :svn do
 
           next if arg1 == 'skip'
           if noCheckout
-            puts "Skipping" if depth == 'skip' # Must agree with monitors/svn.rb
+            puts 'Skipping' if depth == 'skip' # Must agree with monitors/svn.rb
             next
           end
 
@@ -300,7 +300,7 @@ namespace :svn do
       if errors > 0
         puts "** Found #{errors} error(s) **"
       else
-        puts "** No errors found **"
+        puts '** No errors found **'
       end
     end
   end
@@ -387,7 +387,7 @@ LDAP_WHIMSY_PATH = '../.ldap_whimsy.tmp'
 def getpass(user_dn)
   pw = $stdin.getpass("password for #{user_dn}: ")
   return pw unless pw == '*'
-  if RbConfig::CONFIG["host_os"].start_with? 'darwin'
+  if RbConfig::CONFIG['host_os'].start_with? 'darwin'
     pw, status = Open3.capture2('security', 'find-generic-password', '-a', user_dn, '-w')
     raise "ERROR: problem running security: #{status}" unless status.success?
   else
@@ -401,23 +401,23 @@ def ldap_init
   require 'io/console' # cannot prompt from container, so need to do this upfront
   require 'whimsy/asf/config'
 
-  whimsy_dn = ASF::Config.get(:whimsy_dn) or raise "ERROR: Must provide whimsy_dn value in .whimsy"
+  whimsy_dn = ASF::Config.get(:whimsy_dn) or raise 'ERROR: Must provide whimsy_dn value in .whimsy'
   whimsy_pw = getpass(whimsy_dn)
-  raise "ERROR: Password is required" unless whimsy_pw.size > 1
+  raise 'ERROR: Password is required' unless whimsy_pw.size > 1
 
   httpd_dn = ASF::Config.get(:httpd_dn)
   if httpd_dn
     httpd_pw = getpass(httpd_dn)
-    raise "ERROR: Password is required" unless httpd_pw.size > 1
+    raise 'ERROR: Password is required' unless httpd_pw.size > 1
   else # default to whimsy credentials
     httpd_dn = whimsy_dn
     httpd_pw = whimsy_pw
   end
-  File.open(LDAP_HTTPD_PATH, "w", 0o600) do |w|
+  File.open(LDAP_HTTPD_PATH, 'w', 0o600) do |w|
     w.puts httpd_dn
     w.puts httpd_pw
   end
-  File.open(LDAP_WHIMSY_PATH, "w", 0o600) do |w|
+  File.open(LDAP_WHIMSY_PATH, 'w', 0o600) do |w|
     w.puts whimsy_dn
     w.puts whimsy_pw
   end
@@ -427,7 +427,7 @@ end
 def filter(src, dst, ldaphosts, ldapbinddn, ldapbindpw)
   require 'erb'
   template = ERB.new(File.read(src))
-  File.open(dst, "w") do |w|
+  File.open(dst, 'w') do |w|
     w.write(template.result(binding))
   end
 end
@@ -450,9 +450,9 @@ def ldap_setup
   $LOAD_PATH.unshift 'lib'
   require 'whimsy/asf/config'
   hosts = ASF::Config.get(:ldap)
-  raise "ERROR: Must define :ldap in ../.whimsy" unless hosts
+  raise 'ERROR: Must define :ldap in ../.whimsy' unless hosts
 
-  ldaphosts = hosts.join(" ").gsub('ldaps://', '')
+  ldaphosts = hosts.join(' ').gsub('ldaps://', '')
 
   filter('docker-config/whimsy.conf',
     '/etc/apache2/sites-enabled/000-default.conf', ldaphosts, ldapbinddn, ldapbindpw)

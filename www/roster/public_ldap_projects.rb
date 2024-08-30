@@ -51,7 +51,7 @@ entries = {}
 projects = ASF::Project.preload # for performance
 
 if projects.empty?
-  Wunderbar.error "No results retrieved, output not created"
+  Wunderbar.error 'No results retrieved, output not created'
   exit 0
 end
 

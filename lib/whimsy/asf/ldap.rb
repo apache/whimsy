@@ -79,12 +79,12 @@ module ASF
           return ldap
         rescue ::LDAP::ResultError => re
           Wunderbar.warn "[#{host}] - Error connecting to LDAP server: " +
-            re.message + " (continuing)"
+            re.message + ' (continuing)'
         end
 
       end
 
-      Wunderbar.error "Failed to connect to any LDAP host"
+      Wunderbar.error 'Failed to connect to any LDAP host'
       return nil
     end
 
@@ -169,10 +169,10 @@ module ASF
         if File.exist? conf
           uris = File.read(conf)[/^uri\s+(.*)/i, 1].to_s
           hosts = uris.scan(%r{ldaps?://\S+}) # May not have a port
-          Wunderbar.debug "Using hosts from LDAP config"
+          Wunderbar.debug 'Using hosts from LDAP config'
         end
       else
-        Wunderbar.debug "Using hosts from Whimsy config"
+        Wunderbar.debug 'Using hosts from Whimsy config'
       end
 
       # There is no default
@@ -240,7 +240,7 @@ module ASF
 
     # determine if ldap has been configured at least once
     def self.configured?
-      return File.read("#{ETCLDAP}/ldap.conf").include? "asf-ldap-client.pem"
+      return File.read("#{ETCLDAP}/ldap.conf").include? 'asf-ldap-client.pem'
     end
 
     # modify an entry in LDAP; dump information on LDAP errors
@@ -1038,9 +1038,9 @@ module ASF
 
       # defaults
       attrs['loginShell'] ||= '/bin/bash' # as per asfpy.ldap
-      attrs['homeDirectory'] ||= File.join("/home", availid)
-      attrs['host'] ||= "home.apache.org"
-      attrs['asf-sascore'] ||= "10"
+      attrs['homeDirectory'] ||= File.join('/home', availid)
+      attrs['host'] ||= 'home.apache.org'
+      attrs['asf-sascore'] ||= '10'
 
       # parse name if sn has not been provided (givenName is optional)
       attrs = ASF::Person.ldap_name(attrs['cn']).merge(attrs) unless attrs['sn']
@@ -1094,7 +1094,7 @@ module ASF
     # fetch <tt>dn</tt>, <tt>member</tt>, <tt>modifyTimestamp</tt>, and
     # <tt>createTimestamp</tt> for all groups in LDAP.
     def self.preload
-      Hash[ASF.search_one(base, "cn=*", %w(dn memberUid modifyTimestamp createTimestamp)).map do |results|
+      Hash[ASF.search_one(base, 'cn=*', %w(dn memberUid modifyTimestamp createTimestamp)).map do |results|
         cn = results['dn'].first[/^cn=(.*?),/, 1]
         group = ASF::Group.find(cn)
         group.modifyTimestamp = results['modifyTimestamp'].first # it is returned as an array of 1 entry
@@ -1207,7 +1207,7 @@ module ASF
     # fetch <tt>dn</tt>, <tt>member</tt>, <tt>modifyTimestamp</tt>, and
     # <tt>createTimestamp</tt> for all projects in LDAP.
     def self.preload
-      Hash[ASF.search_one(base, "cn=*", %w(dn member owner modifyTimestamp createTimestamp)).map do |results|
+      Hash[ASF.search_one(base, 'cn=*', %w(dn member owner modifyTimestamp createTimestamp)).map do |results|
         cn = results['dn'].first[/^cn=(.*?),/, 1]
         project = self.find(cn)
         project.modifyTimestamp = results['modifyTimestamp'].first # it is returned as an array of 1 entry
@@ -1457,7 +1457,7 @@ module ASF
     # <tt>createTimestamp</tt> for all services in LDAP.
     # N.B. some services have memberUid rather than member entries
     def self.preload
-      Hash[ASF.search_one(base, "cn=*", %w(dn member memberUid modifyTimestamp createTimestamp)).map do |results|
+      Hash[ASF.search_one(base, 'cn=*', %w(dn member memberUid modifyTimestamp createTimestamp)).map do |results|
         cn = results['dn'].first[/^cn=(.*?),/, 1]
         service = self.find(cn)
         service.modifyTimestamp = results['modifyTimestamp'].first # it is returned as an array of 1 entry

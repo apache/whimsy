@@ -48,7 +48,7 @@ class PPMCCommitters < Vue
                 if pending.length == 2
                   list = "#{pending[0]} and #{pending[1]}"
                 else
-                  list = pending[0..-2].join(', ') + ", and " +  pending[-1]
+                  list = pending[0..-2].join(', ') + ', and ' +  pending[-1]
                 end
 
                 _button.btn.btn_success 'Add all as committers',
@@ -122,7 +122,7 @@ class PPMCCommitter < Vue
               data_action: 'add icommit',
               data_target: '#confirm', data_toggle: 'modal',
               data_confirmation: "Add #{@@person.name} as a committer " +
-                "for the incubator PPMC?"
+                'for the incubator PPMC?'
           end
         end
       elsif not @@person.icommit

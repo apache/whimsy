@@ -34,7 +34,7 @@ module ASF
     class Committers < Rack::Auth::Basic
       # Specify 'ASF Committers' as the HTTP auth Realm
       def initialize(app)
-        super(app, "ASF Committers", &proc {})
+        super(app, 'ASF Committers', &proc {})
       end
 
       # Returns <tt>unauthorized</tt> unless running in test mode or
@@ -60,7 +60,7 @@ module ASF
     class MembersAndOfficers < Rack::Auth::Basic
       # Specify 'ASF Members and Officers' as the HTTP auth Realm
       def initialize(app, &block)
-        super(app, "ASF Members and Officers", &proc {})
+        super(app, 'ASF Members and Officers', &proc {})
         @block = block
       end
 

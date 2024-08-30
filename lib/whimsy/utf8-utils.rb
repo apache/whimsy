@@ -11,8 +11,8 @@ module UTF8Utils
   # If that does not work, then it tries ISO-8859-1
   def self.repair(src, dst, verbose=false)
     opts = {undef: :replace, invalid: :replace}
-    ec1 = Encoding::Converter.new('utf8-softbank', "UTF-8", **opts)
-    ec2 = Encoding::Converter.new('iso-8859-1', "UTF-8", **opts)
+    ec1 = Encoding::Converter.new('utf8-softbank', 'UTF-8', **opts)
+    ec2 = Encoding::Converter.new('iso-8859-1', 'UTF-8', **opts)
 
     open(dst,'w:utf-8') do |w|
       open(src,'rb').each do |l|

@@ -114,12 +114,12 @@ module ASF
     # create a member nomination entry in the standard format
     #
     def self.make_member_nomination(fields = {})
-      availid = fields[:availid] or raise ArgumentError.new(":availid is required")
+      availid = fields[:availid] or raise ArgumentError.new(':availid is required')
       publicname = ASF::Person[availid]&.cn or raise ArgumentError.new(":availid #{availid} is invalid")
-      nomby = fields[:nomby] or raise ArgumentError.new(":nomby is required")
-      ASF::Person[nomby]&.dn or raise ArgumentError.new(":nomby is invalid")
+      nomby = fields[:nomby] or raise ArgumentError.new(':nomby is required')
+      ASF::Person[nomby]&.dn or raise ArgumentError.new(':nomby is invalid')
       secby = fields[:secby] || ''
-      statement = fields[:statement] or raise ArgumentError.new(":statement is required")
+      statement = fields[:statement] or raise ArgumentError.new(':statement is required')
       [
         '',
         " #{availid} <#{publicname}>",
@@ -137,12 +137,12 @@ module ASF
     # create a board nomination entry in the standard format
     #
     def self.make_board_nomination(fields = {})
-      availid = fields[:availid] or raise ArgumentError.new(":availid is required")
+      availid = fields[:availid] or raise ArgumentError.new(':availid is required')
       publicname = ASF::Person[availid]&.cn or raise ArgumentError.new(":availid #{availid} is invalid")
-      nomby = fields[:nomby] or raise ArgumentError.new(":nomby is required")
-      ASF::Person[nomby]&.dn or raise ArgumentError.new(":nomby is invalid")
+      nomby = fields[:nomby] or raise ArgumentError.new(':nomby is required')
+      ASF::Person[nomby]&.dn or raise ArgumentError.new(':nomby is invalid')
       secby = fields[:secby] || ''
-      statement = fields[:statement] or raise ArgumentError.new(":statement is required")
+      statement = fields[:statement] or raise ArgumentError.new(':statement is required')
       [
         '',
         "   #{publicname}",
@@ -262,7 +262,7 @@ if __FILE__ == $0
        v['Public Name']&.encoding,
        v['Public Name']&.valid_encoding?]
   end
-  puts "--------------"
+  puts '--------------'
   ASF::MemberFiles.board_nominees.each do |k, v|
     p [k,
        v['Public Name'],

@@ -1,6 +1,6 @@
 # find indicated mailbox in the list of available mailboxes
 # This code is invoked by workbench/server.rb
-available = Dir[File.join(ARCHIVE, "*.yml")].sort
+available = Dir[File.join(ARCHIVE, '*.yml')].sort
 index = available.find_index File.join(ARCHIVE, "#{@mbox}.yml")
 
 # if found, process it
@@ -9,7 +9,7 @@ if index
 
   if index > 0
     prevmbox = available[index-1]
-    prevmbox = nil unless YAML.load_file(prevmbox).any? do |key, mail|
+    prevmbox = nil unless YAML.load_file(prevmbox)&.any? do |key, mail|
       mail[:status] != :deleted and not Message.attachments(mail).empty?
     end
   end
@@ -18,5 +18,11 @@ if index
   {
     mbox: (File.basename(prevmbox, '.yml') if prevmbox),
     messages: Mailbox.new(@mbox).client_headers
+  }
+else
+  # ensure we return something usable
+  {
+    mbox: nil,
+    messages: []
   }
 end

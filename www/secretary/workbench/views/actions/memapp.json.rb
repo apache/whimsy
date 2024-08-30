@@ -21,7 +21,7 @@ if "#{@filename}#{fileext}" =~ /\A\w[-\w]*\.?\w*\z/ # check taint requirements
     _warn "documents/member_apps/#{form} already exists"
   end
 else
-  _warn "Invalid filename or extension"
+  _warn 'Invalid filename or extension'
 end
 
 _warn "Invalid availid #{@availid}" unless @availid =~ /^\w[-.\w]+$/
@@ -69,7 +69,7 @@ task "svn commit documents/member_apps/#{@filename}#{fileext} and update members
       members = data.split(/^\s+\*\)\s+/)
       members.shift
       members.push @entry
-      members_txt[pattern, 1] = " *) " + members.join("\n *) ")
+      members_txt[pattern, 1] = ' *) ' + members.join("\n *) ")
       members_txt[/We now number (\d+) active members\./, 1] = members.length.to_s
       ASF::Member.sort(members_txt)
     end
@@ -81,7 +81,7 @@ end
 #             update cn=member,ou=groups,dc=apache,dc=org              #
 ########################################################################
 
-task "update cn=member,ou=groups,dc=apache,dc=org in LDAP" do
+task 'update cn=member,ou=groups,dc=apache,dc=org in LDAP' do
   form do
     _input value: @availid, name: 'availid'
   end
@@ -102,7 +102,7 @@ end
 #                   subscribe to members@apache.org                    #
 ########################################################################
 
-task "subscribe to members@apache.org" do
+task 'subscribe to members@apache.org' do
   user = ASF::Person.find(@availid)
   vars = {
     version: 3, # This must match committers/subscribe.cgi#FORMAT_NUMBER
@@ -131,7 +131,7 @@ end
 #              subscribe to members-notify@apache.org                  #
 ########################################################################
 
-task "subscribe to members-notify@apache.org" do
+task 'subscribe to members-notify@apache.org' do
   user = ASF::Person.find(@availid)
   vars = {
     version: 3, # This must match committers/subscribe.cgi#FORMAT_NUMBER
@@ -162,7 +162,7 @@ end
 
 # TODO combine with other SVN updates
 
-task "svn commit memapp-received.text" do
+task 'svn commit memapp-received.text' do
   file = ASF::MeetingUtil.get_latest_file('memapp-received.txt')
   received = File.read(file)
   original = received[/.*\s#{@availid}\s.*/]

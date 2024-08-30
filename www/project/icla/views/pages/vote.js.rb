@@ -19,13 +19,13 @@ class Vote < Vue
     end
     console.log('phase: ' + @phase)
     if not @token
-      @alert = "Token is required for this page"
+      @alert = 'Token is required for this page'
     elsif @phase == 'unknown'
-      @alert = "Cannot determine phase: could not read token file"
+      @alert = 'Cannot determine phase: could not read token file'
     elsif @phase == 'error'
       @alert = @progress[:errorMessage]
     elsif @phase != 'vote'
-      @alert = "Wrong phase: " + @phase + "; should be vote"
+      @alert = 'Wrong phase: ' + @phase + '; should be vote'
     else
       @pmc = @progress[:project]
       console.log('pmc: ' + @pmc)
@@ -49,19 +49,19 @@ class Vote < Vue
       vote to invite a contributor to become a committer or a PMC/PPMC member.
     }
     if @phase == 'vote'
-      _b "Project: " + @pmc
+      _b 'Project: ' + @pmc
       _p
-      _b "Contributor: " + @iclaname + " (" + @iclaemail + ")"
+      _b 'Contributor: ' + @iclaname + ' (' + @iclaemail + ')'
       _p
-      _b "Proposed by: " + @proposer
+      _b 'Proposed by: ' + @proposer
       _p
-      _p "Subject: " + @subject
+      _p 'Subject: ' + @subject
       _p
       _div.form_group.vote do
         _label do
           _input type: 'radio', name: 'vote', value: '+1',
           onClick: lambda {@vote = '+1'; @showComment = false; checkValidity()}
-          _span " +1 approve "
+          _span ' +1 approve '
         end
         _p
         _label do
@@ -79,7 +79,7 @@ class Vote < Vue
         _label do
           _input type: 'radio', name: 'vote', value: '-1',
           onClick: lambda {@vote = '-1'; @showComment = true; checkValidity()}
-          _span " -1 disapprove, because... "
+          _span ' -1 disapprove, because... '
         end
         _p
       end
@@ -240,9 +240,9 @@ class Vote < Vue
       newPhase: newPhase,
     }
     data['comment']=@commentBody if @vote == '-1'
-    console.log(">update: "+ data.inspect) # debug
+    console.log('>update: '+ data.inspect) # debug
     post 'update', data do |response|
-      console.log("<update: "+ response.inspect) # debug
+      console.log('<update: '+ response.inspect) # debug
       @alert = response.error
       unless @alert
         @votes = response['contents']['votes']

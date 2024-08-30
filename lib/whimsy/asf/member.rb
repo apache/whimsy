@@ -216,7 +216,7 @@ module ASF
             end
           end
         else # can this happen?
-          raise ArgumentError, "Unexpected section with nil status!"
+          raise ArgumentError, 'Unexpected section with nil status!'
         end
       end
       end.each(&block)
@@ -265,7 +265,7 @@ module ASF
         # split into entries, and normalize those entries
         entries = section.split(/^\s\*\)\s/)
         header = entries.shift
-        entries.map! {|entry| " *) " + entry.strip + "\n\n"}
+        entries.map! {|entry| ' *) ' + entry.strip + "\n\n"}
 
         # sort the entries
         entries.sort_by! do |entry|
@@ -338,9 +338,9 @@ module ASF
     #  :tele - optional
     #  :fax - optional
     def self.make_entry(fields={})
-      fullname = fields[:fullname] or raise ArgumentError.new(":fullname is required")
+      fullname = fields[:fullname] or raise ArgumentError.new(':fullname is required')
       address = fields[:address] || '<postal address>'
-      availid = fields[:availid] or raise ArgumentError.new(":availid is required")
+      availid = fields[:availid] or raise ArgumentError.new(':availid is required')
       email = fields[:email] || "#{availid}@apache.org"
       country = fields[:country] || '<Country>'
       tele = fields[:tele] || '<phone number>'
@@ -353,7 +353,7 @@ module ASF
         ("    Email: #{email}" unless email.empty?),
         ("      Tel: #{tele}" unless tele.empty?),
         ("      Fax: #{fax}"  unless fax.empty?),
-        " Forms on File: ASF Membership Application",
+        ' Forms on File: ASF Membership Application',
         " Avail ID: #{availid}"
       ].compact.join("\n") + "\n"
     end
@@ -363,7 +363,7 @@ module ASF
     # text entry from <tt>members.txt</tt>.  If <tt>full</tt> is <tt>true</tt>,
     # this will also include the text delimiters.
     def members_txt(full = false)
-      prefix, suffix = " *) ", "\n\n" if full
+      prefix, suffix = ' *) ', "\n\n" if full
       # Is the cached text still valid?
       unless @members_time == ASF::Member.mtime
         @members_txt = nil

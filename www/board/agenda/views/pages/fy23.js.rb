@@ -35,8 +35,8 @@ class FY23 < Vue
       .table tbody tr td a {color: blue; text-decoration:underline}
     }
 
-    _p "Instructions: change any input field and press the tab key to see " +
-      "new results. Try to keep FY23 Budget Cash non-negative."
+    _p 'Instructions: change any input field and press the tab key to see ' +
+      'new results. Try to keep FY23 Budget Cash non-negative.'
 
     _table.table.table_sm.table_striped do
       _thead do
@@ -274,7 +274,7 @@ class FY23 < Vue
       end
     end
 
-    _p "Units are in thousands of dollars US."
+    _p 'Units are in thousands of dollars US.'
   end
 
   # evaluate computed fields

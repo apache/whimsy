@@ -66,9 +66,9 @@ _html do
         _ 'Click on a column heading to change the sort order ('
         color.each do |state, clazz|
           _span state, class: clazz
-          _ " "
+          _ ' '
         end
-        _ ")"
+        _ ')'
       end
 
       _table.table.table_hover do

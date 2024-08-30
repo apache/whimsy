@@ -5,7 +5,7 @@ class ActionReminder < Vue
   def initialize
     @disabled = false
     @list = @@item.actions.map do |action|
-      Object.assign({complete: action.status != ""}, action)
+      Object.assign({complete: action.status != ''}, action)
     end
   end
 
@@ -50,18 +50,18 @@ class ActionReminder < Vue
     @disabled = true
     post 'remind-actions', data do |response|
       if not response
-        alert("Server error - check console log")
+        alert('Server error - check console log')
       elsif dryrun
         console.log Object.values(response.sent).join("\n---\n\n")
         response.delete(:sent)
         console.log response
-        alert("Dry run - check console log")
+        alert('Dry run - check console log')
       elsif response.count == @list.length
         alert("Reminders have been sent to: #{response.sent.keys.join(', ')}.")
       elsif response.count and response.unsent
         alert("Error: no emails were sent to #{response.unsent.inspect}")
       else
-        alert("No reminders were sent")
+        alert('No reminders were sent')
       end
 
       @disabled = false

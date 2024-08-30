@@ -70,7 +70,7 @@ class MemApp < Vue
     jQuery.getJSON('../../memapp.json') do |result|
       @received = result.received
       if @received.length == 0
-        alert "No entries found - has memapp-received.txt been set up yet? (It needs to be populated once the list of elected members is known: see Meetings/runbook.txt)"
+        alert 'No entries found - has memapp-received.txt been set up yet? (It needs to be populated once the list of elected members is known: see Meetings/runbook.txt)'
       end
     end
 

@@ -57,7 +57,7 @@ class IclaSearch < Vue
           _input.form_control autofocus: true, value: @search,
             onInput: self.change
           _span.input_group_addon do
-            _span.glyphicon.glyphicon_user aria_label: "Committer ID or name"
+            _span.glyphicon.glyphicon_user aria_label: 'Committer ID or name'
           end
         end
       end

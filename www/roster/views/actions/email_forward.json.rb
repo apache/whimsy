@@ -24,7 +24,7 @@ if @email_forward  # must agree with email_forward.js.rb
   end
 
   if  @email_forward.empty?
-    _error "Forwarding email address must not be empty!"
+    _error 'Forwarding email address must not be empty!'
     return
   end
 

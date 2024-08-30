@@ -54,7 +54,7 @@ YYYYMMDD = ARGV.shift || '20*' # Allow override of minutes to process
 TIME_DIFF = (ARGV.shift || '300').to_i # Allow override of seconds of time diff (WHIMSY-204) for testing
 
 MINUTES_NAME = "board_minutes_#{YYYYMMDD}.txt"
-MINUTES_PATH = File.join(SVN_SITE_RECORDS_MINUTES, "*", MINUTES_NAME)
+MINUTES_PATH = File.join(SVN_SITE_RECORDS_MINUTES, '*', MINUTES_NAME)
 
 Wunderbar.info "Processing minutes matching #{MINUTES_NAME}"
 
@@ -88,7 +88,7 @@ if File.exist? INDEX_FILE
   end
 end
 
-Wunderbar.info "Processing input files"
+Wunderbar.info 'Processing input files'
 
 # mapping of committee names to canonical names (generally from ldap)
 canonical = Hash.new {|hash, name| name}
@@ -119,7 +119,7 @@ if File.exist?(local_copy) && (Time.now - File.stat(local_copy).mtime < 3600)
   Wunderbar.info "Using #{local_copy}"
   cinfo = JSON.parse(File.read(local_copy))
 else
-  Wunderbar.info "Fetching remote copy of committee-info.json"
+  Wunderbar.info 'Fetching remote copy of committee-info.json'
   response = Net::HTTP.get_response(URI(DATAURI))
   response.value() # Raises error if not OK
   cinfo = JSON.parse(response.body)
@@ -141,13 +141,13 @@ get = Net::HTTP::Get.new CALENDAR.request_uri
 $calendar = Nokogiri::HTML(http.request(get).body.gsub('&raquo', '&#187;').gsub('&nbsp;', '&#160;'))
 
 # Link to headerlink css
-link = Nokogiri::XML::Node.new "link", $calendar
+link = Nokogiri::XML::Node.new 'link', $calendar
 link.set_attribute('rel', 'stylesheet')
 link.set_attribute('href', 'https://www.apache.org/css/headerlink.css')
 $calendar.at('head').add_child(link)
 
 # add some style
-style = Nokogiri::XML::Node.new "style", $calendar
+style = Nokogiri::XML::Node.new 'style', $calendar
 style.content = %{
   table {
     border: 1px solid #ccc;
@@ -728,7 +728,7 @@ seen={}
   end
 
   if DUMP_PENDING
-    puts "Dump of pending data for " + date
+    puts 'Dump of pending data for ' + date
     pending.each do |k,v|
       puts "#{k} #{k == v.attach ? '==' : '!='} #{v.attach}"
       puts v.title
@@ -756,13 +756,13 @@ seen={}
 end
 
 if DUMP_AGENDA
-  puts "Dump of agenda data for this run"
+  puts 'Dump of agenda data for this run'
   agenda.each do |title, reports|
     p [reports.length > 1 ? '>1' : '=1', reports.last.attach[0..1], reports.length, title]
   end
 end
 
-Wunderbar.info "Starting to generate output"
+Wunderbar.info 'Starting to generate output'
 
 # determine link for each report
 link = {}
@@ -786,7 +786,7 @@ def layout(title = nil)
     $calendar.at('title').content = "Board Meeting Minutes - #{title}"
 #   $calendar.at('h2').content = "Board Meeting Minutes - #{title}"
   else
-    $calendar.at('title').content = "Board Meeting Minutes"
+    $calendar.at('title').content = 'Board Meeting Minutes'
 #   $calendar.at('h2').content = "Board Meeting Minutes"
   end
 
@@ -811,7 +811,7 @@ def layout(title = nil)
         x.text! "Last run: #{STAMP}. The data is extracted from a list of"
       end
       x.a 'minutes', :href => 'http://www.apache.org/foundation/records/minutes/'
-      x.text! "which have been approved by the Board."
+      x.text! 'which have been approved by the Board.'
       x.br
       x.strong 'Please Note'
       # squiggly heredoc causes problems for Eclipse plugin, but leading spaces don't matter here
@@ -876,13 +876,13 @@ agenda.sort.each do |title, reports|
       _id = report.meeting.gsub('_', '-')
       x.h2 id: _id do
         if report.posted
-          href = "http://apache.org/foundation/records/minutes/" +
+          href = 'http://apache.org/foundation/records/minutes/' +
             "#{report.meeting[0...4]}/board_minutes_#{report.meeting}.txt"
         else
           href = ASF::SVN.svnpath!('foundation_board', "board_minutes_#{report.meeting}.txt")
         end
 
-        x.a Date.parse(report.meeting.gsub('_','/')).strftime("%d %b %Y"),
+        x.a Date.parse(report.meeting.gsub('_','/')).strftime('%d %b %Y'),
           href: href, id: "minutes_#{report.meeting}"
         if report.owners
           x.span "[#{report.owners}]", :style => 'font-size: 14px'
@@ -893,8 +893,8 @@ agenda.sort.each do |title, reports|
       x.h3 report.subtitle if report.subtitle
 
       if report.posted
-        text = report.text.gsub(/^\t+/) {|tabs| " " * (8*tabs.length)}
-        text.gsub!(/ *$/, "")
+        text = report.text.gsub(/^\t+/) {|tabs| ' ' * (8*tabs.length)}
+        text.gsub!(/ *$/, '')
         indent = text.scan(/^([ ]+)/).flatten.min.to_s.length - 1
         text.gsub! /^#{' '*indent}/, '' if indent > 0
         text = $1 + text if text =~ /\A\w.*\n(\s+)/
@@ -904,7 +904,7 @@ agenda.sort.each do |title, reports|
 
         if report.comments and report.comments.strip != ''
           report.comments.split(/\n\s*\n/).each do |p|
-            x.p p, :style => "width: 40em"
+            x.p p, :style => 'width: 40em'
           end
         elsif text.strip.empty?
           if report.subtitle and not report.subtitle.empty?
@@ -949,7 +949,7 @@ end
 # output index
 agenda = agenda.sort_by {|title, reports| title.downcase}
 page = layout do |x|
-  x.h2 "Executive Officer Reports", :id => 'executive'
+  x.h2 'Executive Officer Reports', :id => 'executive'
   x.ul do
     agenda.each do |title, reports|
       next unless reports.last.attach =~ /^\*/
@@ -959,7 +959,7 @@ page = layout do |x|
       end
     end
   end
-  x.h2 "Additional Officer Reports", :id => 'officer'
+  x.h2 'Additional Officer Reports', :id => 'officer'
   x.ul do
     agenda.each do |title, reports|
       next unless reports.last.attach =~ /^\d/
@@ -969,7 +969,7 @@ page = layout do |x|
       end
     end
   end
-  x.h2 "Committee Reports", :id => 'committee'
+  x.h2 'Committee Reports', :id => 'committee'
   list = []
   agenda.each do |title, reports|
     next unless reports.last.attach =~ /^[A-Z]/
@@ -1001,7 +1001,7 @@ page = layout do |x|
       end
     end
   end
-  x.h2 "Podling Reports", :id => 'podling'
+  x.h2 'Podling Reports', :id => 'podling'
   list = []
   agenda.each do |title, reports|
     next unless reports.last.attach =~ /^[.]/
@@ -1034,7 +1034,7 @@ page = layout do |x|
       end
     end
   end
-  x.h2 "Repeating Special Orders", :id => 'orders'
+  x.h2 'Repeating Special Orders', :id => 'orders'
   x.ul do
     agenda.each do |title, reports|
       next unless reports.last.attach =~ /^@/
@@ -1044,7 +1044,7 @@ page = layout do |x|
       end
     end
   end
-  x.h2 "Other Attachments, Special Orders, and Discussions", :id => 'other'
+  x.h2 'Other Attachments, Special Orders, and Discussions', :id => 'other'
   x.ul do
     other = {}
     agenda.each do |title, reports|
@@ -1058,7 +1058,7 @@ page = layout do |x|
       end
     end
   end
-  x.h2 "Other Agenda Items", :id => 'agenda'
+  x.h2 'Other Agenda Items', :id => 'agenda'
   x.ul do
     agenda.each do |title, reports|
       next unless reports.last.attach =~ /^\+/

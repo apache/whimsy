@@ -19,7 +19,7 @@ end
 # wait for server to start
 10.times do |i|
   begin
-    Net::HTTP.get_response(URI.parse("http://localhost:3000/"))
+    Net::HTTP.get_response(URI.parse('http://localhost:3000/'))
     break
   rescue Errno::ECONNREFUSED
   end
@@ -35,20 +35,20 @@ threads = ASF::Service['board'].members.map do |person|
     File.unlink "test/work/data/#{userid}.yml" rescue nil
 
     # approve tomcat
-    uri = URI.parse("http://localhost:3000/json/approve")
+    uri = URI.parse('http://localhost:3000/json/approve')
     http = Net::HTTP.new(uri.host, uri.port)
     request = Net::HTTP::Post.new(uri.request_uri)
-    request.basic_auth(userid, "password")
-    request.set_form_data agenda: "board_agenda_2015_02_18.txt",
+    request.basic_auth(userid, 'password')
+    request.set_form_data agenda: 'board_agenda_2015_02_18.txt',
       initials: initials, request: 'approve', attach: 'BX'
     response = http.request(request)
 
     # commit
-    uri = URI.parse("http://localhost:3000/json/commit")
+    uri = URI.parse('http://localhost:3000/json/commit')
     http = Net::HTTP.new(uri.host, uri.port)
     request = Net::HTTP::Post.new(uri.request_uri)
-    request.basic_auth(userid, "password")
-    request.set_form_data message: "approve tomcat", initials: initials
+    request.basic_auth(userid, 'password')
+    request.set_form_data message: 'approve tomcat', initials: initials
     response = http.request(request)
     # File.write("#{userid}.response", response.body.force_encoding('utf-8'))
   end

@@ -9,12 +9,12 @@ feature 'report' do
     page.driver.header 'REMOTE_USER', SEC_ID # must be a non-director member of the secretarial team
   end
 
-  it "should allow timestamps to be edited" do
+  it 'should allow timestamps to be edited' do
     visit '/2015-02-18/Call-to-order'
     expect(page).to have_selector 'button', text: 'edit minutes'
   end
 
-  it "should take roll" do
+  it 'should take roll' do
     visit '/2015-02-18/Roll-Call'
     expect(page).to have_selector('h3', text: 'Directors')
     expect(page).to have_selector('a', text: 'Sean Kelly')
@@ -23,7 +23,7 @@ feature 'report' do
     expect(page).to have_selector('h3', text: 'Minutes')
   end
 
-  it "should show minute specific options" do
+  it 'should show minute specific options' do
     visit '/2015-02-18/January-21-2015'
     expect(page).to have_selector 'button', text: 'Cancel'
     expect(page).to have_selector 'button', text: 'Delete'
@@ -32,7 +32,7 @@ feature 'report' do
     expect(page).to have_selector 'button', text: 'Save'
   end
 
-  it "should prompt for action items" do
+  it 'should prompt for action items' do
     visit '/2015-02-18/Hama'
     expect(page).to have_selector 'button', text: 'add minutes'
     expect(page).to have_selector 'option', text: 'Sam'
@@ -40,7 +40,7 @@ feature 'report' do
     expect(page).to have_selector 'button', text: '+ AI'
   end
 
-  it "should show comments and edit minutes" do
+  it 'should show comments and edit minutes' do
     visit '/2015-02-18/Perl'
     expect(page).to have_selector 'button', text: 'edit minutes'
     expect(page).to have_selector 'h3', text: 'Comments'
@@ -50,7 +50,7 @@ feature 'report' do
     expect(page).to have_selector 'button', text: 'Delete'
   end
 
-  it "should show vote" do
+  it 'should show vote' do
     visit '/2015-02-18/Change-MINA-Chair'
     expect(page).to have_selector 'button', text: 'vote'
     expect(page).to have_selector 'span', text: 'Reverse roll call vote'
@@ -59,12 +59,12 @@ feature 'report' do
     expect(page).to have_selector 'button', text: 'Unanimous'
   end
 
-  it "should timestamp adjournment" do
+  it 'should timestamp adjournment' do
     visit '/2015-02-18/Adjournment'
     expect(page).to have_selector 'button', text: 'timestamp'
   end
 
-  it "should draft minutes" do
+  it 'should draft minutes' do
     completed '2015-02-18' do
       visit '/2015-02-18/Adjournment'
       expect(page).not_to have_selector 'button', text: 'timestamp'
@@ -97,7 +97,7 @@ feature 'report' do
     end
   end
 
-  it "should publish minutes" do
+  it 'should publish minutes' do
     visit '/2015-01-21/'
     expect(page).to have_selector 'textarea', text:
       '[21 January 2015](../records/minutes/2015/board_minutes_2015_01_21.txt)'

@@ -20,7 +20,13 @@ require 'json'
 require 'time'
 require 'thread'
 
-class Monitor
+# for debugging purposes must include status
+if __FILE__ == $0
+  $LOAD_PATH.unshift '/srv/whimsy/lib'
+  require 'whimsy/asf/status'
+end
+
+class StatusMonitor
   # match http://getbootstrap.com/components/#alerts
   LEVELS = %w(success info warning danger fatal)
 
@@ -52,7 +58,7 @@ class Monitor
           begin
             # invoke method to determine current status
             previous = baseline[:data][method.to_sym] || {mtime: Time.at(0)}
-            status = Monitor.send(method, previous) || previous
+            status = StatusMonitor.send(method, previous) || previous
 
             # convert non-hashes in proper statuses
             if not status.instance_of? Hash
@@ -94,7 +100,7 @@ class Monitor
       # normalize status
       @status = normalize(data: newstatus)
 
-      File.write(File.expand_path("../../logs/status.data", __FILE__),
+      File.write(File.expand_path('../../logs/status.data', __FILE__),
         @status.inspect)
 
       # update results
@@ -187,5 +193,5 @@ end
 
 # for debugging purposes
 if __FILE__ == $0
-  puts JSON.pretty_generate(Monitor.new(ARGV).status)
+  puts JSON.pretty_generate(StatusMonitor.new(ARGV).status)
 end

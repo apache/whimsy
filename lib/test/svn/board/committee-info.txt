@@ -1,0 +1,23 @@
+INFORMATION ABOUT THE ASF COMMITTEES                         -*-indented-text-*-
+
+...
+
+1. APACHE SOFTWARE FOUNDATION COMMITTEES
+
+
+The Apache Software Foundation has the following Project Management
+Committees (PMCs):
+
+    NAME                    CHAIR
+    ----------              ---------------
+    HTTP Server             Person1 <person1@apache.org>
+
+2. REPORTING PROCESS AND SCHEDULE
+
+
+3. COMMITTEE MEMBERSHIP AND CHANGE PROCESS
+
+* HTTP Server  (est. 02/1995)
+    Person1                    <person1@apache.org>             [1995-02-11]
+    Person2                    <person2@apache.org>             [1995-02-11]
+

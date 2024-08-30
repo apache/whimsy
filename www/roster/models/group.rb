@@ -7,20 +7,20 @@ class Group
     # start with groups that aren't PMCs or podlings etc
     groups = ASF::Group.list.map(&:id)
     groups -= ASF::Project.listids # These are PMCs and podlings and other committees
-    groups.map! {|group| [group, "LDAP group"]}
+    groups.map! {|group| [group, 'LDAP group']}
 
     # add services...
-    groups += ASF::Service.listcns.reject {|s| s == 'apldap'}.map {|service| [service, "LDAP service"]}
+    groups += ASF::Service.listcns.reject {|s| s == 'apldap'}.map {|service| [service, 'LDAP service']}
 
     # add authorization (asf and pit)
     groups += ASF::Authorization.new('asf').to_h.
-      map {|id, _list| [id, "ASF Auth"]}
+      map {|id, _list| [id, 'ASF Auth']}
 
     groups += ASF::Authorization.new('pit').to_h.
-      map {|id, _list| [id, "PIT Auth"]}
+      map {|id, _list| [id, 'PIT Auth']}
 
     # add authorization groups (LDAP)
-    groups += ASF::AuthGroup.listcns.map {|group| [group, "LDAP Auth Group"]}
+    groups += ASF::AuthGroup.listcns.map {|group| [group, 'LDAP Auth Group']}
 
     groups.sort
   end

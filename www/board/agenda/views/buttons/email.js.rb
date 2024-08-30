@@ -79,7 +79,7 @@ class Email < Vue
 
       # strip indentation; concatenate lines within a paragraph
       indent = body[/^\s*/]
-      body = body.strip().gsub(/#{indent}/, "\n").gsub(/(\S)\n(\S)/, "$1 $2")
+      body = body.strip().gsub(/#{indent}/, "\n").gsub(/(\S)\n(\S)/, '$1 $2')
     else
       subject = "#{@@item.title} Board Report"
       body = @@item.comments.join("\n\n")
@@ -122,26 +122,26 @@ class EmailForm < Vue
       # input field: to
       _div.form_group.row do
         _label.col_sm_2 'To', for: 'email-to'
-        _input.col_sm_10.email_to! placeholder: "destination email address",
+        _input.col_sm_10.email_to! placeholder: 'destination email address',
           disabled: @disabled, value: @@email.to
       end
 
       # input field: cc
       _div.form_group.row do
         _label.col_sm_2 'CC', for: 'email-cc'
-        _input.col_sm_10.email_cc! placeholder: "cc list", disabled: @disabled,
+        _input.col_sm_10.email_cc! placeholder: 'cc list', disabled: @disabled,
           value: @@email.cc
       end
 
       # input field: subject
       _div.form_group.row do
         _label.col_sm_2 'Subject', for: 'email-subject'
-        _input.col_sm_10.email_subject! placeholder: "email subject",
+        _input.col_sm_10.email_subject! placeholder: 'email subject',
         disabled: @disabled, value: @@email.subject
       end
 
       # input field: body
-      _textarea.email_body! label: 'Body', placeholder: "email text",
+      _textarea.email_body! label: 'Body', placeholder: 'email text',
         disabled: @disabled, value: @@email.body, rows: 10
 
       _button.btn_default 'Cancel', type: 'button', data_dismiss: 'modal'

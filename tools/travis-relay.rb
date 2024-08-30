@@ -17,7 +17,7 @@ require 'whimsy/asf'
 ASF::Mail.configure
 
 original = Mail.new(STDIN.read.encode(crlf_newline: true))
-exit unless original.from.include? "builds@travis-ci.org"
+exit unless original.from.include? 'builds@travis-ci.org'
 
 copy = Mail.new
 

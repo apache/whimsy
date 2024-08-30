@@ -66,7 +66,7 @@ module ASF
     NAMEADDRLEN = 59 # length of name + email address fields (including separator)
 
     # mapping of committee names to canonical names (generally from ldap)
-    # See also www/roster/committee.cgi
+    # See also www/roster/committee.rb
     @@aliases = Hash.new { |_hash, name| name.downcase}
     @@aliases.merge! \
       'brand management'               => 'brand',
@@ -83,6 +83,7 @@ module ASF
       'java community process'         => 'jcp',
       'legal affairs'                  => 'legal',
       'logging services'               => 'logging',
+      'logo development'               => 'logodev',
       'lucene.net'                     => 'lucenenet',
       'open climate workbench'         => 'climate',
       'ocw'                            => 'climate', # is OCW used?
@@ -143,9 +144,18 @@ module ASF
         'planners@apachecon.com'
       when 'publicaffairs'
         'public-affairs-private@apache.org'
+      when 'logodev'
+        'logo-dev@apache.org' # their only list as at 2024-08-25
       else
         name.downcase
       end
+    end
+
+    # Return the committee private list
+    def private_mail_list
+      ml = mail_list
+      return mail_list if mail_list.include? '@'
+      "private@#{mail_list}.apache.org"
     end
 
     # load committee info from <tt>committee-info.txt</tt>.  Will not reparse
@@ -164,9 +174,9 @@ module ASF
         @nonpmcs, @officers, @committee_info = parse_committee_info_nocache(contents)
       else
         board = ASF::SVN.find('board')
-        return unless board
+        raise ArgumentError.new("Could not find 'board' checkout") unless board
         file = File.join(board, 'committee-info.txt')
-        return unless File.exist? file
+        raise ArgumentError.new("Could not find #{file}") unless File.exist? file
 
         if @committee_mtime and File.mtime(file) <= @committee_mtime
           return @committee_info if @committee_info
@@ -175,6 +185,7 @@ module ASF
         @committee_mtime = File.mtime(file)
         @@svn_change = Time.parse(ASF::SVN.getInfoItem(file, 'last-changed-date')).gmtime
 
+        Wunderbar.debug 'Parsing CI file'
         @nonpmcs, @officers, @committee_info = parse_committee_info_nocache(File.read(file))
       end
       @committee_info
@@ -190,7 +201,7 @@ module ASF
       block = next_month[/(.*#.*\n)+/] || ''
 
       # remove expired entries
-      month = date.strftime("%B")
+      month = date.strftime('%B')
       block.gsub!(/.* # new, monthly through #{month}\n/, '')
 
       # update/remove existing 'missing' entries
@@ -415,7 +426,7 @@ module ASF
         blocks[index + 2].split("\n"),
       ]
 
-      unless slots.any? {|slot| slot.include? "    " + pmc}
+      unless slots.any? {|slot| slot.include? '    ' + pmc}
         # ensure that spacing is uniform
         slots.each {|slot| slot.unshift '' unless slot[0] == ''}
 
@@ -429,7 +440,7 @@ module ASF
         headers = slots[slot].shift(3)
 
         # insert pmc into the reporting schedule
-        slots[slot] << "    " + pmc
+        slots[slot] << '    ' + pmc
 
         # sort entries, case insensitive
         slots[slot].sort_by!(&:downcase)
@@ -526,7 +537,7 @@ module ASF
         # Now weed out the malformed lines
         m = line.match(/^[ \t]+(\w.*?)[ \t][ \t]+(.*)[ \t]+<(.*?)@apache\.org>/)
         if m
-          committee, name, id = m.captures
+          committee, name, id = m.captures # committee may not be canonical here
           unless list[committee].chairs.any? {|chair| chair[:id] == id}
             list[committee].chairs << {name: name, id: id}
           end
@@ -534,6 +545,11 @@ module ASF
           # not possible to determine where one name starts and the other begins
           Wunderbar.warn "Missing separator before chair name in: '#{line}'"
         end
+      end
+      # Any duplicates?
+      dupes = list.group_by{|x| x.first.downcase}.select{|k,v|v.size!=1}
+      if dupes.size > 0
+        Wunderbar.warn "Dulicate chairs: #{dupes}}"
       end
       # Extract the non-PMC committees (e-mail address may be absent)
       # first drop leading text (and Officers) so we only match non-PMCs
@@ -790,4 +806,10 @@ module ASF
     end
 
   end
+
+  # ensure the CI data is pre-loaded
+  # If this is not done, the first committee instance may be incomplete
+  Wunderbar.debug 'Initialising CI file'
+  ASF::Committee.load_committee_info
+
 end

@@ -1,14 +1,14 @@
 #
 # Landing page
 #
-PAGETITLE = "ASF Roster Tool" # Wvisible:projects
+PAGETITLE = 'ASF Roster Tool' # Wvisible:projects
 
 _html do
   _link rel: 'stylesheet', href: "stylesheets/app.css?#{cssmtime}"
 
   _body? do
     if @stamps
-      _.comment! "TIMES %s TIMES" % @stamps.join(',')
+      _.comment! 'TIMES %s TIMES' % @stamps.join(',')
     end
     _whimsy_body(
       title: PAGETITLE,
@@ -170,13 +170,13 @@ _html do
         _hr
         _p do
           _a 'Search pending ICLAs', href: 'icla/'
-          _span.glyphicon.glyphicon_lock :aria_hidden, class: "text-primary", aria_label: "ASF Members and Officers",
-                                                                                   title: "ASF Members and Officers"
+          _span.glyphicon.glyphicon_lock :aria_hidden, class: 'text-primary', aria_label: 'ASF Members and Officers',
+                                                                                   title: 'ASF Members and Officers'
         end
         _p do
           _a 'Organization Chart ', href: 'orgchart/'
-          _span.glyphicon.glyphicon_lock :aria_hidden, class: "text-primary", aria_label: "ASF Members and Officers",
-                                                                                   title: "ASF Members and Officers"
+          _span.glyphicon.glyphicon_lock :aria_hidden, class: 'text-primary', aria_label: 'ASF Members and Officers',
+                                                                                   title: 'ASF Members and Officers'
         end
       end
     end

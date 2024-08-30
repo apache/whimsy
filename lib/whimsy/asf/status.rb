@@ -7,7 +7,7 @@ require 'resolv'
 
 # common methods
 module Status
-  ACTIVE_HOSTNAME = "whimsy.apache.org"
+  ACTIVE_HOSTNAME = 'whimsy.apache.org'
 
   # Cache unchanging values
   @currentIP = nil # may not be resolvable

@@ -48,7 +48,7 @@ def getURI(uri, file)
   # The pool needs a special CA cert
   Net::HTTP.start(uri.host, uri.port, opts ) do |https|
     https.request_get(uri.request_uri) do |res|
-      unless res.code == "200"
+      unless res.code == '200'
         raise Exception.new("Get #{uri} failed with #{res.code}: #{res.message}")
       end
       cl = res.content_length
@@ -58,9 +58,9 @@ def getURI(uri, file)
           raise Exception.new("Content-Length: #{cl} > #{MAX_KEY_SIZE}")
         end
       else
-        Wunderbar.warn "Content-Length not provided, continuing"
+        Wunderbar.warn 'Content-Length not provided, continuing'
       end
-      File.open(file, "w") do |f|
+      File.open(file, 'w') do |f|
         # Save the data directly; don't store in memory
         res.read_body do |segment|
           f.write segment
@@ -80,21 +80,21 @@ def validate_sig(attachment, signature, msgid)
   gpg = `which gpg2`.chomp
   gpg = `which gpg`.chomp if gpg.empty?
 
-  # run gpg verify command
+  # run gpg verify command - this is needed to determine the key-id
   # TODO: may need to drop the keyid-format parameter when gpg is updated as it might
   # reduce the keyid length from the full fingerprint
   out, err, rc = Open3.capture3 gpg,
     '--keyid-format', 'long', # Show a longer id
     '--verify', signature.path, attachment.path
 
-  # if key is not found, fetch and try again
-  if
-    err.include? "gpg: Can't check signature: No public key" or
-    err.include? "gpg: Can't check signature: public key not found"
-  then
-    # extract and fetch key
-    keyid = err[/[RD]SA key (ID )?(\w+)/,2]
+  # N.B. the code now always fetches the key, so it is guaranteed current.
+  # Might need to consider allowing for using a cached key if fetches fail frequently,
+  # but this should probably be on demand only
 
+  # Look for the keyid so we can fetch the current key
+  keyid = err[/[RD]SA key (ID )?(\w+)/,2]
+  if keyid
+  then
     # Try to fetch the key
     Dir.mktmpdir do |dir|
       found = false
@@ -109,7 +109,7 @@ def validate_sig(attachment, signature, msgid)
             '--batch', '--import', tmpfile
           # For later analysis
           Wunderbar.warn "#{gpg} --import #{tmpfile} rc=#{rc} out=#{out} err=#{err}"
-          if err.include? 'imported: 1' # downloaded key is valid; store it for posterity
+          if err.include?('processed: 1') # downloaded key is valid; store it for posterity
             Dir.mktmpdir do |tmpdir|
               container = ASF::SVN.svnpath!('iclas', '__keys__')
               ASF::SVN.svn!('checkout',[container, tmpdir], {depth: 'empty', env: env})
@@ -186,7 +186,7 @@ end
 
 # Allow direct testing
 if $0 == __FILE__
-  yyyymmid = ARGV.shift or fail "Need yyyymm/msgid"
+  yyyymmid = ARGV.shift or fail 'Need yyyymm/msgid'
   att = ARGV.shift || 'icla.pdf'
   sig = ARGV.shift || att + '.asc'
   @message = "/secretary/workbench/#{yyyymmid}/"

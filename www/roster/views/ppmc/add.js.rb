@@ -4,7 +4,7 @@
 
 class PPMCAdd < Vue
   mixin ProjectAdd
-  options add_tag: "ppmcadd", add_action: 'actions/ppmc'
+  options add_tag: 'ppmcadd', add_action: 'actions/ppmc'
 
   def initialize
     @people = []

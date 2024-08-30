@@ -156,7 +156,7 @@ class Report < Vue
       line = info[0]
       index = info[1]
       replacement = '<span class="hilite" title="reflowed">' +
-        Flow.text(line) + "</span>"
+        Flow.text(line) + '</span>'
 
       text = text.slice(0, index) + replacement +
         text.slice(index + line.length)

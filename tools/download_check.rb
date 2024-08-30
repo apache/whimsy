@@ -65,13 +65,13 @@ def init
   @fails = 0
   if $NO_CHECK_LINKS
     $NOFOLLOW = true
-    I "Will not check links"
+    I 'Will not check links'
   elsif $ALWAYS_CHECK_LINKS
-    I "Will check links even if download page has errors"
+    I 'Will check links even if download page has errors'
   else
-    I "Will check links if download page has no errors"
+    I 'Will check links if download page has no errors'
   end
-  I "Will %s archive.apache.org links in checks" % ($ARCHIVE_CHECK ? 'include' : 'not include')
+  I 'Will %s archive.apache.org links in checks' % ($ARCHIVE_CHECK ? 'include' : 'not include')
 end
 
 # save the result of a test
@@ -138,11 +138,11 @@ def displayHTML
   end
 
   if @fails > 0
-    showList(fatals, "Fatal errors:")
-    showList(errors, "Errors:")
+    showList(fatals, 'Fatal errors:')
+    showList(errors, 'Errors:')
   end
 
-  showList(warns, "Warnings:")
+  showList(warns, 'Warnings:')
 
   _h2_ 'Tests performed'
   _ol do
@@ -155,7 +155,7 @@ def check_url(url)
   uri = URI.parse(url)
   unless uri.scheme
     W "No scheme for URL #{url}, assuming http"
-    uri = URI.parse("http:" + url)
+    uri = URI.parse('http:' + url)
   end
   return uri if %w{http https}.include? uri.scheme
   raise ArgumentError.new("Unexpected url: #{url}")
@@ -245,8 +245,8 @@ def check_hash_loc(h, tlp)
   tlpQE = Regexp.escape(tlp) # in case of meta-chars
   tlpQE = "(?:ooo|#{tlpQE})" if tlp == 'openoffice'
   tlpQE = "(?:lucene|#{tlpQE})" if tlp == 'solr' # temporary override
-  tlpQE = "(?:tubemq|inlong)" if tlp == 'inlong' # renamed
-  tlpQE = "(?:hadoop/)?ozone" if tlp == 'ozone' # moved
+  tlpQE = '(?:tubemq|inlong)' if tlp == 'inlong' # renamed
+  tlpQE = '(?:hadoop/)?ozone' if tlp == 'ozone' # moved
   if h =~ %r{^(https?)://(?:(archive|www)\.)?apache\.org/dist/(?:incubator/)?#{tlpQE}/.*?([^/]+)\.(\w{3,6})$}
     WE "HTTPS! #{h}" unless $1 == 'https'
     return $2 || '', $3, $4 # allow for no host before apache.org
@@ -274,7 +274,7 @@ def get_links(path, body, checkSpaces=false)
   doc = Nokogiri::HTML(body)
   nodeset = doc.css('a[href]')    # Get anchors w href attribute via css
   nodeset.map { |node|
-    tmp = node.attribute("href").to_s
+    tmp = node.attribute('href').to_s
     href = tmp.strip
     if checkSpaces && tmp != href
       W "Spurious space(s) in '#{tmp}'"
@@ -334,10 +334,14 @@ URL2TLP['jspwiki-wiki'] = 'jspwiki' # https://jspwiki-wiki.apache.org/Wiki.jsp?p
 URL2TLP['xmlbeans'] = 'poi' # xmlbeans now being maintained by POI
 PMCS = Set.new # is this a TLP?
 ASF::Committee.pmcs.map do |p|
-  site = p.site[%r{//(.+?)\.apache\.org}, 1]
   name = p.name
-  URL2TLP[site] = name unless site == name
   PMCS << name
+  if p.site
+    site = p.site[%r{//(.+?)\.apache\.org}, 1]
+    URL2TLP[site] = name unless site == name
+  else
+    Wunderbar.warn "PMC has no site: #{name}"
+  end
 end
 
 # Convert text reference to extension
@@ -404,10 +408,10 @@ def _checkDownloadPage(path, tlp, version)
             W "Found reference to NIGHTLY or SNAPSHOT docs?: #{n}"
           else
             # ignore trafficcontrol bugfix message
-            unless n.include? "Fixed TO log warnings when generating snapshots" or
-                  n.include? "Kafka Raft support for snapshots" or
-                  n.include? "zkSnapshotC" or # ZooKeepeer
-                  n.include? "/issues.apache.org/jira/browse/" # Daffodil
+            unless n.include? 'Fixed TO log warnings when generating snapshots' or
+                  n.include? 'Kafka Raft support for snapshots' or
+                  n.include? 'zkSnapshotC' or # ZooKeepeer
+                  n.include? '/issues.apache.org/jira/browse/' # Daffodil
               W "Found reference to NIGHTLY or SNAPSHOT builds: #{n}"
             end
           end
@@ -437,12 +441,12 @@ def _checkDownloadPage(path, tlp, version)
   end
 
   if $CLI
-    puts "Checking link syntax"
+    puts 'Checking link syntax'
     links.each do |h, t|
       if h =~ %r{^([a-z]{3,6})://}
-        W "scheme? %s %s" % [h, t] unless %w(http https).include? $1
+        W 'scheme? %s %s' % [h, t] unless %w(http https).include? $1
       else
-        W "syntax? %s %s" % [h, t] unless h.start_with? '//'
+        W 'syntax? %s %s' % [h, t] unless h.start_with? '//'
       end
     end
   end
@@ -607,7 +611,7 @@ def _checkDownloadPage(path, tlp, version)
   $vercheck.each do |k, w|
     v = w.dup
     typ = v.shift
-    unless v.include? "asc" and v.any? {|e| e =~ /^sha\d+$/ or e == 'md5' or e == 'sha' or e == 'mds'}
+    unless v.include? 'asc' and v.any? {|e| e =~ /^sha\d+$/ or e == 'md5' or e == 'sha' or e == 'mds'}
       if typ == 'live'
         E "#{k} missing sig/hash: (found only: #{v.inspect})"
       elsif typ == 'archive' || typ == 'maven' # Maven does not include recent hash types; so warn only
@@ -620,13 +624,13 @@ def _checkDownloadPage(path, tlp, version)
   end
 
   if @fails > 0 and not $ALWAYS_CHECK_LINKS
-    W "** Not checking links **"
+    W '** Not checking links **'
     $NOFOLLOW = true
   end
 
   # Still check links if versions not seen
   if $versions.size == 0
-    E "Could not detect any artifact versions -- perhaps it needs JavaScript?"
+    E 'Could not detect any artifact versions -- perhaps it needs JavaScript?'
   end
 
   # Check if the links can be read
@@ -834,31 +838,31 @@ if __FILE__ == $0
   checkDownloadPage(url, tlp, version)
 
   # display the test results as text
-  puts ""
-  puts "================="
-  puts ""
+  puts ''
+  puts '================='
+  puts ''
   @tests.each { |t| t.map {|k, v| puts "#{k}: - #{v}"}}
-  puts ""
+  puts ''
   testentries(:W).each { |t| t.map {|k, v| puts "#{k}: - #{v}"}}
   testentries(:E).each { |t| t.map {|k, v| puts "#{k}: - #{v}"}}
   testentries(:F).each { |t| t.map {|k, v| puts "#{k}: - #{v}"}}
-  puts ""
+  puts ''
 
   # Only show in CLI version for now
-  puts "Version summary"
+  puts 'Version summary'
   $versions.sort.each do |k, v|
     puts k
     v.sort.each do |l, w|
       puts "  #{l} #{w}"
     end
   end
-  puts ""
+  puts ''
 
   if @fails > 0
     puts "NAK: #{url} had #{@fails} errors"
   else
     puts "OK: #{url} passed all the tests"
   end
-  puts ""
+  puts ''
 
 end

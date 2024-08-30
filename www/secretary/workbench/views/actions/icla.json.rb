@@ -27,7 +27,7 @@ if "#@filename#{fileext}" =~ /\A\w[-\w]*\.?\w*\z/
       _icla = ASF::ICLA.find_matches(@realname.strip)
       if _icla.size > 0
         lines = []
-        lines << "Found possible duplicate ICLAs:"
+        lines << 'Found possible duplicate ICLAs:'
         _icla.each do |i|
           file = ASF::ICLAFiles.match_claRef(i.claRef)
           lines << [i.legal_name, ASF::SVN.svnpath!('iclas', file)]
@@ -147,7 +147,7 @@ task "email #@email" do
     to: "#{@pubname.inspect} <#{@email}>",
     cc: [
       ('secretary@apache.org' unless use_Bcc),
-      ("private@#{@pmc.mail_list}.apache.org" if @pmc), # copy pmc
+      (@pmc.private_mail_list if @pmc), # copy pmc
       (@podling.private_mail_list if @podling) # copy podling
     ],
     bcc: [ ('secretary@apache.org' if use_Bcc)],
@@ -158,7 +158,7 @@ task "email #@email" do
   if @podling
     mail.header['Reply-To'] = @podling.private_mail_list
   elsif @pmc
-    mail.header['Reply-To'] = "private@#{@pmc.mail_list}.apache.org"
+    mail.header['Reply-To'] = @pmc.private_mail_list
   end
 
   # echo email
@@ -182,7 +182,7 @@ if @valid_user and @pmc and not @votelink.empty?
   #                   acreq/new-account-reqs.txt                       #
   ######################################################################
 
-  task "svn commit infra/acreq/new-account-reqs.txt" do
+  task 'svn commit infra/acreq/new-account-reqs.txt' do
     # construct account request line
     @acreq ||= [
       @user,
@@ -216,13 +216,13 @@ if @valid_user and @pmc and not @votelink.empty?
   #                          email root@                               #
   ######################################################################
 
-  task "email root@apache.org" do
+  task 'email root@apache.org' do
     # build mail from template (already includes TO: root)
     mail = Mail.new(template('acreq.erb'))
 
     # adjust copy lists
     cc = ["#{@pubname.inspect} <#{@email}>"]
-    cc << "private@#{@pmc.mail_list}.apache.org" if @pmc # copy pmc
+    cc << @pmc.private_mail_list if @pmc # copy pmc
     cc << @podling.private_mail_list if @podling # copy podling
     mail.cc = cc.uniq.map {|email| email}
 

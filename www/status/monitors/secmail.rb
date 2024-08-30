@@ -4,7 +4,7 @@
 
 require 'time'
 
-def Monitor.secmail(previous_status)
+def StatusMonitor.secmail(previous_status)
   log = '/srv/mail/procmail.log'
 
 {mtime: File.mtime(log).gmtime.iso8601, level: 'success'} # to agree with normalise

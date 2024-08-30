@@ -7,8 +7,7 @@ class Committee
     return unless pmc.pmc? # Only show PMCs
     owners = pmc.owners
     committers = pmc.committers
-    return if owners.empty? and committers.empty?
-
+    # These may be empty if there is no matching LDAP group, e.g. during initial setup
     ASF::Committee.load_committee_info
     # We'll be needing the mail data later
     ASF::Person.preload(['cn', 'mail', 'asf-altEmail', 'githubUsername'], (owners + committers).uniq)
@@ -42,7 +41,7 @@ class Committee
     unless analysePrivateSubs # not an ASF member - are we a moderator?
       # TODO match using canonical emails
       user_mail = currentUser.all_mail || []
-      pMods = moderators["private@#{pmc.mail_list}.apache.org"] || []
+      pMods = moderators[pmc.private_mail_list] || []
       analysePrivateSubs = !(pMods & user_mail).empty?
     end
 

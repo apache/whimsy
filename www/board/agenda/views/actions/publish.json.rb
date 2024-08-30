@@ -1,5 +1,5 @@
 
-"""
+''"
 
 Publish approved minutes on the public web site
 
@@ -25,7 +25,7 @@ Publish approved minutes on the public web site
   - archive agenda if it exists
   - commit changes if any
 
-"""
+"''
 
 require 'date'
 require 'whimsy/asf/svn'
@@ -47,7 +47,7 @@ raise ArgumentError, "Invalid date #{@date}" unless @date =~ /\A\d+_\d+_\d+\z/
 # extract date and year from minutes
 date = Date.parse(@date.gsub('_', '-'))
 year = date.year
-fdate = date.strftime("%d %B %Y")
+fdate = date.strftime('%d %B %Y')
 
 minutes = "board_minutes_#{@date}.txt"
 

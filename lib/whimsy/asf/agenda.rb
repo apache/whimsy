@@ -160,9 +160,9 @@ class ASF::Board::Agenda
       hash[:attach] = section
 
       # look for missing titles
-      hash['title'] ||= "UNKNOWN"
+      hash['title'] ||= 'UNKNOWN'
 
-      if hash['title'] == "UNKNOWN"
+      if hash['title'] == 'UNKNOWN'
         hash['warnings'] = ['unable to find attachment']
       end
     end

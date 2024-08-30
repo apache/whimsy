@@ -430,15 +430,15 @@ module ASF
     end
 
     # Standard ASF archivers
-    ARCH_MBOX_PUB = "archiver@mbox-vm.apache.org"
-    ARCH_MBOX_PRV = "private@mbox-vm.apache.org"
-    ARCH_MBOX_RST = "restricted@mbox-vm.apache.org"
+    ARCH_MBOX_PUB = 'archiver@mbox-vm.apache.org'
+    ARCH_MBOX_PRV = 'private@mbox-vm.apache.org'
+    ARCH_MBOX_RST = 'restricted@mbox-vm.apache.org'
 
-    ARCH_PONY_PUB = "archive-asf-public@cust-asf.ponee.io"
-    ARCH_PONY_PRV = "archive-asf-private@cust-asf.ponee.io"
+    ARCH_PONY_PUB = 'archive-asf-public@cust-asf.ponee.io'
+    ARCH_PONY_PRV = 'archive-asf-private@cust-asf.ponee.io'
 
     # Standard external archivers (necessarily public)
-    ARCH_EXT_MAIL_ARCHIVE = "archive@mail-archive.com"
+    ARCH_EXT_MAIL_ARCHIVE = 'archive@mail-archive.com'
     ARCH_EXT_MARKMAIL_RE = %r{^\w+\.\w+\.\w+@.\.markmail\.org$} # one.two.three@a.markmail.org
 
     ARCHIVERS = [ARCH_PONY_PRV, ARCH_PONY_PUB,

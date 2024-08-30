@@ -17,7 +17,7 @@ Danger - File more than 24 hours old or Exception while processing
 require 'fileutils'
 require 'time'
 
-def Monitor.public_json(previous_status)
+def StatusMonitor.public_json(previous_status)
   danger_period = 86_400 # one day
 
   warning_period = 5400 # 1.5 hours

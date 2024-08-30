@@ -55,7 +55,7 @@ _html do
                     value.split(/[, ]+/).each_with_index do |role, index|
                       _span ', ' if index > 0
                       if role == 'members'
-                        _a role, href: "roster/members"
+                        _a role, href: 'roster/members'
                       else
                         _a role, href: "orgchart/#{role}"
                       end

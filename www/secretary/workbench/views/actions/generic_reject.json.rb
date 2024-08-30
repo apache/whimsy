@@ -19,7 +19,7 @@ task "email #{message.from}" do
     from: @from,
     cc: [
       'secretary@apache.org',
-      ("private@#{@pmc.mail_list}.apache.org" if @pmc), # copy pmc if selected
+      (@pmc.private_mail_list if @pmc), # copy pmc if selected
       @podling&.private_mail_list # copy podling if selected
     ],
     body: template("#{@doctype}.erb")

@@ -20,13 +20,13 @@ class Discuss < Vue
     end
     console.log('phase: ' + @phase)
     if not @token
-      @alert = "Token is required for this page"
+      @alert = 'Token is required for this page'
     elsif @phase == 'unknown'
-      @alert = "Cannot determine phase: could not read token file"
+      @alert = 'Cannot determine phase: could not read token file'
     elsif @phase == 'error'
       @alert = @progress[:errorMessage]
     elsif @phase != 'discuss'
-      @alert = "Wrong phase: " + @phase + "; should be discuss"
+      @alert = 'Wrong phase: ' + @phase + '; should be discuss'
     else
       @pmc = @progress[:project]
       @proposer = @progress[:proposer]
@@ -46,19 +46,19 @@ class Discuss < Vue
       discuss contributors to achieve consensus.
     }
     if @phase == 'discuss'
-      _b "Project: " + @pmc
+      _b 'Project: ' + @pmc
       _p
-      _b "Contributor: " + @iclaname + " (" + @iclaemail + ")"
+      _b 'Contributor: ' + @iclaname + ' (' + @iclaemail + ')'
       _p
-      _b "Proposed by: " + @proposer
+      _b 'Proposed by: ' + @proposer
       _p
-      _p "Subject: " + @subject
+      _p 'Subject: ' + @subject
       _p
       #
       # Form fields
       #
       _div.form_group do
-        _label "Comment from " + @member + ' (required)', :for => 'discussBody'
+        _label 'Comment from ' + @member + ' (required)', :for => 'discussBody'
         _textarea.form_control rows: 4,
         required: true, placeholder: 'new comment',
         id: 'discussBody', value: @discussBody,
@@ -187,9 +187,9 @@ class Discuss < Vue
       expectedPhase: 'discuss',
       newPhase: newPhase,
     }
-    console.log(">update: "+ data.inspect) # debug
+    console.log('>update: '+ data.inspect) # debug
     post 'update', data do |response|
-      console.log("<update: "+ response.inspect) # debug
+      console.log('<update: '+ response.inspect) # debug
       @alert = response.error
       @comments = response['contents']['comments'] unless @alert
     end

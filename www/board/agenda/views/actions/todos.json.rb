@@ -196,12 +196,12 @@ if (@change || @establish) and env.password
 
       cc 'Apache Board <board@apache.org>'
 
-      subject "Congratulations on your new role at Apache - next steps"
+      subject 'Congratulations on your new role at Apache - next steps'
 
       body "Dear newly-appointed PMC Chair(s),\n\n" +
       "Congratulations on being appointed by the board as a project VP and Chair of your PMC!\n\n" +
       "Please read the following list of required to-dos for new Chairs, which includes key links to all the duties and responsibilities of being a Chair.\n\n" +
-      "  https://apache.org/dev/pmc-chair" +
+      '  https://apache.org/dev/pmc-chair' +
       "\n\nWarm regards,\n\n#{sender.public_name}\nOn Behalf of the ASF Board"
     end
 

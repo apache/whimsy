@@ -13,23 +13,23 @@ class Keyboard
         %w(input textarea).include? document.activeElement.tagName.downcase()
 
       if event.keyCode == 37 # '<-'
-        link = document.querySelector("a[rel=prev]")
+        link = document.querySelector('a[rel=prev]')
         if link
           link.click()
           return false
         end
       elsif event.keyCode == 39 # '->'
-        link = document.querySelector("a[rel=next]")
+        link = document.querySelector('a[rel=next]')
         if link
           link.click()
           return false
         end
       elsif event.keyCode == 13 # 'enter'
-        link = document.querySelector(".default")
+        link = document.querySelector('.default')
         Main.navigate link.getAttribute('href') if link
         return false
       elsif event.keyCode == 'C'.ord
-        link = document.getElementById("comments")
+        link = document.getElementById('comments')
         if link
           jQuery('html, body').animate({scrollTop: link.offsetTop}, :slow);
         else
@@ -37,14 +37,14 @@ class Keyboard
         end
         return false
       elsif event.keyCode == 'I'.ord
-        info = document.getElementById("info")
+        info = document.getElementById('info')
         info.click() if info
         return false
       elsif event.keyCode == 'M'.ord
         Main.navigate 'missing'
         return false
       elsif event.keyCode == 'N'.ord
-        document.getElementById("nav").click()
+        document.getElementById('nav').click()
         return false
       elsif event.keyCode == 'A'.ord
         Main.navigate '.'
@@ -54,7 +54,7 @@ class Keyboard
           User.role = :secretary
           Main.refresh()
         else
-          link = document.getElementById("shepherd")
+          link = document.getElementById('shepherd')
           Main.navigate link.getAttribute('href') if link
         end
         return false
@@ -65,16 +65,16 @@ class Keyboard
           return false
         end
       elsif event.keyCode == 'Q'.ord
-        Main.navigate "queue"
+        Main.navigate 'queue'
         return false
       elsif event.keyCode == 'F'.ord
-        Main.navigate "flagged"
+        Main.navigate 'flagged'
         return false
       elsif event.keyCode == 'B'.ord
-        Main.navigate "backchannel"
+        Main.navigate 'backchannel'
         return false
       elsif event.shiftKey and event.keyCode == 191 # "?"
-        Main.navigate "help"
+        Main.navigate 'help'
         return false
       elsif event.keyCode == 'R'.ord
         Header.clock_counter += 1
@@ -86,7 +86,7 @@ class Keyboard
         end
         return false
       elsif event.keyCode == '='.ord or event.keyCode == 187 # "="
-        Main.navigate "cache/"
+        Main.navigate 'cache/'
         return false
       end
     end

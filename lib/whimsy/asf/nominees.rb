@@ -16,7 +16,7 @@ module ASF
       nominations = Dir[File.join(meetings, '*', 'nominated-members.txt')].max
 
       # ensure non-UTF-8 chars don't cause a crash
-      nominations = File.read(nominations).encode("utf-8", "utf-8", :invalid => :replace).split(/^\s*---+--\s*/)
+      nominations = File.read(nominations).encode('utf-8', 'utf-8', :invalid => :replace).split(/^\s*---+--\s*/)
       nominations.shift(2)
 
       nominees = {}

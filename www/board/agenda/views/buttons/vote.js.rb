@@ -57,7 +57,7 @@ class Vote < Vue
 
     # autofocus on comment text
     jQuery('#vote-form').on 'shown.bs.modal' do
-      document.getElementById("vote-text").focus()
+      document.getElementById('vote-text').focus()
     end
   end
 
@@ -70,9 +70,9 @@ class Vote < Vue
     month = Date.new(Date.parse(Agenda.date)).getMonth()
     attach = item.attach.charCodeAt(1)
     if (month + attach) % 2 == 0
-      @votetype = "Roll call"
+      @votetype = 'Roll call'
     else
-      @votetype = "Reverse roll call"
+      @votetype = 'Reverse roll call'
       @directors = @directors.split("\n").reverse().join("\n")
     end
 

@@ -5,14 +5,14 @@
 require_relative 'spec_helper'
 
 feature 'other reports' do
-  it "should support search" do
+  it 'should support search' do
     visit '/2015-02-18/search?q=ruby'
 
     expect(page).to have_selector 'pre', text: 'Sam Ruby'
     expect(page).to have_selector 'h4 a', text: 'Qpid'
   end
 
-  it "should support comments" do
+  it 'should support comments' do
     visit '/2015-01-21/comments'
 
     # unseen items
@@ -29,7 +29,7 @@ feature 'other reports' do
     expect(page).to have_selector 'button', text: 'show seen'
   end
 
-  it "should support queued/pending approvals and comments" do
+  it 'should support queued/pending approvals and comments' do
     visit '/2015-01-21/queue'
 
     expect(page).to have_selector :xpath,
@@ -52,7 +52,7 @@ feature 'other reports' do
         'Update AI: follow up with PMC for clarification'].join(' ')
   end
 
-  it "should follow the ready queue" do
+  it 'should follow the ready queue' do
     visit '/2015-01-21/queue/Onami'
 
     expect(page).to have_selector '.navbar-fixed-top.reviewed .navbar-brand',
@@ -64,7 +64,7 @@ feature 'other reports' do
       text: 'OpenOffice'
   end
 
-  it "should show shepherd reports" do
+  it 'should show shepherd reports' do
     visit '/2015-01-21/shepherd/Sam'
 
     # action items
@@ -96,7 +96,7 @@ feature 'other reports' do
     expect(page).not_to have_selector '.nextlink'
   end
 
-  it "should follow the shepherd queue" do
+  it 'should follow the shepherd queue' do
     visit '/2015-02-18/shepherd/queue/Hama'
 
     expect(page).to have_selector '.navbar-fixed-top.missing .navbar-brand',
@@ -108,7 +108,7 @@ feature 'other reports' do
       text: 'Mesos'
   end
 
-  it "should skip to missing/flagged items once meeting has started" do
+  it 'should skip to missing/flagged items once meeting has started' do
     visit '/2015-02-18/Vice-Chairman'
     expect(page).to have_selector '.nextlink[href="flagged/Abdera"]',
       text: 'Abdera'
@@ -126,7 +126,7 @@ feature 'other reports' do
       text: 'Xerces'
   end
 
-  it "should highlight and crosslink action items" do
+  it 'should highlight and crosslink action items' do
     visit '/2015-01-21/Action-Items'
 
     expect(page).to have_selector 'span.missing', text: /^\s*Status:$/
@@ -149,7 +149,7 @@ feature 'other reports' do
     expect(page).to have_selector 'span', text: '2015-01-21 ]'
   end
 
-  it "should draft action items" do
+  it 'should draft action items' do
     yaml = 'test/work/data/board_minutes_2015_02_18.yml'
     minutes = YAML.load_file(yaml)
     begin
@@ -164,7 +164,7 @@ feature 'other reports' do
     end
   end
 
-  it "should show flagged items" do
+  it 'should show flagged items' do
     visit '/2015-02-18/flagged'
 
     expect(page).to have_selector 'h3 a', text: 'Lenya'
@@ -172,7 +172,7 @@ feature 'other reports' do
     expect(page).to have_selector 'pre span', text: 'rg: Last quarter'
   end
 
-  it "should show missing items" do
+  it 'should show missing items' do
     visit '/2015-02-18/missing'
 
     expect(page).to have_selector 'h3 a', text: 'Cassandra'
@@ -191,7 +191,7 @@ feature 'other reports' do
       text: 'send final reminders'
   end
 
-  it "should hypertext minutes" do
+  it 'should hypertext minutes' do
     visit '/2015-02-18/January-21-2015'
 
     expect(page).to have_selector \
@@ -199,7 +199,7 @@ feature 'other reports' do
      text: 'board_minutes_2015_01_21.txt'
   end
 
-  it "should show a help page" do
+  it 'should show a help page' do
     visit '/2015-02-18/help'
 
     # navigation

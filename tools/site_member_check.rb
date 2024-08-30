@@ -32,7 +32,7 @@ if file
   puts "Reading #{file}"
   contents = File.read(file)
 else
-  puts "Fetching members.md"
+  puts 'Fetching members.md'
   code, contents = ASF::Git.github(MEMBERS)
   raise "Could not read #{MEMBERS}, error: #{code}" unless code == '200'
 end
@@ -45,8 +45,8 @@ end
 # |^---|------|----------|
 # | id | Public Name |
 
-puts "Checking member list"
-puts "===================="
+puts 'Checking member list'
+puts '===================='
 
 s = StringScanner.new(contents)
 s.skip_until(/\| Id \| Name \| Projects \|\n/)
@@ -73,8 +73,8 @@ end
 
 puts ''
 
-puts "Checking Emeritus list"
-puts "======================"
+puts 'Checking Emeritus list'
+puts '======================'
 
 s.skip_until(/\| Id \| Name \|\n/)
 s.skip_until(/\n/)

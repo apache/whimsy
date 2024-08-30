@@ -16,12 +16,12 @@ $apache_would_have_been_restarted = (ARGV.delete '--apache-restarted')
 #########################################################################
 
 unless RUBY_PLATFORM.include? 'darwin'
-  STDERR.puts "This script is intended to be run on macOS"
+  STDERR.puts 'This script is intended to be run on macOS'
   exit 1
 end
 
 unless (RUBY_VERSION.split('.').map(&:to_i) <=> [2, 4, 1]) >= 0
-  STDERR.puts "Ruby 2.4.1 or later is required"
+  STDERR.puts 'Ruby 2.4.1 or later is required'
   exit 1
 end
 
@@ -51,7 +51,7 @@ end
 
 # echo a command and run it
 def run *args
-  color "$ " + "#{'sudo ' if $root}" + Array(args).join(' ')
+  color '$ ' + "#{'sudo ' if $root}" + Array(args).join(' ')
   return if $dry_run
   Kernel.system(*args)
 end
@@ -77,7 +77,7 @@ def sudo
     system RbConfig.ruby, COMMAND, *ARGS, '--sudo'
     $apache_would_have_been_restarted = true
   else
-    system "sudo", RbConfig.ruby, COMMAND, *ARGS
+    system 'sudo', RbConfig.ruby, COMMAND, *ARGS
     exit $?.exitstatus unless $?.success?
   end
 end
@@ -98,81 +98,81 @@ option = :www
 OptionParser.new do |opts|
   opts.banner = "Usage: #{$0} [options]"
 
-  opts.on('-u', '--user', "Run whimsy under your user") do |_opt|
+  opts.on('-u', '--user', 'Run whimsy under your user') do |_opt|
     option = :user
   end
 
-  opts.on('-w', '--web', "Run whimsy under the Apache web user") do |_opt|
+  opts.on('-w', '--web', 'Run whimsy under the Apache web user') do |_opt|
     option = :web
   end
 
-  opts.on('-d', '--docker', "Run whimsy on docker") do |_opt|
+  opts.on('-d', '--docker', 'Run whimsy on docker') do |_opt|
     option = :docker
   end
 
-  opts.on('--[no-]gem', '--gems', "Upgrade gem dependencies") do |opt|
+  opts.on('--[no-]gem', '--gems', 'Upgrade gem dependencies') do |opt|
     force[:gems] = opt
   end
 
-  opts.on('--[no-]bundle', '--bundler', "Upgrade bundler") do |opt|
+  opts.on('--[no-]bundle', '--bundler', 'Upgrade bundler') do |opt|
     force[:bundler] = opt
   end
 
-  opts.on('--[no-]node', "Upgrade to the latest node.js") do |opt|
+  opts.on('--[no-]node', 'Upgrade to the latest node.js') do |opt|
     force[:node] = opt
   end
 
-  opts.on('--[no-]passenger', "Upgrade to the latest Phusion Passenger") do |opt|
+  opts.on('--[no-]passenger', 'Upgrade to the latest Phusion Passenger') do |opt|
     force[:passenger] = opt
   end
 
-  opts.on('--[no-]ldap', "Reconfigure LDAP") do |_opt|
+  opts.on('--[no-]ldap', 'Reconfigure LDAP') do |_opt|
     force[:ldap] = opts
   end
 
-  opts.on('--[no-]svn', "Checkout/update svn repositories") do |_opt|
+  opts.on('--[no-]svn', 'Checkout/update svn repositories') do |_opt|
     force[:svn] = opts
   end
 
-  opts.on('--[no-]git', "Clone/pull git repositories") do |_opt|
+  opts.on('--[no-]git', 'Clone/pull git repositories') do |_opt|
     force[:git] = opts
   end
 
-  opts.on('--[no-]source', "Pull the latest changes to the source code") do |opt|
+  opts.on('--[no-]source', 'Pull the latest changes to the source code') do |opt|
     force[:source] = opt
   end
 
-  opts.on('--[no-]minutes', "Collate board minutes") do |opt|
+  opts.on('--[no-]minutes', 'Collate board minutes') do |opt|
     force[:minutes] = opt
   end
 
-  opts.on('--update-all', "Update everything") do |_opt|
+  opts.on('--update-all', 'Update everything') do |_opt|
     force.default = true
   end
 
-  opts.on('--[no-]toucher', "Restart rack applications on source change") do |opt|
+  opts.on('--[no-]toucher', 'Restart rack applications on source change') do |opt|
     force[:toucher] = opt
   end
 
-  opts.on('--[no-]ws', "Start board agenda websocket") do |opt|
+  opts.on('--[no-]ws', 'Start board agenda websocket') do |opt|
     force[:ws] = opt
   end
 
-  opts.on('--all', "Update and launch everything") do |_opt|
+  opts.on('--all', 'Update and launch everything') do |_opt|
     force[:ws] = true if force[:ws].nil?
     force[:toucher] = true if force[:toucher].nil?
     force.default = true
   end
 
-  opts.on('--[no-]clean', "Clean up source directory") do |opt|
+  opts.on('--[no-]clean', 'Clean up source directory') do |opt|
     force[:clean] = opt
   end
 
-  opts.on('--[no-]prune', "Prune docker containers and images") do |opt|
+  opts.on('--[no-]prune', 'Prune docker containers and images') do |opt|
     force[:prune] = opt
   end
 
-  opts.on('--dry-run', "Only indicate what commands would be run") do |_opt|
+  opts.on('--dry-run', 'Only indicate what commands would be run') do |_opt|
     $dry_run = true
   end
 end.parse!
@@ -250,14 +250,14 @@ unless Dir.exist? '/srv'
       run 'chown', "#{sudo_user.uid}:#{sudo_user.gid}", '/var/whimsy'
       run 'touch', '/etc/synthetic.conf'
       SYNTHETIC = '/etc/synthetic.conf'
-      unless File.read(SYNTHETIC).include? "/var/whimsy"
+      unless File.read(SYNTHETIC).include? '/var/whimsy'
         color "$ sudo edit #{SYNTHETIC}"
         unless $dry_run
           File.write SYNTHETIC, File.read(SYNTHETIC) + "srv\t/var/whimsy\n"
         end
         STDERR.puts "#{SYNTHETIC} updated; reboot machine and rerun this script"
         puts %(\nPress "y" to reboot now, anything else to exit)
-        run "shutdown -r now" if gets.strip.downcase == "y"
+        run 'shutdown -r now' if gets.strip.downcase == 'y'
         exit 1
       end
     else
@@ -417,7 +417,7 @@ end
 unless $root
   if force[:gems] or not File.exist?("#{WHIMSY}/Gemfile.lock")
     Dir.chdir WHIMSY do
-      run "rake", "update"
+      run 'rake', 'update'
     end
   end
 end
@@ -515,7 +515,7 @@ if config != File.read(HTTPD_CONF)
   sudo do
     color "$ sudo edit #{HTTPD_CONF}"
     return if $dry_run
-    File.rename HTTPD_CONF, HTTPD_CONF + ".original"
+    File.rename HTTPD_CONF, HTTPD_CONF + '.original'
     File.write(HTTPD_CONF, config)
   end
 
@@ -597,7 +597,7 @@ end
 
 if force[:ws] != nil
   sudo do
-    plist = "/Library/LaunchDaemons/board-agenda-websocket.plist"
+    plist = '/Library/LaunchDaemons/board-agenda-websocket.plist'
 
     if force[:ws]
       contents = File.read("#{__dir__}/board-agenda-websocket.plist")
@@ -639,9 +639,9 @@ end
 
 if $root and not $apache_would_have_been_restarted
   if not `launchctl list`.include? 'org.apache.httpd'
-    run "launchctl load -w /System/Library/LaunchDaemons/org.apache.httpd.plist"
+    run 'launchctl load -w /System/Library/LaunchDaemons/org.apache.httpd.plist'
   elsif restart_apache
-    run "apachectl restart"
+    run 'apachectl restart'
     sleep 0.5
   end
 elsif not $dry_run

@@ -88,7 +88,7 @@ class Invite < Vue
     end
 
     _div.form_group do
-      _label "PMC/PPMC (required)", :for => 'pmc'
+      _label 'PMC/PPMC (required)', :for => 'pmc'
       _select.form_control.pmc! required: true, onChange: self.setPMC, value: @pmc do
         _option ''
         Server.data.allData.each_key do |pmc|
@@ -132,13 +132,13 @@ class Invite < Vue
     end
     if @showPMCVoteLink or @showPPMCVoteLink
       _ 'Navigate to '
-      _a "Ponymail", href: "https://lists.apache.org/list.html?private@#{@mail_list}.apache.org:lte=1M:[VOTE][RESULT]", target: _blank
+      _a 'Ponymail', href: "https://lists.apache.org/list.html?private@#{@mail_list}.apache.org:lte=1M:[VOTE][RESULT]", target: _blank
       _ ', select the appropriate message, right-click PermaLink, copy link'
       _ ' to the clip-board, and paste the link here.'
       _p
 
       _div.form_group do
-        _label "VOTE link", :for => 'votelink'
+        _label 'VOTE link', :for => 'votelink'
         _input.form_control.votelink! type: 'url', onChange: self.setVoteLink,
         value: @votelink
       end
@@ -167,16 +167,16 @@ class Invite < Vue
     if @showPMCNoticeLink or @showPPMCNoticeLink
       _ 'Navigate to '
       if @showPMCNoticeLink
-        _a "Ponymail", href: "https://lists.apache.org/list.html?board@apache.org:lte=1M:NOTICE%20for%20#{@display_name}", target: _blank
+        _a 'Ponymail', href: "https://lists.apache.org/list.html?board@apache.org:lte=1M:NOTICE%20for%20#{@display_name}", target: _blank
       else
-        _a "Ponymail", href: "https://lists.apache.org/list.html?private@incubator.apache.org:lte=1M:NOTICE%20for%20#{@display_name}", target: _blank
+        _a 'Ponymail', href: "https://lists.apache.org/list.html?private@incubator.apache.org:lte=1M:NOTICE%20for%20#{@display_name}", target: _blank
       end
       _ ', select the appropriate message, right-click PermaLink, copy link'
       _ ' to the clip-board, and paste the link here.'
       _p
 
       _div.form_group do
-        _label "NOTICE link", :for => 'noticelink'
+        _label 'NOTICE link', :for => 'noticelink'
         _input.form_control.noticelink! type: 'url', onChange: self.setNoticeLink,
         value: @noticelink
       end

@@ -10,10 +10,10 @@ class JSONStorage
   def self.prefix
     return @@prefix if @@prefix
 
-    base = document.getElementsByTagName("base")[0].href
+    base = document.getElementsByTagName('base')[0].href
     origin = location.origin
     if not origin # compatibility: http://s.apache.org/X2L
-      origin = window.location.protocol + "//" + window.location.hostname +
+      origin = window.location.protocol + '//' + window.location.hostname +
         (window.location.port ? ':' + window.location.port : '')
     end
 

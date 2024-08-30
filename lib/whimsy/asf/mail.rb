@@ -200,7 +200,7 @@ module ASF
       return "apachecon-#{list}" if dom == 'apachecon.com'
       return list if dom == 'apache.org'
 
-      dom.sub(".apache.org", '-') + list
+      dom.sub('.apache.org', '-') + list
     end
 
     # Convert dom, list to form used in mail_list_autosub.yml
@@ -259,11 +259,11 @@ module ASF
       if not @flags or File.mtime(@list_flags) != @flags_mtime
         lists = []
         File.open(@list_flags).each do |line|
-          if line.match(/^F:-([a-zA-Z]{26}) (\S+) (\S+)/)
+          if line.match(/(?:^F:-([a-zA-Z]{26}) )?(\S+) (\S+)/)
             flags, dom, list = $1, $2, $3
             next if list =~ /^infra-[a-z]$/ or (dom == 'incubator' and list == 'infra-dev')
 
-            lists << [dom, list, flags]
+            lists << [dom, list, flags || '']
           else
             raise "Unexpected flags: #{line}"
           end

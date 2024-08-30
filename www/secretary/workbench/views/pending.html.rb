@@ -1,11 +1,11 @@
 _html do
-  _h1.bg_danger "Deleted messages for #{@mbox}"
+  _h1 "Pending messages for #{@mbox}"
   _a 'Workbench', href: '..'
   if @prv
-    _a 'Previous', href: "../#{@prv}/deleted"
+    _a 'Previous', href: "../#{@prv}/pending"
   end
   if @nxt
-    _a 'Next', href: "../#{@nxt}/deleted"
+    _a 'Next', href: "../#{@nxt}/pending"
   end
   _table.table do
     _thead do

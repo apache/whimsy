@@ -38,7 +38,7 @@ def reminder_lines(meeting = File.basename(Dir[File.join(MEETINGS, '2*')].max))
 end
 
 #### Main method - TODO needs to be integrated into meeting process
-puts "START: reminder_lines()"
+puts 'START: reminder_lines()'
 p = reminder_lines
 puts p
 

@@ -39,7 +39,7 @@ if env.password
   mail = Mail.new do
     from "#{from.public_name} <#{from.id}@apache.org>"
     to to
-    bcc "root@apache.org"
+    bcc 'root@apache.org'
     subject "#{person.public_name} #{action} #{list}"
     body "Current roster can be found at:\n\n" +
       "  https://whimsy.apache.org/roster/group/#{service.id}\n\n" +

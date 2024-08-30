@@ -68,9 +68,9 @@ if env.password
   # draft email
   mail = Mail.new do
     from "#{from.public_name} <#{from.id}@apache.org>"
-    to "private@#{pmc.mail_list}.apache.org"
+    to pmc.private_mail_list
     cc cc
-    bcc "root@apache.org"
+    bcc 'root@apache.org'
     subject "#{who} #{action} #{pmc.display_name} #{list}"
     body "Current roster can be found at:\n\n" +
       "  https://whimsy.apache.org/roster/committee/#{pmc.id}\n\n" +

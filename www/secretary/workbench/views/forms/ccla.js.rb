@@ -122,7 +122,7 @@ class CCLA < Vue
 
     # Safari autocomplete workaround: trigger change on leaving field
     # https://github.com/facebook/react/issues/2125
-    if navigator.userAgent.include? "Safari"
+    if navigator.userAgent.include? 'Safari'
       Array(document.getElementsByTagName('input')).each do |input|
         input.addEventListener('blur', self.onblur)
       end

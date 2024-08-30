@@ -77,15 +77,15 @@ end
 get '/' do
   @token = params['token']
   @mock = params['mock']
-  @extra = @mock ? "&mock=" + @mock : ''
+  @extra = @mock ? '&mock=' + @mock : ''
   @progress = loadProgress(@token) if @token
   @phase = @progress['phase'] if @progress
   if @phase == 'discuss'
-    redirect to("/discuss?token=" + @token + @extra)
+    redirect to('/discuss?token=' + @token + @extra)
   elsif @phase == 'vote'
-    redirect to("/vote?token=" + @token + @extra)
+    redirect to('/vote?token=' + @token + @extra)
   else
-    redirect to("/invite")
+    redirect to('/invite')
   end
 end
 

@@ -9,7 +9,7 @@ $LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'whimsy/asf'
 
 # Allow override of local repo
-IP = ARGV.shift or raise RuntimeError.new "Need path to infrastructure puppet checkout"
+IP = ARGV.shift or raise RuntimeError.new 'Need path to infrastructure puppet checkout'
 # Allow override of yaml name
 base = ARGV.shift || 'whimsy-vm*'
 yaml =  Dir["#{IP}/data/nodes/#{base}.apache.org.yaml"].

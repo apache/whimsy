@@ -37,27 +37,27 @@ optionparser = OptionParser.new do |opts|
     options.group = group
   end
 
-  opts.on '-p', '--pidfile path', "Optional pid file location" do |path|
+  opts.on '-p', '--pidfile path', 'Optional pid file location' do |path|
     options.pidfile = path
   end
 
-  opts.on '-d', '--daemonize', "Run as daemon" do
+  opts.on '-d', '--daemonize', 'Run as daemon' do
     options.daemonize = true
   end
 
-  opts.on '--puppet', "Use puppet agent to update" do
+  opts.on '--puppet', 'Use puppet agent to update' do
     options.puppet = true
   end
 
-  opts.on '-s', '--stream', "StreamURL" do |url|
+  opts.on '-s', '--stream', 'StreamURL' do |url|
     options.streamURL = url
   end
 
-  opts.on '-r', '--remote', "Git Clone URL" do |url|
+  opts.on '-r', '--remote', 'Git Clone URL' do |url|
     options.streamURL = url
   end
 
-  opts.on '-c', '--clone', "Git Clone Directory" do |path|
+  opts.on '-c', '--clone', 'Git Clone Directory' do |path|
     options.local = path
   end
 

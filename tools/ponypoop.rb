@@ -113,7 +113,7 @@ def run_analyze_stats(dir, list, subject_regex)
     subjects = analyze_stats(fname, results, subject_regex, errors)
     if subjects
       responses = subjects.select {|subj| subj =~ /Re:/i }.size
-      File.open("#{fname.chomp('.json')}.txt", "w") do |f|
+      File.open("#{fname.chomp('.json')}.txt", 'w') do |f|
         f.puts "COUNTS - Replies:#{responses}, New Messages:#{subjects.size - responses}"
         subjects.sort.each do |s|
           f.puts s.delete("\n")
@@ -132,7 +132,7 @@ def run_analyze_stats(dir, list, subject_regex)
       results.last["error#{index}"] = item
     end
   end
-  File.open("#{output}.json", "w") do |f|
+  File.open("#{output}.json", 'w') do |f|
     f.puts JSON.pretty_generate(results)
   end
 

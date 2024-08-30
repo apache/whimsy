@@ -10,9 +10,9 @@ module ASF
     # Note: the path must be adjusted if the TIMEZONE changes.
     def self.tzlink(time)
       # build full time zone link
-      path = "/worldclock/fixedtime.html?iso=" +
+      path = '/worldclock/fixedtime.html?iso=' +
         time.strftime('%Y-%m-%dT%H:%M:%S') +
-        "&msg=ASF+Board+Meeting"
+        '&msg=ASF+Board+Meeting'
       # path += '&p1=137' # time zone for PST/PDT locality
       link = "http://www.timeanddate.com/#{path}"
 

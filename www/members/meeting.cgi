@@ -119,11 +119,13 @@ _html do
         if today > ics_date # Based on the reconvene date
           _p do
             _ %{
-              The last Annual Member's Meeting was held #{last_mtg_date.strftime('%A, %d %B %Y')}.  Expect the
-              next Member's meeting to be scheduled between 12 - 13 months after the previous meeting, as per
+              The last Member's Meeting was held #{last_mtg_date.strftime('%A, %d %B %Y')}.  Expect the
+              next Annual Member's meeting to be scheduled between 12 - 13 months after the previous Annual meeting, as per
             }
             _a 'https://www.apache.org/foundation/bylaws.html#3.2', 'the bylaws 3.2.'
-            _ 'Stay tuned for a [NOTICE] email on members-notify@ announcing the next meeting.  The below information is about the '
+            _ 'Stay tuned for a [NOTICE] '
+            _a 'https://lists.apache.org/list?members-notify@apache.org', 'email on members-notify@'
+            _ ' announcing the next meeting.  The below information is about the '
             _strong 'LAST'
             _ " Member's meeting."
           end
@@ -134,12 +136,14 @@ _html do
               _span.glyphicon.glyphicon_time ''
               _ " #{ics_date.strftime(DTFORMAT)} "
             end
-            _ "as an online IRC meeting for about an hour.  REMEMBER: all voting is done by email the week BEFORE the IRC meeting"
+            _ "as an online "
+            _a 'https://asfmm.apache.org', "ASFMM chat tool meeting"
+            _ " for less than an hour.  REMEMBER: all voting is done by email the week BEFORE the ASFMM meeting."
           end
           _p do
             _ 'Please read below for a Timeline of Meeting activities and links to how you can take action, or see additional links to the right. '
             _strong 'REMINDER: '
-            _ 'Nominations for the board or new members close 10 days before the meeting starts; no new names may be added after that date.'
+            _ 'Nominations for the board or new members (when being held) close 10 days before the meeting starts; no new names may be added after that date.'
           end
           _p do
             _ 'Currently, we need '
@@ -155,7 +159,7 @@ _html do
           end
           _p 'Individual Members are considered to have Attended a meeting if they either: respond to Roll Call in the meeting; submit a proxy (this gets submitted during Roll Call); or who cast a ballot on any matters.'
           _ul do
-            _li '2024 dates:'
+            _li '2024 March Annual Meeting dates:'
             _li 'Nominations open: February 06'
             _li 'Nominations close: February 24, 2024 at 20:00'
             _li 'Ballots emailed: February 29, 2024'
@@ -198,7 +202,7 @@ _html do
       _div id: 'nominations'
       _whimsy_panel("Timeline: Nomination Period (until 10 days BEFORE meeting)", style: 'panel-default') do
         _p do
-          _ 'Before the meeting, any Member may nominate people either for the Board, or as a New Member Candidate.  Much of this discussion happens on members@ mailing list.  Remember, all new nominated names must be checked into SVN 10 days before the meeting.'
+          _ 'Before any Annual meeting, any Member may nominate people either for the Board, or as a New Member Candidate.  Much of this discussion happens on members@ mailing list.  Remember, all new nominated names must be checked into SVN 10 days before the meeting.'
           _ 'Also, you should submit a proxy if you might not attend the the meeting.'
           _ul do
             ['board_nominations.txt', 'board_ballot.txt', '/members/board-nominate.cgi', '/members/board_nominations.cgi',
@@ -240,10 +244,10 @@ _html do
           _ "Ballots close ONE FULL DAY (24 hours) BEFORE the meeting starts - don't wait to vote!"
           _ul do
             _li do
-              _a 'New Members Elected By Majority Yes/No/Abstain vote', href: 'https://www.apache.org/foundation/governance/meetings#how-member-votes-are-tallied'
+              _a 'New Members Elected By Majority Yes/No/Abstain vote, when elections held', href: 'https://www.apache.org/foundation/governance/meetings#how-member-votes-are-tallied'
             end
             _li do
-              _a 'Board Seats Are Elected By STV - ORDER OF YOUR VOTE MATTERS!', href: 'https://www.apache.org/foundation/governance/meetings#how-votes-for-the-board-are-tallied'
+              _a 'Board Seats Are Elected By STV at Annual Meetings - ORDER OF YOUR VOTE MATTERS!', href: 'https://www.apache.org/foundation/governance/meetings#how-votes-for-the-board-are-tallied'
             end
           end
         end
@@ -257,8 +261,8 @@ _html do
             _em '(time)'
           end
           _ 'The meeting is typically short - it\'s primarily briefly reporting from officers, announcing vote results and any last-minute announcements.  Members do not need to attend the meeting if you proxied or voted; all results will be emailed or checked into SVN.'
-          _ 'Various data files about the meeting (raw-irc-log, board voting tally) will be checked in within a day after the meeting for historical records.'
-          _ 'Votes for the Omnibus resolution are included in raw-irc-log.  We do not currently publish vote results for new member nominees.'
+          _ 'Various data files about the meeting (raw-irc-log, board voting tally if present) will be checked in within soon after the meeting for historical records.'
+          _ 'Votes for the Omnibus resolution, if any, are included in raw-irc-log.  We do not publish vote results for new member nominees.'
           _ul do
             ['record', 'attend', 'voter-tally', 'raw_board_votes.txt', 'raw-irc-log'].each do |f|
               _li do
@@ -273,11 +277,11 @@ _html do
       end
 
       _div id: 'after'
-      _whimsy_panel("Timeline: After This Year's Meeting", style: 'panel-default') do
+      _whimsy_panel("Timeline: After This Meeting", style: 'panel-default') do
         _p do
-          _ 'Shortly after the second half Meeting ends, '
+          _ 'Shortly after the live ASFMM Meeting ends, '
           _a '@TheASF twitter', href: 'https://twitter.com/theasf'
-          _ ' will formally announce the new board - please wait to retweet the official announcement.'
+          _ ' will formally announce the new board, if an Annual meeting has elected one - please wait to retweet the official announcement.'
           _span.text_warning 'IMPORTANT:'
           _ ' Do not publicise the names of newly elected members!  In rare cases, the new candidate might not accept the honor.'
         end

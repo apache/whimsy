@@ -12,7 +12,7 @@ status = JSON.parse(File.read(json)) rescue {}
 if not status[:mtime] or Time.now - Time.parse(status[:mtime]) > 60
   begin
     require_relative './monitor'
-    status = Monitor.new.status || {}
+    status = StatusMonitor.new.status || {}
   rescue Exception => e
     print "Status: 500 Internal Server Error\r\n"
     print "Context-Type: text/plain\r\n\r\n"
@@ -33,9 +33,9 @@ else
 end
 print "Status: #{summary_status}\r\n\r\n"
 
+git_branch = `git branch --show-current`.strip
 git_info = `git show --format="%h  %ci %cr"  -s HEAD`.strip rescue "?"
-# TODO better format; don't assume we use master
-git_repo = `git ls-remote origin master`.strip rescue "?"
+git_repo = `git ls-remote origin #{git_branch}`.strip rescue "?"
 
 hostname = `hostname`
 
@@ -93,7 +93,7 @@ print <<-EOF
         (ASF member only)</li>
       <li><a href="passenger">Passenger</a> (ASF committer only)</li>
       <li><a href="svn">Subversion</a> (ASF committer only)</li>
-      <li>Git code info: #{git_info}</li>
+      <li>Git code info: #{git_info} (#{git_branch})</li>
       <li>Git repo info: #{git_repo}</li>
     </ul>
   </body>

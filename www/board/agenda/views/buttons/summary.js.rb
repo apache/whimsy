@@ -31,7 +31,7 @@ class Summary < Vue
     @summary = ''
     jQuery('#summary-form').on 'show.bs.modal' do
       retrieve "summary/#{Agenda.title}", :text do |summary|
-        document.getElementById("summary-text").focus()
+        document.getElementById('summary-text').focus()
         @disabled = false
         @summary = summary
         jQuery('#summary-text').animate(scrollTop: 0)

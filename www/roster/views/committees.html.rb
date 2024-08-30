@@ -10,10 +10,10 @@ _html do
     subtitle: 'List of all Top Level Projects',
     relatedtitle: 'More Useful Links',
     related: {
-      "/committers/tools" => "Whimsy All Tools Listing",
+      '/committers/tools' => 'Whimsy All Tools Listing',
       ASF::SVN.svnpath!('committers') => "Checkout the private 'committers' repo for Committers",
-      "https://github.com/apache/whimsy/blob/master/www#{ENV['SCRIPT_NAME']}" => "See This Source Code",
-      "mailto:dev@whimsical.apache.org?subject=[FEEDBACK] members/index idea" => "Email Feedback To dev@whimsical"
+      "https://github.com/apache/whimsy/blob/master/www#{ENV['SCRIPT_NAME']}" => 'See This Source Code',
+      'mailto:dev@whimsical.apache.org?subject=[FEEDBACK] members/index idea' => 'Email Feedback To dev@whimsical'
     },
     helpblock: -> {
       _p do
@@ -32,7 +32,7 @@ _html do
       _p do
         _ 'Chair names in BOLD below are also ASF Members.  Click on column names in table to sort; jump to A-Z project listings here:'
         _br
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZ".each_char do |c|
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.each_char do |c|
           _a c, href: "committee/##{c}"
         end
         _ '(note: the links only work properly if the page is sorted by project name ascending)'

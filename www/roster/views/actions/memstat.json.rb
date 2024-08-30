@@ -6,7 +6,7 @@ raise Exception.new("Unable to find member entry for #{@userid}") unless entry
 USERID = user.id
 USERMAIL = "#{USERID}@apache.org"
 USERNAME = user.cn
-TIMESTAMP = (Time.now.strftime "%Y-%m-%d %H:%M:%S %:z")
+TIMESTAMP = (Time.now.strftime '%Y-%m-%d %H:%M:%S %:z')
 
 # identify file to be updated
 members_txt = ASF::SVN.svnpath!('foundation', 'members.txt')
@@ -18,7 +18,7 @@ if @action == 'emeritus' or @action == 'active' or @action == 'deceased'
   ASF::SVN.multiUpdate_ members_txt, message, env, _ do |text|
     # remove user's entry
     unless text.sub! entry, '' # e.g. if the workspace was out of date
-      raise Exception.new("Failed to remove existing entry -- try refreshing")
+      raise Exception.new('Failed to remove existing entry -- try refreshing')
     end
 
     extra = []
@@ -32,7 +32,7 @@ if @action == 'emeritus' or @action == 'active' or @action == 'deceased'
       if pathname
         extra << ['mv', pathname, ASF::SVN.svnpath!('emeritus', basename)]
       else # there should be a request file
-        _warn "Emeritus request file not found"
+        _warn 'Emeritus request file not found'
       end
     elsif @action == 'active'
       index = text.index(/^\s\*\)\s/, text.index(/^Active/))
@@ -64,13 +64,13 @@ if @action == 'rescind_emeritus'
   if pathname
     ASF::SVN.svn_!('mv', [pathname, ASF::SVN.svnpath!('emeritus-requests-rescinded', basename)], _, {env:env, msg:message})
   else
-    _warn "Emeritus request file not found"
+    _warn 'Emeritus request file not found'
   end
 elsif @action == 'request_emeritus'
   # Create emeritus request and send acknowledgement mail from secretary
   # TODO URL should be a config constant ...
   code, template = ASF::Git.github('apache/www-site/main/content/forms/emeritus-request.txt')
-  raise "Failed to read emeritus-request.txt: " + code unless code == "200"
+  raise 'Failed to read emeritus-request.txt: ' + code unless code == '200'
   centered_id = USERID.center(55, '_')
   centered_name = USERNAME.center(55, '_')
   centered_date = TIMESTAMP.center(25, '_')
@@ -85,7 +85,7 @@ elsif @action == 'request_emeritus'
   if rc == 0
     ASF::Mail.configure
     mail = Mail.new do
-      from "secretary@apache.org"
+      from 'secretary@apache.org'
       to "#{USERNAME}<#{USERMAIL}>"
       subject "Acknowledgement of emeritus request from #{USERNAME}"
       text_part do
@@ -95,12 +95,12 @@ elsif @action == 'request_emeritus'
     mail.attachments["#{USERID}.txt"] = signed_request
     mail.deliver!
   elsif rc == 1
-    _warn "Request file already exists"
+    _warn 'Request file already exists'
   end
 elsif @action == 'request_reinstatement'
   ASF::Mail.configure
   mail = Mail.new do
-    to "secretary@apache.org"
+    to 'secretary@apache.org'
     cc "#{USERNAME}<#{USERMAIL}>"
     from USERMAIL
     subject "Emeritus reinstatement request from #{USERNAME}"

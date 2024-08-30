@@ -22,23 +22,23 @@ _html do
 
       _div.commented do
         _h4 'Committees expected to report next month, and why:'
-        _pre.commented @next_month.gsub(@next_month.scan(/\s+#/).max.to_s, " -")
+        _pre.commented @next_month.gsub(@next_month.scan(/\s+#/).max.to_s, ' -')
       end
 
       if @next_month.include? "through #@prev_month"
         _h3.missing do
           _ "List still shows a committee as reporting through #@prev_month."
-          _ "Perhaps committee-info.txt was not updated?"
+          _ 'Perhaps committee-info.txt was not updated?'
         end
       elsif not @next_month.include? @prev_month
         _h3.missing do
           _ "No reports were marked missing or rejected in #@prev_month."
-          _ "Perhaps committee-info.txt was not updated?"
+          _ 'Perhaps committee-info.txt was not updated?'
         end
       end
     end
 
-    _form method: 'post',  action: @meeting.strftime("%Y-%m-%d/") do
+    _form method: 'post',  action: @meeting.strftime('%Y-%m-%d/') do
 
       _div.text_center do
         _button.btn.btn_primary 'Post', disabled: @disabled

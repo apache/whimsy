@@ -7,13 +7,13 @@ class Minutes
                      ((?:^\s{12}[^\n]*\n+)+\n)
                      (.*?)\n\n\s2\.\sRoll\sCall/mx) do |meeting, number, backup|
       start = notes('Call to order') || '??:??'
-      meeting.gsub! "is scheduled", "was scheduled"
-      meeting.gsub! "will begin as", "began at"
-      meeting.gsub! "soon thereafter that", "#{start} when"
-      meeting.gsub! "quorum is", "quorum was"
-      meeting.gsub! "will be", "was"
-      meeting.gsub! %r{:\z}, "."
-      backup.gsub! "will be", "was"
+      meeting.gsub! 'is scheduled', 'was scheduled'
+      meeting.gsub! 'will begin as', 'began at'
+      meeting.gsub! 'soon thereafter that', "#{start} when"
+      meeting.gsub! 'quorum is', 'quorum was'
+      meeting.gsub! 'will be', 'was'
+      meeting.gsub! %r{:\z}, '.'
+      backup.gsub! 'will be', 'was'
       [meeting.reflow(4, 64), '', backup.reflow(4, 68)]
     end
 
@@ -62,7 +62,7 @@ class Minutes
         elsif report.strip.empty?
           [section, title, report, "\n\n       No report was submitted."]
         else
-          [section, title, report, ""]
+          [section, title, report, '']
         end
       end
     end
@@ -98,9 +98,9 @@ class Minutes
         order.sub! %r{\n       \[.*?\n         +\]\n}m, ''
         notes = notes(title.strip)
         if !notes or notes.empty? or notes.strip == 'tabled'
-          notes = "was tabled."
+          notes = 'was tabled.'
         elsif notes == 'unanimous'
-          notes = "was approved by Unanimous Vote of the directors present."
+          notes = 'was approved by Unanimous Vote of the directors present.'
         end
         notes = "Special Order 7#{section}, #{title}, " + notes
         order += "\n" unless order =~ /\n\Z/

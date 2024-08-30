@@ -54,7 +54,7 @@ class Index < Vue
             _tr row_options do
               _td do
                 if %i[emeritusReady emeritusPending].include? message.status
-                  _a message.date, href: message.href, title: message.time, target: "_blank"
+                  _a message.date, href: message.href, title: message.time, target: '_blank'
                 else
                   _a message.date, href: message.href, title: message.time
                 end
@@ -62,7 +62,7 @@ class Index < Vue
               _td _crop(message.from, 40)
               if %i[emeritusReady emeritusPending].include? message.status
                 _td do
-                  _a message.subject, class: message.status, href: message.href2, target: "_blank"
+                  _a message.subject, class: message.status, href: message.href2, target: '_blank'
                 end
               elsif message.secmail
                 _td do
@@ -260,7 +260,7 @@ class Index < Vue
   def refresh(event)
     log "refresh #{@@mbox}"
     @checking = true
-    HTTP.post("actions/check-mail", mbox: @@mbox).then {|response|
+    HTTP.post('actions/check-mail', mbox: @@mbox).then {|response|
       self.mergemsgs response.messages
       @checking = false
     }.catch {|error|

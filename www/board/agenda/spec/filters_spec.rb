@@ -1,7 +1,7 @@
 require_relative 'spec_helper'
 require_relative 'vue_server'
 
-describe "filters", type: :feature, server: :vue do
+describe 'filters', type: :feature, server: :vue do
   before :all do
     @parsed = Agenda.parse 'board_agenda_2015_02_18.txt', :quick
   end
@@ -9,8 +9,8 @@ describe "filters", type: :feature, server: :vue do
   #
   # convert strings containing http:// in reports to links
   #
-  describe "hotlink" do
-    it "should convert http addresses to links" do
+  describe 'hotlink' do
+    it 'should convert http addresses to links' do
       @item = @parsed.find {|item| item['title'] == 'Clerezza'}
 
       on_vue_server do
@@ -32,8 +32,8 @@ describe "filters", type: :feature, server: :vue do
   #
   # add local time to Call to order
   #
-  describe "call to order" do
-    it "should convert start time to local time on call to order" do
+  describe 'call to order' do
+    it 'should convert start time to local time on call to order' do
       @item = @parsed.find {|item| item['title'] == 'Call to order'}
 
       on_vue_server do
@@ -55,11 +55,11 @@ describe "filters", type: :feature, server: :vue do
   #
   # link names to roster
   #
-  describe "roll call" do
-    it "should link people to roster info" do
+  describe 'roll call' do
+    it 'should link people to roster info' do
       @item = @parsed.find {|item| item['title'] == 'Roll Call'}
       @item['people'].replace({
-        rubys: {name: "Sam Ruby", member: true, attending: true}
+        rubys: {name: 'Sam Ruby', member: true, attending: true}
       })
 
       on_vue_server do

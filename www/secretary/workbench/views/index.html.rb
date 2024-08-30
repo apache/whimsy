@@ -1,5 +1,5 @@
 _html do
-  if ENV["RACK_BASE_URI"].to_s + '/' == _.env['REQUEST_URI']
+  if ENV['RACK_BASE_URI'].to_s + '/' == _.env['REQUEST_URI']
     # not sure why Passenger/rack is eating the trailing slash here.
     # add it back in.
     _base href: _.env['REQUEST_URI']
@@ -12,6 +12,11 @@ _html do
     _h1.bg_success do
       _a 'ASF Secretary Mail', href: '.'
     end
+    _a 'Deleted messages', href: 'deleted'
+    _ '-'
+    _a 'All messages', href: 'all'
+    _ '-'
+    _a 'Pending messages', href: 'pending'
   end
 
   _div_.index!

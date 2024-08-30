@@ -103,7 +103,7 @@ class Grant < Vue
       document.querySelector("input[name=#{name}]").validity.valid
     end
 
-    valid &= document.querySelector("textarea[name=description]").validity.valid
+    valid &= document.querySelector('textarea[name=description]').validity.valid
 
     $refs.file.disabled = !valid or @filed or @submitted
 
@@ -114,7 +114,7 @@ class Grant < Vue
 
     # Safari autocomplete workaround: trigger change on leaving field
     # https://github.com/facebook/react/issues/2125
-    if navigator.userAgent.include? "Safari"
+    if navigator.userAgent.include? 'Safari'
       Array(document.getElementsByTagName('input')).each do |input|
         input.addEventListener('blur', self.onblur)
       end

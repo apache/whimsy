@@ -5,7 +5,7 @@ task :server => 'views/pages.js.rb' do
   require 'wunderbar/listen'
 end
 
-file "views/pages.js.rb" => FileList['views/pages/*.js.rb'] do
+file 'views/pages.js.rb' => FileList['views/pages/*.js.rb'] do
   File.open('views/pages.js.rb', 'w') do |pages|
     # define a dummy superclass
     class React

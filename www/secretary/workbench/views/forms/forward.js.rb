@@ -50,7 +50,7 @@ class Forward < Vue
 
   def forward(event)
     form = jQuery(event.target).closest('form')
-    form.attr('action', "../../tasklist/forward")
+    form.attr('action', '../../tasklist/forward')
     form.submit()
   end
 end

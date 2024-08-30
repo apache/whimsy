@@ -34,8 +34,7 @@ if env.password
   # replace with sending to the private@pmc list if this is a pmc owned group
   pmc = ASF::Committee.find(group.id.split('-').first)
   unless pmc.owners.empty?
-    to = pmc.mail_list
-    to = "private@#{to}.apache.org" unless to.include? '@'
+    to = pmc.private_mail_list
   end
 
   # other committees
@@ -45,7 +44,7 @@ if env.password
   mail = Mail.new do
     from "#{from.public_name} <#{from.id}@apache.org>"
     to to
-    bcc "root@apache.org"
+    bcc 'root@apache.org'
     subject "#{person.public_name} #{action} #{list}"
     body "Current roster can be found at:\n\n" +
       "  https://whimsy.apache.org/roster/group/#{group.id}\n\n" +

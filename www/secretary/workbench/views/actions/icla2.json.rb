@@ -23,7 +23,7 @@ _personalize_email(env.user)
 ########################################################################
 
 unless @filename =~ /\A\w[-.\w]*\z/
-  _warn "Unexpected characters in @{filename}"
+  _warn 'Unexpected characters in @{filename}'
 end
 
 if @email.strip.end_with? '@apache.org'
@@ -118,7 +118,7 @@ end
 ########################################################################
 
 # insert line into iclas.txt
-task "svn commit foundation/officers/iclas.txt" do
+task 'svn commit foundation/officers/iclas.txt' do
   icla = ASF::ICLA.find_by_id(@id) || ASF::ICLA.find_by_email(@oldemail)
   unless icla and icla.id == @id and icla.email == @oldemail
     raise ArgumentError.new("ICLA not found for #@id:#@oldemail")
@@ -152,7 +152,7 @@ end
 ########################################################################
 
 if person.public_name != @pubname and @id != 'notinavail'
-  task "change public name in LDAP" do
+  task 'change public name in LDAP' do
     form do
       _input value: @pubname, name: 'pubname'
     end
@@ -199,7 +199,7 @@ end
 ########################################################################
 
 if @id != 'notinavail'
-  task "change email address in LDAP" do
+  task 'change email address in LDAP' do
     form do
       _input value: @email, name: 'email'
     end

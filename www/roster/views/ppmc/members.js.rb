@@ -164,7 +164,7 @@ class PPMCMember < Vue
               data_action: 'add icommit',
               data_target: '#confirm', data_toggle: 'modal',
               data_confirmation: "Add #{@@person.name} as a committer " +
-                "for the incubator PPMC?"
+                'for the incubator PPMC?'
           end
 
           unless @@ppmc.committers.include? @@person.id

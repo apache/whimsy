@@ -61,10 +61,10 @@ get '/' do
   redirect to('/') if env['REQUEST_URI'] == env['SCRIPT_NAME']
 
   # determine latest month for which there are messages
-  archives = Dir[File.join(ARCHIVE, '*.yml')].select {|name| name =~ %r{/\d{6}\.yml$}}
+  current = Date.today.strftime('%Y%m') # exclude future-dated entries
+  archives = Dir[File.join(ARCHIVE, '*.yml')].select {|name| name =~ %r{/\d{6}\.yml$} && File.basename(name,'.yml') <= current}
   @mbox = archives.empty? ? nil : File.basename(archives.max, '.yml')
   if @mbox
-    @mbox = [Date.today.strftime('%Y%m'), @mbox].min
     @messages = Mailbox.new(@mbox).client_headers.select do |message|
       message[:status] != :deleted
     end
@@ -103,13 +103,47 @@ get %r{/(\d{6})} do |mbox|
   _json :index # This invokes workbench/views/index.json.rb
 end
 
+get '/deleted' do
+  current = Mailbox.allmailboxes.last
+  redirect to("/#{current}/deleted")
+end
+
 # display deleted messages
 get %r{/(\d{6})/deleted} do |mbox|
   @mbox = mbox
+  @prv, @nxt = Mailbox.prev_next(mbox)
   @messages = Mailbox.new(@mbox).client_headers.select do |message|
     message[:status] == :deleted
   end
   _html :deleted
+end
+
+get '/pending' do
+  current = Mailbox.allmailboxes.last
+  redirect to("/#{current}/pending")
+end
+
+# display pending messages
+get %r{/(\d{6})/pending} do |mbox|
+  @mbox = mbox
+  @prv, @nxt = Mailbox.prev_next(mbox)
+  @messages = Mailbox.new(@mbox).client_headers.reject do |message|
+    message[:status] == :deleted
+  end
+  _html :pending
+end
+
+get '/all' do
+  current = Mailbox.allmailboxes.last
+  redirect to("/#{current}/all")
+end
+
+# display all messages
+get %r{/(\d{6})/all} do |mbox|
+  @mbox = mbox
+  @prv, @nxt = Mailbox.prev_next(mbox)
+  @messages = Mailbox.new(@mbox).client_headers
+  _html :all
 end
 
 # retrieve a single message
@@ -230,6 +264,8 @@ end
 
 # reparse an existing message
 get %r{/(\d{6})/(\w+)/_reparse_} do |month, hash|
+  return [503, UNAVAILABLE] if UNAVAILABLE
+
   mailbox = Mailbox.new(month)
   message = mailbox.find(hash)
   pass unless message

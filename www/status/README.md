@@ -83,7 +83,7 @@ can be done either by browsers or pings, results in a call to
 If it has been more than 60 seconds since the last status update, index.cgi
 will call
 [monitor.rb](https://github.com/apache/whimsy/blob/master/www/status/monitor.rb).
-Monitor.rb will load and then call each of the monitors defined in the
+StatusMonitor.rb will load and then call each of the monitors defined in the
 [monitors](https://github.com/apache/whimsy/tree/master/www/status/monitors)
 subdirectory.
 

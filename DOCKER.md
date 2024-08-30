@@ -142,7 +142,7 @@ If a developer needs such access, they should use a local SVN repository.
 Using a local SVN repository
 ----------------------------
 Create a directory called REPO (must agree with docker-config/whimsy.conf) under the whimsy parent directory
-(i.e. alonside the gems/ directory)
+(i.e. alongside the gems/ directory)
 Set up 3 local SVN repositories under the REPO directory using `svnadmin create` with the names: asf, private, infra
 Under each of these, create the directories and files you need.
 

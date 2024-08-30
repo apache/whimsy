@@ -90,7 +90,7 @@ end
 
 # add user and pmc emails to the response
 _userEmail "#{user.public_name} <#{user.mail.first}>" if user
-_pmcEmail "private@#{pmc.mail_list}.apache.org" if pmc
+_pmcEmail pmc.private_mail_list if pmc
 
 path = Pathname.new(env['REQUEST_URI']) + "../../?token=#{token}"
 scheme = env['rack.url_scheme'] || 'https'

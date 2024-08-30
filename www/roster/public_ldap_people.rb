@@ -23,7 +23,7 @@ peo = {}
 peeps = ASF::Person.preload(['cn', 'loginShell', 'asf-personalURL', 'createTimestamp', 'modifyTimestamp', 'asf-pgpKeyFingerprint']) # for performance
 
 if peeps.empty?
-  Wunderbar.error "No results retrieved, output not created"
+  Wunderbar.error 'No results retrieved, output not created'
   exit 0
 end
 

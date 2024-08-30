@@ -201,7 +201,7 @@ class Agenda
           update(file, message, retries-1, &block)
         else
           Wunderbar.error _.target! # show the transcript
-          raise Exception.new("svn commit failed")
+          raise Exception.new('svn commit failed')
         end
       end
 

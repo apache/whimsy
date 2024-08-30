@@ -39,7 +39,7 @@ def sendTally(contents)
   user_email = "#{@member}@apache.org"
   pmc = ASF::Committee.find(contents['project'])
   pmc_email = "#{pmc.mail_list}@apache.org"
-  subject = "[RESULT]" + contents['subject']
+  subject = '[RESULT]' + contents['subject']
   last_votes = Hash.new
   votes = contents['votes']
   votes.each { |v|

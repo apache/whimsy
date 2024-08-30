@@ -34,6 +34,24 @@ class Mailbox
     system 'rsync', *options, source, "#{ARCHIVE}/"
   end
 
+  # Get list of mailboxes
+  def self.allmailboxes
+    current = Date.today.strftime('%Y%m.yml') # exclude future-dated entries
+    Dir.entries(ARCHIVE).select{|name| name =~ %r{^\d{6}\.yml$} && name <= current}.map{|n| File.basename n,'.yml'}.sort
+  end
+
+  # get prev and next entries (or nil)
+  def self.prev_next(current)
+    active = self.allmailboxes
+    index = active.find_index current
+    prv = nxt = nil
+    if index
+      prv = active[index - 1] if index > 0
+      nxt = active[index + 1] if index < active.length
+    end
+    return prv, nxt
+  end
+
   #
   # Initialize a mailbox
   #
@@ -157,8 +175,8 @@ class Mailbox
   # return headers (server view)
   #
   def headers
-    messages = YAML.load_file(yaml_file) rescue {}
-    messages.delete :mtime
+    messages = YAML.load_file(yaml_file) || {} rescue {}
+    messages.delete :mtime # TODO: is this needed?
     messages.each do |_key, value|
       value[:source] = @name
     end

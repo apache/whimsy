@@ -47,7 +47,7 @@ class Header < Vue
 
         elsif @@item.online
           _li.dropdown do
-            _a.dropdown_toggle.info! data_toggle: "dropdown" do
+            _a.dropdown_toggle.info! data_toggle: 'dropdown' do
               _ 'online'
               _b.caret
             end
@@ -61,7 +61,7 @@ class Header < Vue
 
         else
           _li.dropdown do
-            _a.dropdown_toggle.info! data_toggle: "dropdown" do
+            _a.dropdown_toggle.info! data_toggle: 'dropdown' do
               _ 'summary'
               _b.caret
             end
@@ -84,7 +84,7 @@ class Header < Vue
         # 'navigation' dropdown
         #
         _li.dropdown do
-          _a.dropdown_toggle.nav! data_toggle: "dropdown" do
+          _a.dropdown_toggle.nav! data_toggle: 'dropdown' do
             _ 'navigation'
             _b.caret
           end
