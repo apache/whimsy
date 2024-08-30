@@ -3,8 +3,6 @@
 # data.
 module ASF # :nodoc:
 
-  ASF::Committee.load_committee_metadata
-
   ##
   # Reads and provides access to the
   # <tt>officers/personnel-duties/ROLENAME.yaml</tt> files.
