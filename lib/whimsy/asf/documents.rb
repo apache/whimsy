@@ -70,7 +70,7 @@ module ASF
 
   end
 
-  # Common class for access to documents/cclas/
+  # Common class for access to documents/grants/
   class GrantFiles
 
     STEM = 'grants'
