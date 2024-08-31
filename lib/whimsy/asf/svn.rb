@@ -296,10 +296,26 @@ module ASF
 
     # retrieve array of names, [err] for a path in svn
     # directories are suffixed with '/'
-    def self.listnames(path, user=nil, password=nil)
+    # If the timestamp is requested, the name is followed by the timestamp in text and in seconds since epoch
+    def self.listnames(path, user=nil, password=nil, timestamp=false)
+      list = err = nil
+      if timestamp
+        list, err = self.svn(['list', '--xml'], path, {user: user, password: password})
+        if list
+          files = []
+          require 'nokogiri'
+          xml_doc = Nokogiri::XML(list)
+          xml_doc.css('entry').each do |entry|
+            date = entry.css('date').text
+            files << [entry.css('name').text, date, Time.parse(date).strftime('%s').to_i]
+          end
+          return files
+        end
+      else
         list, err = self.svn('list', path, {user: user, password: password})
         return list.split(%r{\R}) if list
-        [list, err]
+      end
+      [list, err]
     end
 
     # These keys are common to svn_ and svn
