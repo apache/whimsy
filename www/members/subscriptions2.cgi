@@ -56,6 +56,8 @@ _html do
           _ ', and '
           _a 'Copyable list of Members not subscribed', href: "#unsublist"
           _ ', and '
+          _a 'Copyable list of non-ASF mail subscriptions (must be empty!)', href: "#nonasflist"
+          _ ', and '
           _a 'Entries in LDAP but not members.txt', href: "#ldap"
           _ '.'
         end
@@ -155,7 +157,7 @@ _html do
           _ "#{person.id}@apache.org, "
         end
       end
-      _h3_.unsublist! 'Handy List of non-ASF Emails'
+      _h3_.nonasflist! 'Handy List of non-ASF Emails'
       _p do
         nonASFemails.each do |email|
           _ "#{email} "
