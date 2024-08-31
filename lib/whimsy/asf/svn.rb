@@ -285,12 +285,21 @@ module ASF
     end
 
     # retrieve list, [err] for a path in svn
+    # If timestamp is true, format is xml, else format is a single string with line-breaks
     def self.list(path, user=nil, password=nil, timestamp=false)
       if timestamp
         return self.svn(['list', '--xml'], path, {user: user, password: password})
       else
         return self.svn('list', path, {user: user, password: password})
       end
+    end
+
+    # retrieve array of names, [err] for a path in svn
+    # directories are suffixed with '/'
+    def self.listnames(path, user=nil, password=nil)
+        list, err = self.svn('list', path, {user: user, password: password})
+        return list.split(%r{\R}) if list
+        [list, err]
     end
 
     # These keys are common to svn_ and svn
