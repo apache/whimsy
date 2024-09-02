@@ -13,7 +13,7 @@ listname = 'board' if listname == ''
 info_chairs = ASF::Committee.load_committee_info.group_by(&:chair)
 ldap_chairs = ASF.pmc_chairs
 subscribers, modtime = ASF::MLIST.sub_digest('apache.org', listname)
-subscribers ||= []
+
 member_statuses = ASF::Member.member_statuses
 
 _html do
@@ -32,7 +32,7 @@ _html do
         _h2 'DRAFT - may not be 100% accurate'
         _p! do
           _ "This script takes the list of subscribers (updated #{modtime}) to "
-          _a "#{listname}@apache.org", "href: https://mail-search.apache.org/members/private-arch/#{listname}/"
+          _a "#{listname}@apache.org", href: "https://mail-search.apache.org/members/private-arch/#{listname}/"
           _ ' which are matched against '
           _a 'members.txt', href: ASF::SVN.svnpath!('foundation', 'members.txt')
           _ ', '
@@ -60,18 +60,22 @@ _html do
     ) do
 
       ids = []
-      maillist = ASF::Mail.list
-      subscribers.each do |line|
-        person = maillist[line.downcase]
-        person ||= maillist[line.downcase.sub(/\+\w+@/,'@')]
-        if person
-          id = person.id
-          id = '*notinavail*' if id == 'notinavail'
-        else
-          person = ASF::Person.find('notinavail')
-          id = '*missing*'
+      if subscribers.nil?
+        _h2 "Could not find mailing list #{listname}@apache.org"
+      else
+        maillist = ASF::Mail.list
+        subscribers.each do |line|
+          person = maillist[line.downcase]
+          person ||= maillist[line.downcase.sub(/\+\w+@/,'@')]
+          if person
+            id = person.id
+            id = '*notinavail*' if id == 'notinavail'
+          else
+            person = ASF::Person.find('notinavail')
+            id = '*missing*'
+          end
+          ids << [id, person, line]
         end
-        ids << [id, person, line]
       end
 
       _table_.table do
