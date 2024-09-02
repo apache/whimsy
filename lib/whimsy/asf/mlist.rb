@@ -41,6 +41,18 @@ module ASF
       return list_filter('sub', 'apache.org', 'members-notify', archivers), File.mtime(LIST_TIME)
     end
 
+    # Intended for checking who sees emails on the list
+    def self.sub_digest(dom, list, archivers=false)
+      subs = list_filter('sub', dom, list, archivers)
+      digs = list_filter('digest', dom, list, archivers)
+      if subs.nil?
+        subs = digs # may also be nil
+      elsif !digs.nil? # i.e. neither nil, so merge
+        subs = (subs + digs).uniq
+      end
+      return subs, File.mtime(LIST_TIME)
+    end
+
     # Return an array of private@pmc subscribers (including digests) followed by the file update time
     # Returns nil if the subs file does not exist
     # By default does not return the standard archivers
