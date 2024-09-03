@@ -7,12 +7,12 @@ require 'wunderbar/bootstrap'
 require 'whimsy/asf'
 require 'whimsy/asf/mlist'
 
-listname = ENV['QUERY_STRING']
-listname = 'board' if listname == ''
+DEFAULT_LISTS = 'board,markpub,members,members-announce,members-notify,operations,press,trademarks,private@infra.apache.org'
+listnames = ENV['QUERY_STRING']
+listnames = DEFAULT_LISTS if listnames == ''
 
 info_chairs = ASF::Committee.load_committee_info.group_by(&:chair)
 ldap_chairs = ASF.pmc_chairs
-subscribers, modtime = ASF::MLIST.sub_digest('apache.org', listname)
 
 member_statuses = ASF::Member.member_statuses
 
@@ -31,8 +31,7 @@ _html do
       helpblock: -> {
         _h2 'DRAFT - may not be 100% accurate'
         _p! do
-          _ "This script takes the list of subscribers (updated #{modtime}) to "
-          _a "#{listname}@apache.org", href: "https://mail-search.apache.org/members/private-arch/#{listname}/"
+          _ "This script takes a list of subscribers to a list"
           _ ' which are matched against '
           _a 'members.txt', href: ASF::SVN.svnpath!('foundation', 'members.txt')
           _ ', '
@@ -56,13 +55,33 @@ _html do
           _span.text_danger 'listed in red'
           _ '.'
         end
+        _p %q(
+          If you want to check a particular list, append it to the URL, e.g. subscriptioncheck?listname
+        )
+        _p %q(
+          If the domain is not included, it is assumed to be @apache.org
+        )
+        _p do
+          _ 'The default list is:'
+          _ DEFAULT_LISTS
+        end
       }
     ) do
-
+    _p "Checking: #{listnames}"
+    listnames.split(',') do |entry|
+      listname,domain = entry.split('@')
+      domain ||= 'apache.org'
+      listid = listname + '@' + domain
+      subscribers, modtime = ASF::MLIST.sub_digest(domain, listname)
       ids = []
       if subscribers.nil?
-        _h2 "Could not find mailing list #{listname}@apache.org"
+        _h2 "Could not find mailing list #{listid}"
       else
+        _h2 do
+          _ "Mailing list"
+          _a listid, href: "https://lists.apache.org/list.html?#{listid}"
+          _ "(updated #{modtime})"
+        end
         maillist = ASF::Mail.list
         subscribers.each do |line|
           person = maillist[line.downcase]
@@ -133,6 +152,7 @@ _html do
           end
         end
       end
+    end
     end
   end
 end
