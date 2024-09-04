@@ -197,3 +197,7 @@
 
   tlpreq-input:
     url: infra/infrastructure/trunk/tlpreq/input
+
+  withdrawn:
+    url: private/documents/withdrawn
+    depth: skip
