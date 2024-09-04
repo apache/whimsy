@@ -97,6 +97,19 @@ _html do
           Note that there are other settings which affect the behaviour, and the initial behaviour defined
           by the flags can be modified by local changes to the editor script.
         }
+        _p do
+          _ 'The following query attributes can be added to the URL to filter the output:'
+          _dl do
+            _dt 'match'
+            _dd 'Regex match against the full list name, e.g. dev@ or @apache\.'
+            _dt 'filter'
+            _dd 'Filter flags; must only contain characters A-Za-z, checks if the provided letters are in flags'
+          end
+          _ 'For example:'
+          _pre '?filter=S&match=private@'
+          _ 'This should not produce any output as private@ lists should require subscription moderation (s)'
+          
+        end
         _ 'Sample flag meanings'
         _pre FLAGS
       }
