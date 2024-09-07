@@ -294,26 +294,26 @@ module ASF
       end
     end
 
-    # retrieve array of names, [err] for a path in svn
+    # retrieve array of names for a path in svn
     # directories are suffixed with '/'
     # If the timestamp is requested, the name is followed by the timestamp in text and in seconds since epoch
+    # Returns [array of names, nil] or [nil, err]
     def self.listnames(path, user=nil, password=nil, timestamp=false)
       list = err = nil
       if timestamp
-        list, err = self.svn(['list', '--xml'], path, {user: user, password: password})
-        if list
-          files = []
+        xmlstring, err = self.svn(['list', '--xml'], path, {user: user, password: password})
+        if xmlstring
+          list = []
           require 'nokogiri'
-          xml_doc = Nokogiri::XML(list)
+          xml_doc = Nokogiri::XML(xmlstring)
           xml_doc.css('entry').each do |entry|
             date = entry.css('date').text
-            files << [entry.css('name').text, date, Time.parse(date).strftime('%s').to_i]
+            list << [entry.css('name').text, date, Time.parse(date).strftime('%s').to_i]
           end
-          return files
         end
       else
-        list, err = self.svn('list', path, {user: user, password: password})
-        return list.split(%r{\R}) if list
+        textstring, err = self.svn('list', path, {user: user, password: password})
+        list = textstring.split(%r{\R}) if textstring
       end
       [list, err]
     end
