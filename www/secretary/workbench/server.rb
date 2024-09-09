@@ -105,6 +105,7 @@ end
 
 get '/deleted' do
   current = Mailbox.allmailboxes.last
+  return [404, 'Not found'] unless current
   redirect to("/#{current}/deleted")
 end
 
@@ -120,6 +121,7 @@ end
 
 get '/pending' do
   current = Mailbox.allmailboxes.last
+  return [404, 'Not found'] unless current
   redirect to("/#{current}/pending")
 end
 
@@ -135,6 +137,7 @@ end
 
 get '/all' do
   current = Mailbox.allmailboxes.last
+  return [404, 'Not found'] unless current
   redirect to("/#{current}/all")
 end
 
