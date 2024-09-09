@@ -201,8 +201,3 @@
   withdrawn:
     url: private/documents/withdrawn
     depth: skip
-
-  withdrawn-pending: # listing has dates for age checks
-    url: private/documents/withdrawn/pending
-    list: true
-    dates: true
