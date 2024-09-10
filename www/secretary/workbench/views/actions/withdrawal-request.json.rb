@@ -14,7 +14,7 @@ fileext = File.extname(@selected).downcase if @signature.empty?
 withdrawal_request = "#{@filename}#{fileext}"
 if @filename =~ /\A[a-z][-a-z0-9]+\z/ # check name is valid as availid
   withdrawal_pending = ASF::SVN.svnpath!('withdrawn-pending')
-  list, err = ASF::SVN.listnames(withdrawal_pending)
+  list, err = ASF::SVN.listnames(withdrawal_pending, env.user, env.password)
   unless list
     _warn err
     list = []

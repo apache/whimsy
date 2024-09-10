@@ -273,9 +273,9 @@ module ASF
     # Find the file name (or directory) that matches a person
     # return [svnpath, name] if found
     # return nil if not found
-    def self.findpath(userid)
+    def self.findpath(userid, env)
       reqdir = ASF::SVN.svnpath!(STEM)
-      list, err = ASF::SVN.listnames(reqdir)
+      list, err = ASF::SVN.listnames(reqdir, env.user, env.password)
       if list
         names = list.select{|x| x.start_with?("#{userid}.") or x == "#{userid}/"} # if there is a sig, then files are in a subdir
         if names.size == 1
