@@ -269,5 +269,24 @@ module ASF
     def self.refreshnames(storedates, env)
       ASF::DocumentUtils.update_cache(STEM, env, storedates: storedates, force: true)
     end
+  
+    # Find the file name (or directory) that matches a person
+    # return [svnpath, name] if found
+    # return nil if not found
+    def self.findpath(userid)
+      reqdir = ASF::SVN.svnpath!(STEM)
+      list, err = ASF::SVN.listnames(reqdir)
+      if list
+        names = list.select{|x| x.start_with?("#{userid}.") or x == "#{userid}/"} # if there is a sig, then files are in a subdir
+        if names.size == 1
+          name = names.first
+          path = ASF::SVN.svnpath!(STEM, name)
+          return [path, name]
+        end
+        return nil
+      else
+        raise Exception.new("Failed to list #{STEM} files #{err}")
+      end
+    end
   end
 end
