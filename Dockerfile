@@ -107,7 +107,10 @@ RUN DEBIAN_FRONTEND='noninteractive' apt-get install -y host
 
 WORKDIR /srv/whimsy
 RUN git config --global --add safe.directory /srv/whimsy
-EXPOSE 80
+
+# Use the same port internally and externally so SVN URLs are the same
+RUN sed -i -e 's/Listen 80/Listen 1999/' /etc/apache2/ports.conf
+EXPOSE 1999
 
 # Note: the httpd and LDAP config is now done in the container as part of startup
 # This is to avoid storing any credentials in the image

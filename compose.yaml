@@ -3,7 +3,7 @@ services:
     image: whimsy-web
     build: .
     ports:
-      - "1999:80"
+      - "1999:1999"
     environment:
       - "HOST_HOME=$HOME"
     volumes:
