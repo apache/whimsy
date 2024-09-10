@@ -106,6 +106,8 @@ class Attachment
   end
 
   # write a file out to svn
+  # If there is already a directory with the target path, then add the file to the directory instead
+  # returns the pathname of the file that was written
   def write_svn(repos, file, path=nil)
     filename = File.join(repos, file)
     filename = File.join(filename, path || safe_name) if Dir.exist? filename
