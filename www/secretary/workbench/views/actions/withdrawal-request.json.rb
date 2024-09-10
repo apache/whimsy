@@ -32,7 +32,7 @@ _personalize_email(env.user)
 
 member = ASF::Person.find(@availid)
 @name = member.public_name
-summary = "Emeritus Request from #{@name}"
+summary = "Withdrawal Request from #{@name}"
 
 # file the withdrawal request in svn
 task "svn commit #{withdrawal_pending}/#{withdrawal_request}" do
