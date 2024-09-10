@@ -18,11 +18,20 @@ if qs =~ %r{^url=(https?://[^&]+)(?:&(.+))?}
   option = $2
   # we only want full URLs
   option = 'allref' unless %w{all showurl}.include? option
-  print "Checking the page #{url}\n\n"
-  puts "The following references were found to hosts other than apache.org, openoffice.org and apachecon.com"
-  puts "The first column shows if the host is recognised as being under ASF control according to"
-  puts "https://privacy.apache.org/policies/asf-domains"
-  print "=====\n"
+  puts <<~EOD
+    Checking the page #{url}
+
+
+    The following references were found to hosts other than apache.org, openoffice.org and apachecon.com
+    The first column shows if the host is recognised as being under ASF control according to
+    https://privacy.apache.org/policies/asf-domains
+
+    Note: the script does not yet take account of sites with whom we have a DPA (Data Processing Agreement),
+    so it may show some legitimate references
+
+    ======
+
+  EOD
   cmd = ['node', '/srv/whimsy/tools/scan-page.js', url, option]
   out, err, status = Open3.capture3(*cmd)
   if status.success?
