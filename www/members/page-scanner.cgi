@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-PAGETITLE = "ASF Page Asset Checker - ALPHA"
+PAGETITLE = "ASF Page Asset Checker - ALPHA" # Wvisible:sites
 
 # very rudimentary page asset checker - shows references to non-ASF assets
 
@@ -19,6 +19,9 @@ if qs =~ %r{^url=(https?://[^&]+)(?:&(.+))?}
   # we only want full URLs
   option = 'allref' unless %w{all showurl}.include? option
   puts <<~EOD
+
+    ** ALPHA CODE **
+
     Checking the page #{url}
 
 
