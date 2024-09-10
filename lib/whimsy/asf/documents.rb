@@ -28,14 +28,14 @@ module ASF
 
     # N.B. must check :cache config each time to allow for test overrides
     # create/update cache file
-    def self.update_cache(type, env, cache_dir: ASF::Config.get(:cache))
-      _cache_dir, stale, file, age = check_cache(type, cache_dir: cache_dir, warn: false)
-      if stale
+    def self.update_cache(type, env, cache_dir: ASF::Config.get(:cache), storedates: false, force: false)
+      cache_dir, stale, file, age = check_cache(type, cache_dir: cache_dir, warn: false)
+      if stale or force
         require 'whimsy/asf/rack'
         ASF::Auth.decode(env)
         # TODO: Downdate to info
         Wunderbar.warn "Updating listing #{file} #{age} as #{env.user}"
-        filerev, svnrev = ASF::SVN.updatelisting(type, env.user, env.password, false, cache_dir)
+        filerev, svnrev = ASF::SVN.updatelisting(type, env.user, env.password, storedates, cache_dir)
         if filerev && svnrev # it worked
           FileUtils.touch file # last time it was checked
         else
@@ -43,6 +43,7 @@ module ASF
           Wunderbar.warn("User #{env.user}: failed to update #{type}: #{svnrev}")
         end
       end
+      cache_dir
     end
   end
 
@@ -255,4 +256,18 @@ module ASF
     @base = 'conflict-of-interest'
   end
 
+  class WithdrawalRequestFiles
+
+    STEM = 'withdrawn-pending'
+
+    def self.listnames(storedates, env)
+      cache_dir = ASF::DocumentUtils.update_cache(STEM, env, storedates: storedates)
+      _, list = ASF::SVN.getlisting(STEM, nil, true, storedates, cache_dir)
+      list
+    end
+
+    def self.refreshnames(storedates, env)
+      ASF::DocumentUtils.update_cache(STEM, env, storedates: storedates, force: true)
+    end
+  end
 end

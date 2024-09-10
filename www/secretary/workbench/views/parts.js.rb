@@ -174,6 +174,12 @@ class Parts < Vue
             _span 'emeritus request'
           end
 
+          _label do
+            _input type: :radio, name: 'doctype', value: 'withdrawal-request',
+                   onClick: -> {@form = WithdrawalRequest}
+            _span 'withdrawal request'
+          end
+
           _hr
 
           _label do

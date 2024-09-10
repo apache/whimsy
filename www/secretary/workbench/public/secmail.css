@@ -19,11 +19,11 @@ header h1, header h3 {
   background-color: yellow;
 }
 
-.emeritusPending {
+.emeritusPending, .withdrawalPending {
   background-color: none;
 }
 
-.emeritusReady {
+.emeritusReady, .withdrawalReady {
   background-color: greenyellow;
 }
 

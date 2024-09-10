@@ -201,3 +201,7 @@
   withdrawn:
     url: private/documents/withdrawn
     depth: skip
+
+  withdrawn-pending:
+    url: private/documents/withdrawn/pending
+    depth: skip

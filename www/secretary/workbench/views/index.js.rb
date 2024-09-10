@@ -53,14 +53,14 @@ class Index < Vue
 
             _tr row_options do
               _td do
-                if %i[emeritusReady emeritusPending].include? message.status
+                if %i[emeritusReady emeritusPending withdrawalReady withdrawalPending].include? message.status
                   _a message.date, href: message.href, title: message.time, target: '_blank'
                 else
                   _a message.date, href: message.href, title: message.time
                 end
               end
               _td _crop(message.from, 40)
-              if %i[emeritusReady emeritusPending].include? message.status
+              if %i[emeritusReady emeritusPending withdrawalReady withdrawalPending].include? message.status
                 _td do
                   _a message.subject, class: message.status, href: message.href2, target: '_blank'
                 end

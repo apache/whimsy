@@ -87,6 +87,21 @@ get '/' do
     }
   end
 
+  # Show outstanding emeritus requests
+  ASF::WithdrawalRequestFiles.listnames(true, env).each do |epoch, file|
+    days = (((Time.now.to_i - epoch.to_i).to_f / SECS_TO_DAYS)).round(1)
+    id = File.basename(file, '.*')
+    @messages << {
+      date: Time.at(epoch.to_i).gmtime.asctime,
+      time: Time.at(epoch.to_i).gmtime.iso8601,
+      href: "/roster/committer/#{id}",
+      href2: ASF::SVN.svnpath!('withdrawn-pending', file),
+      from: ASF::Person.find(id).cn,
+      subject: "Pending withdrawal request - #{days} days old",
+      status: days < 10.0 ? :withdrawalPending : :withdrawalReady
+    }
+  end
+
   @cssmtime = File.mtime('public/secmail.css').to_i
   @appmtime = Wunderbar::Asset.convert(File.join(settings.views, 'app.js.rb')).mtime.to_i
   _html :index
