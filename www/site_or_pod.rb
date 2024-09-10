@@ -51,7 +51,7 @@ _html do
   _body? do
     _whimsy_body(
       title: PAGETITLE,
-      subtitle: "Checking #{cgi_for_tlps? ? 'Project' : 'Podling'} Websites For required content",
+      subtitle: "Checking #{cgi_for_tlps? ? 'Project' : 'Podling'} Websites for required and disallowed content",
       related: {
         '/committers/tools' => 'Whimsy Tool Listing',
         other => other_text,
@@ -71,6 +71,7 @@ _html do
           _a 'required links', href: 'https://www.apache.org/foundation/marks/pmcs#navigation'
           _ ' appear on a project homepage, along with an "image" check if project logo files are in apache.org/img'
         end
+        _p 'The script also checks for 3rd party resource references that might be in conflict with our privacy policy.'
         _p! do
           _a 'View the crawler code', href: 'https://github.com/apache/whimsy/blob/master/tools/site-scan.rb'
           _ ', '
