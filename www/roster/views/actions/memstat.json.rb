@@ -24,7 +24,7 @@ if @action == 'emeritus' or @action == 'active' or @action == 'deceased'
     extra = []
 
     # determine where to put the entry
-    if @action == 'emeritus'
+    if @action == 'emeritus' # move to emeritus
       index = text.index(/^\s\*\)\s/, text.index(/^Emeritus/))
       entry.sub! %r{\s*/\* deceased, .+?\*/},'' # drop the deceased comment if necessary
       # if pending emeritus request was found, move it to emeritus
@@ -34,7 +34,7 @@ if @action == 'emeritus' or @action == 'active' or @action == 'deceased'
       else # there should be a request file
         _warn 'Emeritus request file not found'
       end
-    elsif @action == 'active'
+    elsif @action == 'active' # revert to active
       index = text.index(/^\s\*\)\s/, text.index(/^Active/))
       entry.sub! %r{\s*/\* deceased, .+?\*/},'' # drop the deceased comment if necessary
       # if emeritus file was found, move it to emeritus-reinstated
@@ -54,6 +54,83 @@ if @action == 'emeritus' or @action == 'active' or @action == 'deceased'
 
     # return the updated (and normalized) text and extra svn command
     [ASF::Member.normalize(text), extra]
+  end
+
+  ############### INCOMPLETE #######################
+# elsif @action == 'withdraw' # process withdrawal request (secretary only)
+#   # TODO 
+#   # update LDAP - remove from members
+#   # unsubscribe from member only mailing lists:
+#   # - compare subscriptions against ASF::Mail.cansub
+#   Tempfile.create('withdraw') do |tempfile|
+#     ASF::SVN.multiUpdate_ members_txt, message, env, _ do |text|
+#       extra = []
+#       # remove user's entry
+#       unless text.sub! entry, '' # e.g. if the workspace was out of date
+#         raise Exception.new('Failed to remove existing entry -- try refreshing')
+#       end
+#       # save the entry to the archive
+#       File.write(tempfile, entry)
+#       tempfile.close
+#       extra << ['put' , tempfile.path, ASF::SVN.svnpath!('withdrawn', 'archive', "#{@userid}.txt")]
+
+#       # Find matching request for the id
+#       pathname, basename = ASF::WithdrawalRequestFiles.findpath(@userid, env)
+#       unless pathname
+#         raise Exception.new("Failed to find withdrawal pending file for #{@userid}")
+#       end
+
+#       # Move the request from pending - this should also work for directories
+#       extra << ['mv', pathname, ASF::SVN.svnpath!('withdrawn', basename)]
+#       [ASF::Member.normalize(text), extra]
+#     end
+#     ASF::WithdrawalRequestFiles.refreshnames(true, env) # update the listing if successful
+#     ASF::Mail.configure
+#     mail = Mail.new do
+#       from 'secretary@apache.org'
+#       to "#{USERNAME}<#{USERMAIL}>"
+#       subject "Acknowledgement of membership withdrawal from #{USERNAME}"
+#       text_part do
+#         body <<~EOD
+#         The membership withdrawal request that was registered for you has now been actioned.
+#         Your details have been removed from the membership roster.
+#         You have also been unsubscribed from members-only private email lists.
+        
+#         Warm Regards,
+        
+#         Secretary, Apache Software Foundation
+#         secretary@apache.org
+#         EOD
+#       end
+#     end
+#     mail.deliver!
+#   end
+
+elsif @action == 'rescind_withdrawal' # Secretary only
+  pathname, _basename = ASF::WithdrawalRequestFiles.findpath(@userid, env)
+  if pathname
+    ASF::SVN.svn_!('rm', pathname, _, {env:env, msg:message})
+    ASF::WithdrawalRequestFiles.refreshnames(true, env) # update the listing
+    ASF::Mail.configure
+    mail = Mail.new do
+      from 'secretary@apache.org'
+      to "#{USERNAME}<#{USERMAIL}>"
+      subject "Acknowledgement of withdrawal rescindment from #{USERNAME}"
+      text_part do
+        body <<~EOD
+        This acknowledges receipt of your request to rescind your membership withdrawal request.
+        The request has been deleted, and your membership status will be unaffected.
+        
+        Warm Regards,
+        
+        Secretary, Apache Software Foundation
+        secretary@apache.org
+        EOD
+      end
+    end
+    mail.deliver!
+  else
+    _warn "Withdrawal request file not found for #{@userid}"
   end
 end
 

@@ -187,6 +187,12 @@ class Committer
           response[:forms][:emeritus_reinstated] = ASF::EmeritusReinstatedFiles.svnpath!(file)
         end
 
+        if auth[:secretary]
+          path, name = ASF::WithdrawalRequestFiles.findpath(person.id, env)
+          if path
+            response[:forms][:withdrawal_request] = path
+          end
+        end
       else
         if person.member_nomination
           member[:nomination] = person.member_nomination
