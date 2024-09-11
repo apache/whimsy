@@ -178,6 +178,42 @@ class Message
     File.write File.join(dir, @hash), @raw, encoding: Encoding::BINARY
   end
 
+  # don't let a problem with the properties stop the commit
+  #  handle each property separately
+  def propset(pathname, propname)
+    propval = nil
+    case propname
+      when 'email:addr'
+        propval = from.addrs.first.address
+      when 'email:id'
+        propval = id
+      when 'email:name'
+        propval = from.addrs.first.name
+      when 'email:subject'
+        propval = subject
+      when 'envelope:from'
+        propval = @headers[:envelope_from]
+      when 'envelope:date'
+        propval = @headers[:envelope_date]
+      else
+        Wunderbar.warn "Don't know propname #{propname}"
+    end
+    if propval
+      begin
+        system 'svn', 'propset', propname, propval, pathname
+      rescue StandardError => e
+        Wunderbar.warn "Problem occurred adding #{propname} to #{pathname} #{e}"
+      end
+    end
+  end
+  
+  # Add some properties from the email
+  def add_email_details(pathname)
+    %w{email:addr email:id email:name email:subject envelope:from envelope:date}.each do |propname|
+      propset(pathname, propname)
+    end
+  end
+
   #
   # write one or more attachments to directory containing an svn checkout
   #
@@ -190,7 +226,8 @@ class Message
 
     if attachments.flatten.length == 1
       ext = File.extname(attachments.first).downcase
-      find(attachments.first).write_svn(repos, filename + ext)
+      pathname = find(attachments.first).write_svn(repos, filename + ext)
+      add_email_details(pathname)
     else
       # validate filename
       unless filename =~ /\A[a-zA-Z][-.\w]+\z/
@@ -205,7 +242,8 @@ class Message
 
       # write out selected attachment
       attachments.each do |attachment, basename|
-        find(attachment).write_svn(repos, filename, basename)
+        pathname = find(attachment).write_svn(repos, filename, basename)
+        add_email_details(pathname)
       end
 
       dest
