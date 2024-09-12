@@ -188,9 +188,11 @@ class Committer
         end
 
         if auth[:secretary]
-          path, name = ASF::WithdrawalRequestFiles.findpath(person.id, env)
+          path, _name, _timestamp, epoch = ASF::WithdrawalRequestFiles.findpath(person.id, env, true)
           if path
             response[:forms][:withdrawal_request] = path
+            # Calculate the age in days
+            response[:withdrawal_request_age] = (((Time.now.to_i - epoch).to_f/SECS_TO_DAYS)).round(1).to_s
           end
         end
       else
