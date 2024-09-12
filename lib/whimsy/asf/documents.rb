@@ -271,17 +271,17 @@ module ASF
     end
   
     # Find the file name (or directory) that matches a person
-    # return [svnpath, name] if found
+    # return [svnpath, name, timestamp, epoch (int)] if found
     # return nil if not found
-    def self.findpath(userid, env)
+    def self.findpath(userid, env, getDates=false)
       reqdir = ASF::SVN.svnpath!(STEM)
-      list, err = ASF::SVN.listnames(reqdir, env.user, env.password)
-      if list
-        names = list.select{|x| x.start_with?("#{userid}.") or x == "#{userid}/"} # if there is a sig, then files are in a subdir
+      list, err = ASF::SVN.listnames(reqdir, env.user, env.password, getDates)
+      if list # This is a list of [names] or triples [name, ISO timestamp, epoch (int)]
+        names = list.select{|x,_y| x.start_with?("#{userid}.") or x == "#{userid}/"} # if there is a sig, then files are in a subdir
         if names.size == 1
           name = names.first
           path = ASF::SVN.svnpath!(STEM, name)
-          return [path, name]
+          return [path, name].flatten # this works equally well with or without dates
         end
         return nil
       else
