@@ -307,8 +307,11 @@ module ASF
           require 'nokogiri'
           xml_doc = Nokogiri::XML(xmlstring)
           xml_doc.css('entry').each do |entry|
+            kind = entry.attr('kind')
             date = entry.css('date').text
-            list << [entry.css('name').text, date, Time.parse(date).strftime('%s').to_i]
+            name = entry.css('name').text
+            name += '/' if kind == 'dir'
+            list << [name, date, Time.parse(date).strftime('%s').to_i]
           end
         end
       else
