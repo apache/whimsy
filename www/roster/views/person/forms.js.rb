@@ -35,6 +35,12 @@ class PersonForms < Vue
                   _ ' Days since submission: '
                   _ emeritus_request_age
                 end
+              elsif form == 'withdrawal_request'
+                withdrawal_request_age = committer['withdrawal_request_age']
+                if withdrawal_request_age
+                  _ ' Days since submission: '
+                  _ withdrawal_request_age
+                end
               end
             end
           end
