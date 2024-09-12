@@ -65,6 +65,15 @@ class Wunderbar::JsonBuilder
     ASF::SVN.svn_!(command, path, _, options)
   end
 
+  def _extra_props(extras, emessage, outpath)
+    Message::PROPNAMES_DEFAULT.each do |propname|
+      propval = emessage.propval(propname)
+      if propval
+        extras << ['propset', propname, propval, outpath]
+      end
+    end
+end
+  
   # Commit new file(s) and update associated index
   # e.g. add ccla.pdf, ccla.pdf.asc to documents/cclas/xyz/ and update officers/cclas.txt
   # Parameters:
@@ -109,6 +118,9 @@ class Wunderbar::JsonBuilder
           # N.B. file cannot exist here, because the directory was created as part of the same commit
           extras << ['put', file, outpath]
           extras << ['propset', 'svn:mime-type', content_type, outpath]
+          if index_name == 'iclas.txt' # Don't apply this to other types
+            _extra_props(extras, emessage, outpath)
+          end
         end
       else
         _name, file, content_type = dest.flatten
@@ -119,6 +131,9 @@ class Wunderbar::JsonBuilder
         else
           extras << ['put', file, outpath]
           extras << ['propset', 'svn:mime-type', content_type, outpath]
+          if index_name == 'iclas.txt' # Don't apply this to other types
+            _extra_props(extras, emessage, outpath)
+          end
         end
       end
 

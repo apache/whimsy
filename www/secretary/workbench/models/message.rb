@@ -17,6 +17,9 @@ class Message
   # The name used to represent the raw message as an attachment
   RAWMESSAGE_ATTACHMENT_NAME = 'rawmessage.txt'
 
+  # default SVN property names to add to documents
+  PROPNAMES_DEFAULT = %w{email:addr email:id email:name email:subject envelope:from envelope:date}
+
   #
   # create a new message
   #
@@ -178,11 +181,10 @@ class Message
     File.write File.join(dir, @hash), @raw, encoding: Encoding::BINARY
   end
 
-  # don't let a problem with the properties stop the commit
-  #  handle each property separately
-  def propset(pathname, propname)
+  def propval(propname)
     propval = nil
-    case propname
+    begin
+      case propname
       when 'email:addr'
         propval = from.addrs.first.address
       when 'email:id'
@@ -197,7 +199,17 @@ class Message
         propval = @headers[:envelope_date]
       else
         Wunderbar.warn "Don't know propname #{propname}"
+      end
+    rescue StandardError => e
+      Wunderbar.warn "Problem occurred fetching #{propname} #{e}"
     end
+    propval
+  end
+
+  # don't let a problem with the properties stop the commit
+  #  handle each property separately
+  def propset(pathname, propname)
+    propval = propval(propname)
     if propval
       begin
         system 'svn', 'propset', propname, propval, pathname
@@ -209,7 +221,7 @@ class Message
   
   # Add some properties from the email
   def add_email_details(pathname)
-    %w{email:addr email:id email:name email:subject envelope:from envelope:date}.each do |propname|
+    PROPNAMES_DEFAULT.each do |propname|
       propset(pathname, propname)
     end
   end
