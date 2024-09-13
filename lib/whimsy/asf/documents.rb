@@ -280,7 +280,7 @@ module ASF
         names = list.select{|x,_y| x.start_with?("#{userid}.") or x == "#{userid}/"} # if there is a sig, then files are in a subdir
         if names.size == 1
           name = names.first
-          path = ASF::SVN.svnpath!(STEM, name)
+          path = ASF::SVN.svnpath!(STEM, getDates ? name.first : name)
           return [path, name].flatten # this works equally well with or without dates
         end
         return nil
