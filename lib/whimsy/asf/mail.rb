@@ -243,7 +243,7 @@ module ASF
 
     # Load the auto-subscription file
     def self._load_auto
-      apmail_bin = ASF::SVN['apmail_bin']
+      apmail_bin = File.join(ASF::Config[:puppet_data], 'apmail_bin') # Loaded by puppet
       auto_file = File.join(apmail_bin, 'mail_list_autosub.yml')
       auto_mtime = File.mtime(auto_file) # fetch this up front in case file updated during loading
       if not @auto or auto_mtime != @auto_mtime

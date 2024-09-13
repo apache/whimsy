@@ -17,6 +17,7 @@
 lib = File.expand_path('..', __dir__)
 $LOAD_PATH.unshift lib unless $LOAD_PATH.include? lib
 
+require 'wunderbar' # may be needed by svn
 require 'whimsy/asf/config' # must be loaded before updating config
 require 'whimsy/asf/svn' # must be loaded before updating config
 # Don't load 'whimsy/asf' here as some classes may depend on overrides below
@@ -25,10 +26,10 @@ SAMPLE_SVN_NAME = 'minutes' # name of checkout of public SVN dir
 SAMPLE_SVN_URL_RE = %r{https://.+/minutes}
 
 # Override with test data if there is no checkout available (allows local use)
-if ENV['RAKE_TEST'] == 'TRUE' or not (ASF::SVN.find('apmail_bin') and ASF::SVN.find('board'))
+if ENV['RAKE_TEST'] == 'TRUE' or not (File.exist?(File.join(ASF::Config[:puppet_data], 'apmail_bin')) and ASF::SVN.find('board'))
   TEST_DATA = true # Test data is smaller so some tests need adjusting
   puts 'Overriding data directories'
-  ASF::SVN['apmail_bin'] = File.expand_path('../test/svn/apmail_bin', __dir__)
+  ASF::Config[:puppet_data] = File.expand_path('../test/puppet-data', __dir__)
   ASF::SVN['board'] = File.expand_path('../test/svn/board', __dir__)
   ASF::SVN[SAMPLE_SVN_NAME] = File.expand_path('../test/svn/minutes', __dir__)
   ASF::Config[:subscriptions] = File.expand_path('../test/subscriptions', __dir__)

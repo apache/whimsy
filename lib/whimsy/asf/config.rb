@@ -67,6 +67,8 @@ module ASF
     # default location of LDAP credentials
     @config[:ldap_creds] ||= '/srv/ldap.txt'
 
+    # default location of Puppet data
+    @config[:puppet_data] ||= '/srv/puppet-data'
 
     # The cache is used for local copies of SVN files that may be updated by Whimsy
     # for example: podlings.xml

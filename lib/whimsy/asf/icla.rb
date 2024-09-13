@@ -239,7 +239,7 @@ module ASF
     # list of mails rejected by badrcptto and badrcptto_patterns
     # Not intended for external use
     def self.badmails
-      qmc = ASF::SVN['qmail_control']
+      qmc = File.join(ASF::Config[:puppet_data], 'qmail_control')
       # non-patterns
       brt = File.join(qmc, 'badrcptto')
       badmails = File.read(brt).scan(/^(\w.+)@apache\.org\s*$/).flatten

@@ -33,12 +33,6 @@
     files:
       - apacheconhistory.csv
 
-  apmail_bin:
-    url: infra/infrastructure/apmail/trunk/bin
-    depth: empty
-    files:
-      - mail_list_autosub.yml
-
   attic-xdocs:
     url: asf/attic/site/xdocs/projects
     depth: delete
@@ -165,14 +159,6 @@
   personnel-duties:
     url: private/foundation/officers/personnel-duties
     depth: files
-
-# for access to badrcptto files:
-  qmail_control:
-    url: infra/infrastructure/trunk/qmail/control
-    depth: empty
-    files:
-      - badrcptto
-      - badrcptto_patterns
 
   # for Treasurer access to financial records
   records:
