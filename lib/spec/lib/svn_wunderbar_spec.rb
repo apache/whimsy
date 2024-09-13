@@ -287,10 +287,8 @@ describe 'ASF::SVN.svnmucc_', skip: svnmucc_missing do
     ts = out['transcript']
     expect(ts).to be_kind_of(Array)
     expect(ts[0]).to match(%r{\$ echo})
-    # either --password pass or --password-from-stdin {:stdin=>\"pass\"}
-    # This depends on the order in which the command line is built up
-    expect(ts[1]).to match(%r{^svnmucc .*--message test .*--username user --password.+pass})
-    expect(ts[4]).to eq('usage: svnmucc ACTION...') # output of svnmucc help
+    expect(ts[1]).to match(%r{^svnmucc .*--message test .*--username user --password-from-stdin})
+    expect(ts[5]).to eq('usage: svnmucc ACTION...') # output of svnmucc help
   end
   it "svnmucc_([['help']],'test',ENV_.new,_,nil,{root: root}) should include --root-url" do
     root = ASF::SVN.svnurl!(SAMPLE_SVN_NAME)
