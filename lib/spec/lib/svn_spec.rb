@@ -241,16 +241,6 @@ describe ASF::SVN do
     end
   end
 
-  describe 'ASF::SVN.passwordStdinOK?' do
-    it 'passwordStdinOK? should return true or false' do
-      res = ASF::SVN.passwordStdinOK?
-      expect(res).to be(true).or be(false)
-      # show what we are working with
-      ver = %x(svn --version --quiet).chomp
-      puts "\n>> version = '#{ver}' passwordStdinOK = #{res}"
-    end
-  end
-
   describe 'ASF::SVN.svn' do
     it 'svn(nil,nil) should raise error' do
       expect { ASF::SVN.svn(nil,nil) }.to raise_error(ArgumentError, 'command must not be nil')
@@ -319,13 +309,8 @@ describe ASF::SVN do
     it "_svn_build_cmd('help', 'path', {user: 'whimsy', password: 'pass}) should include username" do
       cmd, stdin = ASF::SVN._svn_build_cmd('help', 'path', {user: 'whimsy', password: 'pass'})
       exp = ['svn', 'help', '--non-interactive', ['--username', 'whimsy', '--no-auth-cache'], '--', 'path']
-      if ASF::SVN.passwordStdinOK?
-        expect(stdin).to eq('pass')
-        expect(cmd-exp).to eq([['--password-from-stdin']])
-      else
-        expect(stdin).to eq(nil)
-        expect(cmd-exp).to eq([['--password', 'pass']])
-      end
+      expect(stdin).to eq('pass')
+      expect(cmd-exp).to eq([['--password-from-stdin']])
     end
 
     it "_svn_build_cmd('help', 'path', {user: 'whimsysvn'}) should not include username" do

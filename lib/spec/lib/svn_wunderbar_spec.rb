@@ -113,11 +113,7 @@ describe 'ASF::SVN.svn_' do
     end
     expect(rc).to eq(0)
     act = out['transcript'][1]
-    if ASF::SVN.passwordStdinOK?
-      exp = [['svn', 'help', '--non-interactive', ['--username', 'a', '--no-auth-cache'], ['--password-from-stdin'], '--', 'help'], {:stdin=>'b'}]
-    else
-      exp = [['svn', 'help', '--non-interactive', ['--username', 'a', '--no-auth-cache'], ['--password', 'b'], '--', 'help'], {}]
-    end
+    exp = [['svn', 'help', '--non-interactive', ['--username', 'a', '--no-auth-cache'], ['--password-from-stdin'], '--', 'help'], {:stdin=>'b'}]
     expect(act).to eq(exp.inspect)
    end
 
@@ -127,11 +123,7 @@ describe 'ASF::SVN.svn_' do
     end
     expect(rc).to eq(0)
     act = out['transcript'][1]
-    if ASF::SVN.passwordStdinOK?
-      exp = [['svn', 'help', '--non-interactive', ['--username', 'a', '--no-auth-cache'], ['--password-from-stdin'], '--', 'help'], {:stdin=>'b'}]
-    else
-      exp = [['svn', 'help', '--non-interactive', ['--username', 'a', '--no-auth-cache'], ['--password', 'b'], '--', 'help'], {}]
-    end
+    exp = [['svn', 'help', '--non-interactive', ['--username', 'a', '--no-auth-cache'], ['--password-from-stdin'], '--', 'help'], {:stdin=>'b'}]
     expect(act).to eq(exp.inspect)
    end
 
@@ -151,11 +143,7 @@ describe 'ASF::SVN.svn_' do
     end
     expect(rc).to eq(0)
     act = out['transcript'][1]
-    if ASF::SVN.passwordStdinOK?
-      exp = [['svn', 'help', '--non-interactive', ['--username', 'user', '--no-auth-cache'], ['--password-from-stdin'], '--', 'help'], {:stdin=>'pass'}]
-    else
-      exp = [['svn', 'help', '--non-interactive', ['--username', 'user', '--no-auth-cache'], ['--password', 'pass'], '--', 'help'], {}]
-    end
+    exp = [['svn', 'help', '--non-interactive', ['--username', 'user', '--no-auth-cache'], ['--password-from-stdin'], '--', 'help'], {:stdin=>'pass'}]
     expect(act).to eq(exp.inspect)
    end
 
