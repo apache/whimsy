@@ -385,12 +385,8 @@ module ASF
         # password was supplied, add credentials
         if password
           cmd << ['--username', user, '--no-auth-cache']
-          if self.passwordStdinOK?()
-            stdin = password
-            cmd << ['--password-from-stdin']
-          else
-            cmd << ['--password', password]
-          end
+          stdin = password
+          cmd << ['--password-from-stdin']
         end
       end
 
@@ -825,15 +821,11 @@ module ASF
 
         sysopts = {}
         if env
-          if self.passwordStdinOK?()
-            syscmd << ['--username', env.user, '--password-from-stdin']
-            sysopts[:stdin] = env.password
-          else
-            syscmd << ['--username', env.user, '--password', env.password]
-          end
+          syscmd << ['--username', env.user, '--password-from-stdin']
+          sysopts[:stdin] = env.password
         end
         if options[:verbose]
-          _.system 'echo', [syscmd.flatten, sysopts.to_s]
+          _.system 'echo', [syscmd.flatten, "\n", commands.join("\n")]
         end
         if options[:dryrun]
           rc = _.system syscmd.insert(0, 'echo')
@@ -1119,18 +1111,6 @@ module ASF
           return curtag, list
         end
       end
-    end
-
-    # Does this host's installation of SVN support --password-from-stdin?
-    def self.passwordStdinOK?
-      return @svnHasPasswordFromStdin unless @svnHasPasswordFromStdin.nil?
-      out, _err, status = Open3.capture3('svn', 'help', 'cat', '-v')
-      if status.success? && out
-        @svnHasPasswordFromStdin = out.include? '--password-from-stdin'
-      else
-        @svnHasPasswordFromStdin = false
-      end
-      @svnHasPasswordFromStdin
     end
 
     private
