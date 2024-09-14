@@ -11,6 +11,9 @@ message = Mailbox.find(@message)
 
 # find person
 person = ASF::Person.find(@id)
+unless person.icla
+  _warn "Could not find ICLA entry for #{@id}"
+end
 
 # extract file extension
 fileext = File.extname(@selected).downcase
