@@ -81,6 +81,29 @@ module ASF
       !self._cannot_unsub.include? listid
     end
 
+    # Can a list be read by the person with the specified attributes?
+    # Note: this is different from cansub - not all readable lists can be self-subscribed
+    #
+    # Params:
+    # listid: list@domain
+    # member: true if member
+    # pmc_chair: true if pmc_chair
+    # ldap_pmcs: list of (P)PMC mail_list names to which the user belongs
+    # Return true if person is allowed to read the list
+    # nil if the list is not known
+    # otherwise true
+    def self.canread(listid, member=false, pmc_chair=false, ldap_pmcs=[])
+      flags = getflags(listid)
+      return nil if flags.nil? # Not a known list
+      return true unless isModSub?(flags) # subscription not needed
+      return true if listid == 'committers@apache.org' # any more like this?
+      return true if self._committers_allowed().include?(listid) 
+      return true if member # They can read anything
+      return true if pmc_chair and self._chairs_allowed.include? listid
+      return true if ldap_pmcs and ldap_pmcs.include? listid.split('@')[-1].sub('.apache.org', '')
+      false
+    end
+
     # which lists are available for subscription via Whimsy?
     # Params:
     # member: true if member
@@ -269,6 +292,7 @@ module ASF
           end
         end
         @flags = lists
+        @flags_hash = lists.map{|d,l,f| ["#{l}@#{d}",f]}.to_h
         @flags_mtime = File.mtime(@list_flags)
       end
     end
@@ -286,6 +310,12 @@ module ASF
 
         yield [d, l, f]
       end
+    end
+
+    # get flags for list@domain; nil if not found
+    def self.getflags(listid)
+      self._load_flags()
+      @flags_hash[listid]
     end
 
     # Do the flags indicate subscription moderation?
