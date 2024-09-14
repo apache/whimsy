@@ -87,7 +87,7 @@ get '/' do
     }
   end
 
-  # Show outstanding emeritus requests
+  # Show outstanding withdrawal requests
   ASF::WithdrawalRequestFiles.listnames(true, env).each do |epoch, file|
     days = (((Time.now.to_i - epoch.to_i).to_f / SECS_TO_DAYS)).round(1)
     id = File.basename(file, '.*')
