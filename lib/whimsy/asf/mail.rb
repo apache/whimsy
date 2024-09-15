@@ -96,8 +96,8 @@ module ASF
       flags = getflags(listid)
       return nil if flags.nil? # Not a known list
       return true unless isModSub?(flags) # subscription not needed
-      return true if listid == 'committers@apache.org' # any more like this?
-      return true if self._committers_allowed().include?(listid) 
+      return true if self._cannot_unsub.include? listid # must be system maintained, so assume OK
+      return true if self._committers_allowed().include?(listid)
       return true if member # They can read anything
       return true if pmc_chair and self._chairs_allowed.include? listid
       return true if ldap_pmcs and ldap_pmcs.include? listid.split('@')[-1].sub('.apache.org', '')
