@@ -458,6 +458,11 @@ def ldap_setup
     '/etc/apache2/sites-enabled/000-default.conf', ldaphosts, ldapbinddn, ldapbindpw)
   filter('docker-config/25-authz_ldap_group_membership.conf',
     '/etc/apache2/conf-enabled/25-authz_ldap_group_membership.conf', ldaphosts, ldapbinddn, ldapbindpw)
+  # Add the URI and BASE for use by ldapsearch from shell
+  File.open("/etc/ldap/ldap.conf",'a+') do |f|
+    f.puts "URI #{hosts.join(' ')}"
+    f.puts "BASE dc=apache,dc=org"
+  end
 end
 
 # Docker support
