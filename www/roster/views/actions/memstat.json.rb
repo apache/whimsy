@@ -1,5 +1,6 @@
 # get entry for @userid
 require 'wunderbar'
+
 user = ASF::Person.find(@userid)
 entry = user.members_txt(true)
 raise Exception.new("Unable to find member entry for #{@userid}") unless entry
@@ -56,55 +57,79 @@ if @action == 'emeritus' or @action == 'active' or @action == 'deceased'
     [ASF::Member.normalize(text), extra]
   end
 
-  ############### INCOMPLETE #######################
-# elsif @action == 'withdraw' # process withdrawal request (secretary only)
-#   # TODO 
-#   # update LDAP - remove from members
-#   # unsubscribe from member only mailing lists:
-#   # - compare subscriptions against ASF::Mail.cansub
-#   Tempfile.create('withdraw') do |tempfile|
-#     ASF::SVN.multiUpdate_ members_txt, message, env, _ do |text|
-#       extra = []
-#       # remove user's entry
-#       unless text.sub! entry, '' # e.g. if the workspace was out of date
-#         raise Exception.new('Failed to remove existing entry -- try refreshing')
-#       end
-#       # save the entry to the archive
-#       File.write(tempfile, entry)
-#       tempfile.close
-#       extra << ['put' , tempfile.path, ASF::SVN.svnpath!('withdrawn', 'archive', "#{@userid}.txt")]
+elsif @action == 'withdraw' # process withdrawal request (secretary only)
+  require 'whimsy/asf/subreq'
 
-#       # Find matching request for the id
-#       pathname, basename = ASF::WithdrawalRequestFiles.findpath(@userid, env)
-#       unless pathname
-#         raise Exception.new("Failed to find withdrawal pending file for #{@userid}")
-#       end
+  # TODO 
+  # Check members.md for entry and report - how?
 
-#       # Move the request from pending - this should also work for directories
-#       extra << ['mv', pathname, ASF::SVN.svnpath!('withdrawn', basename)]
-#       [ASF::Member.normalize(text), extra]
-#     end
-#     ASF::WithdrawalRequestFiles.refreshnames(true, env) # update the listing if successful
-#     ASF::Mail.configure
-#     mail = Mail.new do
-#       from 'secretary@apache.org'
-#       to "#{USERNAME}<#{USERMAIL}>"
-#       subject "Acknowledgement of membership withdrawal from #{USERNAME}"
-#       text_part do
-#         body <<~EOD
-#         The membership withdrawal request that was registered for you has now been actioned.
-#         Your details have been removed from the membership roster.
-#         You have also been unsubscribed from members-only private email lists.
+  # unsubscribe from member only mailing lists:
+  all_mail = user.all_mail # their known emails
+  pmc_chair = ASF.pmc_chairs.include?(user)
+  # to which (P)PMCs do they belong?
+  ldap_pmcs = user.committees.map(&:mail_list)
+  ldap_pmcs += user.podlings.map(&:mail_list)
+  # What are their subscriptions?
+  subs = ASF::MLIST.subscriptions(all_mail)[:subscriptions]
+  subs += ASF::MLIST.digests(all_mail)[:digests]
+  # Check subscriptions for readability
+  subs.each do |list, email|
+    unless ASF::Mail.canread(list, false, pmc_chair, ldap_pmcs)
+      request = ASF::Subreq.create_request(user, email, list)
+      ASF::Subreq.queue_request('unsub', request, nil, {env: env})
+    end
+  end
+  # remove from LDAP member group
+  ASF::LDAP.bind(env.user, env.password) do
+    ASF::Group['member'].remove(user)
+  end
+
+  # Remove from members.txt
+  Tempfile.create('withdraw') do |tempfile|
+    ASF::SVN.multiUpdate_ members_txt, message, env, _, {verbose: true} do |text|
+      extra = []
+      # remove user's entry
+      unless text.sub! entry, '' # e.g. if the workspace was out of date
+        raise Exception.new('Failed to remove existing entry -- try refreshing')
+      end
+      # save the entry to the archive
+      File.write(tempfile, entry)
+      tempfile.close
+      extra << ['put' , tempfile.path, ASF::SVN.svnpath!('withdrawn', 'archive', "#{@userid}.txt")]
+
+      # Find matching request for the id
+      pathname, basename = ASF::WithdrawalRequestFiles.findpath(@userid, env)
+      unless pathname
+        raise Exception.new("Failed to find withdrawal pending file for #{@userid}")
+      end
+
+      # Move the request from pending - this should also work for directories
+      extra << ['mv', pathname, ASF::SVN.svnpath!('withdrawn', basename)]
+      [ASF::Member.normalize(text), extra]
+    end
+    ASF::WithdrawalRequestFiles.refreshnames(true, env) # update the listing if successful
+
+    # Send confirmation email
+    ASF::Mail.configure
+    mail = Mail.new do
+      from 'secretary@apache.org'
+      to "#{USERNAME}<#{USERMAIL}>"
+      subject "Acknowledgement of membership withdrawal from #{USERNAME}"
+      text_part do
+        body <<~EOD
+        The membership withdrawal request that was registered for you has now been actioned.
+        Your details have been removed from the membership roster.
+        You have also been unsubscribed from members-only private email lists.
         
-#         Warm Regards,
+        Warm Regards,
         
-#         Secretary, Apache Software Foundation
-#         secretary@apache.org
-#         EOD
-#       end
-#     end
-#     mail.deliver!
-#   end
+        Secretary, Apache Software Foundation
+        secretary@apache.org
+        EOD
+      end
+    end
+    mail.deliver!
+  end
 
 elsif @action == 'rescind_withdrawal' # Secretary only
   pathname, _basename = ASF::WithdrawalRequestFiles.findpath(@userid, env)

@@ -59,11 +59,10 @@ class PersonMemberStatus < Vue
                     name: 'action', value: 'emeritus'
                 end
                 if committer.forms['withdrawal_request']
-                  # INCOMPLETE
-                  # _button.btn.btn_primary 'move to withdrawn',
-                  # name: 'action', value: 'withdraw'
+                  _button.btn.btn_primary 'process withdrawal',
+                    name: 'action', value: 'withdraw'
                   _button.btn.btn_primary 'rescind withdrawal request',
-                  name: 'action', value: 'rescind_withdrawal'
+                    name: 'action', value: 'rescind_withdrawal'
                 end
               end
             end # end _form
