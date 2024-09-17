@@ -37,11 +37,11 @@ The current board agenda tool has code to share a socket and communicate data
 received to all open tabs.  This code is fairly complex (prior to service
 or shared workers there wasn't an architected ability to run a task "in the
 background" and communicate results between tabs).  This code also seems to
-have an undebugged leak of sockets, leading to cases where whimsy-vm3 is idle,
+have an undebugged leak of sockets, leading to cases where whimsy-vmN is idle,
 most users are unaffected, but one user sees whimsy as unresponsive.
 
-FYI: as a workaround, change from whimsy.apache.org to whimsy3.apache.org or
-even whimsy-vm3.apache.org.  These are all aliases for the same server, but
+FYI: as a workaround, change from whimsy.apache.org to whimsy-vmN.apache.org.
+These are all aliases for the same server, but
 from a client perspective are completely different hosts.
 
 Statement of the Solution:
