@@ -103,7 +103,9 @@ and running - these are only needed for a new deployment.
      If the service still does not start, try stopping and starting it:
      `sudo systemctl stop/start board-agenda-websocket.service`
 
- * Update the following cron scripts under https://svn.apache.org/repos/infra/infrastructure/apmail/trunk/bin:
+ * Update the following cron scripts now under
+    https://github.com/apache/infrastructure-p6/tree/production/modules/qmail_asf/files/apmail/bin
+    (but may revert here) https://svn.apache.org/repos/infra/infrastructure/apmail/trunk/bin:
      * listmodsubs.sh - add the new host
      * whimsy_qmail_ids.sh - add the new host
      * make sure that the host is added to the known_hosts file on hermes
@@ -146,4 +148,4 @@ The mail server is unlikely to change, but if it does, rsync auth will need to b
   * generate an SSH keypair for the apmail login:
     * `sudo -Hiu apmail`
     * `ssh-keygen -t ecdsa -b 521`
-  * copy the public key from `.ssh/id_ecdsa.pub` to the Puppet file `data/nodes/whimsy-vm6.apache.org.yaml` under the `whimsy_server::procmail::apmail_keycontent` key.
+  * copy the public key from `.ssh/id_ecdsa.pub` to the Puppet file `data/nodes/whimsy-vmN.apache.org.yaml` under the `whimsy_server::procmail::apmail_keycontent` key.
