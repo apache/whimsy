@@ -49,7 +49,7 @@ that management of Whimsy code and tools is a PMC responsibility.
 <a name="puppetnode"></a>
 The **puppet definition** is contained in the following files (these are private files and need a login):
 
- * https://github.com/apache/infrastructure-p6/blob/production/data/nodes/whimsy-vm6.apache.org.yaml (Includes modules, software, vhosts, ldap realms, and httpd.conf)
+ * https://github.com/apache/infrastructure-p6/blob/production/data/nodes/whimsy-vmN.apache.org.yaml (Includes modules, software, vhosts, ldap realms, and httpd.conf)
 
  * https://github.com/apache/infrastructure-p6/tree/production/modules/vhosts_whimsy/lib/puppet/functions (macro functions used above)
 
@@ -98,7 +98,7 @@ and running - these are only needed for a new deployment.
    * `curl -N localhost:34234` - should produce 'curl: (52) Empty reply from server' or similar
    * if curl replies with something else, check that the service is still running (and has not just been restarted)
    * if the syslog contains a message of the form:
-     'Sep 24 13:09:07 whimsy-vm6 ruby[3435205]:   what():  Encryption not available on this event-machine'
+     'Sep 24 13:09:07 whimsy-vmN ruby[3435205]:   what():  Encryption not available on this event-machine'
      then it will be necessary to re-install the gem eventmachine
      If the service still does not start, try stopping and starting it:
      `sudo systemctl stop/start board-agenda-websocket.service`

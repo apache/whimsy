@@ -336,7 +336,7 @@ User authentication for any CGI script is provided by the http server's
 LDAP module, and can be done by adding the path to the CGI in the
 deployment descriptor for the server under the appropriate `authldap` realm:
 
-https://github.com/apache/infrastructure-puppet/blob/deployment/data/nodes/whimsy-vm4.apache.org.yaml#L127
+https://github.com/apache/infrastructure-p6/blob/production/data/nodes/whimsy-vm7.apache.org.yaml#L251
 
 Note that the LDAP module does not currently handle boolean conditions
 (example: members **or** officers).  The way to handle this is to do
@@ -367,7 +367,8 @@ server subscribe to the list.
 
 - Subscribe _listname_@whimsy-_server_vmname_.apache.org to the desired
   mailing list (see also [Deployment instructions](DEPLOYMENT.md#manual-steps))
-- Add your _listname_ to the `:apache_mailmap:` entry in [puppet](https://github.com/apache/infrastructure-puppet/blob/deployment/data/nodes/whimsy-vm4.apache.org.yaml#L63)
+- Add your _listname_ to the `:apache_mailmap:` entry 
+  in [puppet](https://github.com/apache/infrastructure-p6/blob/production/data/nodes/whimsy-vm7.apache.org.yaml#L107)
 - Note that tools/deliver.rb will dump all mail locally (it does not
   currently get cleaned out) where it can be used by ASF::Mail
 
