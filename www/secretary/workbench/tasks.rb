@@ -96,7 +96,6 @@ end
       extras = []
       # write the attachments as file(s)
       dest = emessage.write_att(tmpdir, docname, docsig)
-      Wunderbar.warn dest.inspect
 
       if dest.size > 1 # write to a container directory
         unless outfilename =~ /\A[a-zA-Z][-.\w]+\z/ # previously done by write_svn
