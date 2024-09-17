@@ -40,7 +40,7 @@ file '/srv/mail' do
   end
 end
 
-desc 'download mail from whimsy-vm2'
+desc 'download mail from whimsy'
 task 'sync' => '/srv/mail' do
   sh 'rsync -av --delete whimsy.apache.org:/srv/mail/ /srv/mail'
 end
