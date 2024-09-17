@@ -91,9 +91,24 @@ def validate_sig(attachment, signature, msgid)
   # Might need to consider allowing for using a cached key if fetches fail frequently,
   # but this should probably be on demand only
 
+  # Allow auto key fetch to be turned off; create the file /srv/gpg/whimsy_use_db
+  # This is intended for local testing
+  fetchKey = !File.exist?('/srv/gpg/whimsy_use_db')
+  # If the key is not in the database, we need to try and fetch it
+  unless fetchKey
+    if
+      err.include? "gpg: Can't check signature: No public key" or
+      err.include? "gpg: Can't check signature: public key not found"
+    then
+      fetchKey = true
+    end
+  end
+
   # Look for the keyid so we can fetch the current key
   keyid = err[/[RD]SA key (ID )?(\w+)/,2]
-  if keyid
+
+  # we have a keyid and we need to fetch it
+  if keyid and fetchKey
   then
     # Try to fetch the key
     Dir.mktmpdir do |dir|
