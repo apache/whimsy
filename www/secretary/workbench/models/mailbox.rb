@@ -188,15 +188,8 @@ class Mailbox
   # (these are messages that originally had attachments)
   def client_headers(listall: false)
     # fetch a list of headers for all messages in the mailbox with attachments
-    if listall
-      headers = self.headers.to_a.reject do |_id, message|
-        message[:attachments].nil?
-      end
-    else
-      headers = self.headers.to_a.reject do |_id, message|
-        # This does not return attachments with status :deleted
-        Message.attachments(message).empty?
-      end
+    headers = self.headers.to_a.reject do |_id, message|
+      Message.attachments(message, includeDeleted: listall).empty?
     end
 
     # extract relevant fields from the headers

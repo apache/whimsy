@@ -119,13 +119,14 @@ class Message
     mail.text_part
   end
 
-  # return list of valid attachments which are not marked deleted (i.e. processed)
-  def self.attachments(headers)
+  # return list of valid attachment names which are not marked deleted (i.e. processed)
+  # if includeDeleted (default false), also include names marked deleted
+  def self.attachments(headers, includeDeleted: false)
     attachments = headers[:attachments]
     return [] unless attachments
     attachments.
       reject do |attachment| 
-        (attachment[:status] == :deleted) or
+        (!includeDeleted and attachment[:status] == :deleted) or
         (SIG_MIMES.include?(attachment[:mime]) and (not attachment[:name] or attachment[:name] !~ /\.pdf\.(asc|sig)$/))
       end.
       map {|attachment| attachment[:name]}.
