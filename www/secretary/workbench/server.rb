@@ -128,7 +128,7 @@ end
 get %r{/(\d{6})/deleted} do |mbox|
   @mbox = mbox
   @prv, @nxt = Mailbox.prev_next(mbox)
-  @messages = Mailbox.new(@mbox).client_headers.select do |message|
+  @messages = Mailbox.new(@mbox).client_headers(listall: true).select do |message|
     message[:status] == :deleted
   end
   _html :deleted
@@ -160,7 +160,7 @@ end
 get %r{/(\d{6})/all} do |mbox|
   @mbox = mbox
   @prv, @nxt = Mailbox.prev_next(mbox)
-  @messages = Mailbox.new(@mbox).client_headers
+  @messages = Mailbox.new(@mbox).client_headers(listall: true)
   _html :all
 end
 
@@ -220,6 +220,13 @@ patch %r{/(\d{6})/(\w+)/} do |month, hash|
   Mailbox.update(month) do |headers|
     if headers[hash]
       updates = JSON.parse(request.env['rack.input'].read)
+      # undelete attachments if requested
+      attStatus = updates.delete('attachment_status')
+      if attStatus
+        headers[hash][:attachments]&.each do |att|
+          att[:status] = nil
+        end
+      end
 
       # special processing for entries with symbols as keys
       headers[hash].each do |key, value|

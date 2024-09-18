@@ -119,12 +119,15 @@ class Message
     mail.text_part
   end
 
+  # return list of valid attachments which are not marked deleted (i.e. processed)
   def self.attachments(headers)
     attachments = headers[:attachments]
     return [] unless attachments
     attachments.
-      reject {|attachment| SIG_MIMES.include?(attachment[:mime]) and
-        (not attachment[:name] or attachment[:name] !~ /\.pdf\.(asc|sig)$/)}.
+      reject do |attachment| 
+        (attachment[:status] == :deleted) or
+        (SIG_MIMES.include?(attachment[:mime]) and (not attachment[:name] or attachment[:name] !~ /\.pdf\.(asc|sig)$/))
+      end.
       map {|attachment| attachment[:name]}.
       reject {|name| name == 'signature.asc'}
   end
@@ -155,12 +158,25 @@ class Message
   end
 
   def delete_attachment(name)
+    $stderr.puts "============================"
     attachment = find(name)
     if attachment
-      @headers[:attachments].delete attachment.headers
-      @headers[:status] = :deleted if @headers[:attachments].empty?
+      $stderr.puts attachment.inspect
+      $stderr.puts @headers[:attachments].inspect
+      $stderr.puts @headers[:attachments].class
+      $stderr.puts attachment.headers.inspect
+      idx = @headers[:attachments].find_index(attachment.headers)
+      $stderr.puts idx
+      $stderr.puts @headers[:attachments][idx]
+      $stderr.puts @headers[:attachments][idx].class
+      @headers[:attachments][idx][:status] = :deleted # .delete attachment.headers
+      $stderr.puts @headers[:attachments][idx]
+      @headers[:status] = :deleted if @headers[:attachments].reject {|att| att[:status] == :deleted}.empty?
       write_headers
+    else
+      raise "Not found #{name}"
     end
+    $stderr.puts "-----------------------------"
   end
 
   #

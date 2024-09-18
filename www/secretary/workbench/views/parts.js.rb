@@ -571,7 +571,8 @@ class Parts < Vue
   def undelete_message(event)
     @busy = true
     pathname = window.parent.location.pathname
-    HTTP.patch(pathname, status: nil).then {
+    # request removal of :deleted status
+    HTTP.patch(pathname, {status: nil, attachment_status: true}).then {
       window.parent.location.href = '../..'
     }.catch {|error|
       alert error
@@ -773,7 +774,7 @@ class Parts < Vue
   # tasklist completion events
   def status_update(event)
     if event.data.status == 'complete'
-      self.delete_message(event)
+      self.delete_attachment(event)
     elsif event.data.status == 'keep'
       @selected = nil
       @form = :categorize
