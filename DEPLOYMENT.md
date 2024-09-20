@@ -108,7 +108,7 @@ and running - these are only needed for a new deployment.
     (but may revert here) https://svn.apache.org/repos/infra/infrastructure/apmail/trunk/bin:
      * listmodsubs.sh - add the new host
      * whimsy_qmail_ids.sh - add the new host
-     * make sure that the host is added to the known_hosts file on hermes
+     * make sure that the host is added to the apmail:known_hosts file on mailgw-he-de
      (e.g. rsync whimsy-vmN.apache.org: and agree to the prompt if the hash is correct; must be done from the apmail account)
      * the old hosts should be removed sometime after switchover. This approach requires two edits to the files
      but ensures that the rsync has been tested for the new host and allows the new host to be better tested

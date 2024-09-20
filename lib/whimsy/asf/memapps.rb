@@ -90,6 +90,7 @@ module ASF
 
     def self.refresh
       cache_dir = ASF::DocumentUtils.check_cache(STEM).first
+      #                                         trimSlash, getEpoch
       @@tag, list = ASF::SVN.getlisting(STEM, @@tag, true, false, cache_dir)
       if list
         @@files = list

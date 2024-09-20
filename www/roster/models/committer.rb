@@ -156,6 +156,7 @@ class Committer
         member[:info] = person.members_txt
 
         if person.icla # not all members have iclas
+          ASF::MemApps.update_cache(env)
           file = ASF::MemApps.find1st(person)
           if file
             url = ASF::SVN.svnurl('member_apps')
