@@ -81,7 +81,7 @@ The following additional steps are required to get a new Whimsy VM up
 and running - these are only needed for a new deployment.
 
  * Ensure that the IP address is static, and has been added to the list of allowed mail relays
-
+ * check that the Puppet node yaml file has the appropriate version settings for ruby, gems and passenger. This may require trial and error.
  * Optionally set up an initial SSL certificate just for the new node, i.e. excluding whimsy.apache.org. This is to allow for initial testing.
    * run `certbot certonly` from root, select option (2) - standalone.
    * restart apache
