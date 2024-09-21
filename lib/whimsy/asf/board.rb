@@ -175,7 +175,7 @@ module ASF
       'bdelacretaz' => ['bd', 'Bertrand', 'Bertrand Delacretaz'],
       'brett' => ['bp', 'Brett', 'Brett Porter'],
       'brianm' => ['bmc', 'Brian', 'Brian McCallister'],
-      'brianm' => ['cd', 'Chris', 'Christofer Dutz'],
+      'cdutz' => ['cd', 'Chris', 'Christofer Dutz'],
       'cliffs' => ['cs', 'Cliff', 'Cliff Schmidt'],
       'coar' => ['kc', 'Ken', 'Ken Coar'],
       'curcuru' => ['sc', 'Shane', 'Shane Curcuru'],
