@@ -138,9 +138,13 @@ and running - these are only needed for a new deployment.
    the previous whimsy-vm server:
    * `/srv/agenda`
    * `/srv/gpg` - this contains the public key ring used to check ICLA signatures
-   * `/srv/mail` - Note that the /srv/mail/* directories will in general be different between hosts
-     This is because the final delivery routes will vary.
+   * `/srv/mail` - Note that the /srv/mail/* directory entries may be different between hosts.
+     This is because the full email content is used if no Message-Id is found (happens occasionally),
+     and final delivery routes in the mail headers will vary.
      However, rather than try and merge the files, it is simpler to do a full copy.
+  Using the `whimsysvn` user, copy the following file:
+   * `/srv/svn/committee-info_last_revision.txt` - needed by pubsub-ci-email to track last reported change
+  Note: if the copies are done by `root`, generally file ownership will be preserved.
 
 Mail server configuration
 -------------------------
