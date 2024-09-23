@@ -343,6 +343,8 @@ $cache = Cache.new(dir: ENV['SITE_SCAN_CACHE'] || 'site-scan')
 $verbose = ARGV.delete '--verbose'
 $saveparse = ARGV.delete '--saveparse'
 $skipresourcecheck = ARGV.delete '--noresource'
+sites_checked = 0
+sites_failed = 0
 
 k = ARGV.select {|k| k.start_with? '-'}
 if k.size > 0
@@ -385,6 +387,10 @@ else
       next unless ARGV.include? committee.name
     end
     results[committee.name] = parse(committee.name, committee.site, committee.display_name)
+    sites_checked += 1
+    sites_failed += 1 unless results[committee.name][:resources].start_with? 'Found'
+    # Don't keep checking unnecessarily
+    $skipresourcecheck = (sites_failed > 10 or (sites_failed > 3 and sites_failed == sites_checked))
   end
 
   # Scan podlings that have a website
