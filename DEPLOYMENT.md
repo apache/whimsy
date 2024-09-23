@@ -116,10 +116,10 @@ and running - these are only needed for a new deployment.
  * Add the following mail subscriptions (see apmail/trunk/bin/whimsy_subscribe.sh):
     * Subscribe `board@whimsy-vmN.apache.org` to `board@apache.org`.
     * Subscribe `members@whimsy-vmN.apache.org` to `members@apache.org`.
-    * Subscribe `www-data@whimsy-vmN.apache.org` to `private-allow@whimsical.apache.org`. (Cron daemon)
-    * Subscribe `root@whimsy-vmN.apache.org` to `private-allow@whimsical.apache.org`. (Cron daemon)
-    * Subscribe `root@whimsy-vmN.apache.org` to `notifications-allow@whimsical.apache.org`. (Cron daemon)
     * Add `secretary@whimsy-vmN.apache.org` to the `secretary@apache.org` alias.
+    * Subscribe `www-data@whimsy-vmN.apache.org` to `private-allow@whimsical.apache.org`. (Cron daemon)
+    * Subscribe `www-data@whimsy-vmN.apache.org` to `notifications-allow@whimsical.apache.org`. (Cron daemon)
+  [Note that the `allow` subscriptions must use the physical host name; the others can use a DNS equivalent.]
 
  * Verify that email can be sent to non-apache.org email addresses.
    * Run [testmail.rb](tools/testmail.rb)
