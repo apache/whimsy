@@ -33,7 +33,8 @@ function getHost(url) {
   // new fails with:
   // Error: Failed to launch the browser process!
   // chrome_crashpad_handler: --database is required
-  const browser = await puppeteer.launch({headless: "old"});
+  // Need executablePath on later versions of Ubuntu
+  const browser = await puppeteer.launch({headless: "old", executablePath: '/opt/google/chrome/chrome'});
   const page = await browser.newPage();
   await page.setRequestInterception(true);
   page.on('request', (interceptedRequest) => {
