@@ -54,7 +54,6 @@ set :show_exceptions, true
 disable :logging # suppress log of requests to stderr/error.log
 
 require 'whimsy/asf/status'
-UNAVAILABLE = Status.updates_disallowed_reason # are updates disallowed?
 
 # list of messages
 get '/' do
@@ -173,7 +172,8 @@ end
 
 # task lists
 post '/tasklist/:file' do
-  return [503, UNAVAILABLE] if UNAVAILABLE
+  unavailable = Status.updates_disallowed_reason # are updates disallowed?
+  return [503, unavailable] if unavailable
 
   @jsmtime = File.mtime('public/tasklist.js').to_i
   @cssmtime = File.mtime('public/secmail.css').to_i
@@ -189,14 +189,16 @@ end
 # posted actions
 SAFE_ACTIONS = %w[check-mail check-signature]
 post '/actions/:file' do
-  return [503, UNAVAILABLE] if UNAVAILABLE && !SAFE_ACTIONS.include?(params[:file])
+  unavailable = Status.updates_disallowed_reason # are updates disallowed?
+  return [503, unavailable] if unavailable && !SAFE_ACTIONS.include?(params[:file])
 
   _json :"actions/#{params[:file]}"
 end
 
 # mark a single message as deleted
 delete %r{/(\d+)/(\w+)/} do |month, hash|
-  return [503, UNAVAILABLE] if UNAVAILABLE
+  unavailable = Status.updates_disallowed_reason # are updates disallowed?
+  return [503, unavailable] if unavailable
 
   success = false
 
@@ -213,7 +215,8 @@ end
 
 # update a single message
 patch %r{/(\d{6})/(\w+)/} do |month, hash|
-  return [503, UNAVAILABLE] if UNAVAILABLE
+  unavailable = Status.updates_disallowed_reason # are updates disallowed?
+  return [503, unavailable] if unavailable
 
   success = false
 
@@ -289,7 +292,8 @@ end
 
 # reparse an existing message
 get %r{/(\d{6})/(\w+)/_reparse_} do |month, hash|
-  return [503, UNAVAILABLE] if UNAVAILABLE
+  unavailable = Status.updates_disallowed_reason # are updates disallowed?
+  return [503, unavailable] if unavailable
 
   mailbox = Mailbox.new(month)
   message = mailbox.find(hash)

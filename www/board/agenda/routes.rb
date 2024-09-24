@@ -3,7 +3,6 @@
 #
 
 require 'whimsy/asf/status'
-UNAVAILABLE = Status.updates_disallowed_reason # are updates disallowed?
 
 # redirect root to latest agenda
 get '/' do
@@ -188,7 +187,8 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/feedback.json} do |date|
 end
 
 post %r{/(\d\d\d\d-\d\d-\d\d)/feedback.json} do |date|
-  return [503, UNAVAILABLE] if UNAVAILABLE
+  unavailable = Status.updates_disallowed_reason # are updates disallowed?
+  return [503, unavailable] if unavailable
 
   @agenda = "board_agenda_#{date.gsub('-', '_')}.txt"
   @dryrun = false
@@ -337,7 +337,8 @@ get '/json/posted-reports' do
 end
 
 post '/json/posted-reports' do
-  return [503, UNAVAILABLE] if UNAVAILABLE
+  unavailable = Status.updates_disallowed_reason # are updates disallowed?
+  return [503, unavailable] if unavailable
 
   _json :"actions/posted-reports"
 end
@@ -354,7 +355,8 @@ end
 
 # posted actions
 post '/json/:file' do
-  return [503, UNAVAILABLE] if UNAVAILABLE
+  unavailable = Status.updates_disallowed_reason # are updates disallowed?
+  return [503, unavailable] if unavailable
 
   _json :"actions/#{params[:file]}"
 end
@@ -452,13 +454,15 @@ end
 
 # Secretary post-meeting todos
 get '/json/secretary-todos/:date' do
-  return [503, UNAVAILABLE] if UNAVAILABLE
+  unavailable = Status.updates_disallowed_reason # are updates disallowed?
+  return [503, unavailable] if unavailable
 
   _json :'actions/todos'
 end
 
 post '/json/secretary-todos/:date' do
-  return [503, UNAVAILABLE] if UNAVAILABLE
+  unavailable = Status.updates_disallowed_reason # are updates disallowed?
+  return [503, unavailable] if unavailable
 
   _json :'actions/todos'
 end
@@ -586,7 +590,8 @@ end
 
 # post a new agenda
 post %r{/(\d\d\d\d-\d\d-\d\d)/} do |date|
-  return [503, UNAVAILABLE] if UNAVAILABLE
+  unavailable = Status.updates_disallowed_reason # are updates disallowed?
+  return [503, unavailable] if unavailable
 
   boardurl = ASF::SVN.svnurl('foundation_board')
   agenda = "board_agenda_#{date.gsub('-', '_')}.txt"
