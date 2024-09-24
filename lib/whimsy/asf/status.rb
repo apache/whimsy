@@ -52,8 +52,8 @@ module Status
   # - or testnode
   def self.updates_disallowed_reason
     return nil if testnode?
-    return 'Service temporarily unavailable due to migration.' if migrating?
-    return 'Service unavailable on this node. Please ensure you have logged in to the correct host.' unless active?
+    return 'Updates unavailable due to migration.' if migrating?
+    return 'Updates unavailable on this node. Please ensure you have logged in to the correct host.' unless active?
 
     nil
   end
@@ -73,6 +73,16 @@ module Status
     Resolv::DNS.open.getaddress(ACTIVE_HOSTNAME)
   end
 
+  # return notice file header and href path or nil
+  def self.notice
+    path =  '/srv/whimsy/www/notice.txt'
+    if File.exist? path
+      File.open(path) do |fh|
+        return fh.readline, '/notice.txt'
+      end
+    end
+    nil
+  end
 end
 
 # for debugging purposes
