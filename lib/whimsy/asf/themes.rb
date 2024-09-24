@@ -1,5 +1,7 @@
 require 'wunderbar'
 
+require 'whimsy/asf/status'
+
 # Define common page features for whimsy tools using bootstrap styles
 class Wunderbar::HtmlMarkup
 
@@ -64,6 +66,7 @@ class Wunderbar::HtmlMarkup
 
   # Emit a bootstrap navbar with required ASF links
   def _whimsy_nav
+    noticetext, noticepath = Status.notice # is there a notice file?
     _nav.navbar.navbar_default do
       _div.container_fluid do
         _div.navbar_header do
@@ -86,6 +89,11 @@ class Wunderbar::HtmlMarkup
             end
             _li do
               _a 'About Whimsy', href: '/technology'
+            end
+            if noticetext
+              _li.bg_warning do
+                _a noticetext, href: noticepath
+              end
             end
           end
           _ul.nav.navbar_nav.navbar_right do
