@@ -159,25 +159,15 @@ class Message
   end
 
   def delete_attachment(name)
-    $stderr.puts "============================"
     attachment = find(name)
     if attachment
-      $stderr.puts attachment.inspect
-      $stderr.puts @headers[:attachments].inspect
-      $stderr.puts @headers[:attachments].class
-      $stderr.puts attachment.headers.inspect
       idx = @headers[:attachments].find_index(attachment.headers)
-      $stderr.puts idx
-      $stderr.puts @headers[:attachments][idx]
-      $stderr.puts @headers[:attachments][idx].class
       @headers[:attachments][idx][:status] = :deleted # .delete attachment.headers
-      $stderr.puts @headers[:attachments][idx]
       @headers[:status] = :deleted if @headers[:attachments].reject {|att| att[:status] == :deleted}.empty?
       write_headers
     else
       raise "Not found #{name}"
     end
-    $stderr.puts "-----------------------------"
   end
 
   #
