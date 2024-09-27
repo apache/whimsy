@@ -47,7 +47,7 @@ class CheckSignature < Vue
 
   # find signature file that matches the selected attachment from the list
   # of attachments
-  def self.find(selected, attachments)
+  def self.find(selected, attachments, attachCount=2)
     return unless selected
 
     # first look for a signature that matches this selected file
@@ -56,8 +56,8 @@ class CheckSignature < Vue
     }
 
     # if no exact match, look closer at the other attachment if there
-    # are exactly two attachments
-    if not signature and attachments.length == 2
+    # are exactly two attachments (or one if we have already deleted the icla)
+    if not signature and attachments.length == attachCount
       signature = attachments.find {|attachment| attachment != selected}
 
       unless signature.end_with? '.asc' or signature.end_with? '.sig'

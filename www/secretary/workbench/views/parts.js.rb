@@ -591,7 +591,8 @@ class Parts < Vue
     HTTP.post('../../actions/delete-attachment', data).then {|response|
       @attachments = response.attachments
       if event.type == 'message'
-        signature = CheckSignature.find(decodeURIComponent(@selected), response.attachments)
+        # we have already deleted the icla, so allow matching a single attachment
+        signature = CheckSignature.find(decodeURIComponent(@selected), response.attachments, 1)
         @busy = false
         @selected = signature
         self.delete_attachment(event) if signature
