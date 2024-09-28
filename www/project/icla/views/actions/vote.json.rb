@@ -45,7 +45,7 @@ if ASF::Person.find_by_email(@iclaemail)
 end
 
 begin
-  Socket.getaddrinfo(@iclaemail[/@(.*)/, 1].untaint, 'smtp')
+  Socket.getaddrinfo(@iclaemail[/@(.*)/, 1], 'smtp')
 rescue
   _error 'Invalid domain name in email address'
   _focus :iclaemail
