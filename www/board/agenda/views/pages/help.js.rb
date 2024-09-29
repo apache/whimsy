@@ -30,7 +30,7 @@ class Help < Vue
       _dd 'Show missing items'
 
       _dt 'Q'
-      _dd 'Show queued approvals/comments'
+      _dd 'Show queued approvals/comments (that you still need to commit)'
 
       _dt 'S'
       _dd 'Show shepherded items (and action items)'
@@ -45,8 +45,9 @@ class Help < Vue
     _h3 'Common Actions'
     _ul do
       _li 'Blue buttons (or links) in bottom navbar (or at bottom of a report) are the primary actions you can take.'
-      _li 'Send Email merely opens your email client with a pre-formatted message to send; it does not change the agenda content.'
-      _li 'Simple Actions like Approve/Unapprove or Add Comment are queued locally; to commit them, click the red number in top navbar and Commit.'
+      _li 'Your Role (set below) defines what actions are available, typically for: Guests can comment/add some items; Directors can also approve; Secretary is reserved.'
+      _li 'Send Email merely opens your email client with a pre-formatted message to send; it does not send anything or change the agenda content.'
+      _li 'Simple Actions like Approve/Unapprove or Add Comment are queued locally in your browser; to commit them, click the red number in top navbar and Commit (with a message, if you like).'
       _li 'Other Actions like Add Item (adding resolution, discussion item) or Post Report (to add a specific project report) are committed after you enter them.'
     end
 
