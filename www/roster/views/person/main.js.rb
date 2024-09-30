@@ -30,7 +30,11 @@ class Person < Vue
 
     # PMCs
     noPMCsub = false
-    pmcs = @committer.pmcs
+    pmcs = @committer.pmcs.slice() # Take copy to avoid affecting orginal
+    # allow for non-PMC chairs
+    @committer.chairOf.each do |pmcchair|
+      pmcs << pmcchair unless pmcs.include? pmcchair
+    end
     unless pmcs.empty?
       _div.row do
         _div.name 'PMCs'
@@ -46,6 +50,9 @@ class Person < Vue
               end
               if @committer.chairOf.include? pmc
                 _ ' (chair)'
+              end
+              unless @committer.pmcs.include?(pmc)
+                _b ' (not on PMC)'
               end
               unless @committer.committees.include?(pmc)
                 _b ' (not in LDAP committee group)'
