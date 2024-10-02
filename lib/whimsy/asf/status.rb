@@ -78,7 +78,7 @@ module Status
     path =  '/srv/whimsy/www/notice.txt'
     if File.exist? path
       File.open(path) do |fh|
-        return fh.readline, '/notice.txt'
+        return fh.readline.chomp, '/notice.txt'
       end
     end
     nil
