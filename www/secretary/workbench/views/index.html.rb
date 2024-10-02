@@ -8,6 +8,7 @@ _html do
   end
 
   unavailable = Status.updates_disallowed_reason # are updates disallowed?
+  noticetext, noticepath = Status.notice
 
   _title 'ASF Secretary Mail'
   _link rel: 'stylesheet', type: 'text/css', href: "secmail.css?#{@cssmtime}"
@@ -15,7 +16,13 @@ _html do
   _header_ do
     _h1.bg_success do
       _a 'ASF Secretary Mail', href: '.'
-      _span.small unavailable if unavailable
+      if unavailable
+        _span.small unavailable
+      elsif noticetext
+        _span.small do
+          _a noticetext, href: noticepath
+        end
+      end
     end
     _a 'Deleted messages', href: 'deleted'
     _ '-'

@@ -9,11 +9,18 @@ _html do
     href: "../../secmail.css?#{@cssmtime}"
 
   unavailable = Status.updates_disallowed_reason # are updates disallowed?
+  noticetext, noticepath = Status.notice
 
   _header_ do
     _h3.bg_success do
       _a 'ASF Secretary Mail', href: '../..', target: '_parent'
-      _span.small unavailable if unavailable
+      if unavailable
+        _span.small unavailable
+      elsif noticetext
+        _span.small do
+          _a noticetext, href: noticepath
+        end
+      end
     end
   end
 
