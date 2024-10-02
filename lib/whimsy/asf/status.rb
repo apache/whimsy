@@ -51,8 +51,8 @@ module Status
   # - not migrating
   # - or testnode
   def self.updates_disallowed_reason
-    return nil if testnode?
     return 'Updates unavailable due to migration.' if migrating?
+    return nil if testnode?
     return 'Updates unavailable on this node. Please ensure you have logged in to the correct host.' unless active?
 
     nil
