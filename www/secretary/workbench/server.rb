@@ -250,7 +250,7 @@ end
 # list of parts for a single message
 get %r{/(\d{6})/(\w+)/_index_} do |month, hash|
   message = Mailbox.new(month).find(hash)
-  pass unless message
+  return [404, 'Message Not Found'] unless message
   @attachments = message.attachments
   @headers = message.headers.dup
   @headers.delete :attachments
@@ -270,9 +270,9 @@ end
 # message body for a single message
 get %r{/(\d{6})/(\w+)/_body_} do |month, hash|
   @message = Mailbox.new(month).find(hash)
+  return [404, 'Message Not Found'] unless @message
   @cssmtime = File.mtime('public/secmail.css').to_i
   @appmtime = Wunderbar::Asset.convert(File.join(settings.views, 'app.js.rb')).mtime.to_i
-  pass unless @message
   _html :body
 end
 
