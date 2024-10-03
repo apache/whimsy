@@ -7,8 +7,7 @@ _html do
     _base href: _.env['REQUEST_URI']
   end
 
-  unavailable = Status.updates_disallowed_reason # are updates disallowed?
-  noticetext, noticepath = Status.notice
+  banner = Status.banner
 
   _title 'ASF Secretary Mail'
   _link rel: 'stylesheet', type: 'text/css', href: "secmail.css?#{@cssmtime}"
@@ -16,11 +15,13 @@ _html do
   _header_ do
     _h1.bg_success do
       _a 'ASF Secretary Mail', href: '.'
-      if unavailable
-        _span.small unavailable
-      elsif noticetext
-        _span.small do
-          _a noticetext, href: noticepath
+      if banner
+        if banner[:href]
+          _span.small do
+            _a banner[:msg], href: banner[:href]
+          end
+        else
+          _span.small banner[:msg]
         end
       end
     end
