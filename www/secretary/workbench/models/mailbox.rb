@@ -184,12 +184,21 @@ class Mailbox
 
   #
   # return headers (client view; only shows messages with attachments)
-  # If :listall is true, then include all entries with an attachments key 
+  # If :listall is true, then include all entries with an attachments key (even if empty)
   # (these are messages that originally had attachments)
   def client_headers(listall: false)
-    # fetch a list of headers for all messages in the mailbox with attachments
-    headers = self.headers.to_a.reject do |_id, message|
-      Message.attachments(message, includeDeleted: listall).empty?
+    if listall
+      # get all headers which ever had attachments
+      headers = self.headers.to_a.reject do |_id, message|
+        message[:attachments].nil?
+      end
+    else
+      # want all active headers
+      headers = self.headers.to_a.reject do |_id, message|
+        # This does not return attachments with status :deleted
+        # also drops irrelevant attachments
+        Message.attachments(message).empty?
+      end
     end
 
     # extract relevant fields from the headers
