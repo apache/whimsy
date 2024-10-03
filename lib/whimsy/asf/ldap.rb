@@ -52,6 +52,7 @@ module ASF
     CONNECT_LOCK = Mutex.new
 
     LDAP_CREDS = ASF::Config.get(:ldap_creds)
+    LDAP_MISC = '/usr/local/etc/asfldapmisc.yml'
 
     # connect to LDAP
     def self.connect(hosts = nil)
@@ -151,7 +152,26 @@ module ASF
     def self.rwhosts
       return @rwhosts if @rwhosts # cache the rwhosts list
       rwhosts = Array(ASF::Config.get(:ldaprw)) # allow separate override for RW LDAP
-      rwhosts = hosts if rwhosts.empty? # default to RO hosts
+      if rwhosts.empty?
+        if File.exist? LDAP_MISC
+          begin
+            ldap_misc = YAML.safe_load(File.read(LDAP_MISC))
+            rwhosts = Array(ldap_misc['ldapclient_asf']['write_uri'])
+          rescue StandardError => e
+            Wunderbar.warn "Could not parse write_uri: #{e.inspect}"
+          end
+        else
+          Wunderbar.warn "Could not find #{LDAP_MISC}"
+        end
+        if rwhosts.empty? # default to RO hosts
+          rwhosts = hosts
+          Wunderbar.debug 'Using rwhosts from hosts'
+        else
+          Wunderbar.debug 'Using rwhosts from LDAP_MISC'
+        end
+      else
+        Wunderbar.debug 'Using rwhosts from Whimsy config'
+      end
       raise 'Cannot determine writable LDAP URI from ldap.conf or local config!' if rwhosts.empty?
       @rwhosts = rwhosts
     end
