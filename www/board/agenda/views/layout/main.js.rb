@@ -15,7 +15,7 @@ class Main < Vue
       _p 'Not found'
     else
 
-      _Header item: @item
+      _Header item: @item, banner: @banner
 
       _main do
         if Agenda.index[0].text # don't display page while bootstrapping
@@ -62,6 +62,7 @@ class Main < Vue
     @item = route.item
     @buttons = route.buttons
     @options = route.options
+    @banner = route.banner
 
     unless Main.item and route.item and Main.item.view == route.item.view
       Main.view = nil

@@ -22,6 +22,16 @@ class Header < Vue
 
       _span.clock! "\u231B" if Header.clock_counter > 0
 
+      if @@banner # is there a banner?
+        if @@banner['href'] # is there a link?
+          _div.navbar_brand {
+            _a @@banner['msg'], href: @@banner['href']
+          }
+        else # just show the text
+          _div.navbar_brand @@banner['msg']
+        end
+      end
+
       _ul.nav.nav_pills.navbar_right do
 
         # pending count

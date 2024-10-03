@@ -12,6 +12,10 @@ class Agenda
   Vue.util.defineReactive @@approved, '?'
   @@color = 'blank'
 
+  def self.banner
+    @@banner
+  end
+
   # (re)-load an agenda, creating instances for each item, and linking
   # each instance to their next and previous items.
   def self.load(list, digest)
@@ -20,6 +24,8 @@ class Agenda
     @@digest = digest
     @@index = []
     prev = nil
+
+    @@banner = list.first.banner
 
     list.each do |item|
       item = Agenda.new(item)

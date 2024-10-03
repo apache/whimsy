@@ -179,6 +179,6 @@ class Router
       end
     end
 
-    return {item: item, buttons: buttons, options: options}
+    return {item: item, buttons: buttons, options: options, banner: Agenda.banner}
   end
 end
