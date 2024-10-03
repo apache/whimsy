@@ -77,11 +77,28 @@ module Status
   def self.notice
     path =  '/srv/whimsy/www/notice.txt'
     if File.exist? path
-      File.open(path) do |fh|
-        return fh.readline.chomp, '/notice.txt'
+      begin
+        File.open(path) do |fh|
+          return fh.readline.chomp, '/notice.txt'
+        end
+      rescue EOFError
       end
     end
     nil
+  end
+
+  # return message and href path suitable for page banner
+  # Returns: {text: message, href: link} where
+  # message and link are derived from updates_disallowed_reason,
+  # failing that, notice.txt
+  # If neither are set, returns nil
+  def self.banner
+    link = nil
+    msg = updates_disallowed_reason
+    return {msg: msg, href: nil} if msg
+    msg, link = notice
+    return {msg: msg, href: link} if msg
+    return nil
   end
 end
 
