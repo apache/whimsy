@@ -105,20 +105,30 @@ module ASF
       end
 
       dn = ASF::Person.new(user).dn
-      raise ::LDAP::ResultError.new('Unknown user') unless dn
 
       begin
         @ldap.unbind if @ldap&.bound?
       rescue StandardError
         # ignore
       end
-      ldap = ASF._init_ldap(true, self.rwhosts)
-      if block
-        ASF.flush_weakrefs
-        ldap.bind(dn, password, &block)
-        ASF._init_ldap(true)
-      else
-        ldap.bind(dn, password)
+      self.rwhosts.each do |rwhost|
+        begin
+          ldap = ASF._init_ldap(true, [rwhost])
+          if block
+            ASF.flush_weakrefs
+            ldap.bind(dn, password, &block)
+            ASF._init_ldap(true)
+          else
+            ldap.bind(dn, password)
+          end
+          break
+        rescue ::LDAP::ResultError => e
+          if e.message == "Can't contact LDAP server" # Any others worth a retry?
+            Wunderbar.warn "#{rwhost}: #{e.inspect}, continuing"
+          else
+            raise
+          end
+        end
       end
     ensure
       ASF.flush_weakrefs
