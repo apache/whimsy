@@ -114,6 +114,7 @@ module ASF
       self.rwhosts.each do |rwhost|
         begin
           ldap = ASF._init_ldap(true, [rwhost])
+          Wunderbar.debug("#{ldap.object_id}: bind as #{dn} as #{ldap}")
           if block
             ASF.flush_weakrefs
             ldap.bind(dn, password, &block)
