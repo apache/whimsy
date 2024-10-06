@@ -91,8 +91,7 @@ task 'update cn=member,ou=groups,dc=apache,dc=org in LDAP' do
       _transcript ["#{@availid} already in group member"]
     else
       ASF::LDAP.bind(env.user, env.password) do
-        # TODO there ought to be a library method to do this
-        ASF::LDAP.modify(ASF::Group['member'].dn, [ASF::Base.mod_add('memberUid', @availid)])
+        ASF::Group['member'].add(ASF::Person.find(@availid))
       end
     end
   end
