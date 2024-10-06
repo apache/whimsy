@@ -1172,8 +1172,9 @@ module ASF
 
     # remove people from an existing group in LDAP
     def remove(people)
+      # Removal fails if the id is not present
       @members = nil  # force fresh LDAP search
-      people = (Array(people) & members).map(&:id)
+      people = Array(people).map(&:id) & memberids
       return if people.empty?
       ASF::LDAP.modify(self.dn, [ASF::Base.mod_delete('memberUid', people)])
     ensure
@@ -1182,8 +1183,9 @@ module ASF
 
     # add people to an existing group in LDAP
     def add(people)
+      # addition fails if the id is present
       @members = nil  # force fresh LDAP search
-      people = (Array(people) - members).map(&:id)
+      people = Array(people).map(&:id) - memberids
       return if people.empty?
       ASF::LDAP.modify(self.dn, [ASF::Base.mod_add('memberUid', people)])
     ensure
@@ -1328,6 +1330,7 @@ module ASF
 
     # remove people as owners of a project in LDAP
     def remove_owners(people)
+      # Removal fails if the id is not present
       @owners = nil  # force fresh LDAP search
       removals = (Array(people) & owners).map(&:dn)
       unless removals.empty?
@@ -1339,6 +1342,7 @@ module ASF
 
     # remove people as members of a project in LDAP
     def remove_members(people)
+      # Removal fails if the id is not present
       @members = nil  # force fresh LDAP search
       removals = (Array(people) & members).map(&:dn)
       unless removals.empty?
@@ -1356,6 +1360,7 @@ module ASF
 
     # add people as owners of a project in LDAP
     def add_owners(people)
+      # Addition fails if the id is present
       @owners = nil  # force fresh LDAP search
       additions = (Array(people) - owners).map(&:dn)
       unless additions.empty?
@@ -1367,6 +1372,7 @@ module ASF
 
     # add people as members of a project in LDAP
     def add_members(people)
+      # Addition fails if the id is present
       @members = nil  # force fresh LDAP search
       additions = (Array(people) - members).map(&:dn)
       unless additions.empty?
