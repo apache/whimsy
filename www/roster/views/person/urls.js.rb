@@ -36,7 +36,14 @@ class PersonUrls < Vue
             end
           else
             _ul committer.urls do |url|
-              _li {_a url, href: url}
+              if url =~ %r{^https?://}
+                _li {_a url, href: url}
+              else
+                _li.bg_warning do
+                  _ url
+                  _ ' - (invalid: must start with https?://)'
+                end
+              end
             end
           end
       end
