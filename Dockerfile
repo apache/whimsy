@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:24.04
 
 # N.B. passenger --install_dir=/var/lib/gems/m.n.o must agree with ruby version
 
@@ -36,19 +36,23 @@ RUN apt-get update && \
       libssl-dev \
       apache2-dev \
       libapr1-dev \
-      libaprutil1-dev && \
-    gem update --system 3.4.22 &&\
-    gem install bundler:2.4.22 passenger --install_dir=/var/lib/gems/2.7.0 && \
+      libaprutil1-dev
+
+      # Note: gem system is maintained by Ubuntu now
+RUN gem install bundler --install_dir=/var/lib/gems/3.2.0
+RUN gem install passenger --install_dir=/var/lib/gems/3.2.0 && \
     passenger-install-apache2-module --auto && \
-    passenger-install-apache2-module --snippet > \
-      /etc/apache2/conf-enabled/passenger.conf && \
-    pip3 install img2pdf && \
+    passenger-install-apache2-module --snippet >/etc/apache2/conf-enabled/passenger.conf 
+
+# Note: pips are generally maintained by Ubuntu now
+RUN DEBIAN_FRONTEND='noninteractive' apt-get install -y python3-img2pdf
+
+RUN \
     a2enmod cgi && \
     a2enmod headers && \
     a2enmod rewrite && \
     a2enmod authnz_ldap && \
     a2enmod speling && \
-    a2enmod remoteip && \
     a2enmod expires && \
     a2enmod proxy_wstunnel &&\
     echo "ServerName whimsy.local" > /etc/apache2/conf-enabled/servername.conf
