@@ -867,9 +867,6 @@ module ASF
     def committees
       # legacy LDAP entries
       committees = []
-#      committees = weakref(:committees) do
-#        Committee.list("member=uid=#{name},#{base}")
-#      end
 
       # add in projects
       # Get list of project names where the person is an owner
