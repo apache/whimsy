@@ -136,8 +136,6 @@ module ASF
         'fundraising-private@apache.org'
       when 'marketingandpublicity'
         'markpub@apache.org'
-      when 'tac', 'diversity'
-         "private@#{name.downcase}.apache.org"
       when 'w3crelations'
         'w3c@apache.org'
       when 'concom'
