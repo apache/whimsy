@@ -14,6 +14,9 @@ unless user.asf_chair_or_member?
   exit
 end
 
+# These are OK for member-announce
+MEMBER_ANNOUNCE_OK = %w(board-chair@apache.org secretary@apache.org)
+
 DEFAULT_LISTS = 'board,markpub,members,members-announce,members-notify,operations,press,trademarks,private@infra.apache.org'
 listnames = ENV['QUERY_STRING']
 listnames = DEFAULT_LISTS if listnames == ''
@@ -89,6 +92,7 @@ _html do
           _a listid, href: "https://lists.apache.org/list.html?#{listid}"
           _ "(updated #{modtime})"
         end
+        subscribers -= MEMBER_ANNOUNCE_OK if listid == 'members-announce@apache.org'
         maillist = ASF::Mail.list
         subscribers.each do |line|
           person = maillist[line.downcase]
