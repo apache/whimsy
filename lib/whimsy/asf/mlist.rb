@@ -341,7 +341,7 @@ module ASF
 
     # Is the email a Whimsy archiver?
     def self.is_whimsy_archiver?(e)
-      e =~ /@whimsy(-vm\d+)?\.apache\.org$/
+      e =~ /@whimsy[-\da-z]*\.apache\.org$/
     end
 
     # Is the email a markmail archiver?
@@ -449,14 +449,11 @@ module ASF
     ARCH_PONY_PUB = 'archive-asf-public@cust-asf.ponee.io'
     ARCH_PONY_PRV = 'archive-asf-private@cust-asf.ponee.io'
 
-    # Local Whimsy archives
-    ARCH_WHIMSY = %r{\A(board|member)@whimsy[^.]*\.apache\.org\z}
-
     # Standard external archivers (necessarily public)
     ARCH_EXT_MAIL_ARCHIVE = 'archive@mail-archive.com'
     ARCH_EXT_MARKMAIL_RE = %r{^\w+\.\w+\.\w+@.\.markmail\.org$} # one.two.three@a.markmail.org
 
-    ARCHIVERS = [ARCH_PONY_PRV, ARCH_PONY_PUB, ARCH_WHIMSY,
+    ARCHIVERS = [ARCH_PONY_PRV, ARCH_PONY_PUB,
                  ARCH_MBOX_PUB, ARCH_MBOX_PRV, ARCH_MBOX_RST, ARCH_EXT_MAIL_ARCHIVE]
 
     # Private archivers
