@@ -1,9 +1,13 @@
 Dear <%= @email.display_names.join(', ') %>,
 
 Thanks for the ICLA, however we already have a copy.
-The <%= @cttee %> can use the existing ICLA to request your account by using Whimsy:
+If you are not already a committer, the <%= @cttee %> can use the existing ICLA to request your account by using Whimsy:
 
 https://whimsy.apache.org/officers/acreq.cgi (PMC chair and ASF members only)
+
+If you are already a committer on another project, the <%= @cttee %> can use Whimsy to give you permissions to the repository:
+
+https://whimsy.apache.org/roster/committee
 
 Please take up any further queries with the <%= @cttee %>.
 
