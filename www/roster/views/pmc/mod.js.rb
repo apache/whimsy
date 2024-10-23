@@ -39,23 +39,6 @@ class PMCMod < Vue
                 end
               end
             end
-
-            # add to PMC button is only shown if every person is not on the PMC
-            if @people.all? {|person| !@@project.members.include? person.id}
-              _p do
-                _br
-                _b do
-                  _ 'Before adding a new PMC member, '
-                  _a 'email notification must have been received by the Board mailing list',
-                    href: 'https://www.apache.org/dev/pmc.html#send-the-board-a-notice-of-the-vote-to-add-someone'
-                  _ ' (cc: the PMC private@ mailing list).'
-                end
-                _label do
-                  _span 'Has the NOTICE email been received by the board list?'
-                  _input type: 'checkbox', checked: @notice_elapsed
-                end
-              end
-            end
           end
 
           _div.modal_footer do
@@ -68,7 +51,7 @@ class PMCMod < Vue
             if @people.all? {|person| !@@project.members.include? person.id}
               _button.btn.btn_primary 'Add to PMC',
                 data_action: 'add pmc info',
-                onClick: self.post, disabled: (@people.empty? or not @notice_elapsed)
+                onClick: self.post, disabled: (@people.empty?)
             end
 
             # remove from all relevant locations

@@ -54,19 +54,6 @@ class PMCAdd < Vue
                 exclude: @@project.roster.keys().
                   concat(@people.map {|person| person.id})
 
-              _p do
-                _br
-                _b do
-                  _ 'Before adding a new PMC member, '
-                  _a 'email notification must be sent to the Board mailing list',
-                    href: 'https://www.apache.org/dev/pmc.html#send-the-board-a-notice-of-the-vote-to-add-someone'
-                  _ ' (cc: the PMC private@ mailing list).'
-                end
-                _label do
-                  _span 'Has the NOTICE email been received by the board list?'
-                  _input type: 'checkbox', checked: @notice_elapsed
-                end
-              end
             end
           end
 
@@ -84,7 +71,7 @@ class PMCAdd < Vue
 
             _button.btn.btn_primary 'Add to PMC', onClick: self.post,
               data_action: 'add pmc info commit',
-              disabled: (@people.empty? or not @notice_elapsed)
+              disabled: (@people.empty?)
           end
         end
       end

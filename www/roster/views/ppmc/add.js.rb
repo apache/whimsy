@@ -54,18 +54,6 @@ class PPMCAdd < Vue
                 exclude: @@project.roster.keys().
                   concat(@people.map {|person| person.id})
 
-              _p do
-                _br
-                _b do
-                  _ 'Before adding a new PPMC member, '
-                  _a 'email notification must be sent to the Incubator private mailing list',
-                    href: 'https://incubator.apache.org/guides/ppmc.html#voting_in_a_new_ppmc_member'
-                end
-                _label do
-                  _span 'Has the NOTICE email been received by the Incubator list?'
-                  _input type: 'checkbox', checked: @notice_elapsed
-                end
-              end
             end
           end
 
@@ -84,7 +72,7 @@ class PPMCAdd < Vue
 
               _button.btn.btn_primary 'Add to PPMC', onClick: self.post,
                 data_action: 'add ppmc committer',
-                disabled: (@people.empty? or not @notice_elapsed)
+                disabled: (@people.empty?)
             end
 
             if @@auth.ipmc
