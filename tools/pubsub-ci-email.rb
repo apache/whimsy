@@ -210,7 +210,6 @@ def do_diff(initialhash, currenthash, triggerrev)
     EOD
     mail = Mail.new do
       from "#{currentcommittername} <#{currentcommitter}@apache.org>"
-      sender "notifications@whimsical.apache.org"
       to "board@apache.org,#{mail_list}"
       bcc 'notifications@whimsical.apache.org' # keep track of mails
       subject subject
