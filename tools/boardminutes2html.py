@@ -137,7 +137,7 @@ FTR="""</body>
 </html>
 """
 
-def text2html(inp, out):
+def text2html(inp, out, extrahdr=''):
     """html-ise text"""
     links = {}
     info = {}
@@ -145,6 +145,7 @@ def text2html(inp, out):
     info['sname'] = ''
     info['podhdr'] = False
     out.write(HDR)
+    out.write(extrahdr)
     out.write('<pre>')
     cur_s = None
     for line in inp:
