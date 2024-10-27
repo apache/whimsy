@@ -13,13 +13,15 @@ import boardminutes2html
 
 # Where to find minutes (locally to Whimsy)
 MINUTES_TXT = '/srv/svn/minutes'
+MINUTES_HTTPS = 'https://www.apache.org/foundation/records/minutes'
 
 HEAD = """<head>
 <meta charset="UTF-8">
 </head>
 <body>"""
 
-TAIL = """</body>
+TAIL = """<p>Generated dynamically by Whimsy</p>
+</body>
 </html>"""
 
 def minutes(path):
@@ -76,7 +78,9 @@ def main():
                 print(f"No such file as {source}")
                 return
             with open(source, encoding='utf8') as inp:
-                boardminutes2html.text2html(inp, sys.stdout)
+                extrahdr = f"""Links: <a href="../{year}">{year}</a> - <a href="../">All years</a>
+- <a href="{MINUTES_HTTPS}/{year}/{basename}" target="_blank">Original</a>"""
+                boardminutes2html.text2html(inp, sys.stdout, extrahdr)
         else:
             print(f"Invalid request {parts} {len(parts)}")
     except Exception as ex:
