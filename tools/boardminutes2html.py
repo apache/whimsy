@@ -155,8 +155,20 @@ def text2html(inp, out, extrahdr=''):
     out.write('</pre>\n')
     out.write('<h2 id="index">Index</h2>\n')
     out.write('<ul>\n')
+    level = 1
     for link, text in links.items():
+        if re.search(r'\d[A-Z]{1,2}$', link): # second level link
+            if level == 1:
+                out.write('<ul>\n')
+                level = 2
+        else:
+            if level == 2:
+                out.write('</ul>\n')
+                level = 1
         out.write(f'<li><a href="#{link}">{text}</a></li>\n')
+    if level == 2:
+        out.write('</ul>\n')
+        level = 1
     out.write('</ul>\n')
     out.write(FTR)
 
