@@ -24,10 +24,12 @@ TAIL = """<p>Generated dynamically by Whimsy</p>
 </body>
 </html>"""
 
+MINUTES_RE = r'board_minutes_\d\d\d\d_\d\d_\d\d\.txt'
+
 def minutes(path):
     """Return sorted list of minute base names"""
     for file in sorted(os.listdir(path)):
-        if (re.fullmatch(r'board_minutes_\d\d\d\d_\d\d_\d\d\.txt', file)
+        if (re.fullmatch(MINUTES_RE, file)
             and os.path.isfile(os.path.join(path, file))):
             yield file
 
@@ -73,6 +75,9 @@ def main():
         elif len(parts) == 2:
             year = parts[0]
             basename = parts[1]
+            if not re.fullmatch(MINUTES_RE, basename):
+                print("Invalid request")
+                return
             source = os.path.join(MINUTES_TXT, year, basename)
             if not os.path.exists(source):
                 print(f"No such file as {source}")
