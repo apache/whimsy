@@ -155,7 +155,12 @@ module SiteStandards
   #   - the name of the project
   def label(analysis, links, col, name)
     if not links[col]
-      SITE_FAIL
+      # Non-PMCs don't need images
+      if col == 'image' and (name == 'attic' or links['nonpmc'])
+        SITE_PASS
+      else
+        SITE_FAIL
+      end
     elsif analysis[2].include? col and not analysis[2][col].include? name
       SITE_WARN
     else

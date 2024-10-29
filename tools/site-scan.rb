@@ -387,6 +387,7 @@ else
       next unless ARGV.include? committee.name
     end
     results[committee.name] = parse(committee.name, committee.site, committee.display_name)
+    results[committee.name]['nonpmc'] = committee.nonpmc?
     sites_checked += 1
     sites_failed += 1 unless results[committee.name][:resources].start_with? 'Found'
     # Don't keep checking unnecessarily
