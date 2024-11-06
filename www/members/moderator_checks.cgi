@@ -10,11 +10,13 @@ require 'whimsy/asf/mlist'
 require 'wunderbar/bootstrap'
 require 'wunderbar/jquery/stupidtable'
 
+# Known moderators
 MODERATORS = %w{
   mod-private@gsuite.cloud.apache.org
   mod-board@gsuite.cloud.apache.org
   secretary@apache.org
   board-chair@apache.org
+  __announce_moderator__@apache.org
 }
 
 def private_mod(lid, mod)
