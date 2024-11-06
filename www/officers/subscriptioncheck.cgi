@@ -93,6 +93,7 @@ _html do
           _ "(updated #{modtime})"
         end
         subscribers -= MEMBER_ANNOUNCE_OK if listid == 'members-announce@apache.org'
+        subscribers -= ['trademarks@gsuite.cloud.apache.org'] if listid = 'trademarks@apache.org'
         maillist = ASF::Mail.list
         subscribers.each do |line|
           person = maillist[line.downcase]
