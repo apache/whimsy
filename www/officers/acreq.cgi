@@ -291,7 +291,7 @@ _html do
                   end
 
                   if requestor == 'incubator' and not @podling.to_s.empty?
-                    cc_list << ASF::Podling.find(@pmc).private_mail_list
+                    cc_list << ASF::Podling.find(@podling).private_mail_list
                     requestor = "#{@podling}@incubator"
                   end
 
