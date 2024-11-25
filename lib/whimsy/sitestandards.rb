@@ -193,7 +193,11 @@ module SiteStandards
     local_copy = File.expand_path("#{get_url(true)}#{get_filename(tlp)}", __FILE__)
     if File.exist? local_copy
       crawl_time = File.mtime(local_copy).httpdate # show time in same format as last-mod
-      sites = JSON.parse(File.read(local_copy))
+      begin
+        sites = JSON.parse(File.read(local_copy))
+      rescue
+        sites = {} # TODO temporary fix
+      end
     else
       Wunderbar.warn "Failed to find #{local_copy}"
       response = Net::HTTP.get_response(URI("#{get_url(false)}#{get_filename(tlp)}"))
