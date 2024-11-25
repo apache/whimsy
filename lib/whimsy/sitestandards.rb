@@ -191,21 +191,22 @@ module SiteStandards
   # @return [hash of site data, crawl_time]
   def get_sites(tlp = true)
     local_copy = File.expand_path("#{get_url(true)}#{get_filename(tlp)}", __FILE__)
-    if File.exist? local_copy
-      crawl_time = File.mtime(local_copy).httpdate # show time in same format as last-mod
-      begin
+    begin
+      if File.exist? local_copy
+        crawl_time = File.mtime(local_copy).httpdate # show time in same format as last-mod
         sites = JSON.parse(File.read(local_copy, :encoding => 'utf-8'))
-      rescue StandardError => e
+      else
         require 'wunderbar'
-        Wunderbar.warn "Failed to read #{local_copy}: #{e.inspect}"
-          sites = {} # TODO temporary fix
+        Wunderbar.warn "Failed to find local copy #{local_copy}"
+        local_copy = "#{get_url(false)}#{get_filename(tlp)}"
+        response = Net::HTTP.get_response(URI(local_copy))
+        crawl_time = response['last-modified']
+        sites = JSON.parse(response.body)
       end
-    else
+    rescue StandardError => e
       require 'wunderbar'
-      Wunderbar.warn "Failed to find #{local_copy}"
-      response = Net::HTTP.get_response(URI("#{get_url(false)}#{get_filename(tlp)}"))
-      crawl_time = response['last-modified']
-      sites = JSON.parse(response.body)
+      Wunderbar.warn "Failed to parse #{local_copy}: #{e.inspect} #{e.backtrace.join("\n\t")}"
+        sites = {}
     end
     return sites, crawl_time
   end
