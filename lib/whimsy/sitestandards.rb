@@ -195,8 +195,10 @@ module SiteStandards
       crawl_time = File.mtime(local_copy).httpdate # show time in same format as last-mod
       begin
         sites = JSON.parse(File.read(local_copy))
-      rescue
-        sites = {} # TODO temporary fix
+      rescue StandardError => e
+        require 'wunderbar'
+        Wunderbar.warn "Failed to read #{local_copy}: #{e.inspect}"
+          sites = {} # TODO temporary fix
       end
     else
       require 'wunderbar'
