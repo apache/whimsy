@@ -194,7 +194,7 @@ module SiteStandards
     if File.exist? local_copy
       crawl_time = File.mtime(local_copy).httpdate # show time in same format as last-mod
       begin
-        sites = JSON.parse(File.read(local_copy))
+        sites = JSON.parse(File.read(local_copy, :encoding => 'utf-8'))
       rescue StandardError => e
         require 'wunderbar'
         Wunderbar.warn "Failed to read #{local_copy}: #{e.inspect}"
