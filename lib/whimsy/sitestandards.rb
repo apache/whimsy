@@ -199,6 +199,7 @@ module SiteStandards
         sites = {} # TODO temporary fix
       end
     else
+      require 'wunderbar'
       Wunderbar.warn "Failed to find #{local_copy}"
       response = Net::HTTP.get_response(URI("#{get_url(false)}#{get_filename(tlp)}"))
       crawl_time = response['last-modified']
