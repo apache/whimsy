@@ -15,7 +15,7 @@ end
 gem 'rake'
 gem 'wunderbar'
 gem 'ruby2js'
-gem 'sinatra', '~> 2.0'
+gem 'sinatra'
 gem 'nokogiri'
 gem 'mail'
 gem 'kramdown'
