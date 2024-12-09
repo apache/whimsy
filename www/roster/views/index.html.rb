@@ -60,7 +60,7 @@ _html do
 
             _td do
               _ 'Search for committers by name, user id, or email address.'
-              _ ' Also includes pending ICLAs'
+              _ ' Also includes pending ICLAs (i.e. account not yet created)'
             end
           end
         end

@@ -89,6 +89,11 @@ class PPMC < Vue
             _br
             _ 'Note: to Add existing committers to the PPMC, please select the committer from the list below and use the Modify button instead.'
             _br
+            _br
+            _ 'If the person does not yet have an ASF id, please use the '
+            _a 'Account Request Form', href: '/officers/acreq.cgi'
+            _br
+            _br
             _ 'N.B. please ask the committer to subscribe themselves to the private list, for example by using the'
             _br
             _ 'Mailing List Subscription Helper '
