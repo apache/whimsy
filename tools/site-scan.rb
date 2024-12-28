@@ -221,7 +221,7 @@ def parse(id, site, name, podling=false)
             nodisclaimer << subpage
           end
         else
-          if show_anyway or !%w(baremaps nlpcraft teaclave horaedb).include? id # reported, but not yet fixed, so suppress noise
+          unless %w(nlpcraft).include? id # reported, but unresponsive, so suppress noise
             $stderr.puts "#{id} #{subpage} => #{uri} #{status} '#{anchor.text.strip}'"
           end
         end
