@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
-PAGETITLE = "ASF Download Page Checker - BETA"
+PAGETITLE = "ASF Download Page Checker - BETA" # Wvisible:sites
+# Note: PAGETITLE must be double quoted
+
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'wunderbar'
 require 'wunderbar/bootstrap'
