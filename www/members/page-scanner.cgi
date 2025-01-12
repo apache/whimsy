@@ -13,16 +13,23 @@ print "Content-type: text/plain; charset=UTF-8\r\n\r\n"
 DIVIDER=' <= '
 
 qs = ENV['QUERY_STRING']
+url = option = nil
 if qs =~ %r{^url=(https?://[^&]+)(?:&(.+))?}
   url = $1
   option = $2
+elsif qs =~ %r{^host=([a-z0-9-]+)(?:&(.+))?$}
+  url = "https://#{$1}.apache.org/"
+  option = $2
+end
+if url
   # we only want full URLs
   option = 'allref' unless %w{all showurl}.include? option
   puts <<~EOD
 
     ** ALPHA CODE **
 
-    Checking the page #{url}
+    Checking the page: #{url} 
+    Using option: #{option}
 
 
     The following references were found to hosts other than apache.org, openoffice.org and apachecon.com
@@ -70,6 +77,6 @@ if qs =~ %r{^url=(https?://[^&]+)(?:&(.+))?}
   end
   print "=====\n"
 else
-  print "Expecting: ?url=http://.../[&showurl]\n"
+  print "Expecting: ?url=http://.../[&showurl] (or ?host=abcd => ?url=https://abcd.apache.org/\n"
 end
 
