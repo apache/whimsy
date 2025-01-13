@@ -57,19 +57,19 @@ details.  Pass `--update-all` to update everything.
 Setupmymac Command Line Reference
 ---------------------------------
 
-| Command | Description |
-| ------- | ----------- |
-| setupmymac | Ensure that everything is installed, checked out, cloned |
-| setupmymac --svn | Ensure that everything is installed, update svn |
-| setupmymac --update-all | Ensure that everything is up to date |
-| setupmymac --update-all --no-svn | Ensure that everything is up to date, except for svn |
-| setupmymac --all | Ensure that everything is up to date and launched |
-| setupmymac --no-ws | Stop board agenda websocket daemon |
-| setupmymac --docker | Configure for docker usage |
-| setupmymac --docker --prune | Clean start container |
-| setupmymac --clean | Reset `/srv/whimsy` - **danger** may cause lost changes |
-| setupmymac --user | Set up webserver to run under your user id |
-| setupmymac --dry-run | show what commands would have been issued |
+| Command                          | Description                                              |
+|----------------------------------|----------------------------------------------------------|
+| setupmymac                       | Ensure that everything is installed, checked out, cloned |
+| setupmymac --svn                 | Ensure that everything is installed, update svn          |
+| setupmymac --update-all          | Ensure that everything is up to date                     |
+| setupmymac --update-all --no-svn | Ensure that everything is up to date, except for svn     |
+| setupmymac --all                 | Ensure that everything is up to date and launched        |
+| setupmymac --no-ws               | Stop board agenda websocket daemon                       |
+| setupmymac --docker              | Configure for docker usage                               |
+| setupmymac --docker --prune      | Clean start container                                    |
+| setupmymac --clean               | Reset `/srv/whimsy` - **danger** may cause lost changes  |
+| setupmymac --user                | Set up webserver to run under your user id               |
+| setupmymac --dry-run             | show what commands would have been issued                |
 
 Setupmymac notes
 ----------------
