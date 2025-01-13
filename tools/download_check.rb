@@ -496,7 +496,7 @@ def _checkDownloadPage(path, tlp, version)
   body.scan(%r{gpg --verify.+$}) { |m|
     hasGPGverify = true
     # Hack to tidy matched text: drop spans and truncate at <br> or <div>
-    m.gsub!(%r{<span [^>]+>|</span>}, '').sub!(%r{(<div|<br).+},'')
+    m = m.gsub(%r{<span [^>]+>|</span>}, '').sub(%r{(<div|<br).+},'') # sub! returns nil if no change
     unless m =~ %r{gpg --verify\s+\S+\.asc\s+\S+}
       W "gpg verify should specify second param: #{m.strip} see:\nhttps://www.apache.org/info/verification.html#specify_both"
     end
