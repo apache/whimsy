@@ -50,7 +50,7 @@ _html do
  
                 # Reports-To - clarifies orgchart reporting structure
                 _td do
-                  value['info']['reports-to'].nil? ? _('')  : _a('reports to', href: value['info']['reports-to'])
+                  value['info']['reports-to'].nil? ? _('')  : _(value['info']['reports-to'])
                 end
 
                 # Website - often valuable to people looking for info
