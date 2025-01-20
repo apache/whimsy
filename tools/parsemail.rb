@@ -128,7 +128,7 @@ module ParseMail
     yamlfile ||= File.join(MAIL_ROOT, list, "#{yyyymm}.yaml") # where to find the YAML summary
 
     maildir = File.join(MAIL_ROOT, list, yyyymm) # where to find the mail files
-    if Dir.exists? maildir
+    if Dir.exist? maildir
       log :INFO, "Processing #{maildir} into #{yamlfile}"
       parse_dir(maildir, yamlfile)
     else
@@ -139,7 +139,7 @@ module ParseMail
       yamlfile = File.join(MAIL_ROOT, list, "#{lastmonth}.yaml") # where to find the YAML summary
 
       maildir = File.join(MAIL_ROOT, list, lastmonth) # where to find the mail files
-      if Dir.exists? maildir
+      if Dir.exist? maildir
         log :INFO, "Processing #{maildir} into #{yamlfile}"
         parse_dir(maildir, yamlfile)
       else

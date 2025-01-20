@@ -175,6 +175,15 @@ module ASF
       return JSON.parse(IO.read(File.join(mtg_root, 'attendance.json')))
     end
 
+    # Read runbook/timeline.json file, not present before 2025
+    # @return hash, or null if not found
+    def self.get_timeline(mtg_root)
+      begin
+        return JSON.parse(IO.read(File.join(mtg_root, 'runbook', 'timeline.json')))
+      rescue StandardError => e
+        return null
+      end
+    end
 
     # 20081216: First Last <xxxxxx@apache.org>:		Yes
     # 20090707: First Last <xxxxx@apache.org>:               yes
