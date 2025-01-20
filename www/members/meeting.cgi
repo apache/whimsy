@@ -11,7 +11,6 @@ require 'whimsy/asf/meeting-util'
 DTFORMAT = '%A, %d %B %Y at %H:%M %z'
 TADFORMAT = '%Y%m%dT%H%M%S'
 WDAYFORMAT = '%A'
-ICS_FILE = 'ASF-members-meeting.ics' # see Meetings/meeting-template/
 ERROR_DATE = Time.new(1970, 1, 1) # An obvious error value 8-)
 
 # Return Time from DTSTART in an .ics file
@@ -84,7 +83,9 @@ _html do
     num_members, quorum_need, num_proxies, attend_irc = ASF::MeetingUtil.calculate_quorum(cur_mtg_dir)
     proxy_nominees = ASF::MeetingUtil.getProxyNominees.count
     # Use ics files for accurate times; see create-meeting.rb; note change in process 2022/2023
-    ics_date = ics2dtstart(File.join(cur_mtg_dir, ICS_FILE))
+    ics_date = ics2dtstart(File.join(cur_mtg_dir, ASF::MeetingUtil::VCAL_EVENTS_FILENAME))
+    # Also grab other timeline dates (for reminders, etc.)
+    mtg_timeline = ASF::MeetingUtil.get_timeline(cur_mtg_dir)
     ROSTER = "/roster/committer"
     _whimsy_body(
       title: PAGETITLE,
@@ -110,7 +111,7 @@ _html do
               _ 'Expecting to find:'
               _br
               _ul do
-                _li ICS_FILE
+                _li ASF::MeetingUtil::VCAL_EVENTS_FILENAME
                 _li "svn_mtg_dir = #{svn_mtg_dir}, cur_mtg_dir = #{cur_mtg_dir},"
               end
             end
@@ -137,7 +138,7 @@ _html do
               _ " #{ics_date.strftime(DTFORMAT)} "
             end
             _ "as an online "
-            _a 'https://asfmm.apache.org', "ASFMM chat tool meeting"
+            _a 'https://asfmm.apache.org', "ASFMM.apache.org chat tool meeting"
             _ " for less than an hour.  REMEMBER: all voting is done by email the week BEFORE the ASFMM meeting."
           end
           _p do
@@ -159,14 +160,18 @@ _html do
           end
           _p 'Individual Members are considered to have Attended a meeting if they either: respond to Roll Call in the meeting; submit a proxy (this gets submitted during Roll Call); or who cast a ballot on any matters.'
           _ul do
-            _li '2024 March Annual Meeting dates:'
-            _li 'Nominations open: February 06'
-            _li 'Nominations close: February 24, 2024 at 20:00'
-            _li 'Ballots emailed: February 29, 2024'
-            _li 'Voting closes: March 06, 2024 20:00 UTC (single IRC meeting March 07, 2024 20:00 UTC)'
+            if mtg_timeline
+              _li "Nominations open: #{mtg_timeline['nominations_open_date']}"
+              _li "Nominations close: #{mtg_timeline['nominations_close_date']}"
+              _li "List of Member Nominees notice (if any): #{mtg_timeline['nominations_notice_date']}"
+              _li "Voting polls open: #{mtg_timeline['vote_open_date']}"
+              _li "Voting polls close: #{mtg_timeline['polls_close_date']}"
+              _li "ASFMM online meeting: #{mtg_timeline['meeting_iso']}"
+              _li "New Member Applications due (if any): #{mtg_timeline['member_form_date']}"
+             else
+              _li 'Timeline not found: For next Annual Meeting dates, please see: https://svn.apache.org/repos/private/foundation/Meetings/'
+            end
           end
-          _p 'The above dates are manually copied from https://svn.apache.org/repos/private/foundation/Meetings/20240307/README.txt'
-          _p 'The file to edit is at: https://github.com/apache/whimsy/blob/master/www/members/meeting.cgi'
         end
       }
     ) do
