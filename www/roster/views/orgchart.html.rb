@@ -26,7 +26,8 @@ _html do
         _table.table do
           _thead do
             _th 'Title'
-            _th 'Contact, Chair, or Person holding that title'
+            _th 'VP or Chair Name'
+            _th 'Reporting Structure'
             _th 'Public Website'
           end
 
@@ -45,6 +46,11 @@ _html do
                     _ ',' if i > 0
                     _a ASF::Person.find(id1).public_name, href: "committer/#{id1}"
                   end
+                end
+ 
+                # Reports-To - clarifies orgchart reporting structure
+                _td do
+                  value['info']['reports-to'].nil? ? _('')  : _(value['info']['reports-to'])
                 end
 
                 # Website - often valuable to people looking for info
