@@ -78,7 +78,7 @@ if role_group
   end
 end
 
-if changed? and @old_file
+if check_now?
   # for validating UIDs
   uids = ASF::Person.list().map(&:id)
   entries.each do |name, entry|

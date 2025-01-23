@@ -58,7 +58,7 @@ public_json_output(
   #pitgroups: pitgroups
 )
 
-if changed? and @old_file
+if check_now?
   # for validating UIDs
   uids = ASF::Person.list().map(&:id)
   groups.each do |name, entry|
