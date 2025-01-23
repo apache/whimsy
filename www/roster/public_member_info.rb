@@ -68,7 +68,7 @@ end
 
 public_json_output(info)
 
-if changed? and @old_file
+if check_now?
   # for validating UIDs
   uids = ASF::Person.list().map(&:id)
   info[:members].each do |id|

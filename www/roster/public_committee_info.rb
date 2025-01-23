@@ -106,7 +106,7 @@ public_json_output(info)
 
 # Check if there is an unexpected entry date
 # we only do this if the file has changed to avoid excessive reports
-if changed? and @old_file
+if check_now?
   # Note: symbolize_names=false to avoid symbolising variable keys such as pmc and user names
   # However the current JSON (info) uses symbols for fixed keys - beware!
   previous = JSON.parse(@old_file, :symbolize_names => false)
