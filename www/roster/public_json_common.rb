@@ -49,7 +49,7 @@ end
 # Time to check for discrepancies?
 def check_now?
   # Check for discrepancies from time to time regardless
-  return ([6, 18].include?(Time.now.hour) or (changed? and @old_file))
+  return ([11, 23].include?(Time.now.hour) or (changed? and @old_file))
 end
 
 # Pretty-prints the JSON input and writes it to the output.
