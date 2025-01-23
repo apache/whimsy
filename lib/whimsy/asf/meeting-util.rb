@@ -430,7 +430,7 @@ module ASF
         nominations_close: times['asf-members-nominations-close'],
         polls_close: times['asf-members-polls-close'],
         meeting_start: times['asf-members'],
-        meeting_end: times['asf-members-end'],
+        meeting_end: times['asf-members-end']
       }
     end
 
