@@ -384,9 +384,21 @@ module ASF
       }]
     end
 
+    # get the times from the timeline file
+    # returns: hash with keys: nominations_close:, polls_close:, meeting_start, meeting_close:
+    def self.get_invite_times(cur_mtg_dir)
+      times = MeetingUtil.get_timeline(cur_mtg_dir)
+      return {
+        nominations_close: times['nominations_close_iso'],
+        polls_close: times['polls_close_iso'],
+        meeting_start: times['meeting_start_iso'],
+        meeting_end: times['meeting_end_iso'],
+      }
+    end
+
     # get the times from the VCAL events file
     # returns: hash with keys: nominations_close:, polls_close:, meeting_start, meeting_close:
-    def self.get_invite_times
+    def self.get_invite_times_ical
       times = {}
       File.readlines(File.join(latest_meeting_dir, VCAL_EVENTS_FILENAME)).slice_before(/^BEGIN:VEVENT/).drop(1).each do |ev|
         uid = nil
