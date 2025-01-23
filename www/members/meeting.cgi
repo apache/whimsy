@@ -161,6 +161,10 @@ _html do
           _p 'Individual Members are considered to have Attended a meeting if they either: respond to Roll Call in the meeting; submit a proxy (this gets submitted during Roll Call); or who cast a ballot on any matters.'
           _ul do
             if mtg_timeline
+              meeting_type = mtg_timeline.fetch('meeting_type', 'Annual')
+              if meeting_type =~ /test/i
+                _li "NOTICE NOTICE NOTICE: This is TEST MEETING DATA ONLY - DO NOT USE FOR ACTUAL MEETINGS :NOTICE NOTICE NOTICE"
+              end
               _li "Nominations open: #{mtg_timeline['nominations_open_date']}"
               _li "Nominations close: #{mtg_timeline['nominations_close_date']}"
               _li "List of Member Nominees notice (if any): #{mtg_timeline['nominations_notice_date']}"
