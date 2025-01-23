@@ -386,8 +386,8 @@ module ASF
 
     # get the times from the timeline file
     # returns: hash with keys: nominations_close:, polls_close:, meeting_start, meeting_close:
-    def self.get_invite_times(cur_mtg_dir)
-      times = MeetingUtil.get_timeline(cur_mtg_dir)
+    def self.get_invite_times()
+      times = MeetingUtil.get_timeline(latest_meeting_dir)
       return {
         nominations_close: times['nominations_close_iso'],
         polls_close: times['polls_close_iso'],
