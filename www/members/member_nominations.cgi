@@ -23,16 +23,16 @@ def emit_form(title, prev_data)
       _whimsy_forms_subhead(label: 'Nomination Form')
       field = 'availid'
       _whimsy_forms_input(label: 'Nominee availid', name: field,
-        value: prev_data[field], helptext: 'Enter the availid of the potential member'
+        value: prev_data[field], helptext: 'Enter the availid of the committer you are nominating for ASF Membership'
       )
       _whimsy_forms_input(label: 'Nominated by', name: 'nomby', readonly: true, value: $USER
       )
       _whimsy_forms_input(
-        label: 'Seconded by', name: 'secby', helptext: 'Optional comma-separated list of seconds'
+        label: 'Seconded by', name: 'secby', helptext: 'Optional comma-separated list of seconds; only if you have confirmed with the seconds directly'
       )
       field = 'statement'
       _whimsy_forms_input(label: 'Nomination Statement', name: field, rows: 10,
-        value: prev_data[field], helptext: 'Reason for nomination'
+        value: prev_data[field], helptext: 'Explain why you believe this person would make a good ASF Member, and what projects/communities they work on at the ASF'
       )
       _whimsy_forms_submit
     end
@@ -44,11 +44,12 @@ end
 def validate_form(formdata: {})
   uid = formdata['availid']
   chk = ASF::Person[uid]&.asf_member?
-  chk.nil? and return "Invalid availid: #{uid}"
+  chk.nil? and return "Invalid availid suppiled: (#{uid})\n\nStatement:\n#{formdata['statement']}"
   # Allow renomination of Emeritus
-  chk && !chk.to_s.start_with?('Emeritus') and return "Already a member: #{uid}"
+  pubname = ASF::Person[uid].public_name
+  chk && !chk.to_s.start_with?('Emeritus') and return "Your nominee #{pubname} (#{uid}) is already an ASF member!"
   already = ASF::MemberFiles.member_nominees
-  return "Already nominated: #{uid} by #{already[uid]['Nominated by']}" if already.include? uid
+  return "Candidate (#{uid}) has already been nominated by #{already[uid]['Nominated by']}" if already.include? uid
   return 'OK'
 end
 
@@ -155,18 +156,25 @@ _html do
               mailval = send_nomination_mail(formdata: submission)
               _p mailval
             else
-              _div.alert.alert_warning role: 'alert' do
-                _p "SORRY! Your submitted form data failed process_form, please try again."
+              _div.alert.alert_danger role: 'alert' do
+                _p do
+                  _span.strong "ERROR: Form data invalid in process_form(), update was NOT submitted! Data submitted:"
+                  _br
+                  _ "#{submission}"
+                end
               end
             end
           else
             _div.alert.alert_danger role: 'alert' do
-              _p "SORRY! Your submitted form data failed validate_form, please try again."
-              _p valid
+              _p do
+                _span.strong "ERROR: Form data invalid in validate_form(), update was NOT submitted!"
+                _br
+                _p valid
+              end
             end
           end
         else # if _.post?
-          emit_form('Enter your New Member nomination', {})
+          emit_form('Enter one New Member nomination', {})
         end
       end
     end
