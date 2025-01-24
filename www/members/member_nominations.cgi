@@ -104,10 +104,9 @@ MAILBODY
       body mail_body
     end
   end
-    mail.deliver!
-    return "The following email was just sent on your behalf:\n\n#{mail_body}"
-  end
-  return "WARNING: mail not sent!"
+  mail.deliver!
+  return "The following email was just sent on your behalf:\n\n#{mail_body}"
+
 end
 
 # Produce HTML
