@@ -10,12 +10,6 @@ require 'whimsy/asf/meeting-util'
 require_relative '../../tools/parsemail'
 require 'whimsy/asf/time-utils'
 
-# Countdown until nominations for current meeting close
-timelines = ASF::MeetingUtil.get_timeline(ASF::MeetingUtil.latest_meeting_dir)
-t_now = Time.now.to_i
-t_end = Time.parse(timelines['nominations_close']).to_i
-nomclosed = t_now > t_end
-
 # link to members private-arch
 MBOX = 'https://mail-search.apache.org/members/private-arch/members/'
 
@@ -106,6 +100,13 @@ _html do
     .count {margin-left: 4em}
   }
   _body? do
+    # Countdown until nominations for current meeting close
+    latest_meeting_dir = ASF::MeetingUtil.latest_meeting_dir
+    timelines = ASF::MeetingUtil.get_timeline(latest_meeting_dir)
+    t_now = Time.now.to_i
+    t_end = Time.parse(timelines['nominations_close']).to_i
+    nomclosed = t_now > t_end
+
     _whimsy_body(
       title: PAGETITLE,
       related: {
