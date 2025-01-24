@@ -92,7 +92,7 @@ has been added:
 
 --
 - #{$USER}"
-  Sent by Whimsy; see data in Meetings: #{NOMINATED_MEMBERS}
+  Sent by Whimsy; data in Meetings/current/nominated-members.txt
 
 MAILBODY
 
