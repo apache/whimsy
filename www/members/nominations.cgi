@@ -103,6 +103,8 @@ _html do
     # Countdown until nominations for current meeting close
     latest_meeting_dir = ASF::MeetingUtil.latest_meeting_dir
     timelines = ASF::MeetingUtil.get_timeline(latest_meeting_dir)
+    _.warn "dir: #{latest_meeting_dir}"
+    _.warn "dir: #{timelines}"
     t_now = Time.now.to_i
     t_end = Time.parse(timelines['nominations_close']).to_i
     nomclosed = t_now > t_end
