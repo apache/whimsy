@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 PAGETITLE = "Board nominations cross-check" # Wvisible:meeting
 $LOAD_PATH.unshift '/srv/whimsy/lib'
-
 require 'time'
 require 'erb'
 require 'wunderbar/bootstrap'
@@ -11,9 +10,10 @@ require 'whimsy/asf/meeting-util'
 require_relative '../../tools/parsemail'
 require 'whimsy/asf/time-utils'
 
+# Countdown until nominations for current meeting close
 t_now = Time.now.to_i
-t_end = ASF::MeetingUtil.nominations_close
-
+t_end = Time.parse(ASF::MeetingUtil.nominations_close).to_i
+nomclosed = t_now > t_end
 
 # link to members private-arch
 MBOX = 'https://mail-search.apache.org/members/private-arch/members/'
@@ -21,7 +21,7 @@ MBOX = 'https://mail-search.apache.org/members/private-arch/members/'
 # link to roster page
 ROSTER = '/roster/committer'
 MEETINGS = ASF::SVN['Meetings']
-MAIL_ROOT = '/srv/mail' # TODO: this should be config item
+MAIL_ROOT = '/srv/mail' # TODO: this should be config item in config.rb
 # Only need these items
 Email = Struct.new(:subject, :date, :message_id, :from, :asciiname)
 
@@ -98,23 +98,24 @@ _html do
     _whimsy_body(
       title: PAGETITLE,
       related: {
-        'board-nominate.cgi' => "Add entries to board nomination file",
+        '/members/meeting' => 'Member Meeting FAQ and info',
+        'board-nominate.cgi' => "Nominate someone for director in board_nominations.txt",
         'nominations' => 'New Member nominations cross-check',
         ASF::SVN.svnpath!('Meetings') => 'Official Meeting Agenda Directory'
       },
       helpblock: -> {
         _ 'This script checks board nomination statements from members@ against the official meeting ballot files, and highlights differences. '
-        _ 'This probably only works in the period shortly before or after a Members meeting!'
+        _ 'This only works in the period shortly before or after a Members meeting!'
         _br
         _ 'Entries are highlighted if they are not present in both lists.'
       }
     ) do
-      if t_end > t_now
-        _h3 "Nominations close in #{ASFTime.secs2text(t_end - t_now)} at #{Time.at(t_end).utc}"
-        _p 'Please ensure all posted nominations are added to SVN before then.'
-      else
+      if nomclosed
         _h1 'Nominations are now closed!'
         _p 'Nominations must no longer be added to the nominations file'
+      else
+        _h3 "Nominations close in #{ASFTime.secs2text(t_end - t_now)} at #{Time.at(t_end).utc}"
+        _p 'Please ensure all posted nominations are added to board_nominations.txt before then.'
       end
       cur_mtg_dir = File.basename(ASF::MeetingUtil.get_latest(MEETINGS))
       nominations, emails = setup_data
