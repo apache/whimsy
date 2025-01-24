@@ -1,8 +1,7 @@
 #!/usr/bin/env ruby
-PAGETITLE = "Add entries to member nomination file" # Wvisible:tools
-# Note: PAGETITLE must be double quoted
-
+PAGETITLE = "Add entries to nominated-members.txt" # Wvisible:meeting
 $LOAD_PATH.unshift '/srv/whimsy/lib'
+require 'time'
 require 'wunderbar'
 require 'wunderbar/bootstrap'
 require 'whimsy/asf'
@@ -12,8 +11,9 @@ require 'whimsy/asf/wunderbar_updates'
 require 'whimsy/asf/meeting-util'
 require 'whimsy/asf/time-utils'
 
+# Countdown until nominations for current meeting close
 t_now = Time.now.to_i
-t_end = ASF::MeetingUtil.nominations_close
+t_end = Time.parse(ASF::MeetingUtil.nominations_close).to_i
 nomclosed = t_now > t_end
 
 def emit_form(title, prev_data)
@@ -85,6 +85,7 @@ _html do
       title: PAGETITLE,
       subtitle: 'About This Script',
       related: {
+        '/members/meeting' => 'Member Meeting FAQ and info',
         '/members/memberless-pmcs' => 'PMCs with no/few ASF Members',
         '/members/watch' => 'Watch list for potential Member candidates',
         'nominations.cgi' => "Member nominations cross-check - ensuring nominations get on the ballot, etc.",
@@ -94,7 +95,7 @@ _html do
         _h3 'BETA - please report any errors to the Whimsy PMC!'
         _p %{
           This form can be used to ADD entries to the nominated-members.txt file.
-          This is currently for use by the Nominator only, and does not send a copy
+          This is currently for use by the Nominator only, and does not yet send a copy
           of the nomination to the members list.
           There is currently no support for updating an existing entry.
         }
@@ -119,7 +120,8 @@ _html do
             end
           elsif valid == 'OK'
             if process_form(formdata: submission, wunderbar: _)
-              _p.lead "Thanks for Using This Form!"
+              _p.lead "Your nomination was submitted to svn."
+              # TODO Also send mail to members@ with this data (to complete process)
             else
               _div.alert.alert_warning role: 'alert' do
                 _p "SORRY! Your submitted form data failed process_form, please try again."
@@ -132,7 +134,7 @@ _html do
             end
           end
         else # if _.post?
-          emit_form('Enter nomination data', {})
+          emit_form('Enter your New Member nomination', {})
         end
       end
     end

@@ -128,7 +128,7 @@ _html do
             end
           end
         else # if _.post?
-          emit_form('Enter nomination data', {})
+          emit_form('Enter your nomination for a Director Candidate', {})
         end
       end
     end
