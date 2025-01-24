@@ -14,7 +14,7 @@ require 'whimsy/asf/time-utils'
 
 t_now = Time.now.to_i
 t_end = ASF::MeetingUtil.nominations_close
-nomclosed = t_now > DateTime.parse(t_end).to_i
+nomclosed = t_now > DateTime.parse(t_end).to_s.to_i
 
 def emit_form(title, prev_data)
   _whimsy_panel(title, style: 'panel-success') do
