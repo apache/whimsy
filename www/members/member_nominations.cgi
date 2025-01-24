@@ -82,7 +82,7 @@ def send_nomination_mail(formdata: {})
     nomseconds = "Nomination seconded by: #{secby}"
   end
   mail_body = <<-MAILBODY
-The following nomination for #{ASF::Person.new(uid).public_name} (#{uid}) as a New Member Candidate
+The following nomination for #{public_name} (#{uid}) as a New Member Candidate
 has been added:
 
 #{formdata['statement']}
@@ -154,7 +154,6 @@ _html do
               _p.lead "Your nomination was submitted to svn; now sending email."
               mailval = send_nomination_mail(formdata: submission)
               _p mailval
-              end
             else
               _div.alert.alert_warning role: 'alert' do
                 _p "SORRY! Your submitted form data failed process_form, please try again."
