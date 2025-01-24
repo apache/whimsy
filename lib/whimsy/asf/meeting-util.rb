@@ -176,12 +176,12 @@ module ASF
     end
 
     # Read runbook/timeline.json file, not present before 2025
-    # @return hash, or null if not found
+    # @return hash, or string error if not found
     def self.get_timeline(mtg_root)
       begin
         return JSON.parse(IO.read(File.join(mtg_root, 'runbook', 'timeline.json')))
       rescue StandardError => e
-        return null
+        return "ERROR: get_timeline(#{mtg_root}) threw: #{e.message}"
       end
     end
 
