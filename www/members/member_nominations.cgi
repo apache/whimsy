@@ -12,11 +12,8 @@ require 'whimsy/asf/meeting-util'
 require 'whimsy/asf/time-utils'
 require 'mail'
 
-# Countdown until nominations for current meeting close
-t_now = Time.now.to_i
-t_end = Time.parse(ASF::MeetingUtil.nominations_close).to_i
-nomclosed = t_now > t_end
 MAILING_LIST = 'gnomes@infra.apache.org'
+NOMINATION_FILE = 'nominated-members.txt'
 
 def emit_form(title, prev_data)
   _whimsy_panel(title, style: 'panel-success') do
@@ -106,8 +103,14 @@ end
 
 # Produce HTML
 _html do
-  _body? do # The ? traps errors inside this block
-    _whimsy_body( # This emits the entire page shell: header, navbar, basic styles, footer
+  _body? do
+    # Countdown until nominations for current meeting close
+    latest_meeting_dir = ASF::MeetingUtil.latest_meeting_dir
+    timelines = ASF::MeetingUtil.get_timeline(latest_meeting_dir)
+    t_now = Time.now.to_i
+    t_end = Time.parse(timelines['nominations_close_iso']).to_i
+    nomclosed = t_now > t_end
+    _whimsy_body(
       title: PAGETITLE,
       subtitle: 'About This Script',
       related: {
@@ -118,7 +121,8 @@ _html do
         ASF::SVN.svnpath!('Meetings') => 'Official Meeting Agenda Directory'
       },
       helpblock: -> {
-        _h3 'BETA - please report any errors to the Whimsy PMC!'
+        _h3 'BETA - please report any errors at private@whimsical!'
+        _b "For: #{timelines['meeting_type']} Meeting on: #{timelines['meeting_iso']}"
         _p %Q{
           This form can be used to nominate new candidates for ASF Membership if they are already committers.
           It automatically adds an entry to to the #{NOMINATION_FILE} file,
@@ -131,7 +135,7 @@ _html do
       if nomclosed
         _h1 'Nominations are now closed!'
       else
-        _h3 "Nominations close in #{ASFTime.secs2text(t_end - t_now)} at #{Time.at(t_end).utc}"
+        _h3 "Nominations close in #{ASFTime.secs2text(t_end - t_now)} at #{Time.at(t_end).utc} for Meeting: #{timelines['meeting_iso']}"
       end
 
       _div id: 'nomination-form' do
