@@ -10,11 +10,6 @@ require 'whimsy/asf/meeting-util'
 require_relative '../../tools/parsemail'
 require 'whimsy/asf/time-utils'
 
-# Countdown until nominations for current meeting close
-t_now = Time.now.to_i
-t_end = Time.parse(ASF::MeetingUtil.nominations_close).to_i
-nomclosed = t_now > t_end
-
 # link to members private-arch
 MBOX = 'https://mail-search.apache.org/members/private-arch/members/'
 
@@ -95,6 +90,13 @@ _html do
     .count {margin-left: 4em}
   }
   _body? do
+    # Countdown until nominations for current meeting close
+    latest_meeting_dir = ASF::MeetingUtil.latest_meeting_dir
+    timelines = ASF::MeetingUtil.get_timeline(latest_meeting_dir)
+    t_now = Time.now.to_i
+    t_end = Time.parse(timelines['nominations_close_iso']).to_i
+    nomclosed = t_now > t_end
+
     _whimsy_body(
       title: PAGETITLE,
       related: {
@@ -104,6 +106,7 @@ _html do
         ASF::SVN.svnpath!('Meetings') => 'Official Meeting Agenda Directory'
       },
       helpblock: -> {
+        _b "For: #{timelines['meeting_type']} Meeting on: #{timelines['meeting_iso']}"
         _ 'This script checks board nomination statements from members@ against the official meeting ballot files, and highlights differences. '
         _ 'This only works in the period shortly before or after a Members meeting!'
         _br
@@ -111,10 +114,10 @@ _html do
       }
     ) do
       if nomclosed
-        _h1 'Nominations are now closed!'
+        _h1 "Nominations are CLOSED for Meeting: #{timelines['meeting_iso']}"
         _p 'Nominations must no longer be added to the nominations file'
       else
-        _h3 "Nominations close in #{ASFTime.secs2text(t_end - t_now)} at #{Time.at(t_end).utc}"
+        _h3 "Nominations close in #{ASFTime.secs2text(t_end - t_now)} at #{Time.at(t_end).utc} for Meeting: #{timelines['meeting_iso']}"
         _p 'Please ensure all posted nominations are added to board_nominations.txt before then.'
       end
       cur_mtg_dir = File.basename(ASF::MeetingUtil.get_latest(MEETINGS))
