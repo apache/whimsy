@@ -15,25 +15,27 @@ require 'whimsy/asf/time-utils'
 t_now = Time.now.to_i
 t_end = Time.parse(ASF::MeetingUtil.nominations_close).to_i
 nomclosed = t_now > t_end
+MAILING_LIST = 'gnomes@infra.apache.org'
+NOMINATION_FILE = 'board_nominations.txt'
 
 def emit_form(title, prev_data)
   _whimsy_panel(title, style: 'panel-success') do
     _form.form_horizontal method: 'post' do
-      _whimsy_forms_subhead(label: 'Nomination Form')
+      _whimsy_forms_subhead(label: 'Director Nomination Form')
       field = 'availid'
       _whimsy_forms_input(
         label: 'Nominee availid', name: field,
-        value: prev_data[field], helptext: 'Enter the availid of the potential board member'
+        value: prev_data[field], helptext: 'Enter the availid of the ASF committer you are nominating for the board'
       )
       _whimsy_forms_input(
         label: 'Nominated by', name: 'nomby', readonly: true, value: $USER
       )
       _whimsy_forms_input(
-        label: 'Seconded by', name: 'secby', helptext: 'Optional comma-separated list of seconds'
+        label: 'Seconded by', name: 'secby', helptext: 'Optional comma-separated list of seconds; only if you have confirmed with the seconds directly'
       )
       field = 'statement'
       _whimsy_forms_input(label: 'Nomination Statement', name: field, rows: 10,
-        value: prev_data[field], helptext: 'Reason for nomination'
+        value: prev_data[field], helptext: 'Explain why you believe this person would be a good Director'
       )
       _whimsy_forms_submit
     end
@@ -45,34 +47,60 @@ end
 def validate_form(formdata: {})
   uid = formdata['availid']
   chk = ASF::Person[uid]&.asf_member?
-  chk.nil? and return "Invalid or non-Member availid: #{uid}"
+  chk.nil? and return "Invalid availid or non-Member suppiled: (#{uid})\n\nStatement:\n#{formdata['statement']}"
   already = ASF::MemberFiles.board_nominees
-  return "Already nominated: #{uid} by #{already[uid]['Nominated by']}" if already.include? uid
+  return "Candidate #{uid} has already been nominated by #{already[uid]['Nominated by']}" if already.include? uid
   return 'OK'
 end
 
 # Handle submission (checkout board_nominations.txt, write form data, checkin file)
 # @return true if we think it succeeded; false in all other cases
 def process_form(formdata: {}, wunderbar: {})
-  statement = formdata['statement']
-
-  _h3 'Copy of nominators statement about the candidate'
-  _pre statement
-
-  _hr
-
-  _h3 'Transcript of update to nomination file'
-  uid = formdata['availid']
+  _h3 "Transcript of update to nomination file #{NOMINATION_FILE}"
   entry = ASF::MemberFiles.make_board_nomination({
-    availid: uid,
-    nomby: $USER,
+    availid: formdata['availid'],
+    nomby: formdata['nomby'],
     secby: formdata['secby'],
-    statement: statement
+    statement: formdata['statement']
   })
 
   environ = Struct.new(:user, :password).new($USER, $PASSWORD)
-  ASF::MemberFiles.update_board_nominees(environ, wunderbar, [entry], "+= #{uid}")
+  ASF::MemberFiles.update_board_nominees(environ, wunderbar, [entry], "+= #{formdata['availid']}")
   return true
+end
+
+# Send email to members@ with this nomination's data
+# Return status string if we think mail was sent
+def send_nomination_mail(formdata: {})
+  uid = formdata['availid']
+  public_name = ASF::Person.new(uid).public_name
+  secby = formdata.fetch('secby', nil)
+  secby.nil? ? nomseconds = '' : nomseconds = "Nomination seconded by: #{secby}" unless secby.nil?
+  mail_body = <<-MAILBODY
+This nomination for #{public_name} (#{uid}) as a Director
+Nominee has been added:
+
+#{formdata['statement']}
+
+#{nomseconds}
+
+--
+- #{ASF::Person[$USER].public_name}
+  Sent by Whimsy; data in Meetings/current/#{NOMINATION_FILE}
+
+MAILBODY
+
+  ASF::Mail.configure
+  mail = Mail.new do
+    to MAILING_LIST
+    from $USER
+    subject "[BOARD NOMINATION] #{ASF::Person.new(uid).public_name} (#{uid})"
+    text_part do
+      body mail_body
+    end
+  end
+  mail.deliver!
+  return "The following email was just sent on your behalf:\n\n#{mail_body}"
 end
 
 # Produce HTML
@@ -88,11 +116,11 @@ _html do
       },
       helpblock: -> {
         _h3 'BETA - please report any errors at private@whimsical!'
-        _p %{
-          This form can be used to ADD entries to the board-nominations.txt file.
-          This is currently for use by the Nominator only, and does not yet send a copy
-          of the nomination to the members list.
-          There is no support for updating an existing entry.
+        _p %Q{
+          This form can be used to nominate candidates for the ASF Board of Director election if they are already Members.
+          It automatically adds an entry to to the #{NOMINATION_FILE} file,
+          and then will send an email to the members@ list with your nomination.
+          There is currently no support for updating an existing entry or for adding seconds; use SVN for that.
         }
       }
     ) do
@@ -114,17 +142,27 @@ _html do
             end
           elsif valid == 'OK'
             if process_form(formdata: submission, wunderbar: _)
-              _p.lead "Your nomination was submitted to svn."
-              # TODO Also send mail to members@ with this data (to complete process)
+              _div.alert.alert_success role: 'alert' do
+                _p "Your nomination was submitted to svn; now sending email to #{MAILING_LIST}."
+              end
+              mailval = send_nomination_mail(formdata: submission)
+              _pre mailval
             else
-              _div.alert.alert_warning role: 'alert' do
-                _p "SORRY! Your submitted form data failed process_form, please try again."
+              _div.alert.alert_danger role: 'alert' do
+                _p do
+                  _span.strong "ERROR: Form data invalid in process_form(), update was NOT submitted!"
+                  _br
+                  _ "#{submission}"
+                end
               end
             end
           else
             _div.alert.alert_danger role: 'alert' do
-              _p "SORRY! Your submitted form data failed validate_form, please try again."
-              _p valid
+              _p do
+                _span.strong "ERROR: Form data invalid in validate_form(), update was NOT submitted!"
+                _br
+                _p valid
+              end
             end
           end
         else # if _.post?

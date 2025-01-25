@@ -16,11 +16,12 @@ require 'mail'
 t_now = Time.now.to_i
 t_end = Time.parse(ASF::MeetingUtil.nominations_close).to_i
 nomclosed = t_now > t_end
+MAILING_LIST = 'gnomes@infra.apache.org'
 
 def emit_form(title, prev_data)
   _whimsy_panel(title, style: 'panel-success') do
     _form.form_horizontal method: 'post' do
-      _whimsy_forms_subhead(label: 'Nomination Form')
+      _whimsy_forms_subhead(label: 'New Member Nomination Form')
       field = 'availid'
       _whimsy_forms_input(label: 'Nominee availid', name: field,
         value: prev_data[field], helptext: 'Enter the availid of the committer you are nominating for ASF Membership'
@@ -56,58 +57,51 @@ end
 # Handle submission (checkout user's apacheid.json, write form data, checkin file)
 # @return true if we think it succeeded; false in all other cases
 def process_form(formdata: {}, wunderbar: {})
-  statement = formdata['statement']
-  uid = formdata['availid']
-
-  _h3 'Transcript of update to nomination file'
+  _h3 "Transcript of update to nomination file #{NOMINATION_FILE}"
   entry = ASF::MemberFiles.make_member_nomination({
-    availid: uid,
-    nomby: $USER,
+    availid: formdata['availid'],
+    nomby: formdata['nomby'],
     secby: formdata['secby'],
-    statement: statement
+    statement: formdata['statement']
   })
 
   environ = Struct.new(:user, :password).new($USER, $PASSWORD)
-  ASF::MemberFiles.update_member_nominees(environ, wunderbar, [entry], "+= #{uid}")
+  ASF::MemberFiles.update_member_nominees(environ, wunderbar, [entry], "+= #{formdata['availid']}")
   return true
 end
 
 # Send email to members@ with this nomination's data
-# Return true if we think mail was sent
+# Return status string if we think mail was sent
 def send_nomination_mail(formdata: {})
   uid = formdata['availid']
   public_name = ASF::Person.new(uid).public_name
   secby = formdata.fetch('secby', nil)
-  nomseconds = ''
-  if secby
-    nomseconds = "Nomination seconded by: #{secby}"
-  end
+  secby.nil? ? nomseconds = '' : nomseconds = "Nomination seconded by: #{secby}" unless secby.nil?
   mail_body = <<-MAILBODY
-The following nomination for #{public_name} (#{uid}) as a New Member Candidate
-has been added:
+This nomination for #{public_name} (#{uid}) as a New Member
+Candidate has been added:
 
 #{formdata['statement']}
 
 #{nomseconds}
 
 --
-- #{$USER}"
-  Sent by Whimsy; data in Meetings/current/nominated-members.txt
+- #{ASF::Person[$USER].public_name}
+  Sent by Whimsy; data in Meetings/current/#{NOMINATION_FILE}
 
 MAILBODY
 
   ASF::Mail.configure
   mail = Mail.new do
-    to "asf@shanecurcuru.org" # FIXME TESTING
+    to MAILING_LIST
     from $USER
-    subject "[MEMBER NOMINATION] #{ASF::Person.new(uid).public_name} (#{uid})\n"
+    subject "[MEMBER NOMINATION] #{ASF::Person.new(uid).public_name} (#{uid})"
     text_part do
       body mail_body
     end
   end
   mail.deliver!
   return "The following email was just sent on your behalf:\n\n#{mail_body}"
-
 end
 
 # Produce HTML
@@ -125,11 +119,11 @@ _html do
       },
       helpblock: -> {
         _h3 'BETA - please report any errors to the Whimsy PMC!'
-        _p %{
+        _p %Q{
           This form can be used to nominate new candidates for ASF Membership if they are already committers.
-          It automatically adds an entry to to the nominated-members.txt file,
+          It automatically adds an entry to to the #{NOMINATION_FILE} file,
           and then will send an email to the members@ list with your nomination.
-          There is currently no support for updating an existing entry or for adding seconds.
+          There is currently no support for updating an existing entry or for adding seconds; use SVN for that.
         }
       }
     ) do
@@ -152,13 +146,15 @@ _html do
             end
           elsif valid == 'OK'
             if process_form(formdata: submission, wunderbar: _)
-              _p.lead "Your nomination was submitted to svn; now sending email."
+              _div.alert.alert_success role: 'alert' do
+                _p "Your nomination was submitted to svn; now sending email to #{MAILING_LIST}."
+              end
               mailval = send_nomination_mail(formdata: submission)
-              _p mailval
+              _pre mailval
             else
               _div.alert.alert_danger role: 'alert' do
                 _p do
-                  _span.strong "ERROR: Form data invalid in process_form(), update was NOT submitted! Data submitted:"
+                  _span.strong "ERROR: Form data invalid in process_form(), update was NOT submitted!"
                   _br
                   _ "#{submission}"
                 end
