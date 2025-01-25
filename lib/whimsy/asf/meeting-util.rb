@@ -388,11 +388,12 @@ module ASF
     # returns: hash with keys: nominations_close:, polls_close:, meeting_start, meeting_close:
     def self.get_invite_times()
       times = MeetingUtil.get_timeline(latest_meeting_dir)
-      return {
-        nominations_close: times['nominations_close_iso'],
-        polls_close: times['polls_close_iso'],
-        meeting_start: times['meeting_start_iso'],
-        meeting_end: times['meeting_end_iso'],
+      # Needs more work to reconcile recent changes to time calculations
+      return { # TEMP HACK: return times in seconds, as per the original get_invite_times method.
+        nominations_close:  DateTime.iso8601(times['nominations_close_iso']).to_time.to_i,
+        polls_close: DateTime.iso8601(times['polls_close_iso']).to_time.to_i,
+        meeting_start: DateTime.iso8601(times['meeting_start_iso']).to_time.to_i,
+        meeting_end: DateTime.iso8601(times['meeting_end_iso']).to_time.to_i,
       }
     end
 
