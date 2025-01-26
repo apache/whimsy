@@ -285,7 +285,7 @@ seen={}
     -{41}\n                        # separator
     Attachment\s\s?(\w+):[ ](.+?)\n # Attachment, Title
     (.)(.*?)\n                     # separator, report
-    (?=-{41,}\n(?:End|Attach))     # separator
+    (?=[-_]{41,}\n(?:End|Attach))     # separator
   /mx).each do |attach,title,cont,text|
 
     # We need to keep the start of the second line.
