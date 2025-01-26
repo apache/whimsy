@@ -96,7 +96,7 @@ def emit_form(cur_mtg_dir, meeting, volunteers, disabled)
       _p.text_warning %{
           NOTE: you are proxying for other members, so you cannot assign
           someone else to proxy for your attendance.  If it turns out that
-          you will not be able to attend the the IRC meeting on Thursday,
+          you will not be able to attend the IRC meeting on Thursday,
           you MUST work with the Board Chair and your proxies to update the
           proxy records, and get someone else to mark their presence!
         }

@@ -212,7 +212,7 @@ _html do
       _whimsy_panel("Timeline: Nomination Period (until 10 days BEFORE meeting)", style: 'panel-default') do
         _p do
           _ 'Before any Annual meeting, any Member may nominate people either for the Board, or as a New Member Candidate.  Much of this discussion happens on members@ mailing list.  Remember, all new nominated names must be checked into SVN 10 days before the meeting.'
-          _ 'Also, you should submit a proxy if you might not attend the the meeting.'
+          _ 'Also, you should submit a proxy if you might not attend the meeting.'
           _ul do
             ['board_nominations.txt', 'board_ballot.txt', '/members/board-nominate.cgi', '/members/board_nominations.cgi',
               'nominated-members.txt', '/members/member_nominations.cgi', '/members/nominations.cgi',

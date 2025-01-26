@@ -12,7 +12,7 @@ STATS_ROLLUP = 'stats'
 # Create summary of statistics from 2007->up board minutes (includes private data)
 # Note that for F2F meetings or meetings before preapps, this won't parse reliably
 # @param dir pointing to /foundation/board/archived_agendas
-# @return stats hash of of various statistics from minutes
+# @return stats hash of various statistics from minutes
 def summarize_all(dir = BOARD)
   summaries = Hash.new{|h,k| h[k] = {} }
   Dir[File.join(dir, 'archived_agendas', 'board_agenda_2*.txt')].sort.each do |f|

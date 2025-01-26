@@ -59,7 +59,7 @@ _html do
           _br
           _ 'Every mailing list should have at least two archivers: MBOX and PONY'
           _br
-          _ 'The MBOX and PONY archivers must agree on the the privacy setting'
+          _ 'The MBOX and PONY archivers must agree on the privacy setting'
           _br
           _ 'Unexpected/missing entries are flagged'
           _br
