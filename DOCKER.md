@@ -19,7 +19,7 @@ Prerequisites
 -------------
 
 You will need Docker, git, and subversion.  And approximately 3 GB of
-disk space
+disk space.
 
 Direct link to [docker for
 macOS](https://download.docker.com/mac/stable/Docker.dmg) (this avoids the
@@ -38,7 +38,7 @@ used by the host machine matches the format used by the container.  Currently
 macOS Catalina/Xcode provides svn 1.10.4 and the Dockerfile downloads the
 latest 1.10 version (currently 1.10.6).
 
-Finally, a note on password stores.  Inside ~/.subversion/config, you will see
+Finally, a note on password stores.  Inside `~/.subversion/config`, you will see
 a list of available stores, which currently is `gnome-keyring`, `kwallet`,
 `gpg-agent`, `keychain`, and `windows-cryptoapi`.  The only ones that are
 available to an Ubuntu container are ones marked as for "Unix-like systems".
@@ -61,18 +61,18 @@ Installation instructions
       This is because some Gems have native code, and the bundler versions are
       unlikely to be the same.
 * `cd` into that directory
-* `git clone git@github.com:apache/whimsy.git` OR
-* `git clone https://github.com/apache/whimsy.git` (whichever works best for you)
-* `cp whimsy/config/whimsy.template .whimsy`
-* edit the `.whimsy` file as per its comments
+* `git clone git@github.com:apache/whimsy.git` OR \
+  `git clone https://github.com/apache/whimsy.git` (whichever works best for you)
+* `cp whimsy/config/whimsy.template .whimsy`\
+  edit the `.whimsy` file as per its comments
 * Create the file `.bash_aliases` if required - this will be picked up by the root user
 There is a sample template `whimsy/config/bash_aliases.template` to get you started
 * `mkdir apache2_logs` if required - this will be used for the server logs (makes it easier to review them)
 * `cd whimsy`
 * Start Docker if necessary: `$ open [~]/Applications/Docker.app`
 * `rake docker:update` # this runs docker:build and updates any Gems
-* If you are using a local copy of SVN, you will need to start the server and run `rake svn:update` from a shell
-* Otherwise you can run `rake svn:update` externally
+* If you are using a local copy of SVN, you will need to start the server and run `rake svn:update` from a shell on the container\
+  Otherwise you can run `rake svn:update` externally
 * `rake docker:up` # This prompts for LDAP Bind password
 * visit `http://localhost:1999/` in your favorite browser
 
@@ -88,7 +88,7 @@ The command does not need to be repeated each time you want to start the contain
 but should be repeated from time to time to fetch updated sources.
 
 If you wish to create the Ubuntu image separately, run `rake docker:build`
-(this is invoked as part of docker:update)
+(this is invoked as part of `docker:update`)
 This should be re-run if you update any of the resources used for the build,
 e.g. files in docker-config and the Dockerfile
 
@@ -106,10 +106,10 @@ known yet what functions work and what functions do not.
 
 Installation layout
 -------------------
-The `docker-compose.yml` has the following mounts:
+The `compose.yaml` has the following mounts:
 
-container path      host path
-/srv                directory chosen in step 1
+    container path      host path
+    /srv                directory chosen in step 1
 
 You can edit the files in these directories using your host tools.
 If any of the configuration files under .subversion etc contain absolute references to
@@ -141,18 +141,18 @@ If a developer needs such access, they should use a local SVN repository.
 
 Using a local SVN repository
 ----------------------------
-Create a directory called REPO (must agree with docker-config/whimsy.conf) under the whimsy parent directory
+Create a directory called REPO (must agree with `docker-config/whimsy.conf`) under the `whimsy` parent directory
 (i.e. alongside the gems/ directory)
-Set up 3 local SVN repositories under the REPO directory using `svnadmin create` with the names: asf, private, infra
+Set up 3 local SVN repositories under the REPO directory using `svnadmin create` with the names: `asf`, `private`, `infra`
 Under each of these, create the directories and files you need.
 
-Add the following entry to the .whimsy file: `:svn_base: http://localhost/repos/`
+Add the following entry to the `.whimsy` file: `:svn_base: http://localhost/repos/`
 The repositories can then be found at the following locations in Docker:
 - http://localhost/repos/asf/
 - http://localhost/repos/infra/
 - http://localhost/repos/private/
 
-Note: these will be checked out under /srv/svn in Docker.
+Note: these will be checked out under `/srv/svn` in Docker.
 
 Testing email
 -------------
