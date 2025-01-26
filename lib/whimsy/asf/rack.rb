@@ -212,7 +212,7 @@ module ASF
     end
 
     # compute the document root by stripping the <tt>PASSENGER_BASE_URI</tt> from
-    # the the current working directory.
+    # the current working directory.
     def call(env)
       if ENV['PASSENGER_BASE_URI'] and not ENV['DOCUMENT_ROOT']
         base = Dir.pwd

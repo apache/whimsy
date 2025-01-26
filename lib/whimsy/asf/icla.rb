@@ -275,7 +275,7 @@ module ASF
       @@availids_reserved = reserved.uniq
     end
 
-    # list of all availids that are are taken or reserved
+    # list of all availids that are taken or reserved
     # See also ASF::Mail.taken?
     def self.availids_taken
       self.availids_reserved + self.availids

@@ -127,7 +127,7 @@ _html do
         _b "For: #{timelines['meeting_type']} Meeting on: #{timelines['meeting_iso']}"
         _p %Q{
           This form can be used to nominate new candidates for ASF Membership if they are already committers.
-          It automatically adds an entry to to the #{NOMINATION_FILE} file,
+          It automatically adds an entry to the #{NOMINATION_FILE} file,
           and then will send an email to the members@ list with your nomination.
           There is currently no support for updating an existing entry or for adding seconds; use SVN for that.
         }

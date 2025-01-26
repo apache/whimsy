@@ -75,5 +75,5 @@ jobs:
       run: |
         npm list # added by Rakefile
         echo "${{ env.action_state }}"
-        # This will be be true for a successful run
+        # This will be true for a successful run
         test "${{ env.action_state }}" != 'failed'
