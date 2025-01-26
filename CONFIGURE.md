@@ -15,7 +15,7 @@ run either in a local environment or with a webserver.
   - Puppet (for our [production](DEPLOYMENT.md) deployment)
 - A variety of Ruby gems
   - [Wunderbar](https://github.com/rubys/wunderbar) - HTML Generator and CGI application support
-  - [Ruby-ldap](https://github.com/bearded/ruby-ldap) - LDAP for Ruby
+  - [Ruby-ldap](https://github.com/Punderthings/ruby-ldap3) - LDAP for Ruby
   - [nokogiri](https://github.com/sparklemotion/nokogiri) - HTML parser for Ruby
   - Full gem dependencies in `asf.gemspec`
 

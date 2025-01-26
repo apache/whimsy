@@ -1,5 +1,5 @@
 version = File.read(File.expand_path('../asf.version', __FILE__)).strip
-ldapversion = 
+ldapversion =
 begin
   File.read(File.expand_path('../asfldap.version', __FILE__)).strip
 rescue Exception => e
@@ -29,7 +29,7 @@ Gem::Specification.new do |s|
   # relevant versions
   s.add_dependency('nokogiri')
   s.add_dependency('rack')
-  s.add_dependency('ruby-ldap', ldapversion)
+  s.add_dependency('ruby-ldap3', '0.10.1')
   s.add_dependency('tzinfo')
   s.add_dependency('tzinfo-data')
   s.add_dependency('wunderbar')
