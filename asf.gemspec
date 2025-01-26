@@ -29,7 +29,7 @@ Gem::Specification.new do |s|
   # relevant versions
   s.add_dependency('nokogiri')
   s.add_dependency('rack')
-  s.add_dependency('ruby-ldap3', '0.10.1')
+  s.add_dependency('ruby-ldap3', '0.10.2')
   s.add_dependency('tzinfo')
   s.add_dependency('tzinfo-data')
   s.add_dependency('wunderbar')
