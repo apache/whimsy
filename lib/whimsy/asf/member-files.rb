@@ -181,6 +181,7 @@ module ASF
     def self.sort_board_nominees(contents, entries=nil)
       sections = contents.split(%r{^-{10,}\n})
       header = sections.shift(2)
+      sections.pop if sections.last.strip == ''
       sections.append(*entries) if entries # add new entries if any
       names = {}
       # replace 'each' by 'sort_by!' to sort by last name
