@@ -15,13 +15,6 @@ cur_mtg_dir = ASF::MeetingUtil.get_latest(MEETINGS)
 meeting = File.basename(cur_mtg_dir)
 today = Date.today.strftime('%Y%m%d')
 
-# look for recent activity if there is an upcoming meeting
-if meeting > today
-  current_status = ASF::MeetingUtil.current_status(cur_mtg_dir)
-else
-  current_status = lambda {|id| 'No response'}
-end
-
 # separator / is added when link is generated
 ROSTER = "/roster/committer"
 if not ENV['QUERY_STRING'] or ENV['QUERY_STRING'].include? 'json'
@@ -32,6 +25,12 @@ end
 _html do
   @meetingsMissed = (@meetingsMissed || 3).to_i
   _body? do
+    # look for recent activity if there is an upcoming meeting
+    if meeting > today
+      current_status = ASF::MeetingUtil.current_status(cur_mtg_dir)
+    else
+      current_status = lambda {|id| 'No response'}
+    end
     attendance, matrix, dates, nameMap = ASF::MeetingUtil.get_attend_matrices(MEETINGS)
     _whimsy_body(
       title: PAGETITLE,
