@@ -167,12 +167,12 @@ _html do
         _p do
           _ 'Before an Annual meeting, Members may nominate candidates for the Board election, or as New Member Candidates.  Nominations are only official if placed in the correct files; although much discussion also happens on members@.'
          _ul do
-            ['/members/board-nominate.cgi',
-            '/members/member_nominations.cgi',
+            ['/members/nominate_board.cgi',
+            '/members/nominate_member.cgi',
             '/members/proxy.cgi',
             'agenda.txt',
-            '/members/board_nominations.cgi',
-            '/members/nominations.cgi',
+            '/members/check_boardnoms.cgi',
+            '/members/check_membernoms.cgi',
             'board_ballot.txt'].each do |f|
               _li do
                 emit_link(svn_mtg_dir, f, ASF::MeetingUtil::MEETING_FILES[f])

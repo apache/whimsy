@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-PAGETITLE = "Add entries to nominated-members.txt" # Wvisible:meeting
+PAGETITLE = "Nominate someone for the Board" # Wvisible:meeting
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'time'
 require 'wunderbar'
@@ -13,24 +13,26 @@ require 'whimsy/asf/time-utils'
 require 'mail'
 
 MAILING_LIST = 'gnomes@infra.apache.org'
-NOMINATION_FILE = 'nominated-members.txt'
+NOMINATION_FILE = 'board_nominations.txt'
 
 def emit_form(title, prev_data)
   _whimsy_panel(title, style: 'panel-success') do
     _form.form_horizontal method: 'post' do
-      _whimsy_forms_subhead(label: 'New Member Nomination Form')
+      _whimsy_forms_subhead(label: 'Director Nomination Form')
       field = 'availid'
-      _whimsy_forms_input(label: 'Nominee availid', name: field,
-        value: prev_data[field], helptext: 'Enter the availid of the committer you are nominating for ASF Membership'
+      _whimsy_forms_input(
+        label: 'Nominee availid', name: field,
+        value: prev_data[field], helptext: 'Enter the availid of the ASF committer you are nominating for the board'
       )
-      _whimsy_forms_input(label: 'Nominated by', name: 'nomby', readonly: true, value: $USER
+      _whimsy_forms_input(
+        label: 'Nominated by', name: 'nomby', readonly: true, value: $USER
       )
       _whimsy_forms_input(
         label: 'Seconded by', name: 'secby', helptext: 'Optional comma-separated list of seconds; only if you have confirmed with the seconds directly'
       )
       field = 'statement'
       _whimsy_forms_input(label: 'Nomination Statement', name: field, rows: 10,
-        value: prev_data[field], helptext: 'Explain why you believe this person would make a good ASF Member, and what projects/communities they work on at the ASF'
+        value: prev_data[field], helptext: 'Explain why you believe this person would be a good Director'
       )
       _whimsy_forms_submit
     end
@@ -42,20 +44,17 @@ end
 def validate_form(formdata: {})
   uid = formdata['availid']
   chk = ASF::Person[uid]&.asf_member?
-  chk.nil? and return "Invalid availid suppiled: (#{uid})\n\nStatement:\n#{formdata['statement']}"
-  # Allow renomination of Emeritus
-  pubname = ASF::Person[uid].public_name
-  chk && !chk.to_s.start_with?('Emeritus') and return "Your nominee #{pubname} (#{uid}) is already an ASF member!"
-  already = ASF::MemberFiles.member_nominees
-  return "Candidate (#{uid}) has already been nominated by #{already[uid]['Nominated by']}" if already.include? uid
+  chk.nil? and return "Invalid availid or non-Member suppiled: (#{uid})\n\nStatement:\n#{formdata['statement']}"
+  already = ASF::MemberFiles.board_nominees
+  return "Candidate #{uid} has already been nominated by #{already[uid]['Nominated by']}" if already.include? uid
   return 'OK'
 end
 
-# Handle submission (checkout user's apacheid.json, write form data, checkin file)
+# Handle submission (checkout board_nominations.txt, write form data, checkin file)
 # @return true if we think it succeeded; false in all other cases
 def process_form(formdata: {}, wunderbar: {})
   _h3 "Transcript of update to nomination file #{NOMINATION_FILE}"
-  entry = ASF::MemberFiles.make_member_nomination({
+  entry = ASF::MemberFiles.make_board_nomination({
     availid: formdata['availid'],
     nomby: formdata['nomby'],
     secby: formdata['secby'],
@@ -63,7 +62,7 @@ def process_form(formdata: {}, wunderbar: {})
   })
 
   environ = Struct.new(:user, :password).new($USER, $PASSWORD)
-  ASF::MemberFiles.update_member_nominees(environ, wunderbar, [entry], "+= #{formdata['availid']}")
+  ASF::MemberFiles.update_board_nominees(environ, wunderbar, [entry], "+= #{formdata['availid']}")
   return true
 end
 
@@ -76,8 +75,8 @@ def send_nomination_mail(formdata: {})
   secby = formdata.fetch('secby', nil)
   secby.nil? ? nomseconds = '' : nomseconds = "Nomination seconded by: #{secby}" unless secby.nil?
   mail_body = <<-MAILBODY
-This nomination for #{public_name} (#{uid}) as a New Member
-Candidate has been added:
+This nomination for #{public_name} (#{uid}) as a Director
+Nominee has been added:
 
 #{formdata['statement']}
 
@@ -94,7 +93,7 @@ MAILBODY
     to MAILING_LIST
     bcc 'notifications@whimsical.apache.org'
     from "#{ASF::Person[nomby].public_name} <#{nomby}@apache.org>"
-    subject "[MEMBER NOMINATION] #{ASF::Person.new(uid).public_name} (#{uid})"
+    subject "[BOARD NOMINATION] #{ASF::Person.new(uid).public_name} (#{uid})"
     text_part do
       body mail_body
     end
@@ -116,24 +115,21 @@ _html do
       title: PAGETITLE,
       subtitle: 'About This Script',
       related: {
-        '/members/meeting' => 'Member Meeting FAQ and info',
-        '/members/memberless-pmcs' => 'PMCs with no/few ASF Members',
-        '/members/watch' => 'Watch list for potential Member candidates',
-        'nominations.cgi' => "Member nominations cross-check - ensuring nominations get on the ballot, etc.",
+        'meeting' => 'Member Meeting FAQ and info',
+        'check_boardnoms.cgi' => 'Board nominations cross-check',
         ASF::SVN.svnpath!('Meetings') => 'Official Meeting Agenda Directory'
       },
       helpblock: -> {
         _h3 'TESTING - please report any errors at private@whimsical!'
         _b "For: #{timelines['meeting_type']} Meeting on: #{timelines['meeting_iso']}"
         _p %Q{
-          This form can be used to nominate new candidates for ASF Membership if they are already committers.
+          This form can be used to nominate candidates for the ASF Board of Director election if they are already Members.
           It automatically adds an entry to the #{NOMINATION_FILE} file,
           and then will send an email to the members@ list with your nomination.
           There is currently no support for updating an existing entry or for adding seconds; use SVN for that.
         }
       }
     ) do
-
       if nomclosed
         _h1 'Nominations are now closed!'
       else
@@ -176,7 +172,7 @@ _html do
             end
           end
         else # if _.post?
-          emit_form('Enter one New Member nomination', {})
+          emit_form('Enter your nomination for a Director Candidate', {})
         end
       end
     end

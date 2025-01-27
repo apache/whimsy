@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-PAGETITLE = "New Member invitations cross-check" # Wvisible:meeting,members
+PAGETITLE = "Cross-check new Member invitations/applications" # Wvisible:meeting,members
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 
 require 'date'
@@ -139,7 +139,7 @@ _html do
         memappurl => 'memapp-received.txt',
         'https://lists.apache.org/list.html?members@apache.org' => 'members@apache.org',
         nominationsurl => 'nominated-members.txt',
-        'https://github.com/apache/whimsy/blob/master/www/members/invitations.cgi' => 'Source code for this page'
+        'https://github.com/apache/whimsy/blob/master/www/members/check_invitations.cgi' => 'Source code for this page'
       },
       helpblock: -> {
         _p do
