@@ -113,7 +113,7 @@ _html do
         'meeting.cgi' => 'Member Meeting FAQ and info',
         'memberless-pmcs.cgi' => 'PMCs with no/few ASF Members',
         'watch.cgi' => 'Watch list for potential Member candidates',
-        'nominate_member.cgi' => 'Add entries to list of nominated members',
+        'nominate_member.cgi' => 'Nominate someone for ASF Member',
         'check_boardnoms.cgi' => 'Cross-check existing Board nominations',
         'nominate_board.cgi' => 'Nominate someone for the Board',
         ASF::SVN.svnpath!('Meetings') => 'Official Meeting Agenda Directory'

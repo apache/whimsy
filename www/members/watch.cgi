@@ -46,7 +46,7 @@ _html do
               _ul do
                 if Time.new.strftime('%Y%m%d') < File.basename(meeting)
                   _li do
-                    _a 'Posted nominations vs svn', href: 'members/nominations'
+                    _a 'Cross-check existing New Member nominations', href: '/members/check_membernoms.cgi'
                   end
                 else
                   unless request =~ /appstatus/
