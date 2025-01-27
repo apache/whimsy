@@ -808,7 +808,7 @@ def layout(title = nil)
         x.text! "This was extracted (@ #{STAMP}) from a list of"
       else # main index, which is always replaced if any input files have changed
         # text below must agree with code that updates the index when no changes have occurred
-        x.text! "Last run: #{STAMP}. The data is extracted from a list of"
+        x.text! "Last collate_minutes.rb run: #{STAMP}. The data is extracted from a list of"
       end
       x.a 'minutes', :href => 'http://www.apache.org/foundation/records/minutes/'
       x.text! 'which have been approved by the Board.'
