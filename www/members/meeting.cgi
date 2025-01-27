@@ -11,17 +11,6 @@ require 'whimsy/asf/meeting-util'
 DTFORMAT = '%A, %d %B %Y at %H:%M %z'
 TADFORMAT = '%Y%m%dT%H%M%S'
 WDAYFORMAT = '%A'
-ERROR_DATE = Time.new(1970, 1, 1) # An obvious error value 8-)
-
-# Return Time from DTSTART in an .ics file
-def ics2dtstart(f)
-  begin
-    tmp = IO.readlines(f).find{ |i| i =~ /DTSTART;TZID=UTC:/ }.split(':')[1].strip
-    return Time.parse(tmp)
-  rescue StandardError
-    return ERROR_DATE
-  end
-end
 
 # Utility function for links, Note: cheezy path detection within MEETING_FILES
 def emit_link(cur_mtg_dir, f, desc)
@@ -29,6 +18,7 @@ def emit_link(cur_mtg_dir, f, desc)
 end
 
 # Output action links for meeting records, depending on if current or past
+# @param dt Time meeting starts
 def emit_meeting(cur_mtg_dir, svn_mtg_dir, dt, num_members, quorum_need, num_proxies, attend_irc)
   _div id: "meeting-#{dt.year}"
   _whimsy_panel("All Meeting Details for #{dt.strftime(DTFORMAT)}", style: 'panel-info') do
@@ -68,6 +58,7 @@ def emit_meeting(cur_mtg_dir, svn_mtg_dir, dt, num_members, quorum_need, num_pro
 end
 
 MEETINGS = ASF::SVN['Meetings']
+RECORDS_DIR = ASF::MeetingUtil::RECORDS
 
 # produce HTML
 _html do
@@ -76,17 +67,13 @@ _html do
     last_mtg_date = Time.parse(File.basename(last_mtg_dir))
     cur_mtg_dir = ASF::MeetingUtil.get_latest(MEETINGS)
     meeting = File.basename(cur_mtg_dir)
-    svn_mtg_dir = File.join(ASF::MeetingUtil::RECORDS, meeting)
-    # mtg_date = Time.parse(meeting)
-    today = Time.now
+    svn_mtg_dir = File.join(RECORDS_DIR, meeting)
     # Calculate quorum
     num_members, quorum_need, num_proxies, attend_irc = ASF::MeetingUtil.calculate_quorum(cur_mtg_dir)
     proxy_nominees = ASF::MeetingUtil.getProxyNominees.count
-    # Use ics files for accurate times; see create-meeting.rb; note change in process 2022/2023
-    ics_date = ics2dtstart(File.join(cur_mtg_dir, ASF::MeetingUtil::VCAL_EVENTS_FILENAME))
-    # Also grab other timeline dates (for reminders, etc.)
     mtg_timeline = ASF::MeetingUtil.get_timeline(cur_mtg_dir)
-    ROSTER = "/roster/committer"
+    meeting_start_time = Time.parse(mtg_timeline['meeting_start_iso'])
+    meeting_type = mtg_timeline.fetch('meeting_type', 'Annual')
     _whimsy_body(
       title: PAGETITLE,
       subtitle: 'Member Meeting Overview',
@@ -99,25 +86,11 @@ _html do
         '/members/whatif' => 'Explore Past Board STV Results',
         '/members/non-participants' => 'Members Not Participating Recently',
         '/members/inactive' => 'Inactive Member Feedback Form',
-        ASF::MeetingUtil::RECORDS => 'Official Past Meeting Records',
+        RECORDS_DIR => 'Official Past Meeting Records',
         'https://lists.apache.org/list.html?members@apache.org' => 'Read members@ List Archives'
       },
       helpblock: -> {
-        if ics_date == ERROR_DATE
-          _p do
-            _center do
-              _strong 'Note: .ics file seems to be missing!'
-              _br
-              _ 'Expecting to find:'
-              _br
-              _ul do
-                _li ASF::MeetingUtil::VCAL_EVENTS_FILENAME
-                _li "svn_mtg_dir = #{svn_mtg_dir}, cur_mtg_dir = #{cur_mtg_dir},"
-              end
-            end
-          end
-        end
-        if today > ics_date # Based on the reconvene date
+        if Time.now > meeting_start_time
           _p do
             _ %{
               The last Member's Meeting was held #{last_mtg_date.strftime('%A, %d %B %Y')}.  Expect the
@@ -132,60 +105,46 @@ _html do
           end
         else
           _p do
-            _ "The Member's Meeting starts at "
-            _a href: "http://www.timeanddate.com/worldclock/fixedtime.html?iso=#{ics_date.strftime(TADFORMAT)}" do
+            if /test/i =~ meeting_type
+              _strong "NOTICE NOTICE NOTICE: This is TEST MEETING DATA ONLY - NOT AN ACTUAL MEETING :NOTICE NOTICE NOTICE"
+              _br
+            end
+            _ "The next #{meeting_type} Member's Meeting starts at "
+            _a href: "http://www.timeanddate.com/worldclock/fixedtime.html?iso=#{meeting_start_time.strftime(TADFORMAT)}" do
               _span.glyphicon.glyphicon_time ''
-              _ " #{ics_date.strftime(DTFORMAT)} "
+              _ " #{meeting_start_time.strftime(DTFORMAT)} "
             end
             _ "as an online "
             _a 'https://asfmm.apache.org', "ASFMM.apache.org chat tool meeting"
-            _ " for less than an hour.  REMEMBER: all voting is done by email the week BEFORE the ASFMM meeting."
-          end
-          _p do
-            _ 'Please read below for a Timeline of Meeting activities and links to how you can take action, or see additional links to the right. '
-            _strong 'REMINDER: '
-            _ 'Nominations for the board or new members (when being held) close 10 days before the meeting starts; no new names may be added after that date.'
-          end
-          _p do
-            _ 'Currently, we need '
-            _span.text_primary attend_irc
-            _ " Members who have NOT submitted a proxy, to attend the meeting on #{ics_date.strftime(WDAYFORMAT)} and respond to Roll Call to reach quorum and continue the meeting, so that between Members actually attending, and Members who have assigned a proxy are counted as attending."
-            _ " Calculation: Total voting members: #{num_members}, with one third for quorum: #{quorum_need}, minus previously submitted proxies: #{num_proxies}"
-          end
-          _p do
-            _ "There are #{proxy_nominees} people acting as proxies."
-            if proxy_nominees >= attend_irc
-              _strong 'If they all attend, then quorum will be achieved.'
+            _ " for less than an hour.  Please carefully read the timeline for this meeting: "
+            if /test/i =~ meeting_type
+              _br
+              _strong "NOTICE NOTICE NOTICE: This is TEST MEETING DATA ONLY - NOT AN ACTUAL MEETING :NOTICE NOTICE NOTICE"
             end
           end
-          _p 'Individual Members are considered to have Attended a meeting if they either: respond to Roll Call in the meeting; submit a proxy (this gets submitted during Roll Call); or who cast a ballot on any matters.'
           _ul do
-            if mtg_timeline
-              meeting_type = mtg_timeline.fetch('meeting_type', 'Annual')
-              if meeting_type =~ /test/i
-                _li "NOTICE NOTICE NOTICE: This is TEST MEETING DATA ONLY - DO NOT USE FOR ACTUAL MEETINGS :NOTICE NOTICE NOTICE"
-              end
-              _li "Nominations open: #{mtg_timeline['nominations_open_date']}"
-              _li "Nominations close: #{mtg_timeline['nominations_close_date']}"
-              _li "List of Member Nominees notice (if any): #{mtg_timeline['nominations_notice_date']}"
-              _li "Voting polls open: #{mtg_timeline['vote_open_date']}"
-              _li "Voting polls close: #{mtg_timeline['polls_close_date']}"
-              _li "ASFMM online meeting: #{mtg_timeline['meeting_iso']}"
-              _li "New Member Applications due (if any): #{mtg_timeline['member_form_date']}"
-             else
-              _li 'Timeline not found: For next Annual Meeting dates, please see: https://svn.apache.org/repos/private/foundation/Meetings/'
-            end
+            _li "Nominations open: #{mtg_timeline['nominations_open_date']} - seconds and Statements may be added"
+            _li "Nominations close: #{mtg_timeline['nominations_close_date']} - no further nominations added"
+            _li "Record Date set: #{mtg_timeline['nominations_notice_date']} - New Member candidates list sent"
+            _li "Election ballots locked: #{mtg_timeline['vote_create_date']} - no further changes to seconds, statements"
+            _li "Polls open for voting: #{mtg_timeline['vote_open_date']} - vote online at vote.apache.org"
+            _li "Polls close: #{mtg_timeline['polls_close_date']} - vote early!"
+            _li "Online meeting starts on ASFMM: #{mtg_timeline['meeting_iso']} - quorum required here; expect a short meeting"
+            _li "New Member Applications due before: #{mtg_timeline['member_form_date']}"
+          end
+          _p do
+            _ 'Currently, we will need '
+            _span.text_primary attend_irc
+            _ " Members who have NOT submitted a proxy, to attend the meeting on #{meeting_start_time.strftime(WDAYFORMAT)} and respond to Roll Call to reach quorum and continue the meeting, so that between Members actually attending, and Members who have assigned a proxy are counted as attending."
+            _ " Calculation: Total voting members: #{num_members}, with one third for quorum: #{quorum_need}, minus previously submitted proxies: #{num_proxies}"
           end
         end
       }
     ) do
-      # if there is a new meeting in the offing, use its date
-      # Old logic for two half meeting m1_date = mtg_date if m1_date == ERROR_DATE && cur_mtg_dir > last_mtg_dir
       help, copypasta = ASF::MeetingUtil.is_user_proxied(cur_mtg_dir, $USER)
-      # attendance = JSON.parse(IO.read(File.join(MEETINGS, 'attendance.json')))
       user = ASF::Person.find($USER)
       _div id: 'personal'
-      _whimsy_panel("#{user.public_name} - Personal Details For Meeting #{ics_date.strftime(DTFORMAT)}", style: 'panel-primary') do
+      _whimsy_panel("#{user.public_name} - Personal Details For Meeting #{meeting_start_time.strftime(DTFORMAT)}", style: 'panel-primary') do
         _p do
           if help
             _p help
@@ -197,82 +156,97 @@ _html do
               end
             end
           else
-            _ 'You have not submitted a proxy - even if you can attend the first half of the meeting, '
+            _ 'You have not submitted a proxy - even if you can attend the the meeting, '
             _a "please assign a proxy - it's easy!", href: '/members/proxy'
           end
-        end
-        _p do
-          _span.text_warning 'REMINDER: '
-          _ "Voting ballots are sent to your official email address as found in members.txt, please double-check it is correct!"
-          _a 'See members.txt', href: ASF::SVN.svnpath!('foundation', 'members.txt')
         end
       end
 
       _div id: 'nominations'
-      _whimsy_panel("Timeline: Nomination Period (until 10 days BEFORE meeting)", style: 'panel-default') do
+      _whimsy_panel("Timeline: Nominations and Seconds Period (until 10 days BEFORE meeting)", style: 'panel-default') do
         _p do
-          _ 'Before any Annual meeting, any Member may nominate people either for the Board, or as a New Member Candidate.  Much of this discussion happens on members@ mailing list.  Remember, all new nominated names must be checked into SVN 10 days before the meeting.'
-          _ 'Also, you should submit a proxy if you might not attend the meeting.'
-          _ul do
-            ['board_nominations.txt', 'board_ballot.txt', '/members/board-nominate.cgi', '/members/board_nominations.cgi',
-              'nominated-members.txt', '/members/member_nominations.cgi', '/members/nominations.cgi',
-              '/members/proxy.cgi'].each do |f|
+          _ 'Before an Annual meeting, Members may nominate candidates for the Board election, or as New Member Candidates.  Nominations are only official if placed in the correct files; although much discussion also happens on members@.'
+         _ul do
+            ['/members/board-nominate.cgi',
+            '/members/member_nominations.cgi',
+            '/members/proxy.cgi',
+            'agenda.txt',
+            '/members/board_nominations.cgi',
+            '/members/nominations.cgi',
+            'board_ballot.txt'].each do |f|
               _li do
                 emit_link(svn_mtg_dir, f, ASF::MeetingUtil::MEETING_FILES[f])
               end
             end
           end
+          _ 'During this period, many other members may add Seconds or their own personal recommendations to various nominees in the official files.'
+          _ 'Anyone nominated for the Board should decide if they accept the nomination, and place a Director Candidate Statement in the board_ballot.txt'
+          _br 
+          _strong "Nominations will close at: #{mtg_timeline['nominations_close_date']}!"
         end
       end
 
       _div id: 'seconds'
-      _whimsy_panel("Timeline: Seconds Period (last ten days before meeting)", style: 'panel-default') do
+      _whimsy_panel("Timeline: Record Date and Nominees NOTICE email (10 days before meeting)", style: 'panel-default') do
         _p do
-          _ 'The last 10 days before the meeting, you may add seconds (comments of support) to existing nomination files, but no new nominations are allowed.'
-          _ 'Also, you can still submit a proxy.'
+          _ "Record date: #{mtg_timeline['nominations_notice_date']}"
+        end
+        _p do
+          _ '10 days before the meeting, per bylaws 3.7 the official list of eligible Members is fixed, along with nomination lists for the meeting. A NOTICE of any candidates nominated for Membership will be sent out to members-notify@.'
+          _ 'No further names may be added to nominations, and director candidates should have added any Director Candidate Statements before the official ballots are frozen.'
           _ul do
-            ['nominated-members.txt', '/members/proxy.cgi'].each do |f|
+            ['nominated-members.txt', '/members/proxy.cgi', 'board_ballot.txt'].each do |f|
               _li do
                 emit_link(svn_mtg_dir, f, ASF::MeetingUtil::MEETING_FILES[f])
               end
             end
           end
+          _ 'Also, you can still submit a proxy if you have not done so yet!'
+          _strong "Ballot files are frozen for vote creation at: #{mtg_timeline['vote_create_date']}!"
         end
       end
 
       _div id: 'firsthalf' # Pre-2022 meeting anchor
 
       _div id: 'recess'
-      _whimsy_panel("Timeline: Voting By Email (week before meeting)", style: 'panel-info') do
+      _whimsy_panel("Timeline: Voting By Email (approx. week before meeting)", style: 'panel-info') do
         _p do
-          _ 'One week before the meeting, the STeVe vote monitors will send you an email '
+          _strong 'NOTE: new, simplified vote.apache.org process!'
+          _ "Polls will open #{mtg_timeline['vote_open_date']}, and the vote monitors will send eligible voters an email "
           _code 'From: voter@apache.org'
-          _ ' with your voting key URL.'
-          _ 'All voting is done via a simple web interface at vote.apache.org after you login with your Apache ID.'
-          _b 'REMEMBER:'
-          _ "Ballots close ONE FULL DAY (24 hours) BEFORE the meeting starts - don't wait to vote!"
+          _ ' with simple instructions for voting over the next several days.'
+          _ 'Voting is now done by simply logging into vote.apache.org with your Apache ID - no more need for a voting key in email!'
+          _strong 'REMEMBER:'
+          _ "Ballots close at #{mtg_timeline['polls_close_date']} - ONE FULL DAY (24 hours) BEFORE the meeting starts - don't wait to vote!"
           _ul do
             _li do
-              _a 'New Members Elected By Majority Yes/No/Abstain vote, when elections held', href: 'https://www.apache.org/foundation/governance/meetings#how-member-votes-are-tallied'
+              _a 'New Members are Elected By Majority Yes/No/Abstain vote, when elections held', href: 'https://www.apache.org/foundation/governance/meetings#membervoting'
             end
             _li do
-              _a 'Board Seats Are Elected By STV at Annual Meetings - ORDER OF YOUR VOTE MATTERS!', href: 'https://www.apache.org/foundation/governance/meetings#how-votes-for-the-board-are-tallied'
+              _a 'Board Seats Are Elected By STV at Annual Meetings - ORDER OF YOUR VOTE MATTERS!', href: 'https://www.apache.org/foundation/governance/meetings#boardvoting'
+            end
+            _li do
+              _a 'Cast Your Votes (requires ASF Member Login)', href: "#{mtg_timeline['meeting_vote_link']}"
             end
           end
+          _strong "Polls close: #{mtg_timeline['polls_close_date']}!"
         end
       end
 
       _div id: 'secondhalf'
-      _whimsy_panel("Timeline: Meeting (at #{ics_date.strftime(DTFORMAT)})", style: 'panel-primary') do
+      _whimsy_panel("Timeline: Online Meeting (at #{meeting_start_time.strftime(DTFORMAT)})", style: 'panel-primary') do
         _p do
-          _a href: "http://www.timeanddate.com/worldclock/fixedtime.html?iso=#{ics_date.strftime(TADFORMAT)}" do
+          _a href: "http://www.timeanddate.com/worldclock/fixedtime.html?iso=#{meeting_start_time.strftime(TADFORMAT)}" do
             _span.glyphicon.glyphicon_time ''
-            _em '(time)'
+            _em '(time in various zones)'
           end
-          _ 'The meeting is typically short - it\'s primarily briefly reporting from officers, announcing vote results and any last-minute announcements.  Members do not need to attend the meeting if you proxied or voted; all results will be emailed or checked into SVN.'
-          _ 'Various data files about the meeting (raw-irc-log, board voting tally if present) will be checked in within soon after the meeting for historical records.'
+          _ 'The single online meeting on asfmm.apache.org is typically short - it\'s primarily briefly reporting from officers, announcing vote results and any last-minute announcements.  Members do not need to attend the meeting if you proxied or voted; all results will be emailed or checked into SVN.'
+          _ 'Various data files about the meeting (raw-irc-log, board voting tally if present) will be checked in soon after the meeting for historical records.'
           _ 'Votes for the Omnibus resolution, if any, are included in raw-irc-log.  We do not publish vote results for new member nominees.'
           _ul do
+            _li do
+              _a 'ASFMM meeting tool (requires ASF Member Login)', href: 'https://asfmm.apache.org/'
+            end
             ['record', 'attend', 'voter-tally', 'raw_board_votes.txt', 'raw-irc-log'].each do |f|
               _li do
                 emit_link(svn_mtg_dir, f, ASF::MeetingUtil::MEETING_FILES[f])
@@ -282,30 +256,35 @@ _html do
               _a 'What-If tool for analyzing Board STV votes', href: '/members/whatif'
             end
           end
+          _ 'Note: If quorum is not achieved within 15 minutes, the online meeting may be rescheduled - be sure to submit a proxy!'
         end
       end
 
       _div id: 'after'
-      _whimsy_panel("Timeline: After This Meeting", style: 'panel-default') do
+      _whimsy_panel("Timeline: After The Meeting", style: 'panel-default') do
         _p do
           _ 'Shortly after the live ASFMM Meeting ends, '
           _a '@TheASF twitter', href: 'https://twitter.com/theasf'
           _ ' will formally announce the new board, if an Annual meeting has elected one - please wait to retweet the official announcement.'
           _span.text_warning 'IMPORTANT:'
-          _ ' Do not publicise the names of newly elected members!  In rare cases, the new candidate might not accept the honor.'
+          _ ' Do NOT publicise the names of newly elected members!  In rare cases, the new candidate might not accept the honor.'
         end
         _p do
           _span.text_primary 'If you nominated a new member:'
           _ ' You '
-          _b 'must'
+          _strong 'must'
           _ ' send an email with '
           _a 'foundation/membership-application-email.txt', href: ASF::SVN.svnpath!('foundation', 'membership-application-email.txt')
-          _ ' to formally invite the new member to fill out the application form.  Applications must be signed and submitted to the secretary within 30 days of the meeting to be valid.'
+          _ ' to formally invite the new member to fill out the application form; follow instructions carefully.  Applications must be signed and submitted to the secretary within 30 days of the meeting to be valid.'
         end
+        _p do
+          _ "REMEMBER: newly elected members must return their application before #{mtg_timeline['member_form_date']}, otherwise they are not admitted per bylaws 4.1."
+        end
+
       end
 
       # Most/all of these links should already be included above
-      emit_meeting(cur_mtg_dir, svn_mtg_dir, ics_date, num_members, quorum_need, num_proxies, attend_irc)
+      emit_meeting(cur_mtg_dir, svn_mtg_dir, meeting_start_time, num_members, quorum_need, num_proxies, attend_irc)
 
       _div id: 'meeting-history'
       _whimsy_panel("Member Meeting History", style: 'panel-info') do
@@ -326,7 +305,7 @@ _html do
           _ul do
             all_mtg.each do |mtg|
               _li do
-                tmp = File.join(ASF::MeetingUtil::RECORDS, File.basename(mtg))
+                tmp = File.join(RECORDS_DIR, File.basename(mtg))
                 _a tmp, href: tmp
               end
             end
