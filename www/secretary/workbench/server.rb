@@ -49,11 +49,21 @@ ASF::Mail.configure
 
 SECS_TO_DAYS = 60*60*24
 
-set :show_exceptions, true
 
 disable :logging # suppress log of requests to stderr/error.log
 
 require 'whimsy/asf/status'
+
+error do
+  err = env['sinatra.error']
+  <<~EOD
+  <pre>
+  Error detected, please see web server error log for full details:
+
+  #{Time.now.gmtime.to_s}: #{err.detailed_message}
+  </pre>
+  EOD
+end
 
 # list of messages
 get '/' do
