@@ -11,7 +11,7 @@ end
 gem 'json'
 gem 'nokogiri'
 gem 'rake'
-gem 'ruby-ldap3', '~> 0.10.1' # Forked version supports ruby 3.x
+gem 'ruby-ldap3', ldapversion # Forked version supports ruby 3.x
 gem 'wunderbar'
 gem 'pdf-reader'
 
