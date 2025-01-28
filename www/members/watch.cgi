@@ -19,9 +19,9 @@ _html do
     _whimsy_body(
       title: PAGETITLE,
       related: {
-        '/members/memberless-pmcs' => 'PMCs with no/few ASF Members',
-        '/members/member_nominations' => 'Add entries to list of nominated members',
-        '/members/nominations' => 'Members Meeting Nomination Crosscheck',
+        'memberless-pmcs.cgi' => 'PMCs with no/few ASF Members',
+        'nominate_member.cgi' => 'Nominate someone for ASF Member',
+        'check_membernoms.cgi' => 'Cross-check existing New Member Nominations',
         ASF::SVN.svnpath!('Meetings') => 'Official Meeting Agenda Directory'
       },
       helpblock: -> {
@@ -46,7 +46,7 @@ _html do
               _ul do
                 if Time.new.strftime('%Y%m%d') < File.basename(meeting)
                   _li do
-                    _a 'Posted nominations vs svn', href: 'members/nominations'
+                    _a 'Cross-check existing New Member nominations', href: '/members/check_membernoms.cgi'
                   end
                 else
                   unless request =~ /appstatus/

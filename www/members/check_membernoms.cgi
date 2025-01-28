@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-PAGETITLE = "New Member nominations cross-check" # Wvisible:meeting
+PAGETITLE = "Cross-check existing New Member nominations" # Wvisible:meeting
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'time'
 require 'erb'
@@ -110,12 +110,12 @@ _html do
     _whimsy_body(
       title: PAGETITLE,
       related: {
-        '/members/meeting' => 'Member Meeting FAQ and info',
-        '/members/memberless-pmcs' => 'PMCs with no/few ASF Members',
-        '/members/watch' => 'Watch list for potential Member candidates',
-        '/members/member_nominations' => 'Add entries to list of nominated members',
-        'board-nominations' => 'Board nominations cross-check',
-        'board-nominate.cgi' => "Add entries to board nomination file",
+        'meeting.cgi' => 'Member Meeting FAQ and info',
+        'memberless-pmcs.cgi' => 'PMCs with no/few ASF Members',
+        'watch.cgi' => 'Watch list for potential Member candidates',
+        'nominate_member.cgi' => 'Nominate someone for ASF Member',
+        'check_boardnoms.cgi' => 'Cross-check existing Board nominations',
+        'nominate_board.cgi' => 'Nominate someone for the Board',
         ASF::SVN.svnpath!('Meetings') => 'Official Meeting Agenda Directory'
       },
       helpblock: -> {
