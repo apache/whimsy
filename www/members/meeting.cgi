@@ -96,9 +96,9 @@ _html do
               The last Member's Meeting was held #{last_mtg_date.strftime('%A, %d %B %Y')}.  Expect the
               next Annual Member's meeting to be scheduled between 12 - 13 months after the previous Annual meeting, as per
             }
-            _a 'https://www.apache.org/foundation/bylaws.html#3.2', 'the bylaws 3.2.'
+            _a 'the bylaws 3.2.', href: 'https://www.apache.org/foundation/bylaws.html#3.2'
             _ 'Stay tuned for a [NOTICE] '
-            _a 'https://lists.apache.org/list?members-notify@apache.org', 'email on members-notify@'
+            _a 'email on members-notify@', href: 'https://lists.apache.org/list?members-notify@apache.org'
             _ ' announcing the next meeting.  The below information is about the '
             _strong 'LAST'
             _ " Member's meeting."
@@ -115,7 +115,7 @@ _html do
               _ " #{meeting_start_time.strftime(DTFORMAT)} "
             end
             _ "as an online "
-            _a 'https://asfmm.apache.org', "ASFMM.apache.org chat tool meeting"
+            _a 'ASFMM.apache.org chat tool meeting', href: 'https://asfmm.apache.org'
             _ " for less than an hour.  Please carefully read the timeline for this meeting: "
             if /test/i =~ meeting_type
               _br
