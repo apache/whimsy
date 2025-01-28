@@ -18,11 +18,29 @@ NOMINATION_FILE = 'board_nominations.txt'
 def emit_form(title, prev_data)
   _whimsy_panel(title, style: 'panel-success') do
     _form.form_horizontal method: 'post' do
-      _whimsy_forms_subhead(label: 'Director Nomination Form')
       field = 'availid'
-      _whimsy_forms_input(
-        label: 'Nominee availid', name: field,
-        value: prev_data[field], helptext: 'Enter the availid of the ASF committer you are nominating for the board'
+
+      # Construct list of active voting Members
+      ldap_members = ASF.members
+      ASF::Person.preload('id', ldap_members)
+      members_txt = ASF::Member.list
+      already = ASF::MemberFiles.board_nominees
+      field_list = {}
+
+      # Fillup dropdown with all active members
+      ldap_members.sort_by(&:public_name).each do |nominee|
+        next unless members_txt[nominee.id]       # Non-members
+        next if members_txt[nominee.id]['status'] # Emeritus/Deceased
+        next if already.include? nominee.id       # Previously nominated
+        field_list["#{nominee.id}"] = "#{nominee.public_name}"
+      end
+      _whimsy_forms_select(
+        label: 'Select Nominee', 
+        name: field,
+        multiple: false, 
+        values: prev_data[field],
+        options: field_list,
+        helptext: 'Select the name of the Member to nominate for Board election'
       )
       _whimsy_forms_input(
         label: 'Nominated by', name: 'nomby', readonly: true, value: $USER
@@ -116,22 +134,29 @@ _html do
       subtitle: 'About This Script',
       related: {
         'meeting' => 'Member Meeting FAQ and info',
-        'check_boardnoms.cgi' => 'Board nominations cross-check',
+        'check_boardnoms.cgi' => 'Cross-check existing Board nominations',
+        'https://www.apache.org/foundation/governance/board' => 'Role of the Board of Directors',
         ASF::SVN.svnpath!('Meetings') => 'Official Meeting Agenda Directory'
       },
       helpblock: -> {
         _h3 'TESTING - please report any errors at private@whimsical!'
         _b "For: #{timelines['meeting_type']} Meeting on: #{timelines['meeting_iso']}"
-        _p %Q{
-          This form can be used to nominate candidates for the ASF Board of Director election if they are already Members.
-          It automatically adds an entry to the #{NOMINATION_FILE} file,
-          and then will send an email to the members@ list with your nomination.
-          There is currently no support for updating an existing entry or for adding seconds; use SVN for that.
-        }
+        _p do
+          _ %Q{
+            Use this form to nominate any Member for the ASF Board of Director election.
+            It automatically adds a properly formatted nomination to the #{NOMINATION_FILE} file,
+            and will then 
+          }
+          _strong 'send an email to the members@ list'
+          _ ' from you with the nomination, '
+          _a 'as is tradition.', href: 'https://lists.apache.org/list?members@apache.org:2023-2:%22BOARD%20NOMINATION%22'
+          _ 'This form only supports adding new nominations; to add seconds or comments, please use SVN.'
+        end
       }
     ) do
       if nomclosed
         _h1 'Nominations are now closed!'
+        _p 'Sorry, no futher nominations will be accepted for ballots at this meeting.'
       else
         _h3 "Nominations close in #{ASFTime.secs2text(t_end - t_now)} at #{Time.at(t_end).utc} for Meeting: #{timelines['meeting_iso']}"
       end
@@ -172,7 +197,7 @@ _html do
             end
           end
         else # if _.post?
-          emit_form('Enter your nomination for a Director Candidate', {})
+          emit_form('Enter your nomination for a Director Nominee', {})
         end
       end
     end
