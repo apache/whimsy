@@ -59,6 +59,8 @@ end
 # Validation as needed within the script
 # Returns: 'OK' or a text message describing the problem
 def validate_form(formdata: {})
+  statement = formdata['statement']
+  return "Please provide a statement" unless statement =~ %r{\S{3,}.+\S{3,}} # at least 2 three-letter words!
   uid = formdata['availid']
   return "You MUST provide a nomination statement for Candidate #{uid}; blank was provided!" if formdata['statement'].empty? 
   chk = ASF::Person[uid]&.asf_member?
