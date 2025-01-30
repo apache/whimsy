@@ -37,7 +37,7 @@ module ASF
       \s*Nomination\ [sS]tatement:\s*?\r?\n+(?<statement>.*)\z
       }mx
 
-    SECONDS_SEPARATOR = '*** Seconds Statements ***'
+    SECONDS_SEPARATOR = '*** Statements by Seconds (below; please include your id) ***'
     # get the latest meeting directory or nomination file
     def self.latest_meeting(name=nil)
       if name.nil? # we want the parent directory
