@@ -50,7 +50,7 @@ class Wunderbar::HtmlMarkup
       _div.col_sm_9 do
         _div! class: "input-group #{args[:groupclass]}" do
           yield
-          _whimsy_forms_iconlink(**args)
+          _whimsy_forms_iconlink(**args) unless args[:noicon]
         end
         if args[:helptext]
           _span.help_block id: args[:aria_describedby] do
@@ -183,6 +183,15 @@ class Wunderbar::HtmlMarkup
   def _whimsy_forms_submit(value: 'submit')
     _div.col_sm_offset_3.col_sm_9 do
       _input.btn.btn_default type: 'submit', value: value
+    end
+  end
+
+  def _whimsy_forms_submitwrap(**args)
+    _whimsy_control_wrapper(**args) do
+      args[:class] = 'form-control'
+      args[:aria_describedby] = "#{args[:name]}_help" if args[:helptext]
+      _input.btn.btn_default.col_sm_3 type: 'submit', name: args[:name], id: args[:id], value: args[:value], class: args[:class],
+      aria_describedby: args[:aria_describedby]
     end
   end
 
