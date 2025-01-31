@@ -69,9 +69,10 @@ def validate_form(formdata: {})
 end
 
 # Handle submission (checkout board_nominations.txt, write form data, checkin file)
+# Also creates a board_ballot/availid.txt file for director statements
 # @return true if we think it succeeded; false in all other cases
 def process_form(formdata: {}, wunderbar: {})
-  _h3 "Transcript of update to nomination file #{ASF::MemberFiles::NOMINATED_BOARD}"
+  _h3 "Transcript of updates to nomination files #{ASF::MemberFiles::NOMINATED_BOARD} for candidate #{formdata['availid']}"
   entry = ASF::MemberFiles.make_board_nomination({
     availid: formdata['availid'],
     nomby: formdata['nomby'],
@@ -80,6 +81,7 @@ def process_form(formdata: {}, wunderbar: {})
   })
 
   environ = Struct.new(:user, :password).new($USER, $PASSWORD)
+  ASF::MemberFiles.add_board_ballot(environ, wunderbar, "#{formdata['availid']}", "nominee statements += #{formdata['availid']}")
   ASF::MemberFiles.update_board_nominees(environ, wunderbar, [entry], "+= #{formdata['availid']}")
   return true
 end

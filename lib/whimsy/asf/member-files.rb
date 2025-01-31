@@ -12,6 +12,8 @@ module ASF
 
     NOMINATED_MEMBERS = 'nominated-members.txt'
     NOMINATED_BOARD = 'board_nominations.txt'
+    BOARD_BALLOT = 'board_ballot'
+    BOARD_BALLOT_EXT = '.txt'
     NAME2OUTPUTKEY = { # names (from Regex) and corresponding output keys
       'email' => 'Nominee email',
       'nomby' => 'Nominated by',
@@ -212,6 +214,17 @@ module ASF
       opt[:diff] = true unless opt.include? :diff # default to true
       ASF::SVN.update(nomfile, msg || 'Updating nominated members', env, wunderbar, opt) do |_tmpdir, contents|
         sort_member_nominees(contents, entries)
+      end
+    end
+
+    # create a single director ballot statement (if not present)
+    # @param availid of director nominee
+    def self.add_board_ballot(env, wunderbar, availid, msg=nil, opt={})
+      bfile = File.join(latest_meeting(), BOARD_BALLOT, "#{availid}#{BOARD_BALLOT_EXT}")
+      opt[:diff] = true unless opt.include? :diff # default to true
+      ASF::SVN.update(bfile, msg || 'Adding board_ballot template', env, wunderbar, opt) do |_tmpdir, contents|
+        # We merely create this file if not already present; don't change existing contents
+        contents
       end
     end
 
