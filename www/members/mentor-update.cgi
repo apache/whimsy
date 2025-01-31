@@ -186,7 +186,7 @@ _html do
     myrecord = read_myrecord($USER)
     intro = "You can use this form to update your existing Mentor record, which will be checked into #{MentorFormat::MENTORS_SVN}"
     header = 'Update Your Mentor Data (most fields optional)'
-    button_help = "Pressing Update will update your existing Mentoring Record in #{MentorFormat::MENTORS_SVN}#{$USER}.json"
+    button_help = "Pressing Update will update your existing Mentoring Record in #{MentorFormat::MENTORS_SVN}/#{$USER}.json"
     if myrecord.empty?
       intro = "You can use this form to volunteer to Mentor other new ASF Members; when you submit your Mentoring Record will be checked into #{MentorFormat::MENTORS_SVN})"
       header = 'Enter Your Mentor Data (most fields optional)'
