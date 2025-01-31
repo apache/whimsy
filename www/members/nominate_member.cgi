@@ -30,7 +30,9 @@ def emit_form(title, prev_data)
       _whimsy_forms_input(label: 'Nomination Statement', name: field, rows: 10,
         value: prev_data[field], helptext: 'Explain why you believe this person would make a good ASF Member, and what projects/communities they work on at the ASF'
       )
-      _whimsy_forms_submit
+      _whimsy_forms_submitwrap(
+        noicon: true, label: 'submit', name: 'submit', value: 'submit', helptext: 'Checkin this nomination and send email to members@'
+      )
     end
   end
 end
