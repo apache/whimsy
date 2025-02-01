@@ -83,7 +83,10 @@ def process_form(formdata: {}, wunderbar: {})
   })
 
   environ = Struct.new(:user, :password).new($USER, $PASSWORD)
-  ASF::MemberFiles.add_board_ballot(environ, wunderbar, "#{formdata['availid']}", "nominee statements += #{formdata['availid']}")
+  _div.transcript do
+    tmp = ASF::MemberFiles.add_board_ballot(environ, wunderbar, "#{formdata['availid']}", "board_ballot/ += #{formdata['availid']}")
+    _ tmp unless tmp.empty?
+  end
   ASF::MemberFiles.update_board_nominees(environ, wunderbar, [entry], "+= #{formdata['availid']}")
   return true
 end

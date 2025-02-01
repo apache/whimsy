@@ -219,13 +219,29 @@ module ASF
 
     # create a single director ballot statement (if not present)
     # @param availid of director nominee
+    # @return string for transcript (blank if success; svn_ does it's own output) 
     def self.add_board_ballot(env, wunderbar, availid, msg=nil, opt={})
-      bfile = File.join(latest_meeting(), BOARD_BALLOT, "#{availid}#{BOARD_BALLOT_EXT}")
-      opt[:diff] = true unless opt.include? :diff # default to true
-      ASF::SVN.update(bfile, msg || 'Adding board_ballot template', env, wunderbar, opt) do |_tmpdir, contents|
-        # We merely create this file if not already present; don't change existing contents
-        contents
+      bdir = File.join(latest_meeting(), BOARD_BALLOT)
+      bfile = File.join(bdir, "#{availid}#{BOARD_BALLOT_EXT}")
+      ASF::SVN.update(bfile, msg || "Adding board_ballot template for #{$availid}", env, wunderbar, opt) do |_tmpdir, contents|
+        contents # Don't change existing contents
       end
+      # Dir.mktmpdir do |tmpdir|
+      #   credentials = {user: $USER, password: $PASSWORD}.merge(opt)
+      #   # TODO: investigate if we should to --depth empty and attempt to get only that mentor's file
+      #   ASF::SVN.svn_('checkout', [File.join(latest_meeting(), BOARD_BALLOT), tmpdir], wunderbar, credentials)
+      #   Dir.chdir tmpdir do
+      #     if File.exist? fn
+      #       # All we need to do is create a file if it doesn't already exist, so just skip
+      #       return "Note: board_ballot/#{fn}, already exists, nothing to do!"
+      #     else
+      #       File.write('') # We create an empty file, if candidate accepts, they edit
+      #       ASF::SVN.svn_('add', fn, wunderbar)
+      #       ASF::SVN.svn_('commit', fn, wunderbar, {msg: "Adding board_ballot template for #{$availid}"}.merge(credentials))
+      #       return 
+      #     end
+      #   end
+      # end
     end
 
     # update the board nominees
