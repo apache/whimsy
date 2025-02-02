@@ -19,9 +19,9 @@ _html do
     _whimsy_body(
       title: PAGETITLE,
       related: {
-        'memberless-pmcs.cgi' => 'PMCs with no/few ASF Members',
-        'nominate_member.cgi' => 'Nominate someone for ASF Member',
-        'check_membernoms.cgi' => 'Cross-check existing New Member Nominations',
+        '/members/memberless-pmcs.cgi' => 'PMCs with no/few ASF Members',
+        '/members/nominate_member.cgi' => 'Nominate someone for ASF Member',
+        '/members/check_membernoms.cgi' => 'Cross-check existing New Member Nominations',
         ASF::SVN.svnpath!('Meetings') => 'Official Meeting Agenda Directory'
       },
       helpblock: -> {
