@@ -269,6 +269,32 @@ module ASF
       end
       nominees
     end
+
+    # Return hash of board nomination statements
+    # TODO Annotate with board nominees data?
+    def self.board_statements
+      statements = {}
+      Dir["#{File.join(latest_meeting(), BOARD_BALLOT)}/*#{BOARD_BALLOT_EXT}"].each do |f|
+        statements[File.basename(f, BOARD_BALLOT_EXT)] = {'candidate_statement' => IO.read(f)}
+      end
+      return statements
+    end
+
+    # Merged board nominations and statements
+    def self.board_all
+      noms = board_nominees
+      stats = board_statements
+      combined = {}
+      noms.each do |availid, hash|
+        combined[availid] = hash.merge(stats.fetch(availid, {}))
+        combined[availid]['Nomination Statement'] = combined[availid]['Nomination Statement'].join('\n')
+        combined[availid]['nombyemail'] = combined[availid].fetch('Nominated by', '')
+        combined[availid]['nombyeavailid'] = combined[availid]['nombyemail'].sub('@apache.org', '')
+        person = ASF::Person.find(combined[availid]['nombyeavailid'])
+        combined[availid]['nombycn'] = person.public_name
+      end
+      return combined
+    end
   end
 end
 
