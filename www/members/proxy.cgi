@@ -130,14 +130,14 @@ def emit_form(cur_mtg_dir, meeting, volunteers, disabled)
               if meeting != '20220615'
                 _option 'Select an ASF Member', :selected, value: ''
               end
-
-              ldap_members.sort_by(&:public_name).each do |member|
+              # Allow for missing public name (should not happen unless LDAP is inconsistent)
+              ldap_members.sort_by{|m| m.public_name || '_'}.each do |member|
                 next if member.id == $USER               # No self proxies
                 next if exclude.include? member.id       # Not attending
                 next unless members_txt[member.id]       # Non-members
                 next if members_txt[member.id]['status'] # Emeritus/Deceased
                 # Display the availid to users to match volunteers array above
-                _option "#{member.public_name} (#{member.id})",
+                _option "#{member.public_name || '?No public name?'} (#{member.id})",
                   selected: (member.id == secretary_id)
               end
             end
