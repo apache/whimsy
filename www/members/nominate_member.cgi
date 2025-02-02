@@ -12,7 +12,7 @@ require 'whimsy/asf/meeting-util'
 require 'whimsy/asf/time-utils'
 require 'mail'
 
-MAILING_LIST = 'gnomes@infra.apache.org'
+MAILING_LIST = 'members@apache.org'
 
 def emit_form(title, prev_data)
   _whimsy_panel(title, style: 'panel-success') do
@@ -24,7 +24,7 @@ def emit_form(title, prev_data)
       _whimsy_forms_input(label: 'Nominated by', name: 'nomby', readonly: true, value: $USER
       )
       _whimsy_forms_input(
-        label: 'Seconded by', name: 'secby', helptext: 'Optional comma-separated list of seconds; only if you have confirmed with the seconds directly'
+        label: 'Seconded by', name: 'secby', helptext: 'Optional comma-separated list of seconds; ONLY if you have confirmed with the seconds directly'
       )
       field = 'statement'
       _whimsy_forms_input(label: 'Nomination Statement', name: field, rows: 10,
@@ -151,7 +151,6 @@ _html do
         ASF::SVN.svnpath!('Meetings') => 'Official Meeting Agenda Directory'
       },
       helpblock: -> {
-        _h3 'TESTING - please report any errors at private@whimsical!'
         _b "For: #{timelines['meeting_type']} Meeting on: #{timelines['meeting_iso']}"
         _p do
           _ %Q{
@@ -159,9 +158,9 @@ _html do
             It automatically adds a properly formatted nomination to the #{ASF::MemberFiles::NOMINATED_MEMBERS} file,
             and will then 
           }
-          _strong 'send an email to the members@ list'
+          _strong "send an email to the #{MAILING_LIST} list"
           _ ' from you with the nomination, '
-          _a 'as is tradition.', href: 'https://lists.apache.org/list?members@apache.org:2023-2:%22BOARD%20NOMINATION%22'
+          _a 'as is tradition.', href: 'https://lists.apache.org/list?members@apache.org:2023-2:%22MEMBER%20NOMINATION%22'
           _ ' This form only supports adding new nominations of existing committers; to add seconds or comments, please use SVN.  To nominate a non-committer, add them manually and use use n/a for the id. '
           _a 'Lookup committer availIDs', href: '/roster/committer/'
         end
