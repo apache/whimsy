@@ -267,7 +267,9 @@ module ASF
         nominee['Public Name'] = hdr # the board file does not have ids
         nominees[id] = nominee
       end
-      nominees
+      # Remove informational entry if somehow present
+      nominees.delete('<<Nominee Name>>')
+      return nominees
     end
 
     # Return hash of board nomination statements
