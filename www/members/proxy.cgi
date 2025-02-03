@@ -102,7 +102,7 @@ def emit_form(cur_mtg_dir, meeting, volunteers, disabled)
         }
     else
       _div.well.well_lg do
-        _form method: 'POST' do
+        _form method: 'POST', onsubmit: 'return validateForm();' do
           _div.form_group do
             _label 'Select proxy'
             _b do
@@ -163,6 +163,14 @@ def emit_form(cur_mtg_dir, meeting, volunteers, disabled)
   _script src: "js/bootstrap-combobox.js" # TODO do we need this still?
 
   _script_ %{
+    function validateForm() {
+      if ($('.combobox').val() == '')  {
+        alert("A proxy name is required");
+        return false;
+      }
+      return true;
+    }
+
     // convert select into combobox
     $('.combobox').combobox();
 
