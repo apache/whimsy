@@ -24,19 +24,19 @@ module ASF
     # Same as MEMBER_REGEX, but no <uid> and no <email>
     BOARD_REGEX = %r{
         \A(?<header>(?<name>[^:]+?):?)\r?\n
-        \s*Nominated\ by:\s*(?<nomby>.*)\r?\n
-        \s*Seconded\ by:\s*(?<seconds>.*?)\r?\n+
-        \s*Nomination\ [sS]tatement:\s*?\r?\n+(?<statement>.*)\z
+        \s*Nominated\ by[:]?\s*(?<nomby>.*)\r?\n
+        \s*Seconded\ by[:]?\s*(?<seconds>.*?)\r?\n+
+        \s*Nomination\ [sS]tatement[:]?\s*?\r?\n+(?<statement>.*)\z
         }mx
 
     # This Regex is very similar to the one in the script used to create ballots:
     # https://svn.apache.org/repos/private/foundation/Meetings/steve-tools/seed-issues.py
     MEMBER_REGEX = %r{
       \A(?<header>(?:(?<uid>[-_.a-z0-9]+)\s+)?(?<name>[^:]+?):?)\r?\n
-      \s*Nominee\ email:\s*(?<email>.*)\r?\n
-      \s*Nominated\ by:\s*(?<nomby>.*)\r?\n
-      \s*Seconded\ by:\s*(?<seconds>.*?)\r?\n+
-      \s*Nomination\ [sS]tatement:\s*?\r?\n+(?<statement>.*)\z
+      \s*Nominee\ email[:]?\s*(?<email>.*)\r?\n
+      \s*Nominated\ by[:]?\s*(?<nomby>.*)\r?\n
+      \s*Seconded\ by[:]?\s*(?<seconds>.*?)\r?\n+
+      \s*Nomination\ [sS]tatement[:]?\s*?\r?\n+(?<statement>.*)\z
       }mx
 
     SECONDS_SEPARATOR = '    *** Statements by Seconds (below; please include your id) ***'
