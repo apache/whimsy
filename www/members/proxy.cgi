@@ -310,7 +310,12 @@ _html do
       if _.get?
         emit_form(cur_mtg_dir, meeting, ASF::MeetingUtil::getVolunteers(cur_mtg_dir), today > meeting)
       else # POST
-        emit_post(cur_mtg_dir, meeting, _)
+        # WHIMSY-409: improve UI
+        begin
+          emit_post(cur_mtg_dir, meeting, _)
+        rescue ArgumentError => e
+          _h2_.text_danger {_span.label.label_danger e}
+        end
       end
     end
   end
