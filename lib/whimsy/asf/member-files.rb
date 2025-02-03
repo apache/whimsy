@@ -223,7 +223,7 @@ module ASF
       bdir = File.join(latest_meeting(), BOARD_BALLOT)
       bfile = File.join(bdir, "#{availid}#{BOARD_BALLOT_EXT}")
       ASF::SVN.update(bfile, msg || "Adding board_ballot template for #{$availid}", env, wunderbar, opt) do |_tmpdir, contents|
-        "#{contents} " # Merely add space to contents because blank files not suppored by svn.update()
+        "Instructions: ../runbook/director_ballot_email.txt #{contents}" # Add instructions as single line
       end
     end
 
