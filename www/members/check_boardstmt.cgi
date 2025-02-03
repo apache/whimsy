@@ -3,6 +3,7 @@ PAGETITLE = "Review existing Board statements" # Wvisible:meeting
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'wunderbar/bootstrap'
 require 'whimsy/asf'
+require 'whimsy/asf/forms'
 require 'whimsy/asf/member-files'
 require 'whimsy/asf/meeting-util'
 
@@ -27,22 +28,45 @@ _html do
         _ 'This only works in the period shortly before or after a Members meeting!'
       }
     ) do
+      _h2 id: 'board-statement-list' do
+        _ 'All Board Nominations and Candidate Statements'
+      end
       statements = ASF::MemberFiles.board_all
       statements.each do |availid, shash|
-        _div id: availid
-        _whimsy_panel("Director Nominee: #{shash.fetch('Public Name', '')} (#{availid})", style: 'panel-default') do
-          _p do
-            _strong "Director's Own Statement (once present)"
-            _br
-            _ shash.fetch('candidate_statement', '')
+        listid = availid
+        public_name = shash.fetch('Public Name', availid) # Fallback if missing
+        _div.panel.panel_primary id: listid do
+          _div.panel_heading do
+            _h3!.panel_title do
+              _! 'Nominee for Director: '
+              _a! "#{public_name} (#{availid})", href: "/roster/committer/#{availid}"
+            end
           end
-          _p do
-            _strong "Nominated By: #{shash['nombycn']} (#{shash['nombyeavailid']})"
-            _br
-            _ "Testing: Seconded by = #{shash['Seconded by']}"
-            _ 'Nominator Statment(s):'
-            _br
-            _ shash.fetch('Nomination Statement', '')
+          _div.panel_body do
+            _div.panel_group id: listid, role: 'tablist', aria_multiselectable: 'true' do
+              _whimsy_accordion_item(listid: listid, itemid: "#{availid}-nomination", itemtitle: "Nominated by: #{shash['nombycn']}", n: 1, itemclass: 'panel-info') do
+                _p do
+                  _strong "Nominated By: #{shash['nombycn']} (#{shash['nombyeavailid']})"
+                  _br
+                  _ "Seconded by: #{shash['Seconded by'].join(', ')}"
+                  _br
+                  _ "Nomination and Seconds Statements:"
+                end
+                _p do
+                  allnoms = shash.fetch('Nomination Statement', '(no statement entered)')
+                  allnoms.split('\n') do |l| # FIXME: add styles to key lines or (availids)
+                    _! l
+                    _br
+                  end
+                end
+              end
+              _whimsy_accordion_item(listid: listid, itemid: "#{availid}-statement", itemtitle: "Candidate Statement for (#{availid})", n: 2, itemclass: 'panel-primary') do
+                _p do
+                   # FIXME: display message for blank/one line or when DECLINE
+                  _{shash.fetch('candidate_statement', '')}
+                end
+              end
+            end
           end
         end
       end
