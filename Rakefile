@@ -487,6 +487,10 @@ namespace :docker do
     sh "docker compose exec #{SERVICE} /bin/bash"
   end
 
+  task :bash do
+    sh "docker compose run --rm  --entrypoint /bin/bash #{SERVICE}"
+  end
+
   # cannot depend on :config
   # It runs in container, and needs to occur first
   task :scaffold do

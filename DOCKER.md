@@ -78,6 +78,7 @@ There is a sample template `whimsy/config/bash_aliases.template` to get you star
 
 To get a shell on the container, open a terminal console in the work directory
 and run `rake docker:exec`. The container must already be running.
+If you want to run bash in the bare container, run `rake docker:bash`
 
 Note: the initial run of the `rake docker:update` step will take a long time as
 it will need to download and install all of the Ubuntu packages,
