@@ -178,7 +178,7 @@ _html do
 
           # attempt to sort reports by nominee name
           emails.sort_by! do |mail|
-            mail.subject.downcase.gsub('- ', '').sub(/\[.*?\]\s*/, '')
+            mail.subject.gsub('- ', '').sub(/\[.*?\]\s*/, '')
           end
 
           # output an unordered list of subjects linked to the message archive
