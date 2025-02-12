@@ -80,7 +80,9 @@ _html do
       relatedtitle: 'Meeting Explainers',
       related: {
         '/members/proxy' => 'PLEASE Assign A Proxy For The Meeting',
-        'https://www.apache.org/foundation/governance/meetings' => 'How Meetings & Voting Works',
+        "#{svn_mtg_dir}/README.txt" => "Detailed README for this meeting",
+        "#{svn_mtg_dir}/agenda.txt" => "Actual Agenda for this meeting",
+        'https://www.apache.org/foundation/governance/meetings' => 'Descriptions: how voting works:',
         'https://www.apache.org/foundation/governance/meetings#how-member-votes-are-tallied' => 'New Members Elected By Majority',
         'https://www.apache.org/foundation/governance/meetings#how-votes-for-the-board-are-tallied' => 'Board Seats Are Elected By STV',
         '/members/whatif' => 'Explore Past Board STV Results',
@@ -117,7 +119,8 @@ _html do
             _ 'as an online meeting in the'
             _strong ' NEW '
             _a 'ASFMM.apache.org chat tool', href: 'https://asfmm.apache.org'
-            _ ' for less than an hour. Most activity happens in the weeks before the meeting.  Please review the meeting timeline, and some NEW PROCESS steps!'
+            _ ' for less than an hour. Most activity happens in the weeks before the meeting.  Please review the meeting timeline, and some NEW PROCESS steps, or '
+            _a 'see detailed FAQ about meeting files.', href: "#{svn_mtg_dir}/README.txt"
             if /test/i =~ meeting_type
               _br
               _strong "NOTICE NOTICE NOTICE: This is TEST MEETING DATA ONLY - NOT AN ACTUAL MEETING :NOTICE NOTICE NOTICE"
