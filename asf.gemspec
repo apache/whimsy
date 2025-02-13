@@ -6,6 +6,15 @@ rescue Exception => e
   nil
 end
 
+# Allow override of ldap gem name
+ldapname = 
+begin
+  File.read(File.expand_path('../asfldap.gemname', __FILE__)).strip
+rescue Exception => e
+  'ruby-ldap'
+end
+
+
 Gem::Specification.new do |s|
 
   # Change these as appropriate
@@ -29,7 +38,7 @@ Gem::Specification.new do |s|
   # relevant versions
   s.add_dependency('nokogiri')
   s.add_dependency('rack')
-  s.add_dependency('ruby-ldap', ldapversion)
+  s.add_dependency(ldapname, ldapversion)
   s.add_dependency('tzinfo')
   s.add_dependency('tzinfo-data')
   s.add_dependency('wunderbar')

@@ -7,11 +7,19 @@ rescue Exception => e
   nil
 end
 
+# Allow override of ldap gem name
+ldapname = 
+begin
+  File.read(File.expand_path('../../asfldap.gemname', __FILE__)).strip
+rescue Exception => e
+  'ruby-ldap'
+end
+
 # lib needs these at run-time
 gem 'json'
 gem 'nokogiri'
 gem 'rake'
-gem 'ruby-ldap', ldapversion
+gem ldapname, ldapversion
 gem 'wunderbar'
 gem 'pdf-reader'
 
