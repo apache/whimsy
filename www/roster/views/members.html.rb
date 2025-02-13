@@ -79,7 +79,8 @@ _html do
           end
 
           _tbody do
-            members.sort_by {|_id, info| info[:name]}.each do |id, info|
+            # Allow for missing name (should not happen unless LDAP is inconsistent)
+            members.sort_by {|_id, info| info[:name] || '_'}.each do |id, info|
               _tr_ do
                 _td! do
                   if ldap.include? ASF::Person.find(id)
