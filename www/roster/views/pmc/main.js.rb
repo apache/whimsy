@@ -43,7 +43,7 @@ class PMC < Vue
         _a @@committee.chairname, href: "committer/#{@@committee.chair}"
       end
       if @committee.image
-        _img src: "https://apache.org/logos/res/#{@committee.id}/default.png"
+        _img src: "https://www.apache.org/logos/res/#{@committee.id}/default.png"
       end
     end
 

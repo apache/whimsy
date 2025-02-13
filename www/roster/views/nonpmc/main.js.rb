@@ -33,7 +33,7 @@ class NonPMC < Vue
       _a @nonpmc.display_name, href: @nonpmc.site
       _small " established #{@nonpmc.established}" if @nonpmc.established
       if @nonpmc.image
-        _img src: "https://apache.org/logos/res/#{@nonpmc.id}/default.png"
+        _img src: "https://www.apache.org/logos/res/#{@nonpmc.id}/default.png"
       end
     end
 
