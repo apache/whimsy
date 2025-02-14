@@ -8,6 +8,8 @@ require 'whimsy/asf/status'
 json = File.expand_path('../status.json', __FILE__)
 status = JSON.parse(File.read(json)) rescue {}
 
+t1 = Time.now # Try to find where time is being spent
+
 # Get new status every minute
 if not status[:mtime] or Time.now - Time.parse(status[:mtime]) > 60
   begin
@@ -23,6 +25,8 @@ if not status[:mtime] or Time.now - Time.parse(status[:mtime]) > 60
   end
 end
 
+t2 = Time.now
+
 # The following is what infrastructure team sees:
 if %w(success info warning).include? status[:level]
   summary_status = "200 OK"
@@ -35,7 +39,13 @@ print "Status: #{summary_status}\r\n\r\n"
 
 git_branch = `git branch --show-current`.strip
 git_info = `git show --format="%h  %ci %cr"  -s HEAD`.strip rescue "?"
+
+t3 = Time.now
+
+# This is a remote check, so may be delayed
 git_repo = `git ls-remote origin #{git_branch}`.strip rescue "?"
+
+t4 = Time.now
 
 hostname = `hostname`
 
@@ -99,3 +109,8 @@ print <<-EOF
   </body>
 </html>
 EOF
+
+t5 = Time.now
+if t5 - t1 > 2 # seconds
+  $stderr.puts "Times: #{t2-t1} #{t3-t2} #{t4-t3} #{t5-t4} Overall: #{t5-t1}"
+end
