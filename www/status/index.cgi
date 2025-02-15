@@ -9,7 +9,7 @@ json = File.expand_path('../status.json', __FILE__)
 begin
   status = JSON.parse(File.read(json, encoding: Encoding::UTF_8)) 
 rescue Exception => e
-  $stderr.puts "Failed to read status.json: #{e}"
+  $stderr.puts "index.cgi: Failed to read status.json: #{e}"
   status = {}
 end
 timings = [] # more debug timing

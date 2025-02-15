@@ -48,7 +48,7 @@ class StatusMonitor
       begin
         baseline = JSON.parse(file.read, {symbolize_names: true})
       rescue Exception => e
-        $stderr.puts "Failed to read status.json: #{e}"
+        $stderr.puts "monitor: Failed to read status.json: #{e}"
         baseline = {}
       end
       timings << Time.now
