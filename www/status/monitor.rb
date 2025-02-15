@@ -31,16 +31,27 @@ class StatusMonitor
   LEVELS = %w(success info warning danger fatal)
 
   attr_reader :status
+  attr_reader :timings # debug timings
 
   def initialize(args = [])
+    @timings = []
+    timings << Time.now
     status_file = File.expand_path('../status.json', __FILE__)
     File.open(status_file, File::RDWR|File::CREAT, 0644) do |file|
+      timings << Time.now
       # lock the file
       mtime = File.exist?(status_file) ? File.mtime(status_file) : Time.at(0)
       file.flock(File::LOCK_EX)
+      timings << Time.now
 
       # fetch previous status (using symbolic keys)
-      baseline = JSON.parse(file.read, {symbolize_names: true}) rescue {}
+      begin
+        baseline = JSON.parse(file.read, {symbolize_names: true})
+      rescue Exception => e
+        $stderr.puts "Failed to read status.json: #{e}"
+        baseline = {}
+      end
+      timings << Time.now
       baseline[:data] = {} unless baseline[:data].instance_of? Hash
 
       # If status was updated while waiting for the lock, use the new status
@@ -49,6 +60,7 @@ class StatusMonitor
         return
       end
 
+      timings << Time.now
       # start each monitor in a separate thread
       threads = []
       self.class.singleton_methods.sort.each do |method|
@@ -90,24 +102,31 @@ class StatusMonitor
         end
       end
 
+      timings << Time.now
       # collect status from each monitor thread
       newstatus = {}
       threads.each do |thread|
+        timings << Time.now
         thread.join
+        timings << Time.now
         newstatus[thread[:name]] = thread[:status]
       end
 
+      timings << Time.now
       # normalize status
       @status = normalize(data: newstatus)
 
+      timings << Time.now
       File.write(File.expand_path('../../logs/status.data', __FILE__),
         @status.inspect)
 
+      timings << Time.now
       # update results
       file.rewind
       file.write JSON.pretty_generate(@status)
       file.flush
       file.truncate(file.pos)
+      timings << Time.now
     end
   end
 

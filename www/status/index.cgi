@@ -6,15 +6,26 @@ require 'time'
 require 'whimsy/asf/status'
 
 json = File.expand_path('../status.json', __FILE__)
-status = JSON.parse(File.read(json)) rescue {}
-
+begin
+  status = JSON.parse(File.read(json)) 
+rescue
+  $stderr.puts "Failed to read status.json: #{e}"
+  status = {}
+end
+timings = [] # more debug timing
 t1 = Time.now # Try to find where time is being spent
 
 # Get new status every minute
 if not status[:mtime] or Time.now - Time.parse(status[:mtime]) > 60
   begin
     require_relative './monitor'
-    status = StatusMonitor.new.status || {}
+    t1a = Time.now
+    sm = StatusMonitor.new
+    t1b = Time.now
+    status = sm.status || {}
+    t1c = Time.now
+    timings = sm.timings || []
+    t1d = Time.now
   rescue Exception => e
     print "Status: 500 Internal Server Error\r\n"
     print "Context-Type: text/plain\r\n\r\n"
@@ -112,5 +123,6 @@ EOF
 
 t5 = Time.now
 if t5 - t1 > 2 # seconds
-  $stderr.puts "Times: #{t2-t1} #{t3-t2} #{t4-t3} #{t5-t4} Overall: #{t5-t1}"
+  $stderr.puts "Times1: #{t2-t1} (#{t1a -t1} #{t1b -t1a} #{t1c -t1b} #{t1d -t1c}) #{t3-t2} #{t4-t3} #{t5-t4} Overall: #{t5-t1}"
+  $stderr.puts "Times2: #{timings.each_cons(2).map{|a,b| b-a}} Overall: #{timings[-1]-timings[0]}"
 end
