@@ -37,7 +37,7 @@ class StatusMonitor
     @timings = []
     timings << Time.now
     status_file = File.expand_path('../status.json', __FILE__)
-    File.open(status_file, File::RDWR|File::CREAT, 0644) do |file|
+    File.open(status_file, File::RDWR|File::CREAT, 0644, encoding: Encoding::UTF_8) do |file|
       timings << Time.now
       # lock the file
       mtime = File.exist?(status_file) ? File.mtime(status_file) : Time.at(0)
