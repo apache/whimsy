@@ -47,6 +47,7 @@ if query and not query.empty? and ENV['SCRIPT_URL'] == '/committers/test.cgi'
     puts_system('which', '-a', 'ruby')
     puts_system('which', '-a', 'ruby2.3.0')
     puts_system('ruby', '-v')
+    puts_system('ruby', '-e', 'p [Encoding.default_external, Encoding.default_internal]')
     puts_system('gem', 'env')
     puts_system('which', '-a',  'gem')
     puts_system('PATH=/usr/local/bin:$PATH which -a gem')
