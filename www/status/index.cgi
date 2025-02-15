@@ -7,7 +7,7 @@ require 'whimsy/asf/status'
 
 json = File.expand_path('../status.json', __FILE__)
 begin
-  status = JSON.parse(File.read(json, encoding: Encoding::UTF_8)) 
+  status = JSON.parse(File.read(json, encoding: Encoding::UTF_8), {symbolize_names: true}) 
 rescue Exception => e
   $stderr.puts "index.cgi: Failed to read status.json: #{e}"
   status = {}

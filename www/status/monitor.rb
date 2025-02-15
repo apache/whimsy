@@ -114,7 +114,9 @@ class StatusMonitor
 
       timings << Time.now
       # normalize status
-      @status = normalize(data: newstatus)
+      status = normalize(data: newstatus)
+      status[:mtime] = Time.now.gmtime.iso8601
+      @status = status
 
       timings << Time.now
       File.write(File.expand_path('../../logs/status.data', __FILE__),
