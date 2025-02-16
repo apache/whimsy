@@ -33,16 +33,22 @@ class StatusMonitor
   attr_reader :status
   attr_reader :timings # debug timings
 
+  def timediff(what)
+    now = Time.now
+    @timings << [what, now - @prev]
+    @prev = now
+  end
+  
   def initialize(args = [])
     @timings = []
-    timings << Time.now
+    @prev = Time.now
     status_file = File.expand_path('../status.json', __FILE__)
     File.open(status_file, File::RDWR|File::CREAT, 0644, encoding: Encoding::UTF_8) do |file|
-      timings << Time.now
+      timediff('open')
       # lock the file
       mtime = File.exist?(status_file) ? File.mtime(status_file) : Time.at(0)
       file.flock(File::LOCK_EX)
-      timings << Time.now
+      timediff('locked')
 
       # fetch previous status (using symbolic keys)
       begin
@@ -51,7 +57,7 @@ class StatusMonitor
         $stderr.puts "monitor: Failed to read status.json: #{e}"
         baseline = {}
       end
-      timings << Time.now
+      timediff('parsed')
       baseline[:data] = {} unless baseline[:data].instance_of? Hash
 
       # If status was updated while waiting for the lock, use the new status
@@ -60,12 +66,11 @@ class StatusMonitor
         return
       end
 
-      timings << Time.now
+      timediff('before threads')
       # start each monitor in a separate thread
       threads = []
       self.class.singleton_methods.sort.each do |method|
         next if args.length > 0 and not args.include? method.to_s
-
         threads << Thread.new do
           begin
             # invoke method to determine current status
@@ -102,33 +107,32 @@ class StatusMonitor
         end
       end
 
-      timings << Time.now
+      timediff('started threads')
       # collect status from each monitor thread
       newstatus = {}
       threads.each do |thread|
-        timings << Time.now
         thread.join
-        timings << Time.now
+        timediff(thread[:name])        
         newstatus[thread[:name]] = thread[:status]
       end
 
-      timings << Time.now
+      timediff('after threads')
       # normalize status
       status = normalize(data: newstatus)
       status[:mtime] = Time.now.gmtime.iso8601
       @status = status
 
-      timings << Time.now
+      timediff('normalized')
       File.write(File.expand_path('../../logs/status.data', __FILE__),
         @status.inspect)
 
-      timings << Time.now
+      timediff('status.data')
       # update results
       file.rewind
       file.write JSON.pretty_generate(@status)
       file.flush
       file.truncate(file.pos)
-      timings << Time.now
+      timediff('status.json')
     end
   end
 

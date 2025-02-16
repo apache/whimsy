@@ -5,6 +5,16 @@ require 'json'
 require 'time'
 require 'whimsy/asf/status'
 
+start = $prev = Time.now
+$timings1 = [] # more debug timing
+timings2 = []
+
+def timediff(what)
+  now = Time.now
+  $timings1 << [what, now - $prev]
+  $prev = now
+end
+
 json = File.expand_path('../status.json', __FILE__)
 begin
   status = JSON.parse(File.read(json, encoding: Encoding::UTF_8), {symbolize_names: true}) 
@@ -12,8 +22,7 @@ rescue Exception => e
   $stderr.puts "index.cgi: Failed to read status.json: #{e}"
   status = {}
 end
-timings = [] # more debug timing
-t1 = Time.now # Try to find where time is being spent
+timediff('parsed')
 
 # Get new status every minute
 if not status[:mtime] or Time.now - Time.parse(status[:mtime]) > 60
@@ -24,7 +33,7 @@ if not status[:mtime] or Time.now - Time.parse(status[:mtime]) > 60
     t1b = Time.now
     status = sm.status || {}
     t1c = Time.now
-    timings = sm.timings || []
+    timings2 = sm.timings || []
     t1d = Time.now
   rescue Exception => e
     print "Status: 500 Internal Server Error\r\n"
@@ -34,9 +43,8 @@ if not status[:mtime] or Time.now - Time.parse(status[:mtime]) > 60
     e.backtrace.each {|line| puts "  #{line}"}
     exit
   end
+  timediff('reparsed')
 end
-
-t2 = Time.now
 
 # The following is what infrastructure team sees:
 if %w(success info warning).include? status[:level]
@@ -51,12 +59,12 @@ print "Status: #{summary_status}\r\n\r\n"
 git_branch = `git branch --show-current`.strip
 git_info = `git show --format="%h  %ci %cr"  -s HEAD`.strip rescue "?"
 
-t3 = Time.now
+timediff('git show')
 
 # This is a remote check, so may be delayed
 git_repo = `git ls-remote origin #{git_branch}`.strip rescue "?"
 
-t4 = Time.now
+timediff('git ls-remote')
 
 hostname = `hostname`
 
@@ -121,8 +129,9 @@ print <<-EOF
 </html>
 EOF
 
-t5 = Time.now
-if t5 - t1 > 2 # seconds
-  $stderr.puts "Times1: #{t2-t1} (#{t1a -t1} #{t1b -t1a} #{t1c -t1b} #{t1d -t1c}) #{t3-t2} #{t4-t3} #{t5-t4} Overall: #{t5-t1}"
-  $stderr.puts "Times2: #{timings.each_cons(2).map{|a,b| b-a}} Overall: #{timings[-1]-timings[0]}"
+timediff('done') # sets $prev
+
+if $prev - start > 2 # seconds
+  $stderr.puts "Times1: #{$timings1} Overall: #{$prev - start}"
+  $stderr.puts "Times2: #{timings2}"
 end
