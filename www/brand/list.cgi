@@ -32,8 +32,13 @@ MAP_PMC_REG = {
 # Transform docket spreadsheet into structured JSON
 def csv2json
   brand_dir = ASF::SVN['brandlist']
-  csv = CSV.read("#{brand_dir}/docket.csv", headers:true)
   docket = {}
+  begin
+    csv = CSV.read("#{brand_dir}/docket.csv", headers:true)
+  rescue Exception => e
+    Wunderbar.warn e.to_s
+    return docket
+  end
   csv.each do |r|
     r << ['pmc', r[MNAM].downcase.sub('.org','').sub(' & design','')]
     key = r['pmc'].to_sym
