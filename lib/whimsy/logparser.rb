@@ -185,7 +185,7 @@ module LogParser
   # [..date..] [proxy:error] [pid ...] [client ...] AH00898: Error during SSL Handshake with remote server returned by /board/agenda/websocket/
   # [..date..] [proxy:error] [pid ...] (20014)Internal error (specific information not available): [client ...] AH01084: pass request body failed to 127.0.0.1:34234 (localhost)
   def parse_whimsy_error(f, logs = {})
-    r = Regexp.new('\[(?<errdate>[^\]]*)\] \[[\w_]+:error\] \[.+?\] (.+: )?\[.+?\] (?<errline>.+)')
+    r = Regexp.new('\[(?<errdate>[^\]]*)\] \[[\w_]+:error\] \[.+?\] (.+: )?\[client .+?\] (?<errline>.+)')
     ignored = Regexp.union(IGNORE_TRACEBACKS)
     read_logz(f).lines.each do |l|
       r.match(l) do |m|
