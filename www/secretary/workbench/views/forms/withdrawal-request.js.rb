@@ -35,7 +35,7 @@ class WithdrawalRequest < Vue
   end
 
   def render
-    _h4 'Member Withdrawl Request'
+    _h4 'Member Withdrawal Request'
 
     _form.form do
       _h5 'Search'
