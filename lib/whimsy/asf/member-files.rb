@@ -242,6 +242,7 @@ module ASF
     # Return hash of member nominees
     def self.member_nominees
       nominees = {}
+      na = 0 # Allow for noms without ids
       ASF::MemberFiles.parse_file(NOMINATED_MEMBERS) do |hdr, nominee|
         # for members, the header currently looks like this:
         # availid <PUBLIC NAME>
@@ -249,6 +250,10 @@ module ASF
         # availid PUBLIC NAME
         # PUBLIC NAME <email address>:
         id, name = hdr.split(' ', 2)
+        if id == 'n/a' # Ensure multiple n/a entries can exist
+          na += 1
+          id = "n/a_#{na}"
+        end
         # remove the spurious <> wrapper
         nominee['Public Name'] = name.sub(%r{^<}, '').chomp('>')
         # TODO: handle missing availid better
