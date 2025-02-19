@@ -151,7 +151,7 @@ style = Nokogiri::XML::Node.new 'style', $calendar
 style.content = %{
   table {
     border: 1px solid #ccc;
-    margin-botton: 10px;
+    margin-bottom: 10px;
     width: 100%;
     border-collapse: collapse;
     border-spacing: 0;
