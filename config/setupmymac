@@ -412,7 +412,7 @@ elsif force[:bundler]
   ARGS.push '--no-bundle'
 end
 
-### Installl gems
+### Install gems
 
 unless $root
   if force[:gems] or not File.exist?("#{WHIMSY}/Gemfile.lock")

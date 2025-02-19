@@ -43,7 +43,7 @@ def validate_form(formdata: {})
   uid = formdata['availid']
   return "You MUST provide a nomination statement for Candidate #{uid}; blank was provided!" if formdata['statement'].empty? 
   chk = ASF::Person[uid]&.asf_member?
-  chk.nil? and return "Invalid availid suppiled: (#{uid})\n\nStatement:\n#{formdata['statement']}"
+  chk.nil? and return "Invalid availid supplied: (#{uid})\n\nStatement:\n#{formdata['statement']}"
   # Allow renomination of Emeritus
   pubname = ASF::Person[uid].public_name
   chk && !chk.to_s.start_with?('Emeritus') and return "Your nominee #{pubname} (#{uid}) is already an ASF member!"
@@ -169,7 +169,7 @@ _html do
 
       if nomclosed
         _h1 'Nominations are now closed!'
-        _p 'Sorry, no futher nominations will be accepted for ballots at this meeting.'
+        _p 'Sorry, no further nominations will be accepted for ballots at this meeting.'
       else
         _h3 "Nominations close in #{ASFTime.secs2text(t_end - t_now)} at #{Time.at(t_end).utc} for Meeting: #{timelines['meeting_iso']}"
       end

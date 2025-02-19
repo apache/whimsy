@@ -185,7 +185,7 @@ _html do
     ) do
       if nomclosed
         _h1 'Nominations are now closed!'
-        _p 'Sorry, no futher nominations will be accepted for ballots at this meeting.'
+        _p 'Sorry, no further nominations will be accepted for ballots at this meeting.'
       else
         _h3 "Nominations close in #{ASFTime.secs2text(t_end - t_now)} at #{Time.at(t_end).utc} for Meeting: #{timelines['meeting_iso']}"
       end
