@@ -57,7 +57,13 @@ def setup_data
 
   # parse nominations for names and ids (from SVN)
   nominations = ASF::MemberFiles.member_nominees.map do |id, hash|
-    {id: id, name: hash['Public Name'], nominator: hash['Nominated by']}
+    secs = hash['Nomination Statement'].slice_before(/Statements by Seconds/).drop(1)
+    if secs.size == 1
+      hassec = secs.first.size > 1 # There is a seconds statement
+    else
+      hassec = false
+    end
+    {id: id, name: hash['Public Name'], nominator: hash['Nominated by'], hassec: hassec}
   end
 
   # preload names
@@ -163,6 +169,8 @@ _html do
               if nominee[:name] != person.public_name
                 _span " (as #{nominee[:name]})"
               end
+
+              _i ' - No statements by seconds found' unless nominee[:hassec]
             end
           end
         end
