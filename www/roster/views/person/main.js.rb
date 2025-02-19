@@ -30,7 +30,7 @@ class Person < Vue
 
     # PMCs
     noPMCsub = false
-    pmcs = @committer.pmcs.slice() # Take copy to avoid affecting orginal
+    pmcs = @committer.pmcs.slice() # Take copy to avoid affecting original
     # allow for non-PMC chairs
     @committer.chairOf.each do |pmcchair|
       pmcs << pmcchair unless pmcs.include? pmcchair

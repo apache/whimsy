@@ -46,7 +46,7 @@ get '/whimsy.svg' do
     type: 'image/svg+xml'
 end
 
-# Progress Web App Manfest
+# Progress Web App Manifest
 get '/manifest.json' do
   @svgmtime = File.mtime(File.expand_path('../../../whimsy.svg', __FILE__)).to_i
   @pngmtime = File.mtime(File.expand_path('../public/whimsy.png', __FILE__)).to_i
