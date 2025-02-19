@@ -173,7 +173,8 @@ module ASF
         m = s.match %r{(\S+) +<([^>]+)>}
         if m
           id = m[1]
-          raise ArgumentError.new("Duplicate id: #{id}") if ids.include? id
+          # Allow for multiple n/a ids
+          raise ArgumentError.new("Duplicate id: #{id}") if ids.include? id and id != 'n/a'
           ids[id] = 1
           m[2].split.last
         else
