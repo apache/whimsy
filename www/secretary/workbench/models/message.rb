@@ -125,7 +125,7 @@ class Message
     attachments = headers[:attachments]
     return [] unless attachments
     attachments.
-      reject do |attachment| 
+      reject do |attachment|
         (!includeDeleted and attachment[:status] == :deleted) or
         (SIG_MIMES.include?(attachment[:mime]) and (not attachment[:name] or attachment[:name] !~ /\.pdf\.(asc|sig)$/))
       end.
@@ -225,7 +225,7 @@ class Message
       end
     end
   end
-  
+
   # Add some properties from the email
   def add_email_details(pathname)
     PROPNAMES_DEFAULT.each do |propname|

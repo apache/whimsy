@@ -192,7 +192,7 @@ module ASF
       'jim' => ['jj', 'Jim', 'Jim Jagielski'],
       'jjirsa' => ['jjr', 'Jeff', 'Jeff Jirsa'],
       'jmclean' => ['jm', 'Justin', 'Justin Mclean'],
-      'kanchana' => ['kw', 'Kanchana', 'Kanchana Welagedara'],     
+      'kanchana' => ['kw', 'Kanchana', 'Kanchana Welagedara'],
       'ke4qqq' => ['dn', 'David', 'David Nalley'],
       'lrosen' => ['lr', 'Larry', 'Lawrence Rosen'],
       'markt' => ['mt', 'Mark', 'Mark Thomas'],

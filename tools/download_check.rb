@@ -283,7 +283,7 @@ def get_links(path, body, checkSpaces=false)
       href = path + URI.decode_www_form_component(href)
     end
     # Strip spurious text from link (age, baremaps)
-    text = node.text.gsub(/[[:space:]]+/, ' ').sub('(opens in a new tab)', '').sub('➚', '').strip  
+    text = node.text.gsub(/[[:space:]]+/, ' ').sub('(opens in a new tab)', '').sub('➚', '').strip
     [href, text] unless href =~ %r{/httpcomponents.+/xdoc/downloads.xml} # breadcrumb link to source
   }.select {|x, _y| x =~ %r{^(https?:)?//} }
 end

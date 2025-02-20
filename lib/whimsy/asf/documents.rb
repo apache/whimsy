@@ -269,7 +269,7 @@ module ASF
     def self.refreshnames(storedates, env)
       ASF::DocumentUtils.update_cache(STEM, env, storedates: storedates, force: true)
     end
-  
+
     # Find the file name (or directory) that matches a person
     # return [svnpath, name, timestamp, epoch (int)] if found
     # return nil if not found

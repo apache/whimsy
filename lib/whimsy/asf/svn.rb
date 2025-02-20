@@ -504,7 +504,7 @@ module ASF
       end
       out
     end
-    
+
     # get list of commits from initial to current, and parses the output
     # Returns: [out, err], where:
     #  out = array of entries, each of which is a hash

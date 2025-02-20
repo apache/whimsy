@@ -38,7 +38,7 @@ class StatusMonitor
     @timings << [what, now - @prev]
     @prev = now
   end
-  
+
   def initialize(args = [])
     @timings = []
     @prev = Time.now
@@ -112,7 +112,7 @@ class StatusMonitor
       newstatus = {}
       threads.each do |thread|
         thread.join
-        timediff(thread[:name])        
+        timediff(thread[:name])
         newstatus[thread[:name]] = thread[:status]
       end
 
