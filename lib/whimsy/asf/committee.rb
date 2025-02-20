@@ -11,7 +11,7 @@ module ASF
   #
   # Representation for a committee (either a PMC, a board committee, or
   # a President's committee).  This data is parsed from
-  # <tt>committee-info.txt|.yaml</tt>, and is augmened by data from LDAP,
+  # <tt>committee-info.txt|.yaml</tt>, and is augmented by data from LDAP,
   # and ASF::Mail.
   #
   # Note that the simple attributes which are sourced from
@@ -548,7 +548,7 @@ module ASF
       # Any duplicates?
       dupes = list.group_by{|x| x.first.downcase}.select{|k,v|v.size!=1}
       if dupes.size > 0
-        Wunderbar.warn "Dulicate chairs: #{dupes}}"
+        Wunderbar.warn "Duplicate chairs: #{dupes}}"
       end
       # Extract the non-PMC committees (e-mail address may be absent)
       # first drop leading text (and Officers) so we only match non-PMCs
