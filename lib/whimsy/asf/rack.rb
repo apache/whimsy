@@ -204,7 +204,7 @@ module ASF
   end
 
   # compute document root for the site.  Needed by Rack/Passenger applications
-  # that wish to use support site wide assets (stylesheets, javascripts).
+  # that wish to use site wide assets (stylesheets, JavaScript).
   class DocumentRoot
     # capture the application
     def initialize(app)
