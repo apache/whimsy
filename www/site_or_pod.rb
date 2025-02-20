@@ -88,8 +88,8 @@ _html do
     ) do
       # Encapsulate data display (same for projects and podlings)
       if sites.size > 0
-        display_application(path_info, sites, analysis, checks_performed, cgi_for_tlps?)        
-      else 
+        display_application(path_info, sites, analysis, checks_performed, cgi_for_tlps?)
+      else
         _h3 'Could not parse the site data. Please check the error log for details.'
       end
     end

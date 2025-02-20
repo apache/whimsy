@@ -47,7 +47,7 @@ _html do
                     _a ASF::Person.find(id1).public_name, href: "committer/#{id1}"
                   end
                 end
- 
+
                 # Reports-To - clarifies orgchart reporting structure
                 _td do
                   value['info']['reports-to'].nil? ? _('')  : _(value['info']['reports-to'])

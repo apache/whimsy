@@ -294,7 +294,7 @@ module ASF
         name.downcase
       end
     end
-    
+
     # development mailing list associated with a given podling
     def dev_mail_list
       case name

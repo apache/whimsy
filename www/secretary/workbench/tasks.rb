@@ -73,7 +73,7 @@ class Wunderbar::JsonBuilder
       end
     end
 end
-  
+
   # Commit new file(s) and update associated index
   # e.g. add ccla.pdf, ccla.pdf.asc to documents/cclas/xyz/ and update officers/cclas.txt
   # Parameters:

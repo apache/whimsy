@@ -60,7 +60,7 @@ if @action == 'emeritus' or @action == 'active' or @action == 'deceased'
 elsif @action == 'withdraw' # process withdrawal request (secretary only)
   require 'whimsy/asf/subreq'
 
-  # TODO 
+  # TODO
   # Check members.md for entry and report - how?
 
   # unsubscribe from member only mailing lists:

@@ -58,7 +58,7 @@ module ASFString
 
   # fix encoding errors
   def self.fix_encoding(text)
-  
+
     if text.encoding == Encoding::BINARY
       return text.encode('utf-8', invalid: :replace, undef: :replace)
     end
