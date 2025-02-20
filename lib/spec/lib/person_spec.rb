@@ -46,7 +46,7 @@ describe ASF::Person do
     res = ASF::Person.ldap_parse_cn_DRAFT('one two three', false)
     expect(res).to eq(['three', ['one', 'two']])
   end
-  it  "ldap_parse_cn_DRAFT('one two three', tru) should return ['one', ['two', 'three']]" do
+  it  "ldap_parse_cn_DRAFT('one two three', true) should return ['one', ['two', 'three']]" do
     res = ASF::Person.ldap_parse_cn_DRAFT('one two three', true)
     expect(res).to eq(['one', ['two', 'three']])
   end
