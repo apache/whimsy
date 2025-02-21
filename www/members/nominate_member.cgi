@@ -40,7 +40,7 @@ end
 # Validation as needed within the script
 # Returns: 'OK' or a text message describing the problem
 def validate_form(formdata: {})
-  uid = formdata['availid']
+  uid = formdata['availid'].downcase
   return "You MUST provide a nomination statement for Candidate #{uid}; blank was provided!" if formdata['statement'].empty? 
   chk = ASF::Person[uid]&.asf_member?
   chk.nil? and return "Invalid availid supplied: (#{uid})\n\nStatement:\n#{formdata['statement']}"
@@ -57,21 +57,21 @@ end
 def process_form(formdata: {}, wunderbar: {})
   _h3 "Transcript of update to nomination file #{ASF::MemberFiles::NOMINATED_MEMBERS}"
   entry = ASF::MemberFiles.make_member_nomination({
-    availid: formdata['availid'],
+    availid: formdata['availid'].downcase,
     nomby: formdata['nomby'],
     secby: formdata['secby'],
     statement: formdata['statement']
   })
 
   environ = Struct.new(:user, :password).new($USER, $PASSWORD)
-  ASF::MemberFiles.update_member_nominees(environ, wunderbar, [entry], "+= #{formdata['availid']}")
+  ASF::MemberFiles.update_member_nominees(environ, wunderbar, [entry], "+= #{formdata['availid'].downcase}")
   return true
 end
 
 # Send email to members@ with this nomination's data
 # Reports status to user in a _div
 def send_nomination_mail(formdata: {})
-  uid = formdata['availid']
+  uid = formdata['availid'].downcase
   nomby = formdata['nomby']
   public_name = ASF::Person.new(uid).public_name
   secby = formdata.fetch('secby', nil)
