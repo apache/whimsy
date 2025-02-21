@@ -40,6 +40,11 @@ module ASF
       }mx
 
     SECONDS_SEPARATOR = '    *** Statements by Seconds (below; please include your id) ***'
+
+    # section dividers in nomination files
+    MEMBER_DIVIDER = "-----------------------------------------\n"
+    BOARD_DIVIDER  = "---------------------------------------\n"
+
     # get the latest meeting directory or nomination file
     def self.latest_meeting(name=nil)
       if name.nil? # we want the parent directory
@@ -182,7 +187,7 @@ module ASF
         end
       end
       # reconstitute the file
-      [header, sections, ''].join("-----------------------------------------\n")
+      [header, sections, ''].join(MEMBER_DIVIDER)
     end
 
     # Sort the board_nominees, optionally adding new entries
@@ -206,7 +211,7 @@ module ASF
         end
       end
       # reconstitute the file
-      [header, sections, ''].join("---------------------------------------\n")
+      [header, sections, ''].join(BOARD_DIVIDER)
     end
 
     # update the member nominees
