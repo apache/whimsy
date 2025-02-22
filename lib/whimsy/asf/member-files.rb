@@ -288,7 +288,7 @@ module ASF
     def self.board_statements
       statements = {}
       Dir["#{File.join(latest_meeting(), BOARD_BALLOT)}/*#{BOARD_BALLOT_EXT}"].each do |f|
-        statements[File.basename(f, BOARD_BALLOT_EXT)] = {'candidate_statement' => IO.read(f)}
+        statements[File.basename(f, BOARD_BALLOT_EXT)] = {'candidate_statement' => IO.readlines(f)}
       end
       return statements
     end
