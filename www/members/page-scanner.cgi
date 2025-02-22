@@ -51,13 +51,17 @@ if url
       puts "Top-level references:"
     end
     extras = Hash.new {|h,k| h[k] = Hash.new}
-    out.split("\n").each do |url|
-      p1, p2 = url.split(DIVIDER)
-      if p2
-        extras[p2][p1]=1
-      else
-        print ASFDOMAIN.asfurl?(url) ? 'OK ' : 'NO '
+    out.split(%r{\n+}).each do |url|
+      if url.start_with? 'ERROR' # console error message (e.g. CSP)
         puts url
+      else
+        p1, p2 = url.split(DIVIDER)
+        if p2
+          extras[p2][p1]=1
+        else
+          print ASFDOMAIN.asfurl?(url) ? 'OK ' : 'NO '
+          puts url
+        end
       end
     end
     if extras.size > 0

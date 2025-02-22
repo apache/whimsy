@@ -37,6 +37,9 @@ function getHost(url) {
   const browser = await puppeteer.launch({headless: "old", executablePath: '/opt/google/chrome/chrome'});
   const page = await browser.newPage();
   await page.setRequestInterception(true);
+  // capture CSP messages
+  page.on('console', message =>
+      console.log(`${message.type().toUpperCase()} ${message.text()}`))
   page.on('request', (interceptedRequest) => {
     // already handled?
     if (interceptedRequest.isInterceptResolutionHandled()) return;
