@@ -63,7 +63,11 @@ _html do
               _whimsy_accordion_item(listid: listid, itemid: "#{availid}-statement", itemtitle: "Candidate Statement for (#{availid})", n: 2, itemclass: 'panel-primary') do
                 _p do
                    # FIXME: display message for blank/one line or when DECLINE
-                  _{shash.fetch('candidate_statement', '')}
+                   candidate_stmt = shash.fetch('candidate_statement', '')
+                   candidate_stmt.split('\n') do |l| # TODO: consider adding styles or markdown processing
+                     _! l
+                     _br
+                   end
                 end
               end
             end
