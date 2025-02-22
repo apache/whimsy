@@ -226,7 +226,15 @@ _html do
             end
           end
         else # if _.post?
-          emit_form('Enter your nomination for a Director Nominee', {})
+          if nomclosed
+            _p do
+              _ 'Sorry, no further nominations will be accepted for ballots at this meeting.'
+              _br
+              _a 'See existing nominations.', href: '/members/check_boardnoms.cgi'
+            end
+          else
+            emit_form('Enter your nomination for a Director Nominee', {})
+          end
         end
       end
     end

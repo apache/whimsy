@@ -210,7 +210,15 @@ _html do
             end
           end
         else # if _.post?
-          emit_form('Enter your New Member nomination', {})
+          if nomclosed
+            _p do
+              _ 'Sorry, no further nominations will be accepted for ballots at this meeting.'
+              _br
+              _a 'See existing nominations.', href: '/members/check_membernoms.cgi'
+            end
+          else
+            emit_form('Enter your New Member nomination', {})
+          end
         end
       end
     end
