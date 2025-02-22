@@ -52,7 +52,7 @@ if url
     end
     extras = Hash.new {|h,k| h[k] = Hash.new}
     out.split(%r{\n+}).each do |url|
-      if url.start_with? 'ERROR' # console error message (e.g. CSP)
+      if url.start_with?('ERROR') or url.start_with?('WARN') # console error message (e.g. CSP)
         puts url
       else
         p1, p2 = url.split(DIVIDER)
