@@ -110,12 +110,12 @@ if @votelink and not @votelink.empty?
   # attempt to fetch the page
   if @votelink =~ /^https?:/i
     uri = URI.parse(@votelink)
-    http = Net::HTTP.new(uri.host.untaint, uri.port)
+    http = Net::HTTP.new(uri.host, uri.port)
     if uri.scheme == 'https'
       http.use_ssl = true
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE
     end
-    request = Net::HTTP::Head.new(uri.request_uri.untaint)
+    request = Net::HTTP::Head.new(uri.request_uri)
     response = http.request(request)
     unless response.code.to_i < 400
       _error "HTTP status #{response.code} for #{@votelink}"
@@ -150,12 +150,12 @@ if @noticelink and not @noticelink.empty?
   # attempt to fetch the page
   if @noticelink =~ /^https?:/i
     uri = URI.parse(@noticelink)
-    http = Net::HTTP.new(uri.host.untaint, uri.port)
+    http = Net::HTTP.new(uri.host, uri.port)
     if uri.scheme == 'https'
       http.use_ssl = true
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE
     end
-    request = Net::HTTP::Head.new(uri.request_uri.untaint)
+    request = Net::HTTP::Head.new(uri.request_uri)
     response = http.request(request)
     unless response.code.to_i < 400
       _error "HTTP status #{response.code} for #{@noticelink}"

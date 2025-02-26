@@ -76,7 +76,7 @@ token = pmc.name + '-' + date + '-' + Digest::MD5.hexdigest(@iclaemail)[0..5]
 file_name = '/srv/icla/' + token + '.json'
 
 # important not to overwrite any existing files
-err = LockFile.create_ex(file_name.untaint) do |f|
+err = LockFile.create_ex(file_name) do |f|
   f.write(JSON.pretty_generate(discussion))
 end
 if err
@@ -104,7 +104,7 @@ Use this link to discuss:
 # create the email to the user
 mail = Mail.new do
   to user_email
-  from user_email.untaint
+  from user_email
   subject subject
   text_part do
     body body_text
