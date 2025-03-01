@@ -23,27 +23,47 @@ def emit_instructions(today, cur_mtg_dir, meeting)
       }
   end
   _p %{
-    This form allows you to assign a proxy for the upcoming
-    Member's Meeting on #{meeting_display}.  Submitting an attendance proxy will
-    help us reach quorum at the start of the meeting - the meeting can't formally
-    continue without quorum at the start.
-
-    You can still vote and attend the meeting if you want, and you can revoke a
-    proxy at any time.
-  }
-  _p %{
-    If you submit a proxy, you will still be sent ballots by email to your personal
-    @apache.org email address one week ahead of the meeting.
-    
-    If you won't have internet access for the full week of the meeting, ask
-    for how to assign a proxy for your vote ballots as well.
+    Use this form to assign a proxy for the Member's Meeting on #{meeting_display}.
+    Assigning a proxy helps meet quorum, which is necessary to officially start the meeting.
   }
   _p do
-    _ 'Note while the legal proxy form below states your proxy may have your voting rights, in practice '
-    _strong 'you will still be emailed your ballots'
+    _strong 'Even if you plan to attend or have already voted, '
+    _ 'assigning a proxy ensures the meeting can start on time if you\'re unexpectedly absent.'
+  end
+  _p do
+    _ 'The '
+    _strong 'easiest option is to assign the Secretary as your proxy, '
+    _ 'as they are required to attend. '
+    _ 'They have been pre-selected in the form below for your convenience. '
+    _ 'Usually, all you have to do is click '
+    _strong 'Submit'
+    _ ' below.'
+  end
+  _ul do
+    _li do
+      _strong 'You will still receive your voting ballots by email '
+      _ 'at your @apache.org address one week before the meeting.'
+    end
+    _li do
+      _strong 'You can still attend and vote '
+      _ 'even if you assign a proxy.'
+    end
+    _li do
+      _strong 'Voting does not count as attending the meeting '
+      _ 'for quorum purposes. A proxy ensures you are counted.'
+    end
+  end
+  _p %{
+     If you won't have internet access for the full week of the meeting,
+     ask for how to assign a proxy for your vote ballots as well.
+  }
+  _p do
+    _ 'The legal proxy form below mentions voting rights, but in practice, '
+    _strong 'you will still receive your ballots and the proxy will not vote on your behalf'
     _ ' unless you explicitly mark a \'*\' in the appropriate place in the '
     _code 'proxies'
-    _ ' file.  The great majority of proxies assigned are for attendance only; not for voting.'
+    _ ' file. Most proxies are assigned for attendance only, not voting. '
+    _ 'You can also revoke your proxy at any time.'
   end
   num_members, quorum_need, num_proxies, attend_irc = ASF::MeetingUtil.calculate_quorum(cur_mtg_dir)
   if num_members
