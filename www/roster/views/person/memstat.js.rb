@@ -3,6 +3,17 @@
 #
 
 class PersonMemberStatus < Vue
+  def checkReason(event)
+    target = event.target
+    reason = document.getElementById('emeritus_reason').value
+    if reason.size() < 10 # TODO: better check
+      alert 'Must provide a reason for the involuntary emeritus'
+      target.setAttribute('data-skip-submit', true)
+    else
+      target.removeAttribute('data-skip-submit')
+    end
+  end
+
   def render
     committer = @@person.state.committer
     owner = @@person.props.auth.id == committer.id
@@ -45,6 +56,10 @@ class PersonMemberStatus < Vue
                   _button.btn.btn_primary 'move to deceased',
                     name: 'action', value: 'deceased'
                   _input 'dod', name: 'dod', value: dod
+                  _button.btn.btn_primary 'involuntary emeritus',
+                    onClick: self.checkReason,
+                    name: 'action', value: 'involuntary_emeritus'
+                  _input 'emeritus_reason', name: 'emeritus_reason', id: 'emeritus_reason'
                 elsif committer.member.status.include? 'Emeritus'
                   _button.btn.btn_primary 'move to active',
                     name: 'action', value: 'active'

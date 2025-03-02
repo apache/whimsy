@@ -376,6 +376,10 @@ class Person < Vue
     form = jQuery(event.currentTarget).closest('form')
     target = event.target
 
+    # if event has the skip submit attribute, return immediately
+    # (used for fast return from validation)
+    return if target.getAttribute('data-skip-submit')
+
     # if (cancel) button is pressed, don't submit but remove @edit form
     cancel_submit = target.getAttribute('data-cancel-submit')
 

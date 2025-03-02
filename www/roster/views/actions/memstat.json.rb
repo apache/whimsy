@@ -13,9 +13,15 @@ TIMESTAMP = (Time.now.strftime '%Y-%m-%d %H:%M:%S %:z')
 members_txt = ASF::SVN.svnpath!('foundation', 'members.txt')
 # construct commit message
 message = "Action #{@action} for #{USERID}"
+if @action == 'involuntary_emeritus'
+  if @emeritus_reason.size < 10
+    raise Exception.new("Missing or incomplete reason provided: '#{@emeritus_reason}'")
+  end
+  message = "Action #{@action} for #{USERID}: #{@emeritus_reason}"
+end
 
 # update members.txt only for secretary actions
-if @action == 'emeritus' or @action == 'active' or @action == 'deceased'
+if %w{active emeritus deceased involuntary_emeritus}.include? @action
   ASF::SVN.multiUpdate_ members_txt, message, env, _ do |text|
     # remove user's entry
     unless text.sub! entry, '' # e.g. if the workspace was out of date
@@ -35,9 +41,13 @@ if @action == 'emeritus' or @action == 'active' or @action == 'deceased'
       else # there should be a request file
         _warn 'Emeritus request file not found'
       end
+    elsif @action == 'involuntary_emeritus' # move to emeritus
+      index = text.index(/^\s\*\)\s/, text.index(/^Emeritus/))
+      entry.sub! %r{\s*/\* deceased, .+?\*/},'' # drop the deceased comment if necessary
+      entry.sub! "\n", " /* involuntary, #{@emeritus_reason} */\n" # add the reason comment
     elsif @action == 'active' # revert to active
       index = text.index(/^\s\*\)\s/, text.index(/^Active/))
-      entry.sub! %r{\s*/\* deceased, .+?\*/},'' # drop the deceased comment if necessary
+      entry.sub! %r{\s*/\* (?:deceased|involuntary), .+?\*/},'' # drop the comments if necessary
       # if emeritus file was found, move it to emeritus-reinstated
       # otherwise ignore
       pathname, basename = ASF::EmeritusFiles.findpath(user)
