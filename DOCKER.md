@@ -149,9 +149,9 @@ Under each of these, create the directories and files you need.
 
 Add the following entry to the `.whimsy` file: `:svn_base: http://localhost/repos/`
 The repositories can then be found at the following locations in Docker:
-- http://localhost/repos/asf/
-- http://localhost/repos/infra/
-- http://localhost/repos/private/
+- http://localhost:1999/repos/asf/
+- http://localhost:1999/repos/infra/
+- http://localhost:1999/repos/private/
 
 Note: these will be checked out under `/srv/svn` in Docker.
 
