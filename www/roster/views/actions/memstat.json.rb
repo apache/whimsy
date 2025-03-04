@@ -37,6 +37,12 @@ if %w{active emeritus deceased involuntary_emeritus}.include? @action
       # if pending emeritus request was found, move it to emeritus
       pathname, basename = ASF::EmeritusRequestFiles.findpath(user)
       if pathname
+        # Add details of emeritus file commit.
+        # The file is moved to the emeritus directory as part of the commit, so we show today's date
+        # and the details of the file from the received directory.
+        info = ASF::SVN.getInfoAsHash(pathname, env.user, env.password)
+        reason = "updated #{Time.now.utc.strftime "%Y-%m-%d"} received as r#{info['Last Changed Rev']} #{info['Last Changed Date'].split().first}}"
+        entry.sub! "\n", " /* emeritus, #{reason} */\n" # add the reason comment
         extra << ['mv', pathname, ASF::SVN.svnpath!('emeritus', basename)]
       else # there should be a request file
         _warn 'Emeritus request file not found'
