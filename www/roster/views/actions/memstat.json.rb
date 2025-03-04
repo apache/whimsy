@@ -47,7 +47,7 @@ if %w{active emeritus deceased involuntary_emeritus}.include? @action
       entry.sub! "\n", " /* involuntary, #{@emeritus_reason} */\n" # add the reason comment
     elsif @action == 'active' # revert to active
       index = text.index(/^\s\*\)\s/, text.index(/^Active/))
-      entry.sub! %r{\s*/\* (?:deceased|involuntary), .+?\*/},'' # drop the comments if necessary
+      entry.sub! %r{\s*/\* (?:deceased|involuntary|emeritus), .+?\*/},'' # drop the comments if necessary
       # if emeritus file was found, move it to emeritus-reinstated
       # otherwise ignore
       pathname, basename = ASF::EmeritusFiles.findpath(user)
