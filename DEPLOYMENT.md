@@ -122,7 +122,7 @@ and running - these are only needed for a new deployment.
   [Note that the `allow` subscriptions must use the physical host name; the others can use a DNS equivalent.]
 
  * Verify that email can be sent to non-apache.org email addresses.
-   * Run [testmail.rb](tools/testmail.rb)
+   * Run [testmail.rb](tools/testmail.rb). Note that this depends on various Ruby gems which are set up by 'rake update'
 
  * check that mail is being delivered to the /srv/mail directory tree
 
