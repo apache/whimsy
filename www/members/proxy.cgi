@@ -34,7 +34,7 @@ def emit_instructions(today, cur_mtg_dir, meeting)
   _p %{
     If you submit a proxy, you will still be sent ballots by email to your personal
     @apache.org email address one week ahead of the meeting.
-    
+
     If you won't have internet access for the full week of the meeting, ask
     for how to assign a proxy for your vote ballots as well.
   }
@@ -77,9 +77,8 @@ def emit_form(cur_mtg_dir, meeting, volunteers, disabled)
         _p help
         if copypasta
           _ul.bg_success do
-            copypasta.each do |copyline|
-              _pre copyline
-            end
+            copylines = copypasta.join("\n")
+            _pre copylines
           end
         end
       else
@@ -328,4 +327,3 @@ _html do
     end
   end
 end
-
