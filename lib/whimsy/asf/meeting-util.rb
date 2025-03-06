@@ -143,7 +143,7 @@ module ASF
       if copypasta.empty?
         return help
       else
-        (help ||= '') << "During the meeting, to mark your proxies' attendance, AFTER the 2. Roll Call is called, you may copy/paste the below lines to mark your and your proxies attendance."
+        (help ||= '') << "During the meeting, to mark your proxies' attendance, AFTER logging into the ASFMM tool, click the top left Hamburger menu, Proxies button, and copy/paste the below lines to mark your proxies attendance."
         copypasta.unshift("#{user.id.ljust(max_uid_len)} | #{user.cn}")
         return help, copypasta
       end
