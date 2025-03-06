@@ -1,5 +1,5 @@
 Deploying Production Whimsy.apache.org
-==========
+========== 
 
 The production `whimsy.apache.org` server is managed by [Puppet](puppetnode), and
 is automatically updated whenever commits are made to the master branch
