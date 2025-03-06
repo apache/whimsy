@@ -119,6 +119,7 @@ _html do
         list = nominations.map {|id| ASF::Person.find(id)}.reject{|p| p.asf_member_status == :current}
       elsif request =~ /appstatus/
         _h2_ 'Elected Members - Application Status'
+        _h3_ '*Does not yet show nominees without an ASF id*'
         status = File.read(File.join(meeting, 'memapp-received.txt')).
           scan(/^(yes|no)\s+(yes|no)\s+(yes|no)\s+(yes|no)\s+(\w+)\s/)
         status = status.map {|tokens| [tokens.pop, tokens]}.to_h
