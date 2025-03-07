@@ -1,53 +1,17 @@
-name: Unit test library methods
-on:
-  push:
-    paths:
-      - '**/unittestlib.yml'
-      - 'lib/**'
+            - name: Push Workflow Data to Tinybird
+  # You may pin to the exact commit or the version.
+  # uses: localstack/tinybird-workflow-push@518790fd8ad2665b06419c2588c744da355bb970
+  uses: localstack/tinybird-workflow-push@v3.3.1
+  with:
+    # Github token for receiving start and end time of the workflow
+    github_token: 
+    # The token to authenticate with Tinybird
+    tinybird_token: 
+    # The Tinybird datasource to which to push the data to
+    tinybird_datasource: # optional, default is ci_workflows
+    # The id of the workflow
+    workflow_id: # optional
+    # Optional input to manually override the outcome reported to Tinybird. By default the outcome is calculated using the worst outcome of all jobs in the current workflow run attempt.
 
-  workflow_dispatch:
-
-permissions:  # added using https://github.com/step-security/secure-workflows
-  contents: read
-
-jobs:
-  test:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [macos-13, ubuntu-20.04, ubuntu-22.04]
-        ruby: [2.7, 3.1]
-        # 2.7 not supported on 22.04
-        exclude:
-          - os: ubuntu-22.04
-            ruby: 2.7
-        # LDAP does not work on 24.04 (needs patch)
-        # include:
-        #   - os: ubuntu-24.04
-        #     ruby: 3.2
-    runs-on: ${{ matrix.os }}
-    steps:
-    - name: setup non-macOS # needed for installing ruby-ldap
-      if: ${{ runner.os != 'macOS' }}
-      run: |
-        sudo apt-get update
-        sudo apt-get install libldap2-dev
-        sudo apt-get install libsasl2-dev
-        sudo apt-get install libyaml-dev # seems to be needed for installing ruby since psych 5.0.0 release
-    - name: setup macos
-      if: ${{ runner.os == 'macOS' }}
-      run: |
-        brew install subversion
-    - uses: actions/checkout@v4
-      with:
-        persist-credentials: false
-    - name: ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: ${{ matrix.ruby }}
-        bundler-cache: true
-    - name: test library code
-      run: |
-        cd lib
-        bundle install
-        bundle exec rake
+    outcome: # optional
+          
