@@ -61,7 +61,8 @@ def setup_data
       # may be sent as a reply
       # The alternative prefix has been seen in a reply from China
       # Looks like ': ' is being treated as a separate character
-      if v[:Subject] =~ /^(Re: |Re：)?Invitation to join The Apache Software Foundation Membership/
+      # Allow for forwarded mail (may not catch original and reply ...)
+      if v[:Subject] =~ /^(Re: |Re：)?(?:Fwd: )?Invitation to (?:re-)?join The Apache Software Foundation Membership/
         pfx = $1
         to = Mail::AddressList.new(v[:To])
         cc = Mail::AddressList.new(v[:Cc])
