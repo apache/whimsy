@@ -1,37 +1,12 @@
-name: test npm install
-on:
-  push:
-    paths:
-      - '**/npmtest.yml'
-
-  workflow_dispatch:
-
-permissions:  # added using https://github.com/step-security/secure-workflows
-  contents: read
-
-jobs:
-  test:
-    strategy:
-      fail-fast: true
-      matrix:
-        os: [ubuntu-20.04, macos-latest]
-        ruby: [2.7]
-    runs-on: ${{ matrix.os }}
-    steps:
-    - name: Check Path 1
-      run: |
-        echo "==================="
-        echo $PATH
-        which -a node || true
-        which -a npm || true
-        echo "==================="
-    - uses: actions/setup-node@v4
-      with:
-        node-version: '18.16.0'
-    - name: Check Path 2
-      run: |
-        echo "==================="
-        echo $PATH
-        which -a node || true
-        which -a npm || true
-        echo "==================="
+            - name: Load runner information
+  # You may pin to the exact commit or the version.
+  # uses: devops-actions/load-runner-info@7f8c07227aa6176e94e4eeb912016bb0a9d33796
+  uses: devops-actions/load-runner-info@v1.0.10
+  with:
+    # Slug of the organization to analyze.
+    organization: 
+    # Slug of the repository to analyze.
+    repo: # optional
+    # Access token to use for analysis with either admin:org or repo owner if you run it against a repo
+    accessToken: 
+          
