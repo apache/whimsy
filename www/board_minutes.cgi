@@ -36,7 +36,7 @@ def minutes(path):
 def year_index(year):
     """Generate year index"""
     if not re.fullmatch(r'\d\d\d\d', year):
-        print(f"Invalid year: {year}")
+        print("Invalid year")
         return
     folder = os.path.join(MINUTES_TXT, year)
     if not os.path.isdir(folder):
