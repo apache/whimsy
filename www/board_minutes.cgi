@@ -80,14 +80,14 @@ def main():
                 return
             source = os.path.join(MINUTES_TXT, year, basename)
             if not os.path.exists(source):
-                print(f"No such file as {source}")
+                print("No such file")
                 return
             with open(source, encoding='utf8') as inp:
                 extrahdr = f"""Links: <a href="../{year}">{year}</a> - <a href="../">All years</a>
 - <a href="{MINUTES_HTTPS}/{year}/{basename}" target="_blank">Original</a>"""
                 boardminutes2html.text2html(inp, sys.stdout, extrahdr)
         else:
-            print(f"Invalid request {parts} {len(parts)}")
+            print("Invalid request")
     except Exception as ex:
         print(ex)
 
