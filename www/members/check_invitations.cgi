@@ -85,14 +85,19 @@ def setup_data
   end
 
   nominated_by = {}
+  na_emails = {} # emails for n/a ids from member-nominations
   # n/a entries are not necessarily in the same order as in member-apps
   ASF::MemberFiles.member_nominees.each do |k, v|
-    k = 'n/a_' + v['Public Name'] if k.start_with? 'n/a_'
+    if k.start_with? 'n/a_'
+      k = 'n/a_' + v['Public Name']
+      na_emails[k] = v['Nominee email']
+    end
     nominated_by[k] = v['Nominated by']
   end
 
   notinvited.each do |id, v|
-    mails = ASF::Person.new(id).all_mail
+    # na_emails entries only exist for non-commiters
+    mails = [na_emails[id] || ASF::Person.new(id).all_mail].flatten
     v[:invited] = match_person(invites, id, v[:name], mails)
     v[:replied] = match_person(replies, id, v[:name], mails)
     v[:nominators] = nominated_by[id] || ['unknown']
@@ -100,7 +105,8 @@ def setup_data
   notapplied.each do |record|
     id = record[:id]
     name = record[:name]
-    mails = ASF::Person.new(id).all_mail
+    # na_emails entries only exist for non-commiters
+    mails = [na_emails[id] || ASF::Person.new(id).all_mail].flatten
     record[:replied] = match_person(replies, id, name, mails)
     record[:invited] = match_person(invites, id, name, mails)
   end
