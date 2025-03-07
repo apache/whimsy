@@ -30,7 +30,7 @@ _html do
       }
     ) do
       # start with the Watch List itself
-      watch_list = ASF::Person.member_watch_list.keys
+      watch_list = ASF::Person.member_watch_list.keys # array of Person entries
       meeting = ASF::MemberFiles.latest_meeting
 
       nominations = ASF::MemberFiles.member_nominees.keys
@@ -119,11 +119,24 @@ _html do
         list = nominations.map {|id| ASF::Person.find(id)}.reject{|p| p.asf_member_status == :current}
       elsif request =~ /appstatus/
         _h2_ 'Elected Members - Application Status'
-        _h3_ '*Does not yet show nominees without an ASF id*'
-        status = File.read(File.join(meeting, 'memapp-received.txt')).
-          scan(/^(yes|no)\s+(yes|no)\s+(yes|no)\s+(yes|no)\s+(\w+)\s/)
-        status = status.map {|tokens| [tokens.pop, tokens]}.to_h
-        list = status.keys.map {|id| ASF::Person.find(id)}
+        nanum = 0
+        status = {} # status keyed by id or notinavail_n
+        list = [] # list of People entries
+        File.read(File.join(meeting, 'memapp-received.txt')).
+          scan(/^(yes|no)\s+(yes|no)\s+(yes|no)\s+(yes|no)\s+(\S+)\s+(\S.+)/).each do |tokens|
+            name = tokens.pop
+            id = tokens.pop
+            if id == 'n/a'
+              nanum += 1
+              id = 'notinavail_' + nanum.to_s
+              p = ASF::Person.new(id)
+              p.attrs['cn'] = name # public name
+              list << p
+            else
+              list << ASF::Person.find(id)
+            end
+            status[id] = tokens
+          end
         _p do
           applied = status.filter_map {|k, v| list.find{|p| p.name == k}.public_name.to_s if v[1] == 'yes' }
           _ "Applied: (#{applied.size}) "
@@ -208,7 +221,7 @@ _html do
 
               # ASF id
               if person.id =~ /^notinavail_\d+$/
-                _td
+                _td! '(not yet a committer)'
               elsif person.asf_member_status == :current
                 _td! do
                   _strong {_a person.id, href: "roster/committer/#{person.id}"}
