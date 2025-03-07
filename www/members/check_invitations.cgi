@@ -7,6 +7,7 @@ require 'wunderbar/bootstrap'
 require 'whimsy/asf'
 require 'mail'
 require 'whimsy/asf/meeting-util'
+require 'whimsy/asf/member-files'
 
 MAIL_DIR = '/srv/mail/members'
 
@@ -31,10 +32,9 @@ def setup_data
   notinvited = {}
   notapplied = []
   fields = %i(invite apply mail karma id name)
-  nanum = 0
   ASF::MeetingUtil.parse_memapp(memappfile).filter_map do |a|
     entry = fields.zip(a).to_h
-    entry[:id] = "n/a_#{nanum+=1}" if entry[:id] == 'n/a' # Allow for n/a entries
+    entry[:id] = 'n/a_' + entry[:name] if entry[:id] == 'n/a' # Allow for n/a entries
     if entry[:invite] == 'no'
       notinvited[entry[:id]] = {name: entry[:name]}
     elsif %i(apply mail karma).any? {|e| entry[e] == 'no'} # any no apart from invite?
@@ -84,9 +84,10 @@ def setup_data
   end
 
   nominated_by = {}
-  # might be more than one ...
-  ASF::Person.member_nominees.each do |k, v|
-    nominated_by[k.id] = v.scan(/Nominated by: (.*)/).flatten
+  # n/a entries are not necessarily in the same order as in member-apps
+  ASF::MemberFiles.member_nominees.each do |k, v|
+    k = 'n/a_' + v['Public Name'] if k.start_with? 'n/a_'
+    nominated_by[k] = v['Nominated by']
   end
 
   notinvited.each do |id, v|
@@ -184,10 +185,14 @@ _html do
         end
 
         # sort by nominators to make it easier to send reminders
-        notinvited.sort_by{|k,v| v[:nominators].join(', ')}.each do |id, v|
+        notinvited.sort_by{|k,v| v[:nominators]}.each do |id, v|
           _tr_ do
             _td do
-              _a id, href: "https://whimsy.apache.org/roster/committer/#{id}"
+              if id.start_with? 'n/a_'
+                _ id
+              else
+                _a id, href: "https://whimsy.apache.org/roster/committer/#{id}"
+              end
             end
             _td v[:name]
             url, age = v[:invited]
@@ -208,7 +213,7 @@ _html do
             else
               _td 'false'
             end
-            _td v[:nominators].join(', ')
+            _td v[:nominators]
           end
         end
       end
@@ -253,10 +258,14 @@ _html do
             # _td entry[:mail]
             # _td entry[:karma]
             _td do
-              _a entry[:id], href: "https://whimsy.apache.org/roster/committer/#{entry[:id]}"
+              if entry[:id].start_with? 'n/a_'
+                _ entry[:id]
+              else
+                _a entry[:id], href: "https://whimsy.apache.org/roster/committer/#{entry[:id]}"
+              end
             end
             _td entry[:name]
-            _td (nominated_by[entry[:id]] || ['unknown']).join(' ')
+            _td nominated_by[entry[:id]] || 'unknown'
           end
         end
       end
