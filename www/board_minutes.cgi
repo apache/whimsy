@@ -7,6 +7,7 @@ import os
 import os.path
 import sys
 import re
+import traceback
 
 sys.path.append('/srv/whimsy/tools')
 import boardminutes2html
@@ -63,7 +64,7 @@ def main():
     print("Content-type: text/html\n\n")
 
     try:
-        info = os.environ['PATH_INFO']
+        info = os.environ.get('PATH_INFO', '')
         parts = info.lstrip('/').split('/')
         if parts[-1] == '': # drop trailing empty part
             parts.pop()
@@ -89,7 +90,8 @@ def main():
         else:
             print("Invalid request")
     except Exception as ex:
-        print(ex)
+        print('Sorry, something went wrong')
+        traceback.print_exc()
 
 if __name__ == '__main__':
     main()
