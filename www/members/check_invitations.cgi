@@ -7,6 +7,8 @@ require 'wunderbar/bootstrap'
 require 'whimsy/asf'
 require 'mail'
 require 'whimsy/asf/meeting-util'
+require 'whimsy/asf/member-files'
+require 'yaml'
 
 MAIL_DIR = '/srv/mail/members'
 
@@ -33,6 +35,7 @@ def setup_data
   fields = %i(invite apply mail karma id name)
   ASF::MeetingUtil.parse_memapp(memappfile).filter_map do |a|
     entry = fields.zip(a).to_h
+    entry[:id] = 'n/a_' + entry[:name] if entry[:id] == 'n/a' # Allow for n/a entries
     if entry[:invite] == 'no'
       notinvited[entry[:id]] = {name: entry[:name]}
     elsif %i(apply mail karma).any? {|e| entry[e] == 'no'} # any no apart from invite?
@@ -59,7 +62,8 @@ def setup_data
       # may be sent as a reply
       # The alternative prefix has been seen in a reply from China
       # Looks like ': ' is being treated as a separate character
-      if v[:Subject] =~ /^(Re: |Re：)?Invitation to join The Apache Software Foundation Membership/
+      # Allow for forwarded mail (may not catch original and reply ...)
+      if v[:Subject] =~ /^(Re: |Re：)?(?:Fwd: )?Invitation to (?:re-)?join The Apache Software Foundation/
         pfx = $1
         to = Mail::AddressList.new(v[:To])
         cc = Mail::AddressList.new(v[:Cc])
@@ -82,13 +86,29 @@ def setup_data
   end
 
   nominated_by = {}
-  # might be more than one ...
-  ASF::Person.member_nominees.each do |k, v|
-    nominated_by[k.id] = v.scan(/Nominated by: (.*)/).flatten
+  na_emails = Hash.new {|h,k| h[k] = Array.new} # emails for n/a ids from member-nominations
+  # n/a entries are not necessarily in the same order as in member-apps
+  ASF::MemberFiles.member_nominees.each do |k, v|
+    if k.start_with? 'n/a_'
+      k = 'n/a_' + v['Public Name']
+      na_emails[k] << v['Nominee email']
+    end
+    nominated_by[k] = v['Nominated by']
+  end
+
+  # Load extra emails from override file if it exists
+  begin
+    extras = YAML.load_file(File.join(File.dirname(memappfile),'notinavail.yml'))
+    extras[:emails].each do |name, email|
+      na_emails['n/a_' + name] += email
+    end
+  rescue StandardError
+    # ignored
   end
 
   notinvited.each do |id, v|
-    mails = ASF::Person.new(id).all_mail
+    # na_emails entries only exist for non-commiters
+    mails = na_emails[id] || ASF::Person.new(id).all_mail
     v[:invited] = match_person(invites, id, v[:name], mails)
     v[:replied] = match_person(replies, id, v[:name], mails)
     v[:nominators] = nominated_by[id] || ['unknown']
@@ -96,7 +116,8 @@ def setup_data
   notapplied.each do |record|
     id = record[:id]
     name = record[:name]
-    mails = ASF::Person.new(id).all_mail
+    # na_emails entries only exist for non-commiters
+    mails = na_emails[id] || ASF::Person.new(id).all_mail
     record[:replied] = match_person(replies, id, name, mails)
     record[:invited] = match_person(invites, id, name, mails)
   end
@@ -182,10 +203,14 @@ _html do
         end
 
         # sort by nominators to make it easier to send reminders
-        notinvited.sort_by{|k,v| v[:nominators].join(', ')}.each do |id, v|
+        notinvited.sort_by{|k,v| v[:nominators]}.each do |id, v|
           _tr_ do
             _td do
-              _a id, href: "https://whimsy.apache.org/roster/committer/#{id}"
+              if id.start_with? 'n/a_'
+                _ id
+              else
+                _a id, href: "https://whimsy.apache.org/roster/committer/#{id}"
+              end
             end
             _td v[:name]
             url, age = v[:invited]
@@ -206,7 +231,7 @@ _html do
             else
               _td 'false'
             end
-            _td v[:nominators].join(', ')
+            _td v[:nominators]
           end
         end
       end
@@ -251,10 +276,14 @@ _html do
             # _td entry[:mail]
             # _td entry[:karma]
             _td do
-              _a entry[:id], href: "https://whimsy.apache.org/roster/committer/#{entry[:id]}"
+              if entry[:id].start_with? 'n/a_'
+                _ entry[:id]
+              else
+                _a entry[:id], href: "https://whimsy.apache.org/roster/committer/#{entry[:id]}"
+              end
             end
             _td entry[:name]
-            _td (nominated_by[entry[:id]] || ['unknown']).join(' ')
+            _td nominated_by[entry[:id]] || 'unknown'
           end
         end
       end

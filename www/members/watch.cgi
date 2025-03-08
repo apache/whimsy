@@ -30,10 +30,10 @@ _html do
       }
     ) do
       # start with the Watch List itself
-      watch_list = ASF::Person.member_watch_list.keys
+      watch_list = ASF::Person.member_watch_list.keys # array of Person entries
       meeting = ASF::MemberFiles.latest_meeting
 
-      nominations = ASF::MemberFiles.member_nominees.keys
+      nominations = ASF::MemberFiles.member_nominees
 
       # determine which list to report on, based on the URI
       request = ENV['REQUEST_URI']
@@ -116,13 +116,36 @@ _html do
       elsif request =~ /nominees/
         _h2_ 'Member Nominees'
         # Keep only ids that are not current members
-        list = nominations.map {|id| ASF::Person.find(id)}.reject{|p| p.asf_member_status == :current}
+        list = nominations.filter_map do |id, info|
+          if id.start_with? 'n/a_'
+            p = ASF::Person.new(id)
+            p.attrs['cn'] = info['Public Name'] # public name
+            p
+          else
+            p = ASF::Person.find(id)
+            p if p.asf_member_status != :current # drop current members
+          end
+        end
       elsif request =~ /appstatus/
         _h2_ 'Elected Members - Application Status'
-        status = File.read(File.join(meeting, 'memapp-received.txt')).
-          scan(/^(yes|no)\s+(yes|no)\s+(yes|no)\s+(yes|no)\s+(\w+)\s/)
-        status = status.map {|tokens| [tokens.pop, tokens]}.to_h
-        list = status.keys.map {|id| ASF::Person.find(id)}
+        nanum = 0
+        status = {} # status keyed by id or notinavail_n
+        list = [] # list of People entries
+        File.read(File.join(meeting, 'memapp-received.txt')).
+          scan(/^(yes|no)\s+(yes|no)\s+(yes|no)\s+(yes|no)\s+(\S+)\s+(\S.+)/).each do |tokens|
+            name = tokens.pop
+            id = tokens.pop
+            if id == 'n/a'
+              nanum += 1
+              id = "notinavail_#{nanum+=1}"
+              p = ASF::Person.new(id)
+              p.attrs['cn'] = name # public name
+              list << p
+            else
+              list << ASF::Person.find(id)
+            end
+            status[id] = tokens
+          end
         _p do
           applied = status.filter_map {|k, v| list.find{|p| p.name == k}.public_name.to_s if v[1] == 'yes' }
           _ "Applied: (#{applied.size}) "
@@ -198,7 +221,7 @@ _html do
                   _td.text_danger 'no'
                 end
               else
-                if nominations.include? person.id
+                if nominations.key? person.id
                   _td 'yes'
                 else
                   _td
@@ -206,8 +229,8 @@ _html do
               end
 
               # ASF id
-              if person.id =~ /^notinavail_\d+$/
-                _td
+              if person.id =~ %r{^(notinavail_|n/a_)\d+$}
+                _td! '(not yet a committer)'
               elsif person.asf_member_status == :current
                 _td! do
                   _strong {_a person.id, href: "roster/committer/#{person.id}"}

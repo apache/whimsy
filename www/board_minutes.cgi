@@ -7,6 +7,7 @@ import os
 import os.path
 import sys
 import re
+import traceback
 
 sys.path.append('/srv/whimsy/tools')
 import boardminutes2html
@@ -36,7 +37,7 @@ def minutes(path):
 def year_index(year):
     """Generate year index"""
     if not re.fullmatch(r'\d\d\d\d', year):
-        print(f"Invalid year: {year}")
+        print("Invalid year")
         return
     folder = os.path.join(MINUTES_TXT, year)
     if not os.path.isdir(folder):
@@ -63,7 +64,7 @@ def main():
     print("Content-type: text/html\n\n")
 
     try:
-        info = os.environ['PATH_INFO']
+        info = os.environ.get('PATH_INFO', '')
         parts = info.lstrip('/').split('/')
         if parts[-1] == '': # drop trailing empty part
             parts.pop()
@@ -80,16 +81,17 @@ def main():
                 return
             source = os.path.join(MINUTES_TXT, year, basename)
             if not os.path.exists(source):
-                print(f"No such file as {source}")
+                print("No such file")
                 return
             with open(source, encoding='utf8') as inp:
                 extrahdr = f"""Links: <a href="../{year}">{year}</a> - <a href="../">All years</a>
 - <a href="{MINUTES_HTTPS}/{year}/{basename}" target="_blank">Original</a>"""
                 boardminutes2html.text2html(inp, sys.stdout, extrahdr)
         else:
-            print(f"Invalid request {parts} {len(parts)}")
+            print("Invalid request")
     except Exception as ex:
-        print(ex)
+        print('Sorry, something went wrong')
+        traceback.print_exc()
 
 if __name__ == '__main__':
     main()
