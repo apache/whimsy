@@ -86,12 +86,12 @@ def setup_data
   end
 
   nominated_by = {}
-  na_emails = Hash.new {|h,k| h[k] = Array.new} # emails for n/a ids from member-nominations
+  na_emails = {} # emails for n/a ids from member-nominations
   # n/a entries are not necessarily in the same order as in member-apps
   ASF::MemberFiles.member_nominees.each do |k, v|
     if k.start_with? 'n/a_'
       k = 'n/a_' + v['Public Name']
-      na_emails[k] << v['Nominee email']
+      na_emails[k] = [v['Nominee email']]
     end
     nominated_by[k] = v['Nominated by']
   end
@@ -100,7 +100,9 @@ def setup_data
   begin
     extras = YAML.load_file(File.join(File.dirname(memappfile),'notinavail.yml'))
     extras[:emails].each do |name, email|
-      na_emails['n/a_' + name] += email
+      k = 'n/a_' + name
+      na_emails[k] ||= []
+      na_emails[k] += email
     end
   rescue StandardError
     # ignored
