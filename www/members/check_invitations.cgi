@@ -8,6 +8,7 @@ require 'whimsy/asf'
 require 'mail'
 require 'whimsy/asf/meeting-util'
 require 'whimsy/asf/member-files'
+require 'yaml'
 
 MAIL_DIR = '/srv/mail/members'
 
@@ -85,19 +86,29 @@ def setup_data
   end
 
   nominated_by = {}
-  na_emails = {} # emails for n/a ids from member-nominations
+  na_emails = Hash.new {|h,k| h[k] = Array.new} # emails for n/a ids from member-nominations
   # n/a entries are not necessarily in the same order as in member-apps
   ASF::MemberFiles.member_nominees.each do |k, v|
     if k.start_with? 'n/a_'
       k = 'n/a_' + v['Public Name']
-      na_emails[k] = v['Nominee email']
+      na_emails[k] << v['Nominee email']
     end
     nominated_by[k] = v['Nominated by']
   end
 
+  # Load extra emails from override file if it exists
+  begin
+    extras = YAML.load_file(File.join(File.dirname(memappfile),'notinavail.yml'))
+    extras[:emails].each do |name, email|
+      na_emails['n/a_' + name] += email
+    end
+  rescue StandardError
+    # ignored
+  end
+
   notinvited.each do |id, v|
     # na_emails entries only exist for non-commiters
-    mails = [na_emails[id] || ASF::Person.new(id).all_mail].flatten
+    mails = na_emails[id] || ASF::Person.new(id).all_mail
     v[:invited] = match_person(invites, id, v[:name], mails)
     v[:replied] = match_person(replies, id, v[:name], mails)
     v[:nominators] = nominated_by[id] || ['unknown']
@@ -106,7 +117,7 @@ def setup_data
     id = record[:id]
     name = record[:name]
     # na_emails entries only exist for non-commiters
-    mails = [na_emails[id] || ASF::Person.new(id).all_mail].flatten
+    mails = na_emails[id] || ASF::Person.new(id).all_mail
     record[:replied] = match_person(replies, id, name, mails)
     record[:invited] = match_person(invites, id, name, mails)
   end
