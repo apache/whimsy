@@ -14,6 +14,10 @@ require 'net/http'
 require 'json'
 require 'fileutils'
 
+def stamp(*s)
+  '%s: %s' % [Time.now.gmtime.to_s, s.join(' ')]
+end
+
 # extract script name
 script = File.basename(__FILE__, '.rb')
 
@@ -109,7 +113,7 @@ else
     File.write options.pidfile, Process.pid.to_s
     at_exit { File.delete options.pidfile if File.exist? options.pidfile }
   else
-    STDERR.puts "EACCES: Skipping creation of pidfile #{options.pidfile}"
+    STDERR.puts stamp "EACCES: Skipping creation of pidfile #{options.pidfile}"
   end
 end
 
@@ -160,8 +164,8 @@ ps_thread = Thread.new do
             elsif notification['svnpubsub']
               next
             else
-              STDERR.puts '*** unexpected notification ***'
-              STDERR.puts notification.inspect
+              STDERR.puts stamp '*** unexpected notification ***'
+              STDERR.puts stamp notification.inspect
             end
           else
             body += chunk
@@ -171,11 +175,11 @@ ps_thread = Thread.new do
     end
   rescue Errno::ECONNREFUSED => e
     restartable = true
-    STDERR.puts e
+    STDERR.puts stamp e
     sleep 3
   rescue Exception => e
-    STDERR.puts e
-    STDERR.puts e.backtrace
+    STDERR.puts stamp e
+    STDERR.puts stamp e.backtrace
   end
 end
 
@@ -203,9 +207,10 @@ begin
       # running; in which case it may not have picked up this update.  So try
       # again in 30, 60, 90, and 120 seconds, for a total of five minutes.
       4.times do |i|
+        puts stamp "Starting Puppet"
         system('puppet', 'agent', '-t')
         break unless $?.exitstatus == 1
-        puts "Failed to run Puppet, will try again shortly"
+        puts stamp "Failed to run Puppet, will try again shortly"
         sleep 30 * (i+1)
       end
     else
@@ -223,12 +228,12 @@ begin
     break if mtime != File.mtime(__FILE__)
   end
 rescue SignalException => e
-  STDERR.puts e
+  STDERR.puts stamp e
   restartable = false
 rescue Exception => e
   if ps_thread.alive?
-    STDERR.puts e
-    STDERR.puts e.backtrace
+    STDERR.puts stamp e
+    STDERR.puts stamp e.backtrace
     restartable = false
   end
 end
@@ -238,7 +243,7 @@ end
 #
 
 if restartable
-  STDERR.puts 'restarting'
+  STDERR.puts stamp 'restarting'
 
   # relaunch script after a one second delay
   sleep 1
