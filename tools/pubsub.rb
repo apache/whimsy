@@ -191,11 +191,21 @@ begin
     notification_queue.clear
 
     if options.puppet
+      # puppet agent -t has the following exit codes:
+      # 0: The run succeeded with no changes or failures; the system was already in the desired state.
+      # 1: The run failed, or wasn´t attempted due to another run already in progress.
+      # 2: The run succeeded, and some resources were changed.
+      # 4: The run succeeded, and some resources failed.
+      # 6: The run succeeded, and included both changes and failures.
+      # Only attempt a restart if the run failed entirely
+      #
       # Update using puppet.  If puppet fails, it may be due to puppet already
       # running; in which case it may not have picked up this update.  So try
       # again in 30, 60, 90, and 120 seconds, for a total of five minutes.
       4.times do |i|
-        break if system('puppet', 'agent', '-t')
+        system('puppet', 'agent', '-t')
+        break unless $?.exitstatus == 1
+        puts "Failed to run Puppet, will try again shortly"
         sleep 30 * (i+1)
       end
     else
