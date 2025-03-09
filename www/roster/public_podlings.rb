@@ -110,8 +110,13 @@ if ARGV.length == 2
     v.delete(:resourceAliases) if v[:resourceAliases].length == 0
     v.delete(:duration) # This changes every day ...
     status_counts[v[:status]] += 1
-    if v[:status] == 'graduated' and not (v[:resolutionTLP] or v[:resolutionURL])
-      Wunderbar.warn "Graduated Podling #{p} but no valid resolution"
+    if v[:status] == 'graduated'
+      unless (v[:resolutionTLP] or v[:resolutionURL])
+        Wunderbar.warn "Graduated Podling #{p} but no valid resolution"
+      end
+      unless v[:enddate]
+        Wunderbar.warn "Graduated Podling #{p} but no valid enddate"
+      end
     end
   end
   public_json_output_file({
