@@ -63,7 +63,7 @@ def setup_data
       # The alternative prefix has been seen in a reply from China
       # Looks like ': ' is being treated as a separate character
       # Allow for forwarded mail (may not catch original and reply ...)
-      if v[:Subject] =~ /^(R[eE]: |R[eE]：|AW: )?(?:Fwd: )?Invitation to (?:re-)?join The Apache Software Foundation/
+      if v[:Subject] =~ /^(R[eE]: ?|R[eE]：|AW: )?(?:Fwd: )?Invitation to (?:re-)?join The Apache Software Foundation/
         pfx = $1
         to = Mail::AddressList.new(v[:To])
         cc = Mail::AddressList.new(v[:Cc])
