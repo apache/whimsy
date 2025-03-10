@@ -309,6 +309,10 @@ _html do
         _p do
           _ "REMEMBER: newly elected members must return their application before #{mtg_timeline['member_form_date']}, otherwise they are not admitted per bylaws 4.1."
         end
+        _p do
+          _ 'You can use the following page to '
+          _a 'check the progress of member invitations', href: '/members/check_invitations'
+        end
 
       end
 
