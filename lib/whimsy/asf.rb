@@ -25,6 +25,7 @@ require_relative 'asf/site-img'
 #
 # Key data access classes include:
 # SVN, Git, ICLA, LDAP, Authorization
+# 
 # Key classes that provide complex data structures:
 # Person, Committer, Member, Committee, Podling, OrgChart, Board
 #
