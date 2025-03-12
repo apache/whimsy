@@ -7,8 +7,19 @@ require 'tempfile'
 module ASF
 
   #
-  # Provide access to files stored in Subversion, generally to local working
-  # copies that are updated via cronjobs.
+  # Provide access to files stored in Subversion, either to local working
+  # copies that are updated via cronjobs, or to files checked out and 
+  # potentially updated or created via user action in a tool.
+  #
+  # Allows for conceptually mapping specific directories in common ASF 
+  # SVN repositories via the repository.yml mapping file.
+  # 
+  # == Key SVN methods
+  #
+  # - SVN.svn allows building an svn command; see also option:dryrun
+  # - SVN.svn! variant that raises Exception on error
+  # - SVN.svn_ variant in Wunderbar contexts for web output
+  # - SVN.update allows user action to update or create a new file
   #
   # Note: svn paths passed to various #find methods are resolved relative to
   # <tt>https://svn.apache.org/repos/</tt> if they are not full URIs.
