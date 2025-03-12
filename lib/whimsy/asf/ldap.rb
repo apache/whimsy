@@ -1,36 +1,3 @@
-#
-# Encapsulate access to LDAP, caching results for performance.  For best
-# performance in applications that access large number of objects, make use
-# of the preload methods to pre-fetch multiple objects in a single LDAP
-# call, and rely on the cache to find the objects later.
-#
-# The cache makes heavy use of Weak References internally to enable garbage
-# collection to reclaim objects; among other things, this ensures that
-# LDAP results don't become too stale.
-#
-# Until garbage collection reclaims an object, calls to find methods for the
-# same name is guaranteed to return the same object.  Holding on to the
-# results of find or preload calls (by assigning it to a variable) is
-# sufficient to prevent reclaiming of objects.
-#
-# To illustrate, the following is likely to return the same id twice, followed
-# by a new id:
-#   puts ASF::Person.find('rubys').__id__
-#   puts ASF::Person.find('rubys').__id__
-#   GC.start
-#   puts ASF::Person.find('rubys').__id__
-#
-# By contrast, the following is guaranteed to produce the same id three times:
-#   rubys1 = ASF::Person.find('rubys')
-#   rubys2 = ASF::Person.find('rubys')
-#   GC.start
-#   rubys3 = ASF::Person.find('rubys')
-#   puts [rubys1.__id__, rubys2.__id__, rubys3.__id__]
-#
-
-# Note: custom ASF LDAP attributes are defined in the file:
-# https://github.com/apache/infrastructure-p6/blob/production/modules/ldapserver/files/asf-custom.schema
-
 require 'wunderbar'
 require 'ldap'
 require 'weakref'
@@ -44,9 +11,40 @@ if __FILE__ == $0
   require 'whimsy/asf/config'
 end
 
+# Note: custom ASF LDAP attributes are defined in the file:
+# https://github.com/apache/infrastructure-p6/blob/production/modules/ldapserver/files/asf-custom.schema
+
 module ASF
   @@weakrefs = Set.new
-
+  #
+  # Encapsulate access to LDAP, caching results for performance.  For best
+  # performance in applications that access large number of objects, make use
+  # of the preload methods to pre-fetch multiple objects in a single LDAP
+  # call, and rely on the cache to find the objects later.
+  #
+  # The cache makes heavy use of Weak References internally to enable garbage
+  # collection to reclaim objects; among other things, this ensures that
+  # LDAP results don't become too stale.
+  #
+  # Until garbage collection reclaims an object, calls to find methods for the
+  # same name is guaranteed to return the same object.  Holding on to the
+  # results of find or preload calls (by assigning it to a variable) is
+  # sufficient to prevent reclaiming of objects.
+  #
+  # To illustrate, the following is likely to return the same id twice, followed
+  # by a new id:
+  #   puts ASF::Person.find('rubys').__id__
+  #   puts ASF::Person.find('rubys').__id__
+  #   GC.start
+  #   puts ASF::Person.find('rubys').__id__
+  #
+  # By contrast, the following is guaranteed to produce the same id three times:
+  #   rubys1 = ASF::Person.find('rubys')
+  #   rubys2 = ASF::Person.find('rubys')
+  #   GC.start
+  #   rubys3 = ASF::Person.find('rubys')
+  #   puts [rubys1.__id__, rubys2.__id__, rubys3.__id__]
+  #
   module LDAP
     # Mutex preventing simultaneous connections to LDAP from a single process
     CONNECT_LOCK = Mutex.new

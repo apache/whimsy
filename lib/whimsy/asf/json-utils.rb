@@ -1,9 +1,6 @@
-# JSON utilities
-
-# This addon must be required before use
-
 require 'json'
-
+# Utility functions for comparing JSON data.
+# This addon must be required before use
 module ASFJSON
   # Compare JSON files
   # bc = breadcrumb

@@ -1,5 +1,7 @@
 module ASF
 
+  # Convenience methods to determine svn auth for a user.
+  #
   # parse the <tt>-authorization-template</tt> files contained within
   # <tt>infrastructure-puppet/modules/subversion_server/files/authorization</tt>
   class Authorization

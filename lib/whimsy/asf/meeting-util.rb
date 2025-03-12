@@ -1,12 +1,12 @@
 #!/usr/bin/env ruby
-# Utility methods and structs related to Member's Meetings
-# NOTE: Assumes 21st century '2*'
 $LOAD_PATH.unshift '/srv/whimsy/lib' if __FILE__ == $PROGRAM_NAME
 require 'whimsy/asf'
 require 'json'
 require 'date'
 
 module ASF
+  # Utility methods and structs related to Member's Meetings.
+  # NOTE: Assumes 21st century '2*' for meeting directories.
   class MeetingUtil
     RECORDS = ASF::SVN.svnurl!('Meetings') # in SVN
     MEETINGS_DIR = ASF::SVN['Meetings'] # local checkout

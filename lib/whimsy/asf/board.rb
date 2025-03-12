@@ -3,6 +3,7 @@ require 'active_support'
 require 'active_support/time'
 
 module ASF
+  # Utility methods for board agendas or meetings.
   module Board
     TIMEZONE = ActiveSupport::TimeZone.new('UTC')
 

@@ -7,7 +7,9 @@ require_relative 'ldap'
 require_relative 'svn'
 
 module ASF
-
+  #
+  # Common access to various Member Meeting data.
+  #
   class MemberFiles
 
     NOMINATED_MEMBERS = 'nominated-members.txt'

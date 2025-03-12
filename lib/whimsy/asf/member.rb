@@ -2,6 +2,7 @@ require 'weakref'
 require 'wunderbar'
 
 module ASF
+  # Convenience class for Person who is an ASF Member.
   class Member
     include Enumerable
     @@text = nil
