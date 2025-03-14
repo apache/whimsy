@@ -19,6 +19,24 @@
         margin-left: 20px;
       }
     </style>
+    <script>
+      const notice = '/notice.txt'
+      fetch(notice)
+        .then(response => {
+          console.log(response);
+          if (response.ok) {
+            return response.text();     
+          }
+        })
+        .then(data => {
+          const noticeDiv = document.getElementById('notice');
+          text = data.replace(/\n.*/s, '');
+          link = document.createElement('a');
+          link.text = text;
+          link.href = notice;
+          noticeDiv.append(link);
+        });
+    </script>
   </head>
   <body>
     <div class="header container-fluid">
@@ -68,8 +86,8 @@
     <div class="content container-fluid">
         <div class="row">
         <div class="col-md-10 col-md-offset-1">
+        <div class="alert-warning h3" id="notice"></div>
         <header>
-          <h3>SVN access is currently intermittent; this may cause issues.</h2>
           <h2><a href="http://dictionary.reference.com/browse/whimsy">Whim<span>·</span>sy</a></h2>
           <aside>
             [hwim-zee, wim-] noun, plural whim·sies.
