@@ -68,6 +68,13 @@ timediff('git ls-remote')
 
 hostname = `hostname`
 
+noticetext, noticepath = Status.notice # is there a notice file?
+if noticetext
+  notice = "<h3 class='alert-warning'><a href=#{noticepath}>#{noticetext}</a></h3><br>"
+else
+  notice = ''
+end
+
 # What the browser sees:
 print <<-EOF
 <!DOCTYPE html>
@@ -89,6 +96,8 @@ print <<-EOF
       <img alt="Whimsy logo" title="Whimsy logo" src="../whimsy.svg" class="logo"/>
     </a>
     <h1>Whimsy Status for #{hostname}</h1>
+
+    #{notice}
 
     <div class="list-group list-group-root well">
       Loading...
