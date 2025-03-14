@@ -14,7 +14,8 @@ module ASF
 end
 
 #
-# Class which contains a number of parsers.
+# Board::Agenda contains various parsers for an entire board agenda.txt
+# file, as well as for various agenda section types.
 #
 class ASF::Board::Agenda
   # mapping of agenda section numbers to section names

@@ -1,11 +1,9 @@
 #!/usr/bin/env ruby
 
-# status methods
-
 require 'socket'
 require 'resolv'
 
-# common methods
+# Cache and display various status indicators about the live server.
 module Status
   ACTIVE_HOSTNAME = 'whimsy.apache.org'
 

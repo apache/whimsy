@@ -1,11 +1,9 @@
-#
-# Simplify access to JSON files in the /public/ directory
-#
-
 require 'json'
 require 'net/https'
 require 'fileutils'
-
+#
+# Simplify access to JSON files in the /public/ directory
+#
 module Public
   # location of where public files are placed on the web
   DATAURI = 'https://whimsy.apache.org/public/'

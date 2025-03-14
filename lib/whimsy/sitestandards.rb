@@ -1,8 +1,6 @@
 #!/usr/bin/env ruby
 # Defines partial standards for Apache website checker
-# TODO better document with specific policies
-
-# Encapsulate (most) scans/validations done on website content
+# TODO better document individual scans with specific policies
 module SiteStandards
   extend self
   CHECK_TEXT      = 'text'      # (optional) Regex of <a ...>Text to scan for</a>, of a.text.downcase.strip

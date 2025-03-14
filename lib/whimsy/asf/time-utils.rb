@@ -1,7 +1,5 @@
 # Time/date utilities
-
 # This addon must be required before use
-
 module ASFTime
   # Convert seconds to number of days, hours or minutes
   # Intended for countdown-style displays

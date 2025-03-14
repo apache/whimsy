@@ -1,13 +1,12 @@
-#
-# Common access to membership application files
-#
-
 ### INITIAL RELEASE - SUBJECT TO CHANGE ###
 
 require_relative 'config'
 require_relative 'svn'
 
 module ASF
+  #
+  # Common access to membership application files
+  #
   class MemApps
     @@files = nil
     @@tag = nil

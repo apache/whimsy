@@ -5,11 +5,10 @@ require 'weakref'
 require 'whimsy/asf/config'
 
 module ASF
-
+  # utility methods for handling mailing list attributes:
+  # - subscriptions
+  # - moderation
   module MLIST
-    # utility methods for handling mailing list attributes:
-    # - subscriptions
-    # - moderation
 
     # whilst the source files are not particularly difficult to parse, it makes
     # sense to centralise access so any necessary changes can be localised

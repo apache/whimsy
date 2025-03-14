@@ -1,9 +1,7 @@
 require 'json'
 
-# Access to documents/* (except member_apps)
-
 module ASF
-
+  # Caching and convenience methods for files in documents/* (except member_apps)
   module DocumentUtils # This module is also used for member_apps
 
     MAX_AGE = 600  # 5 minutes

@@ -18,13 +18,21 @@ require_relative 'asf/themes'
 require_relative 'asf/site-img'
 
 #
-# The ASF module contains a set of classes which encapsulate access to a number
-# of data sources such as LDAP, ICLAs, auth lists, etc. This code originally
-# was developed as a part of separate tools and was later refactored out into a
-# common library. Some of the older tools don't fully make use of this
-# refactoring.
+# The ASF module contains a set of classes which encapsulate access to many
+# public and private data sources across the ASF, as well as synthesizing
+# some useful convenience functions and data structures, like representing
+# a PMC as a Committee with list of People and the Chair.
 #
-
+# Key data access classes include:
+# SVN, Git, ICLA, LDAP, Authorization
+# 
+# Key classes that provide complex data structures:
+# Person, Committer, Member, Committee, Podling, OrgChart, Board
+#
+# This code originally was developed as a part of separate tools and was later
+# refactored out into this common library. Many Whimsy tools, but not all, make
+# use of various ASF:: features and convenience methods.
+#
 module ASF
   # Last modified time of any file in the entire source tree.
   def self.library_mtime

@@ -2,11 +2,10 @@ require 'yaml'
 require 'net/http'
 module ASF
 
+  PETRI_INFO = 'https://petri.apache.org/info.yaml'
   # Represents a Petri culture
   # currently defined in
   # https://petri.apache.org/info.yaml
-
-  PETRI_INFO = 'https://petri.apache.org/info.yaml'
   class Petri
     include Enumerable
 

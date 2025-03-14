@@ -1,7 +1,7 @@
 require 'weakref'
 
 module ASF
-
+  # Convenience functions related to emails or mailing lists.
   class Mail
     # return a Hash containing complete list of all known emails, and the
     # ASF::Person that is associated with that email.
