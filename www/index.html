@@ -20,40 +20,24 @@
       }
     </style>
     <script>
-      // TODO: replace with interface to Status.notice?
-      const notice = '/notice.txt'
+      const notice = '/getnotice.cgi'
       fetch(notice)
         .then(response => {
-          console.log(response);
           if (response.ok) {
-            return response.text();     
+            return response.json();
           }
+          return {};
         })
-        .then(data => {
-          const noticeDiv = document.getElementById('notice');
-          text = data.split('\n',2)[0]; // first line
-          link = document.createElement('a');
-          link.text = text;
-          link.href = notice;
-          pfx = text.split(':',2)[0];
-          // These classes should agree with Status.notice
-          switch (pfx) {
-            case 'DANGER': 
-            case 'BEWARE': 
-              classes = "h3 bg-danger";
-              break;
-            case 'WARNING': 
-              classes = "h3 bg-warning";
-              break;
-            case 'INFO': 
-              classes = "h3 bg-info";
-              break;
-            default:
-              classes = "h3 bg-light";
-              break;
+        .then(jzon => {
+          noticetext = jzon['noticetext'];
+          if (noticetext) {
+            const noticeDiv = document.getElementById('notice');
+            link = document.createElement('a');
+            link.text = noticetext;
+            link.href = jzon['noticepath'];
+            noticeDiv.classList = `h3 ${jzon['noticeclass']}`;
+            noticeDiv.append(link);
           }
-          noticeDiv.classList = classes;
-          noticeDiv.append(link);
         });
     </script>
   </head>
