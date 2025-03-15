@@ -71,13 +71,26 @@ module Status
     Resolv::DNS.open.getaddress(ACTIVE_HOSTNAME)
   end
 
-  # return notice file header and href path or nil
+  # return notice file header, href path and class -- or nil
   def self.notice
-    path =  '/srv/whimsy/www/notice.txt'
+    path =  '/srv/whimsy/www/notice.txt' # as file path
+    link = '/notice.txt' # as relative URL
     if File.exist? path
       begin
         File.open(path) do |fh|
-          return fh.readline.chomp, '/notice.txt'
+          txt = fh.readline.chomp
+          # These classes should agree with the script in index.html
+          case txt.split(':',2).first
+          when 'DANGER', 'BEWARE'
+            cls = 'bg-danger'
+          when 'WARNING'
+            cls = 'bg-warning'
+          when 'INFO'
+            cls = 'bg-info'
+          else
+            cls = 'bg-light'
+          end
+          return txt, link, cls
         end
       rescue EOFError
       end

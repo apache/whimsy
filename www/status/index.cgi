@@ -68,9 +68,9 @@ timediff('git ls-remote')
 
 hostname = `hostname`
 
-noticetext, noticepath = Status.notice # is there a notice file?
+noticetext, noticepath, noticeclass = Status.notice # is there a notice file?
 if noticetext
-  notice = "<h3 class='alert-warning'><a href=#{noticepath}>#{noticetext}</a></h3><br>"
+  notice = "<h3 class='#{noticeclass}'><a href=#{noticepath}>#{noticetext}</a></h3><br>"
 else
   notice = ''
 end

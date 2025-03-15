@@ -66,7 +66,7 @@ class Wunderbar::HtmlMarkup
 
   # Emit a bootstrap navbar with required ASF links
   def _whimsy_nav
-    noticetext, noticepath = Status.notice # is there a notice file?
+    noticetext, noticepath, noticeclass = Status.notice # is there a notice file?
     _nav.navbar.navbar_default do
       _div.container_fluid do
         _div.navbar_header do
@@ -91,7 +91,7 @@ class Wunderbar::HtmlMarkup
               _a 'About Whimsy', href: '/technology'
             end
             if noticetext
-              _li.bg_warning do
+              _li class: noticeclass do
                 _a noticetext, href: noticepath
               end
             end

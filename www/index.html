@@ -20,6 +20,7 @@
       }
     </style>
     <script>
+      // TODO: replace with interface to Status.notice?
       const notice = '/notice.txt'
       fetch(notice)
         .then(response => {
@@ -30,10 +31,28 @@
         })
         .then(data => {
           const noticeDiv = document.getElementById('notice');
-          text = data.replace(/\n.*/s, '');
+          text = data.split('\n',2)[0]; // first line
           link = document.createElement('a');
           link.text = text;
           link.href = notice;
+          pfx = text.split(':',2)[0];
+          // These classes should agree with Status.notice
+          switch (pfx) {
+            case 'DANGER': 
+            case 'BEWARE': 
+              classes = "h3 bg-danger";
+              break;
+            case 'WARNING': 
+              classes = "h3 bg-warning";
+              break;
+            case 'INFO': 
+              classes = "h3 bg-info";
+              break;
+            default:
+              classes = "h3 bg-light";
+              break;
+          }
+          noticeDiv.classList = classes;
           noticeDiv.append(link);
         });
     </script>
@@ -86,7 +105,7 @@
     <div class="content container-fluid">
         <div class="row">
         <div class="col-md-10 col-md-offset-1">
-        <div class="alert-warning h3" id="notice"></div>
+        <div id="notice"></div>
         <header>
           <h2><a href="http://dictionary.reference.com/browse/whimsy">Whim<span>·</span>sy</a></h2>
           <aside>
