@@ -190,7 +190,8 @@ _html do
         end
         _p do
           _ 'It also tries to check against applications which are pending processing by the secretary.'
-          _ 'These must have a subject or attachment name that mentions "membership"'
+          _ 'These must have a subject or attachment name that mentions "membership".'
+          _ 'Also, the From address must be one of the ones registered to the applicant.'
         end
         _p 'The invite and reply columns link to the relevant emails in members@ if possible'
         _p %{
