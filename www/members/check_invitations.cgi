@@ -13,6 +13,8 @@ require 'yaml'
 MAIL_DIR = '/srv/mail/members'
 MAIL_DIR_SEC = '/srv/mail/secretary'
 
+ENV['HTTP_ACCEPT'] = 'application/json' if ENV['QUERY_STRING'].include? 'json'
+
 # Get a link to lists.a.o for an email
 def lists_link(email)
   mid = email[:MessageId]
@@ -56,6 +58,8 @@ def setup_data
       next unless v[:attachments] and v[:attachments].size > 0
       if (v['Subject'] =~ %r{[Mm]embership}) or (v[:attachments].first[:name] =~ %r{[Mm]embership})
         applications << v[:from]
+        name = v['From'].sub(%r{<[^>\s]+>}, '').strip
+        applications << name if name
       end
     end
   end
@@ -138,7 +142,7 @@ def setup_data
     mails = na_emails[id] || ASF::Person.new(id).all_mail
     record[:replied] = match_person(replies, id, name, mails)
     record[:invited] = match_person(invites, id, name, mails)
-    record[:applied] = applications.any? {|x| mails.include? x}
+    record[:applied] = applications.any? {|x| mails.include? x or x == name}
   end
   return notinvited, memappfile, invites, replies, nominated_by, notapplied
 end
@@ -191,7 +195,7 @@ _html do
         _p do
           _ 'It also tries to check against applications which are pending processing by the secretary.'
           _ 'These must have a subject or attachment name that mentions "membership".'
-          _ 'Also, the From address must be one of the ones registered to the applicant.'
+          _ 'Also, the From address must be one of the ones registered to the applicant, or must match the full name.'
         end
         _p 'The invite and reply columns link to the relevant emails in members@ if possible'
         _p %{
