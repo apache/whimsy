@@ -45,6 +45,7 @@ def year_index(year):
         return
     print(HEAD)
     print(f'<h1>Board minutes: index of {year}</h1>')
+    print('<p><a href=".">Main Index</a></p>')
     for minute in minutes(folder):
         print(f"<a href='{year}/{minute}'>{minute}</a><br>")
     print(TAIL)
