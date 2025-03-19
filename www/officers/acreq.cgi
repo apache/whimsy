@@ -208,7 +208,8 @@ _html do
                 _label.control_label.col_sm_2 'Vote Link', for: "votelink"
                 _div.col_sm_10 do
                   _input.form_control name: "votelink", id: "votelink", type: "text",
-                    pattern: '.*://.*|.*@.*', placeholder: 'https://lists.apache.org/list.html?dev@project.apache.org'
+                    pattern: '.*://.*|.*@.*',
+                      placeholder: 'https://lists.apache.org/list.html?project@PROJECT.apache.org'
                 end
               end
 
