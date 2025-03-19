@@ -118,7 +118,8 @@ _html do
       related: {
         '/roster' => 'Whimsy Roster Tool',
         'https://cwiki.apache.org/confluence/display/INFRA/Reference' => 'Infra Reference Documentation',
-        'https://infra.apache.org/managing-committers.html' => 'Infra How To Create New Account Docs'
+        'https://infra.apache.org/managing-committers.html' => 'Infra How To Create New Account Docs',
+        'https://svn.apache.org/repos/infra/infrastructure/trunk/acreq/new-account-reqs.txt' => 'Requests file: new-account-reqs.txt',
       },
       helpblock: -> {
         _p %{
@@ -126,7 +127,7 @@ _html do
           on your input below.  Does both full client validation and Server-side validation.
         }
         _p %{
-          Should validation succeed, the entry will be appended to the
+          Should validation succeed, the entry will be appended to
           new-account-reqs.txt and committed.  An email will be sent to root
           (copying the relevant pmc private list) of the request.
         }
@@ -207,8 +208,6 @@ _html do
                 end
                 _div.col_md_4 do
                   _ 'If a project is provided, the account will be added as a committer on that project.'
-                  _ 'Also, a confirmation email will be sent to the private@ list for that project.'
-                  _ 'If the project is omitted, the email sent to operations@ instead.'
                 end
               end
 
