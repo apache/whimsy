@@ -132,7 +132,7 @@ _html do
         }
         _p %{
           The response contains
-          the messages produced by the commit (if any) in the response, and
+          the messages produced by the commit (if any), and
           a copy of the email that was sent.
         }
       }
@@ -168,11 +168,11 @@ _html do
                 end
                 _div.col_md_4 do
                   if @iclas == 'all'
-                    _ 'Showing all ICLAs ever received.'
+                    _ 'Showing all ICLAs ever received (excludes pending)'
                     _br
                     _a 'Show only ICLAs received recently', href: '?'
                   else
-                    _ 'Showing only ICLAs received in the last %d days.' % 100
+                    _ 'ICLAs received in the last %d days (excludes pending)' % 100
                     _br
                     _a 'Show the full list of ICLAs submitted', href: '?iclas=all'
                   end
@@ -181,7 +181,7 @@ _html do
 
               _div.form_group do
                 _label.control_label.col_sm_2 'Email', for: "email"
-                _div.col_sm_10 do
+                _div.col_sm_6 do
                   _select.form_control name: "email", id: "email", required: true do
                     _option value: ''
                     iclas.to_a.sort_by {|email, _name| email.downcase}.
@@ -190,17 +190,25 @@ _html do
                     end
                   end
                 end
+                _div.col_md_4 do
+                  _ 'As an alternative to finding the person by name, search for their email address'
+                end
               end
 
               _div.form_group do
                 _label.control_label.col_sm_2 'Project', for: "project"
-                _div.col_sm_10 do
+                _div.col_sm_6 do
                   _select.form_control name: "project", id: "pmc" do
                     _option value: ''
                     projects.each do |project|
                       _option project, value: project
                     end
                   end
+                end
+                _div.col_md_4 do
+                  _ 'If a project is provided, the account will be added as a committer on that project.'
+                  _ 'Also, a confirmation email will be sent to the private@ list for that project.'
+                  _ 'If the project is omitted, the email sent to operations@ instead.'
                 end
               end
 
