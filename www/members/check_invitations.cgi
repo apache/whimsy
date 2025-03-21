@@ -266,6 +266,13 @@ _html do
       _h1 'Invitees who have yet to be granted membership'
       _ 'If an invite email (or reply) cannot be found, the table cell is'
       _span.missing 'flagged'
+      _p do
+        _ 'There is currently no way to record declined invitations.'
+        _ 'Nor is there a way to record replies that do not match the list search criteria.'
+        _br
+        _ 'Some replies may be incorrectly recorded as missing'
+        _ 'and some applications will never be received.'
+      end
       _table.table.table_striped do
         _tr do
           _th 'invited?'
