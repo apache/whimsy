@@ -74,4 +74,27 @@ if check_now?
   info[:members].each do |id|
     Wunderbar.warn "member: unknown uid '#{id}'" unless uids.include?(id)
   end
+
+  require_relative 'parse_members'
+  begin
+    parse_members do |status, id| # status = ASF or Emeritus
+      actual = info[:members].include?(id) ? 'active' : info[:ex_members][id] ? info[:ex_members][id].split().first : 'unknown'
+      if status == 'ASF'
+        unless actual == 'active'
+          Wunderbar.warn "members.md shows #{id} as active, but is #{actual}"
+        end
+      elsif status == 'Emeritus'
+        unless actual == 'Emeritus'
+          Wunderbar.warn "members.md shows #{id} as Emeritus, but is #{actual}"
+        end
+      else
+        Wunderbar.error "Unexpected status #{status}"
+        exit(1)
+      end
+    end
+  rescue StandardError => e
+    Wunderbar.warn e.inspect
+  end
+  
 end
+
