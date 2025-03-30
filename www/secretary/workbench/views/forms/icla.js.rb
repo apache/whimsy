@@ -14,11 +14,11 @@ class ICLA < Vue
     _div.buttons do
       _button 'clear form', disabled: @filed,
         onClick: lambda {clear_form()}
-      _button 'Use mail data', disabled: @filed,
-        onClick: lambda {process_response({})}
       _button (@pdfdata.nil? ? 'Parse/use PDF data' : @pdfdisabled ? 'No PDF data found' : 'Use PDF data'),
         disabled: (@filed or @pdfdisabled or @pdfbusy),
         onClick: lambda {getpdfdata()}
+      _button 'Use mail data', disabled: @filed,
+      onClick: lambda {process_response({})}
     end
 
     _form method: 'post', action: '../../tasklist/icla', target: 'content' do
@@ -36,6 +36,22 @@ class ICLA < Vue
             _ ')'
           end
         end
+
+        _tr do
+          _th 'E-mail'
+          _td do
+            _input name: 'email', value: @email, required: true, type: 'email',
+              disabled: (@filed or @pdfbusy)
+          end
+        end
+
+        _tr do
+          _th 'Message'
+          _td do
+            _input name: 'errmsg', value: @errmsg, required: false, disabled: true
+          end
+        end
+
         _tr do
           _th 'Real Name'
           _td do
@@ -61,14 +77,6 @@ class ICLA < Vue
               type: 'checkbox', checked: @familyfirst,
               disabled: (@filed or @pdfbusy),
               onChange: self.changeFamilyFirst, onBlur: self.changeFamilyFirst
-          end
-        end
-
-        _tr do
-          _th 'E-mail'
-          _td do
-            _input name: 'email', value: @email, required: true, type: 'email',
-              disabled: (@filed or @pdfbusy)
           end
         end
 
@@ -148,10 +156,18 @@ class ICLA < Vue
     end
   end
 
+  def missing_pdf_value(value, fieldname)
+    field = document.querySelector("input[name=#{fieldname}]")
+    field.style.backgroundColor = value ? '' : 'yellow'
+    field.title = 'Cannot check this field against the PDF'
+  end
+
   # needs to be called even if post fails
   def process_response(parsed)
+    clear_form()
+    pdfdata = @pdfdata || {}
     name = parsed.FullName || @@headers.name || ''
-
+    missing_pdf_value(pdfdata.FullName, 'realname')
     # reorder name if there is a single comma present
     parts = name.split(',')
     if parts.length == 2 and parts[1] !~ /^\s*(jr|ph\.d)\.?$/i
@@ -160,9 +176,29 @@ class ICLA < Vue
 
     @realname = name
     @pubname = parsed.PublicName || name
+    missing_pdf_value(pdfdata.PublicName || pdfdata.RealName, 'pubname')
+
     @familyfirst = parsed.FamilyFirst || false
     @filename = self.genfilename(name, @familyfirst)
     @email = parsed.EMail || @@headers.from
+    @errmsg = ''
+    errmsg = document.querySelector('input[name=errmsg]')
+    errmsg.style.borderColor = ''
+    email = document.querySelector('input[name=email]')
+    email.style.borderColor = email.style.backgroundColor = ''
+    if pdfdata.EMail 
+      if pdfdata.EMail != @@headers.from
+        email.style.borderColor = 'red'
+        email.style.backgroundColor = 'yellow'
+        @errmsg = "Submitter email does not match PDF email"
+        errmsg.style.borderColor = 'red'
+      end
+    else
+      email.style.borderColor = 'red'
+      email.style.backgroundColor = 'yellow'
+      @errmsg = "Could not check email against PDF"
+      errmsg.style.borderColor = 'red'
+    end
     @user = parsed.ApacheID || ''
     project = parsed.Project
     @project = project if @@projects.include? project
@@ -173,7 +209,6 @@ class ICLA < Vue
     # @ldapgivenname = self.genldapgivenname(pubnamearray, @familyfirst)
   end
 
-  # TODO: should this be called by process_response() ?
   def clear_form()
     @pubname = @realname = @email = @filename = @user = ''
     @project = @pdfproject = ''
@@ -203,9 +238,10 @@ class ICLA < Vue
   # state
   def mounted()
     @pdfdata = nil # Not yet parsed
-    process_response({}) # preset with message data
+    clear_form
     # watch for status updates
     window.addEventListener 'message', self.status_update
+    getpdfdata() # use PDFData by preference
   end
 
   def beforeDestroy()
@@ -255,7 +291,7 @@ class ICLA < Vue
 
   # when real name changes, update file name
   def changeRealName(event)
-    @realname = event.target.value;
+    @realname = event.target.value || ''; # not nil
     @filename = self.genfilename(@realname, @familyfirst)
   end
 
