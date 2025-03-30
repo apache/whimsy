@@ -78,7 +78,7 @@ class WithdrawalRequest < Vue
           _th 'ASF id (used for file name)'
           _td do
             _input type: :text, name: 'filename', value: @filename, required: true, disabled: @filed || @availid.empty?,
-                   pattern: '[a-zA-Z][-\w]+(\.[a-z]+)?'
+                   pattern: '[a-zA-Z][\-\w]+(\.[a-z]+)?' # bare '-' not allowed in v-mode character classes
           end
         end
       end
