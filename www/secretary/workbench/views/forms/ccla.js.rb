@@ -62,7 +62,7 @@ class CCLA < Vue
           _th 'File Name'
           _td do
             _input name: 'filename', value: @filename, required: true,
-              pattern: '[a-zA-Z][-\w]+(\.[a-z]+)?', disabled: @filed
+              pattern: '[a-zA-Z][\-\w]+(\.[a-z]+)?', disabled: @filed  # bare '-' not allowed in v-mode character classes
           end
         end
 
