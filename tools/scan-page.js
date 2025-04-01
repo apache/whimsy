@@ -13,7 +13,7 @@ const option = process.argv[3] || '';
 
 // TODO: this list is not complete
 function isASFhost(host) {
-  return host == '' || 
+  return host == '' ||
          host == 'apache.org' ||
          host == 'apachecon.com' ||
          host == 'openoffice.org' ||

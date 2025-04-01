@@ -26,8 +26,8 @@ Suggested process
 If there are unexpected discrepancies, the cause must be determined before cutover.
 - Remove /srv/whimsy/www/maintenance.txt on the target system. The workbench should accessible on the target host, and should show a message that it is not the active node for changes.
 - The system is now ready for changeover
-- Contact Infra to get DNS changed over. This should only take a few minutes. 
-- Once DNS has been updated (can check with ping), 
+- Contact Infra to get DNS changed over. This should only take a few minutes.
+- Once DNS has been updated (can check with ping),
 - Touch /srv/whimsy/www/maintenance.txt on the source system to prevent further updates
 
 

@@ -8,12 +8,12 @@ module ASF
 
   #
   # Provide access to files stored in Subversion, either to local working
-  # copies that are updated via cronjobs, or to files checked out and 
+  # copies that are updated via cronjobs, or to files checked out and
   # potentially updated or created via user action in a tool.
   #
-  # Allows for conceptually mapping specific directories in common ASF 
+  # Allows for conceptually mapping specific directories in common ASF
   # SVN repositories via the repository.yml mapping file.
-  # 
+  #
   # == Key SVN methods
   #
   # - SVN.svn allows building an svn command; see also option:dryrun

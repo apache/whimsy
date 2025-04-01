@@ -108,7 +108,7 @@ _html do
           _ 'For example:'
           _pre '?filter=S&match=private@'
           _ 'This should not produce any output as private@ lists should require subscription moderation (s)'
-          
+
         end
         _ 'Sample flag meanings'
         _pre FLAGS

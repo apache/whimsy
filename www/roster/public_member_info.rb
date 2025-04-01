@@ -95,6 +95,6 @@ if check_now?
   rescue StandardError => e
     Wunderbar.warn e.inspect
   end
-  
+
 end
 

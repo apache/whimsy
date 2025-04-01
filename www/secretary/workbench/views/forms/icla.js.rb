@@ -186,7 +186,7 @@ class ICLA < Vue
     errmsg.style.borderColor = ''
     email = document.querySelector('input[name=email]')
     email.style.borderColor = email.style.backgroundColor = ''
-    if pdfdata.EMail 
+    if pdfdata.EMail
       if pdfdata.EMail != @@headers.from
         email.style.borderColor = 'red'
         email.style.backgroundColor = 'yellow'

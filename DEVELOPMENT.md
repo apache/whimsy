@@ -367,7 +367,7 @@ server subscribe to the list.
 
 - Subscribe _listname_@whimsy-_server_vmname_.apache.org to the desired
   mailing list (see also [Deployment instructions](DEPLOYMENT.md#manual-steps))
-- Add your _listname_ to the `:apache_mailmap:` entry 
+- Add your _listname_ to the `:apache_mailmap:` entry
   in [puppet](https://github.com/apache/infrastructure-p6/blob/production/data/nodes/whimsy-vm7.apache.org.yaml#L107)
 - Note that tools/deliver.rb will dump all mail locally (it does not
   currently get cleaned out) where it can be used by ASF::Mail

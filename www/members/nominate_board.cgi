@@ -34,9 +34,9 @@ def emit_form(title, prev_data)
         field_list["#{nominee.id}"] = "#{nominee.public_name}"
       end
       _whimsy_forms_select(
-        label: 'Select Nominee', 
+        label: 'Select Nominee',
         name: field,
-        multiple: false, 
+        multiple: false,
         values: prev_data[field],
         options: field_list,
         helptext: 'Select the name of a Member to nominate for the Board election'
