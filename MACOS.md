@@ -327,7 +327,7 @@ $ curl whimsy.local
 Install passenger
 ------------------------------------------------
 
-Follow the [Installing Passenger + Apache on Mac OS X](https://www.phusionpassenger.com/library/install/apache/install/oss/osx/) instructions, which are summaried below:.
+Follow the [Installing Passenger + Apache on Mac OS X](https://www.phusionpassenger.com/library/install/apache/install/oss/osx/) instructions, which are summarized below:.
 
 Install:
 
