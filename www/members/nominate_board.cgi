@@ -62,7 +62,7 @@ end
 # Returns: 'OK' or a text message describing the problem
 def validate_form(formdata: {})
   uid = formdata['availid']
-  return "You MUST provide a nomination statement for Candidate #{uid}; blank was provided!" if formdata['statement'].empty? 
+  return "You MUST provide a nomination statement for Candidate #{uid}; blank was provided!" if formdata['statement'].empty?
   chk = ASF::Person[uid]&.asf_member?
   chk.nil? and return "Invalid availid or non-Member nominated; please add manually if desired: (#{uid})\n\nYour Statement:\n#{formdata['statement']}"
   already = ASF::MemberFiles.board_nominees

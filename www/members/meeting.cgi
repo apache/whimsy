@@ -217,8 +217,8 @@ _html do
           _a 'added their Candidate Statement to their ballot', href: "#{svn_mtg_dir}/runbook/director_ballot_email.txt"
           _ ' before the official ballots are frozen.'
           _ul do
-            ['agenda.txt', 
-            '/members/check_boardnoms.cgi', 
+            ['agenda.txt',
+            '/members/check_boardnoms.cgi',
             '/members/check_membernoms.cgi'].each do |f|
               _li do
                 emit_link(svn_mtg_dir, f, ASF::MeetingUtil::MEETING_FILES[f])

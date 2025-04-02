@@ -47,7 +47,7 @@ def setup_data
   end
 
   yyyymm = File.basename(File.dirname(memappfile))[0..5]
-  
+
   applications = []
   # find relevant secretary files (exclude ones before the meeting)
   syamls = Dir[File.join(MAIL_DIR_SEC, '2?????.yml')].select {|n| File.basename(n, 'yml') >= yyyymm }

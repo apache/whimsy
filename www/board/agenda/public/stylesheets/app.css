@@ -28,7 +28,7 @@ a {color: #000}
 .pres-missing {color: #F00}
 
 /* sidebar */
-aside {float: right} 
+aside {float: right}
 aside ul {margin: 0}
 aside li {list-style: none}
 
@@ -49,8 +49,8 @@ ul.new-item-type {margin: 0}
 
 /* agenda item special notes */
 .notes {
-  background-color: #FF4; 
-  padding: 0.3em 1em; 
+  background-color: #FF4;
+  padding: 0.3em 1em;
   margin: 1em 1em 0 1em;
   font-weight: bold;
   border: 1px solid SkyBlue;
@@ -58,8 +58,8 @@ ul.new-item-type {margin: 0}
 }
 
 .rejected {
-  background-color: #F88; 
-  padding: 0.3em 1em; 
+  background-color: #F88;
+  padding: 0.3em 1em;
   margin: 1em 1em 0 1em;
   font-weight: bold;
   border: 1px solid SkyBlue;
@@ -69,8 +69,8 @@ ul.new-item-type {margin: 0}
 /* posted_reports */
 .posted-reports {
   list-style: none;
-  background-color: #90EE90; 
-  padding: 0.3em 1em; 
+  background-color: #90EE90;
+  padding: 0.3em 1em;
   margin: 1em 1em 0 1em;
   font-weight: bold;
   border: 1px solid SkyBlue;
@@ -193,9 +193,9 @@ label.checkbox span {
   margin-top: 10px;
 }
 
-.comments button, #paste_report { 
-  color: #000; 
-  background-color: #F90; 
+.comments button, #paste_report {
+  color: #000;
+  background-color: #F90;
   border-radius: 0.5em
 }
 
@@ -296,7 +296,7 @@ main hr {
     width: 80%;
   }
   .wide-form .modal-footer {
-    margin-top: 0  
+    margin-top: 0
   }
   .table-bordered {
     width: auto;
@@ -308,7 +308,7 @@ main hr {
 }
 
 #new-actions a {
-  margin-left: 6em 
+  margin-left: 6em
 }
 
 footer button {
@@ -517,7 +517,7 @@ dl.chatlog dd.info {
 
 ul.checklist {
   list-style-type: none;
-  padding-left: 1.5em; 
+  padding-left: 1.5em;
 }
 
 .checklist input[type=checkbox] {

@@ -14,8 +14,8 @@ div.value {border-spacing: 0}
 table {margin-top: 0.5em}
 td, th {padding-left: 0.5em; padding-right: 0.5em}
 .issue:before, .chair:before {content: '\21d0  '}
-.issue, .not-found {color: red; font-weight:bold} 
-.chair {color: green; font-weight:bold} 
+.issue, .not-found {color: red; font-weight:bold}
+.chair {color: green; font-weight:bold}
 .member {font-weight: bold}
 .editable td:first-child {color: blue}
 .podlingWarning{color: red; font-weight: bold}

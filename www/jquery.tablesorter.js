@@ -493,12 +493,12 @@
                 };
                 return false;
             }
-			
+
 			 function checkHeaderOptionsSortingLocked(table, i) {
                 if ((table.config.headers[i]) && (table.config.headers[i].lockedOrder)) return table.config.headers[i].lockedOrder;
                 return false;
             }
-			
+
             function applyWidget(table) {
                 var c = table.config.widgets;
                 var l = c.length;
@@ -727,7 +727,7 @@
                             this.order = this.count++ % 2;
 							// always sort on the locked order.
 							if(this.lockedOrder) this.order = this.lockedOrder;
-							
+
 							// user only whants to sort on one
                             // column
                             if (!e[config.sortMultiSortKey]) {
