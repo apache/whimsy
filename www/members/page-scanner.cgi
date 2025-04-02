@@ -28,7 +28,7 @@ if url
 
     ** ALPHA CODE **
 
-    Checking the page: #{url} 
+    Checking the page: #{url}
     Using option: #{option}
 
 

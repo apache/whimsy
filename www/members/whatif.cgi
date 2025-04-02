@@ -14,5 +14,5 @@ Dir.chdir ASF::SVN['steve']
 # However, whatif.rb no longer works with the current version of Ruby
 # See: https://github.com/apache/whimsy/issues/257
 # The file below is a corrected copy
-# 
+#
 require '/srv/whimsy/tools/whatif'

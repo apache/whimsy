@@ -17,7 +17,7 @@
 # limitations under the License.
 #####
 
-# N.B. This is a copy of the file 
+# N.B. This is a copy of the file
 # https://raw.githubusercontent.com/apache/steve/refs/heads/trunk/whatif.rb
 # adjusted to remove untaint calls (and fix the jquery reference)
 # It's not currently possible to fix the code in Git and use that;

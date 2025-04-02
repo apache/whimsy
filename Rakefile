@@ -65,7 +65,7 @@ task :update, [:command] do |_task, args|
     gems = gemlines.map {|line| [line[/['"](.*?)['"]/, 1], line.strip]}.to_h
     gems['whimsy-asf'].sub!(/,.*/, ", path: #{Dir.pwd.inspect}")
 
-    ldapname = 
+    ldapname =
     begin
       File.read(File.expand_path('../asfldap.gemname', __FILE__)).strip
     rescue Exception => e

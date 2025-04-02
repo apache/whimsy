@@ -42,7 +42,7 @@ RUN apt-get update && \
 RUN gem install bundler --install_dir=/var/lib/gems/3.2.0
 RUN gem install passenger --install_dir=/var/lib/gems/3.2.0 && \
     passenger-install-apache2-module --auto && \
-    passenger-install-apache2-module --snippet >/etc/apache2/conf-enabled/passenger.conf 
+    passenger-install-apache2-module --snippet >/etc/apache2/conf-enabled/passenger.conf
 
 # Note: pips are generally maintained by Ubuntu now
 RUN DEBIAN_FRONTEND='noninteractive' apt-get install -y python3-img2pdf

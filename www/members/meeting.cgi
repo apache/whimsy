@@ -143,11 +143,11 @@ _html do
             end
             _li "Polls Close: #{mtg_timeline['polls_close_date']} - vote early!"
             _li do
-              _a 'Online Meeting', href: '#secondhalf'              
+              _a 'Online Meeting', href: '#secondhalf'
               _ ": #{mtg_timeline['meeting_iso']} - quorum required here; expect a short meeting"
             end
             _li do
-              _a 'New Member Applications', href: '#after' 
+              _a 'New Member Applications', href: '#after'
               _ " due before: #{mtg_timeline['member_form_date']}"
             end
           end
@@ -201,7 +201,7 @@ _html do
           _ 'During this period, Members may add Seconds Statements of their own personal recommendations to various nominees.'
           _ 'Director Nominees should decide to accept the nomination, and then '
           _a 'add a Candidate Statement to their ballot', href: "#{svn_mtg_dir}/runbook/director_ballot_email.txt"
-          _br 
+          _br
           _strong "Nominations close at: #{mtg_timeline['nominations_close_date']}!"
         end
       end

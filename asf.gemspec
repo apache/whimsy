@@ -1,5 +1,5 @@
 version = File.read(File.expand_path('../asf.version', __FILE__)).strip
-ldapversion = 
+ldapversion =
 begin
   File.read(File.expand_path('../asfldap.version', __FILE__)).strip
 rescue Exception => e
@@ -7,7 +7,7 @@ rescue Exception => e
 end
 
 # Allow override of ldap gem name
-ldapname = 
+ldapname =
 begin
   File.read(File.expand_path('../asfldap.gemname', __FILE__)).strip
 rescue Exception => e
