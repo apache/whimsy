@@ -44,7 +44,7 @@ function nexttask(proceed) {
           pre.text(json.transcript.join("\n"));
 
           // highlight commands
-          pre.html(("\n" + pre.html()).replace(/\n(\$ \w+ .*)/g, 
+          pre.html(("\n" + pre.html()).replace(/\n(\$ \w+ .*)/g,
             "\n<b>$1</b>").trim());
 
           // append results
@@ -70,7 +70,7 @@ function nexttask(proceed) {
         if (json.headers) headers = json.headers;
 
         // conditionally proceed to the next task
-        nexttask(response.ok || 
+        nexttask(response.ok ||
           confirm(response.statusText + "; continue?"));
       });
     }).catch(function(error) {

@@ -97,7 +97,7 @@ _html do
       end
       if errs.size > 0 # Found an error
         _tr do
-          uid = singleton attrs['uid'] 
+          uid = singleton attrs['uid']
           _td do
             _a uid, href: "https://whimsy.apache.org/roster/committer/#{uid}"
           end
