@@ -80,7 +80,7 @@ module SiteStandards
     'security' => { # link_check a_text == 'security'
       CHECK_TEXT => /security/,
       CHECK_CAPTURE => /security/,
-      CHECK_VALIDATE => %r{^https?://.*apache.org/.*[Ss]ecurity},
+      CHECK_VALIDATE => %r{^(https?://.*apache.org|[^:]*)/.*[Ss]ecurity},
       CHECK_TYPE => true,
       CHECK_POLICY => 'https://www.apache.org/foundation/marks/pmcs#navigation',
       CHECK_DOC => '"Security" should link to either to a project-specific page [...], or to the main http://www.apache.org/security/ page.',
