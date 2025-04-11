@@ -33,11 +33,6 @@
     files:
       - apacheconhistory.csv
 
-  attic-xdocs:
-    url: asf/attic/site/xdocs/projects
-    depth: delete
-    list: true
-
   board:
     url: private/committers/board
     depth: empty

@@ -379,8 +379,7 @@ end
 
 # complete podling list
 get '/podlings' do
-  _, attic = ASF::SVN.getlisting('attic-xdocs')
-  @attic = attic.select { |file| file.end_with? '.xml'}.map {|file| File.basename(file, '.xml')}
+  @attic = ASF::Committee.load_committee_metadata[:tlps].filter {|k,v| v[:retired]}.keys
   @committees = ASF::Committee.pmcs.map(&:id) # Use list of PMCs from CI.txt
   @podlings = ASF::Podling.list
 
