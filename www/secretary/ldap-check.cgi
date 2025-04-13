@@ -9,8 +9,8 @@ owners should also be members
 members and owners should also be committers
 
 The two committers groups should have the same members:
-- cn=committers,ou=role,ou=groups,dc=apache,dc=org (new role group)
-- cn=committers,ou=groups,dc=apache,dc=org (old unix group)
+- cn=committers,ou=role,ou=groups,dc=apache,dc=org (role group - groupOfNames)
+- cn=committers,ou=groups,dc=apache,dc=org (unix group - posixGroup)
 
 All committers should be in LDAP people
 LDAP people would be committers (unless login is disabled)
@@ -259,11 +259,16 @@ _html do
   _p do
     _ 'There are currently two LDAP committers groups:'
     _br
-    _ 'cn=committers,ou=role,ou=groups,dc=apache,dc=org (new role group)'
+    _ 'cn=committers,ou=role,ou=groups,dc=apache,dc=org (role group)'
     _br
-    _ 'cn=committers,ou=groups,dc=apache,dc=org (old unix group)'
+    _ '(This is a groupOfNames, i.e. a list of member entries of the form member: uid=abcd,ou=people,dc=apache,dc=org)'
     _br
-    _ 'These should agree'
+    _ 'cn=committers,ou=groups,dc=apache,dc=org (unix group - posixGroup)'
+    _br
+    _ '(This is a posixGroup, i.e. a list of member uids of the form memberUid: abcd)'
+    _br
+    _br
+    _ 'These uids in these groups should agree'
   end
 
   new_old = cmtrol - cmtgrp
@@ -271,7 +276,7 @@ _html do
 
   if new_old.size > 0
     _p do
-      _ 'The following ids are in the new group but not the old'
+      _ 'The following ids are in the role group but not the unix group'
       _br
       _ new_old.map(&:inspect).join(',')
     end
@@ -281,7 +286,7 @@ _html do
 
   if old_new.size > 0
     _p do
-      _ 'The following ids are in the old group but not the new'
+      _ 'The following ids are in the unix group but not the role group'
       _br
       _ old_new.map(&:inspect).join(',')
     end
