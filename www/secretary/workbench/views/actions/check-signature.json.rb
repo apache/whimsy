@@ -75,7 +75,7 @@ def getURI(uri, file)
   end
 end
 
-def validate_sig(attachment, signature, msgid)
+def validate_sig(attachment, signature, msgid, message)
   # pick the latest gpg version
   gpg = `which gpg2`.chomp
   gpg = `which gpg`.chomp if gpg.empty?
@@ -140,6 +140,11 @@ def validate_sig(attachment, signature, msgid)
               else # we have a new key
                 ASF::SVN.svn!('add', outfile, {verbose: true})
               end
+              begin
+                message.add_email_details(outfile)
+              rescue StandardError => err
+                Wunderbar.warn "Failed to add properties for #{keyid} - #{err}"
+              end
               ASF::SVN.svn!('commit', outfile, {msg: "Adding key for msgid: #{msgid}", env: env})
             end
           else
@@ -189,7 +194,7 @@ def process
     signature  = message.find(@signature).as_file # This is derived from the YAML file
     msgid = message.headers.select{|k,v| k.downcase == 'message-id'}.values.first
 
-    out, err, rc = validate_sig(attachment, signature, msgid)
+    out, err, rc = validate_sig(attachment, signature, msgid, message)
 
   ensure
     attachment.unlink if attachment
