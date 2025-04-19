@@ -50,7 +50,7 @@ _html do
                 if agenda.include? 'archived'
                   year = agenda[/\d+/]
                   minutes = File.basename(agenda).sub('agenda', 'minutes')
-                  _a File.basename(agenda), href: "#{RECORDS}/#{year}/#{minutes}"
+                  _a minutes, href: "#{RECORDS}/#{year}/#{minutes}"
                 else
                   date = agenda[/\d+_\d+_\d+/].gsub('_', '-')
                   _a File.basename(agenda), href: "agenda/#{date}/"
