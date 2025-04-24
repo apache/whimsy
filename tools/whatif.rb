@@ -121,11 +121,11 @@ _html do
     _form method: 'post', id: 'vote' do
       _select name: 'date' do
         Dir["#{MEETINGS}/*/raw_board_votes.txt"].sort.reverse.each do |votes|
-	  next unless File.exist? ini(votes)
-	  date = votes[/(\d+)\/raw_board_votes.txt$/,1]
+          next unless File.exist? ini(votes)
+          date = votes[/(\d+)\/raw_board_votes.txt$/,1]
           display = date.sub(/(\d{4})(\d\d)(\d\d)/,'\1-\2-\3')
           _option display, value: date, selected: (votes == raw_votes(@date))
-	end
+        end
       end
 
       nominees.sort.each do |id, name|
