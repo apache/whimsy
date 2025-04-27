@@ -31,7 +31,7 @@ class PubSub
         uri = URI.parse(url)
         Net::HTTP.start(uri.host, uri.port,
           open_timeout: 20, read_timeout: 20, ssl_timeout: 20,
-          use_ssl: url.match(/^https:/) ? true : false) do |http|
+          use_ssl: uri.scheme == 'https') do |http|
           request = Net::HTTP::Get.new uri.request_uri
           request.basic_auth(*creds) if creds
           http.request request do |response|
