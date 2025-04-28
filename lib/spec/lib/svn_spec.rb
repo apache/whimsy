@@ -220,21 +220,21 @@ describe ASF::SVN do
   end
 
   describe 'ASF:SVN.get' do
-#    it "get(public checkout,'_template.xml') should return the revision and contents" do
-#      repo = File.join(ASF::SVN['attic-xdocs'],'_template.xml')
+#    it "get(public checkout,'HEADER.html') should return the revision and contents" do
+#      repo = File.join(ASF::SVN['minutes'],'HEADER.html')
 #      revision, content = ASF::SVN.get(repo)
 #      expect(revision).to match(/\d+/)
 #      expect(content.size).to be > 1000 # need a better test
 #    end
 
-    it "get(public url,'_template.xml') should return the revision and contents" do
-      repo = File.join(ASF::SVN.svnurl('attic-xdocs'),'_template.xml')
+    it "get(public url,'HEADER.html') should return the revision and contents" do
+      repo = File.join(ASF::SVN.svnurl('minutes'),'HEADER.html')
       revision, content = ASF::SVN.get(repo)
       expect(revision).to match(/\d+/)
-      expect(content.size).to be > 1000 # need a better test
+      expect(content.size).to be > 260 # need a better test
     end
     it "get(public url,'_____') should return 0 and nil" do
-      repo = File.join(ASF::SVN.svnurl('attic-xdocs'),'_____')
+      repo = File.join(ASF::SVN.svnurl('minutes'),'_____')
       revision, content = ASF::SVN.get(repo)
       expect(revision).to eq('0')
       expect(content).to eq(nil)
@@ -253,18 +253,18 @@ describe ASF::SVN do
     end
 
     it "svn('info', path) should return 'Name: path'" do
-      repo = File.join(ASF::SVN.svnurl('attic-xdocs'),'_template.xml')
+      repo = File.join(ASF::SVN.svnurl('minutes'),'HEADER.html')
       out, _err = ASF::SVN.svn('info',repo)
-      expect(out).to match(/^Name: _template.xml$/)
+      expect(out).to match(/^Name: HEADER.html$/)
     end
     it "svn('info', [path]) should return 'Name: path'" do
-      repo = File.join(ASF::SVN.svnurl('attic-xdocs'),'_template.xml')
+      repo = File.join(ASF::SVN.svnurl('minutes'),'HEADER.html')
       out, _err = ASF::SVN.svn('info',[repo])
-      expect(out).to match(/^Name: _template.xml$/)
+      expect(out).to match(/^Name: HEADER.html$/)
     end
     it "svn('info', [path1, path2], {item: kind'}) should return 'file ...'" do
-      path1 = File.join(ASF::SVN.svnurl('attic-xdocs'),'_template.xml')
-      path2 = File.join(ASF::SVN.svnurl('attic-xdocs'),'jakarta.xml')
+      path1 = File.join(ASF::SVN.svnurl('minutes'),'HEADER.html')
+      path2 = File.join(ASF::SVN.svnurl('minutes'),'2000','board_minutes_2000_02_28.txt')
       out, _err = ASF::SVN.svn('info',[path1, path2], {item: 'kind'})
       expect(out).to match(/^file +https:/)
     end

@@ -132,6 +132,7 @@
     url: private/documents/member_apps
     depth: skip
 
+  # N.B. This is used as a public repo for tests, see svn_spec.rb and svn_wunderbar_spec.rb
   minutes:
     url: asf/infrastructure/site/trunk/content/foundation/records/minutes
 

@@ -4,6 +4,7 @@ on:
     paths:
       - '**/unittestlib.yml'
       - 'lib/**'
+      - 'repository.yml'
 
   workflow_dispatch:
 

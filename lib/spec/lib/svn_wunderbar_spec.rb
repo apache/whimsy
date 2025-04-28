@@ -25,7 +25,7 @@ svnmucc_missing = $?.exitstatus == 0 ? false : 'svnmucc not found'
 
 describe 'ASF::SVN.svn_!' do
   it "svn_!('info') should return array with Name:" do
-    repo = File.join(ASF::SVN.svnurl('attic-xdocs'),'_template.xml')
+    repo = File.join(ASF::SVN.svnurl('minutes'),'HEADER.html')
 
     rc, out = _json do |_|
       ASF::SVN.svn_!('info', repo, _)
@@ -33,10 +33,10 @@ describe 'ASF::SVN.svn_!' do
 
     expect(rc).to be(0)
     expect(out['transcript'].class).to equal(Array)
-    expect(out['transcript'].include?('Name: _template.xml')).to be(true)
+    expect(out['transcript'].include?('Name: HEADER.html')).to be(true)
   end
   it "svn_!('info', 'no file') should fail with E200009" do
-    repo = File.join(ASF::SVN.svnurl('attic-xdocs'),'___')
+    repo = File.join(ASF::SVN.svnurl('minutes'),'___')
 
     rc, out = _json do |_|
       ASF::SVN.svn_!('info', repo, _)
@@ -63,7 +63,7 @@ describe 'ASF::SVN.svn_' do
   end
 
   it "svn_('info') should return array with Name:" do
-    repo = File.join(ASF::SVN.svnurl('attic-xdocs'),'_template.xml')
+    repo = File.join(ASF::SVN.svnurl('minutes'),'HEADER.html')
 
     rc, out = _json do |_|
       ASF::SVN.svn_('info', repo, _)
@@ -71,10 +71,10 @@ describe 'ASF::SVN.svn_' do
 
     expect(rc).to be(0)
     expect(out['transcript'].class).to equal(Array)
-    expect(out['transcript'].include?('Name: _template.xml')).to be(true)
+    expect(out['transcript'].include?('Name: HEADER.html')).to be(true)
   end
   it "svn_('info') should return array" do
-    repo = File.join(ASF::SVN.svnurl('attic-xdocs'),'_template.xml')
+    repo = File.join(ASF::SVN.svnurl('minutes'),'HEADER.html')
 
     rc, out = _json do |_|
       ASF::SVN.svn_('info', repo, _, {dryrun: true})
@@ -82,11 +82,11 @@ describe 'ASF::SVN.svn_' do
 
     expect(rc).to be(0)
     expect(out['transcript'].class).to equal(Array)
-    exp = ['svn', 'info', '--non-interactive', '--', 'https://svn.apache.org/repos/asf/attic/site/xdocs/projects/_template.xml']
+    exp = ['svn', 'info', '--non-interactive', '--', 'https://svn.apache.org/repos/asf/infrastructure/site/trunk/content/foundation/records/minutes/HEADER.html']
     expect(out['transcript'][1]).to eq(exp.join(' '))
   end
   it "svn_('info', 'no file') should fail with E200009" do
-    repo = File.join(ASF::SVN.svnurl('attic-xdocs'),'___')
+    repo = File.join(ASF::SVN.svnurl('minutes'),'___')
 
     rc, out = _json do |_|
       ASF::SVN.svn_('info', repo, _)
@@ -170,8 +170,8 @@ describe 'ASF::SVN.svn_' do
 end
 
 describe 'ASF::SVN.update' do
-  it "update('_template.xml') should return array" do
-    repo = File.join(ASF::SVN.svnurl('attic-xdocs'),'_template.xml')
+  it "update('HEADER.html') should return array" do
+    repo = File.join(ASF::SVN.svnurl('minutes'),'HEADER.html')
 
     rc, out = _json do |_|
       ASF::SVN.update(repo, 'Dummy message', ENV_.new, _, {dryrun:true}) do |tmpdir, contents|
