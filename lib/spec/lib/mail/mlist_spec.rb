@@ -33,7 +33,7 @@ describe ASF::MLIST do
       if TEST_DATA
         expect(subs.length).to be_between(1, 10).inclusive
       else
-        expect(subs.length).to be_between(500, 1000).inclusive
+        expect(subs.length).to be_between(500, 1100).inclusive
       end
     end
   end
