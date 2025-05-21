@@ -58,6 +58,10 @@ class Info < Vue
           _dd { _a 'Prior Reports', href: @@item.prior_reports }
         end
 
+        if @@item.mailing_lists
+          _dd { _a 'Mailing Lists', href: @@item.mailing_lists }
+        end
+
         if @@item.stats
           _dd { _a 'Statistics', href: @@item.stats }
         end
