@@ -151,6 +151,8 @@ class ASF::Board::Agenda
         if section =~ /^[A-Z][A-Z]?$/
           hash['stats'] = 'https://reporter.apache.org/wizard/statistics?' +
             CGI.escape(committee.name)
+          hash['mailing_lists'] =
+            "https://lists.apache.org/list.html?private@#{CGI.escape committee.name}.apache.org"
         end
         hash['prior_reports'] = minutes(committee.display_name)
       end
