@@ -20,6 +20,9 @@ class PPMC < Vue
     end
 
     if @ppmc.status == 'graduated'
+      # disable modification; may cause issues
+      @@auth.ppmc = false
+      @@auth.ipmc = false
       _div.alert.alert_danger do
         _p do
           _b 'Warning: '
