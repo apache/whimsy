@@ -362,16 +362,18 @@ module ASF
     # Params:
     # - input: the contents of committee-info.yaml
     # - pmc: the pmc name
-    # - yyyymm: YYYY-MM retirement date
+    # - yyyymmdd: YYYY-MM-DD retirement date
     #  Returns: the updated contents
-    def self.record_termination(input, pmc, yyyymm)
+    def self.record_termination(input, pmc, yyyymmdd)
+      yyyymm = yyyymmdd[0, 7] # keep only yyyy-mm
       YamlFile.replace_section(input, :tlps) do |section, _yaml|
         key = ASF::Committee.to_canonical(pmc)
         if section[key]
           section[key][:retired] = yyyymm
+          section[key][:retired_date] = yyyymmdd
           section[key][:name] = pmc
         else
-          section[key] = {retired: yyyymm, name: pmc}
+          section[key] = {retired: yyyymm, retired_date: yyyymmdd, name: pmc}
         end
         section.sort.to_h
       end

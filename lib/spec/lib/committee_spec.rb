@@ -169,7 +169,8 @@ describe ASF::Committee do
 
   describe 'ASF::ASF::Committee.record_termination' do
     cinfoy = File.join(ASF::SVN['board'], 'committee-info.yaml')
-    yyyymm = '2020-10'
+    yyyymmdd = '2020-10-12'
+    yyyymm = yyyymmdd[0, 7] # keep only yyyy-mm
     data = File.read cinfoy
     yaml = YAML.safe_load(data, permitted_classes: [Symbol])
     it 'should contain HTTPD, but not retired' do
@@ -178,11 +179,12 @@ describe ASF::Committee do
       expect(para[:retired]).to eql(nil)
     end
     it 'should add retired tag to HTTPD' do
-      data = ASF::Committee.record_termination(data, 'HTTP Server', yyyymm)
+      data = ASF::Committee.record_termination(data, 'HTTP Server', yyyymmdd)
       yaml = YAML.safe_load(data, permitted_classes: [Symbol])
       para = yaml[:tlps]['httpd']
       expect(para).not_to eql(nil)
       expect(para[:retired]).to eql(yyyymm)
+      expect(para[:retired_date]).to eql(yyyymmdd)
       expect(para[:name]).to eql('HTTP Server')
     end
     yaml = YAML.safe_load(data, permitted_classes: [Symbol])
@@ -193,7 +195,7 @@ describe ASF::Committee do
       expect(para).to eql(nil)
     end
     it 'should now contain XYZXYZ' do
-      data = ASF::Committee.record_termination(data, name, yyyymm)
+      data = ASF::Committee.record_termination(data, name, yyyymmdd)
       yaml = YAML.safe_load(data, permitted_classes: [Symbol])
       para = yaml[:tlps][pmc]
       expect(para).not_to eql(nil)

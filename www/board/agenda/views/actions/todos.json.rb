@@ -4,10 +4,12 @@
 
 TLPREQ = ASF::SVN['tlpreq-input']
 
-date = params[:date].gsub('-', '_')
-raise ArgumentError, "Invalid date #{date}" unless date =~ /\A\d+_\d+_\d+\z/
-datehy = date.gsub('_', '-')
-date_established = Date.parse(datehy)
+yyyymmdd = params[:date] # The Agenda app uses hyphens in dates
+raise ArgumentError, "Invalid date #{yyyymmdd}" unless yyyymmdd =~ /\A\d+-\d+-\d+\z/
+
+date = yyyymmdd.gsub('-', '_') # files use underscores
+raise ArgumentError, "Invalid date #{date}" unless date =~ /\A\d+_\d+_\d+\z/ # double check
+date_established = Date.parse(yyyymmdd)
 
 agenda = "board_agenda_#{date}.txt"
 
@@ -160,11 +162,10 @@ end
 
 # update ci.yaml to add retirements
 if @terminate and env.password
-  yyyymm = datehy[0, 7] # keep only yyyy-mm
   cinfoy = File.join(ASF::SVN['board'], 'committee-info.yaml')
   @terminate.each do |resolution|
     ASF::SVN.update cinfoy, title, env, _ do |_tmpdir, contents|
-      ASF::Committee.record_termination(contents, resolution['name'], yyyymm)
+      ASF::Committee.record_termination(contents, resolution['name'], yyyymmdd)
     end
   end
 end
