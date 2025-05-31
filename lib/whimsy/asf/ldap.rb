@@ -1589,4 +1589,5 @@ if __FILE__ == $0
   newids = ASF.committerids()
   puts newids.length
   puts newids.first
+  ASF::RoleGroup.listcns.map {|g| puts ASF::RoleGroup.find(g).dn}
 end
