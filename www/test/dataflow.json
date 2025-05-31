@@ -87,8 +87,8 @@
     ]
   },
   "https://whimsy.apache.org/public/public_ldap_roles.json": {
-    "description": "Membership of LDAP role groups. For example committers shows the list of people with committer karma",
-    "format": "hash of hashes['rolegroups']['committers']['roster'][n] = 'brett'",
+    "description": "Membership of LDAP role groups. Note: the committers group is deprecated (INFRA-23030)",
+    "format": "hash of hashes['rolegroups']['groupname']['roster'][n] = 'uid'",
     "maintainer": "/www/roster/public_ldap_roles.rb",
     "sources": [
       "/lib/whimsy/asf/ldap.rb"
