@@ -36,8 +36,17 @@ _html do
 
   _h1 'LDAP membership checks'
 
-  cmtgrp = ASF::Group['committers'].memberids # cn=committers,ou=groups
-  cmtrol = ASF::Committer.listids # cn=committers,ou=role
+  cmtgrp = ASF::Group['committers'].memberids # cn=committers,ou=groups - canonical
+  role_base = 'ou=role,ou=groups,dc=apache,dc=org'
+  # Does the deprecated role group still exist?
+  has_role_group = ASF.search_one(role_base, 'cn=committers', 'dn').size > 0
+  if has_role_group
+    cmtrol = ASF::RoleGroup['committers'].memberids # cn=committers,ou=role - deprecated
+  else
+    cmtrol = []
+  end
+  # TODO: delete the code which uses cmtrol when the LDAP group no longer exists
+
   people = ASF::Person.preload(%w(uid createTimestamp asf-banned asf-altEmail mail loginShell))
 
   # fetch the email details up front to avoid rescanning
@@ -255,41 +264,42 @@ _html do
     _p 'All committers are included in LDAP people'
   end
 
-  _h2 'Committers'
-  _p do
-    _ 'There are currently two LDAP committers groups:'
-    _br
-    _ 'cn=committers,ou=role,ou=groups,dc=apache,dc=org (role group)'
-    _br
-    _ '(This is a groupOfNames, i.e. a list of member entries of the form member: uid=abcd,ou=people,dc=apache,dc=org)'
-    _br
-    _ 'cn=committers,ou=groups,dc=apache,dc=org (unix group - posixGroup)'
-    _br
-    _ '(This is a posixGroup, i.e. a list of member uids of the form memberUid: abcd)'
-    _br
-    _br
-    _ 'These uids in these groups should agree'
-  end
-
-  new_old = cmtrol - cmtgrp
-  old_new = cmtgrp - cmtrol
-
-  if new_old.size > 0
+  if has_role_group
+    _h2 'Committers'
     _p do
-      _ 'The following ids are in the role group but not the unix group'
+      _ 'There are currently two LDAP committers groups:'
       _br
-      _ new_old.map(&:inspect).join(',')
-    end
-  elsif old_new.size == 0
-    _p 'The groups are equal'
-  end
-
-  if old_new.size > 0
-    _p do
-      _ 'The following ids are in the unix group but not the role group'
+      _ 'cn=committers,ou=role,ou=groups,dc=apache,dc=org (role group)'
       _br
-      _ old_new.map(&:inspect).join(',')
+      _ '(This is a groupOfNames, i.e. a list of member entries of the form member: uid=abcd,ou=people,dc=apache,dc=org)'
+      _br
+      _ 'cn=committers,ou=groups,dc=apache,dc=org (unix group - posixGroup)'
+      _br
+      _ '(This is a posixGroup, i.e. a list of member uids of the form memberUid: abcd)'
+      _br
+      _br
+      _ 'These uids in these groups should agree'
+    end
+
+    new_old = cmtrol - cmtgrp
+    old_new = cmtgrp - cmtrol
+
+    if new_old.size > 0
+      _p do
+        _ 'The following ids are in the role group but not the unix group'
+        _br
+        _ new_old.map(&:inspect).join(',')
+      end
+    elsif old_new.size == 0
+      _p 'The groups are equal'
+    end
+
+    if old_new.size > 0
+      _p do
+        _ 'The following ids are in the unix group but not the role group'
+        _br
+        _ old_new.map(&:inspect).join(',')
+      end
     end
   end
-
 end
