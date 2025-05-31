@@ -426,21 +426,20 @@ module ASF
   end
 
   # Obtain a list of committers from LDAP
-  # <tt>cn=committers,ou=role,ou=groups,dc=apache,dc=org</tt>
+  # <tt>cn=committers,ou=groups,dc=apache,dc=org</tt>
   def self.committers
-    weakref(:committers) {RoleGroup.find('committers').members}
+    weakref(:committers) {ASF::Group['committers'].members}
   end
 
   # Obtain a list of committerids from LDAP
-  # <tt>cn=committers,ou=role,ou=groups,dc=apache,dc=org</tt>
+  # <tt>cn=committers,ou=groups,dc=apache,dc=org</tt>
   def self.committerids
-    weakref(:committerids) {RoleGroup.find('committers').memberids}
+    weakref(:committerids) {ASF::Group['committers'].memberids}
   end
 
   # Obtain a list of members from LDAP
   # <tt>cn=member,ou=groups,dc=apache,dc=org</tt>
   # Note: includes some non-ASF member infrastructure contractors
-  # TODO: convert to RoleGroup at some point?
   def self.members
     weakref(:members) {Group.find('member').members}
   end
@@ -448,7 +447,6 @@ module ASF
   # Obtain a list of memberids from LDAP
   # <tt>cn=member,ou=groups,dc=apache,dc=org</tt>
   # Note: includes some non-ASF member infrastructure contractors
-  # TODO: convert to RoleGroup at some point?
   def self.memberids
     weakref(:memberids) {Group.find('member').memberids}
   end
@@ -595,18 +593,18 @@ module ASF
   # Manage committers: list, add, and remove people not only from the list
   # of people, but from the list of committers.
   class Committer < Base
-    @base = 'ou=role,ou=groups,dc=apache,dc=org'
+    @role_base = 'ou=role,ou=groups,dc=apache,dc=org' # Keep for now
+    # Does the role group still exist?
+    @has_role_group = ASF.search_one(@role_base, 'cn=committers', 'dn').size > 0
 
     # get a list of committers
     def self.list
-      ASF.search_one(base, 'cn=committers', 'member').flatten.
-        map {|uid| Person.find uid[/uid=(.*?),/, 1]}
+      self.listids.map {|uid| Person.find uid}
     end
 
     # get a list of committers (ids only)
     def self.listids
-      ASF.search_one(base, 'cn=committers', 'member').flatten.
-        map {|uid| uid[/uid=(.*?),/, 1]}
+      ASF::Group['committers'].memberids
     end
 
     # create a new person and add as a new committer to LDAP.
@@ -667,12 +665,14 @@ module ASF
       # if person is a string, find the person object
       person = ASF::Person.find(person) if person.instance_of? String
 
-      # remove person from 'legacy' committers list, ignoring exceptions
+      # remove person from canonical committers list, ignoring exceptions
       ASF::Group['committers'].remove(person) rescue nil
 
-      # remove person from 'new' committers list, ignoring exceptions
-      ASF::LDAP.modify("cn=committers,#{@base}",
-        [ASF::Base.mod_delete('member', [person.dn])]) rescue nil
+      # remove person from deprecated committers list, ignoring exceptions
+      if @has_role_group
+        ASF::LDAP.modify("cn=committers,#{@role_base}",
+          [ASF::Base.mod_delete('member', [person.dn])]) rescue nil
+      end
 
       # remove person from LDAP (should almost never be done)
       ASF::Person.remove(person.id)
@@ -686,12 +686,14 @@ module ASF
         person = ASF::Person[person] or raise ArgumentError.new("Cannot find person: '#{id}'")
       end
 
-      # add person to 'new' committers list
-      ASF::LDAP.modify("cn=committers,#{@base}",
-        [ASF::Base.mod_add('member', [person.dn])])
-
-      # add person to 'legacy' committers list
+      # add person to canonical committers list
       ASF::Group['committers'].add(person)
+
+      # add person to deprecated committers list
+      if @has_role_group
+        ASF::LDAP.modify("cn=committers,#{@role_base}",
+          [ASF::Base.mod_add('member', [person.dn])])
+      end
     end
 
     # deregister an existing person as a committer
@@ -702,12 +704,14 @@ module ASF
         person = ASF::Person[person] or raise ArgumentError.new("Cannot find person: '#{id}'")
       end
 
-      # remove person from 'legacy' committers list
+      # remove person from canonical committers list
       ASF::Group['committers'].remove(person)
 
-      # remove person from 'new' committers list
-      ASF::LDAP.modify("cn=committers,#{@base}",
-        [ASF::Base.mod_delete('member', [person.dn])])
+      # remove person from deprecated committers list
+      if @has_role_group
+        ASF::LDAP.modify("cn=committers,#{@role_base}",
+          [ASF::Base.mod_delete('member', [person.dn])])
+      end
     end
 
   end
@@ -1565,7 +1569,8 @@ module ASF
   end
 
   # <tt>ou=role</tt> subtree of <tt>ou=groups,dc=apache,dc=org</tt>, used for
-  # committers (new) group only currently
+  # committers (new) group only currently.
+  # Also used in public_ldap_roles.rb JSON generator
   class RoleGroup < Service
     @base = 'ou=role,ou=groups,dc=apache,dc=org'
   end
@@ -1584,5 +1589,4 @@ if __FILE__ == $0
   newids = ASF.committerids()
   puts newids.length
   puts newids.first
-  ASF::RoleGroup.listcns.map {|g| puts ASF::RoleGroup.find(g).dn}
 end
