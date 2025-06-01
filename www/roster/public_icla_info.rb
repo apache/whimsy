@@ -19,6 +19,7 @@ if ARGV.length == 2
 
   info_id = {
     last_updated: ASF::ICLA.svn_change,
+    committer_count: ids.size,
     committers: Hash[ids.sort]
   }
   public_json_output_file(info_id, ARGV.shift)
@@ -26,6 +27,7 @@ if ARGV.length == 2
   info_noid = {
     last_updated: ASF::ICLA.svn_change,
     see_instead: 'https://whimsy.apache.org/officers/unlistedclas.cgi',
+    noid_count: noid.size,
     non_committers: [] # deprecated
   }
   public_json_output_file(info_noid, ARGV.shift)
@@ -34,8 +36,11 @@ else # combined (original) output file
 
   info = {
     last_updated: ASF::ICLA.svn_change,
+    committer_count: ids.size,
     committers: Hash[ids.sort],
-    non_committers: noid # do not sort because the input is already sorted by surname
+    see_instead: 'https://whimsy.apache.org/officers/unlistedclas.cgi',
+    noid_count: noid.size,
+    non_committers: [] # deprecated
   }
 
   public_json_output(info) # original full output
