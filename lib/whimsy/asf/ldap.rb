@@ -1573,7 +1573,6 @@ module ASF
 
   # <tt>ou=role</tt> subtree of <tt>ou=groups,dc=apache,dc=org</tt>, used for
   # committers (new) group only currently.
-  # Also used in public_ldap_roles.rb JSON generator
   class RoleGroup < Service
     @base = 'ou=role,ou=groups,dc=apache,dc=org'
   end

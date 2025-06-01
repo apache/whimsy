@@ -25,7 +25,6 @@ ruby roster/public_ldap_authgroups.rb public/public_ldap_authgroups.json > logs/
 ruby roster/public_ldap_groups.rb public/public_ldap_groups.json > logs/public-ldap-groups 2>&1
 ruby roster/public_ldap_people.rb public/public_ldap_people.json > logs/public-ldap-people 2>&1
 ruby roster/public_ldap_projects.rb public/public_ldap_projects.json > logs/public-ldap-projects 2>&1
-ruby roster/public_ldap_roles.rb public/public_ldap_roles.json > logs/public-ldap-roles 2>&1
 ruby roster/public_ldap_services.rb public/public_ldap_services.json > logs/public-ldap-services 2>&1
 ruby roster/public_member_info.rb public/member-info.json > logs/public-member-info 2>&1
 ruby roster/public_nonldap_groups.rb public/public_nonldap_groups.json > logs/public-nonldap-groups 2>&1

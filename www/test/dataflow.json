@@ -86,14 +86,6 @@
       "/lib/whimsy/asf/ldap.rb"
     ]
   },
-  "https://whimsy.apache.org/public/public_ldap_roles.json": {
-    "description": "Membership of LDAP role groups. Note: the committers group is deprecated (INFRA-23030)",
-    "format": "hash of hashes['rolegroups']['groupname']['roster'][n] = 'uid'",
-    "maintainer": "/www/roster/public_ldap_roles.rb",
-    "sources": [
-      "/lib/whimsy/asf/ldap.rb"
-    ]
-  },
   "https://whimsy.apache.org/public/public_ldap_services.json": {
     "description": "Membership of LDAP service groups. For example pmc_chairs shows the list of people with PMC chair karma",
     "format": "hash of hashes['services']['board']['roster'][1] = 'brett'",
