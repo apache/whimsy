@@ -97,20 +97,15 @@ _html do
       _th 'ICLA stub'
     end
 
-    input = File.join(ASF::SVN['officers'], 'iclas.txt')
-    document = File.read(input)
-    document.scan(/^((\w.*?):.*?:(.*?):(.*?):(.*))/) do |(line, id, name, email, comment)|
+    ASF::ICLA.each do |icla_entry|
+      line = icla_entry.as_line
+      id = icla_entry.id
+      name = icla_entry.name
+      email = icla_entry.email
+      comment = icla_entry.form
+      claRef = icla_entry.claRef
+
       issue, note = nil, nil
-      comment2 = comment.dup
-      claRef = nil
-
-      if comment.sub!(/\s*(\(.*?\))\s*/, '')
-        issue, note = 'comment', "parenthetical comment: #{$1.inspect}"
-      end
-
-      if comment.sub!(/Signed CLA(.+?);/, 'Signed CLA;')
-        issue, note = 'extra', "extra text: #{$1.inspect}"
-      end
 
       if id != 'notinavail'
         icla_ids[id] << line
@@ -122,7 +117,6 @@ _html do
         issue, note = 'notinldap', 'not in LDAP people'
       end
       if comment =~ /Signed CLA;(.*)/
-        claRef = $1
         # to be valid, the entry must exist; also record what we have seen
         missing = claRef.split(',').reject {|path| seen[path] << [id,name,email]; iclafiles.include? path}
 
@@ -173,7 +167,7 @@ _html do
           end
 
           _td email
-          _td comment2
+          _td comment
         end
       end
     end
