@@ -6,7 +6,7 @@ require 'wunderbar/script'
 require 'ruby2js/filter/functions'
 require 'whimsy/asf'
 
-ldap = ASF::Person.listids
+people = ASF::Person.listids
 committers = ASF.committerids # to check for missing ICLAs
 
 ASF::ICLAFiles.update_cache({})
@@ -26,7 +26,7 @@ _html do
 
   _h2_ 'LDAP Status'
   _div do
-    _label "#{ldap.length} People entries found."
+    _label "#{people.length} People entries found."
     _br
     _label "#{committers.length} committers found."
   end
@@ -72,13 +72,14 @@ _html do
     _label "notinavail entries", for: 'notinavail'
   end
 
-  iclas = Hash.new{|h,k| h[k]=[]}
+  iclafiles = Hash.new{|h,k| h[k]=[]}
   dupes = 0
   ASF::ICLAFiles.listnames.each do |file|
+    next if file == '__keys__/'
     name = File.basename(file)
     stem = name.sub(/\.\w+$/, '')
-    dupes += 1 if iclas.has_key? stem
-    iclas[stem] << name
+    dupes += 1 if iclafiles.has_key? stem
+    iclafiles[stem] << name
   end
 
   seen = Hash.new { |h, k| h[k] = []} # iclas.txt CLA stem values (value = id,name)
@@ -117,13 +118,13 @@ _html do
       end
 
       # check LDAP independently; may be overridden by issues with comment field
-      if id != 'notinavail' and ldap.length > 0 and not ldap.include? id
-        issue, note = 'notinldap', 'not in LDAP'
+      if id != 'notinavail' and people.length > 0 and not people.include? id
+        issue, note = 'notinldap', 'not in LDAP people'
       end
       if comment =~ /Signed CLA;(.*)/
         claRef = $1
         # to be valid, the entry must exist; also record what we have seen
-        missing = claRef.split(',').reject {|path| seen[path] << [id,name,email]; iclas.include? path}
+        missing = claRef.split(',').reject {|path| seen[path] << [id,name,email]; iclafiles.include? path}
 
         if not missing.empty?
           issue, note = 'error', "missing icla: #{missing.first.inspect}"
@@ -178,11 +179,11 @@ _html do
 
   # drop known test entries
   TEST_ENTRIES = %w(testsebb testrubys testcml testdooh)
-  committers.reject! {|id| TEST_ENTRIES.include? id}
+  noiclas = committers.reject {|id| TEST_ENTRIES.include? id}
 
-  _h2 'Committers without an ICLA recorded'
+  _h2 "Committers without an ICLA recorded (#{noiclas.size})"
 
-  if committers.size > 0
+  if noiclas.size > 0
     _table do
       _tr do
         _th 'id'
@@ -190,7 +191,7 @@ _html do
         _th 'Join Date'
         _th 'Nologin?'
       end
-      committers.each do |id|
+      noiclas.each do |id|
         _tr do
           _td do
             _a id, href: '/roster/committer/' + id
@@ -212,7 +213,7 @@ _html do
         _th 'stem'
         _th 'paths'
       end
-      iclas.each do |icla,paths|
+      iclafiles.each do |icla,paths|
         if paths.size > 1
           _tr do
             _td icla
@@ -228,7 +229,7 @@ _html do
   end
 
   # drop any stems we have seen
-  iclas.reject! {|path| seen.include? path}
+  iclafiles_not_seen = iclafiles.reject {|path| seen.include? path}
 
   # select entries with count != 1
   seen.select! { |k, v| v.length != 1}
@@ -255,13 +256,13 @@ _html do
     end # table
   end
 
-  if iclas.size > 0
+  if iclafiles_not_seen.size > 0
     _h2_ 'ICLA files not matched against iclas.txt'
     _table do
       _tr do
         _th 'stem'
       end
-      iclas.each do |k,v|
+      iclafiles_not_seen.each do |k,v|
         v.each do |p|
           _tr do
             _td do
@@ -294,9 +295,9 @@ _html do
   end
 
   # Check that all LDAP entries appear in iclas.txt
-  no_icla = ldap.select {|k| not icla_ids.has_key? k}
+  no_icla = people.reject {|k| icla_ids.has_key? k}
   # remove known exceptions
-  %w(testsebb testrubys testcml testdooh apldaptest).each {|w| no_icla.delete w}
+  %w(testsebb testrubys testcml testdooh apldaptest cml-test iroh-test rmonk).each {|w| no_icla.delete w}
   if no_icla.size > 0
     _h2 'LDAP entries not listed in iclas.txt'
     _table_ do
