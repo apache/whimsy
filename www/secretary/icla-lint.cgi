@@ -165,8 +165,10 @@ _html do
           end
 
           _td do
-            _button 'email', data_email: "#{name} <#{email}>#{apachemail}",
-              data_issue: note, data_name: name
+            if note.start_with? ('missing') # email only applies to missing ICLA currently
+              _button 'email', data_email: "#{name} <#{email}>#{apachemail}",
+                data_issue: note, data_name: name
+            end
             _span note
           end
 
