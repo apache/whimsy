@@ -824,13 +824,14 @@ module ASF
     # preloading the <tt>loginShell</tt> attributes for these people.
     def nologin?
       # FreeBSD uses /usr/bin/false; Ubuntu uses /bin/false
+      # It's not clear whether this has any effect now
       not attrs['loginShell'] or %w(/bin/false bin/nologin bin/no-cla).any? {|a| attrs['loginShell'].first.include? a}
     end
 
     # determine if the person has asf-banned: yes.  If scanning a large list, consider
     # preloading the <tt>asf-banned</tt> attributes for these people.
     def asf_banned?
-      # No idea what this means (yet)
+      # This prevents a user from changing their password, and may prevent them from logging in
       attrs['asf-banned']&.first == 'yes'
     end
 

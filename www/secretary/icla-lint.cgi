@@ -186,6 +186,7 @@ _html do
         _th 'Public Name'
         _th 'Join Date'
         _th 'Nologin?'
+        _th 'asf-banned?'
       end
       noiclas.each do |id|
         _tr do
@@ -195,6 +196,7 @@ _html do
           _td ASF::Person[id].public_name
           _td ASF::Person[id].createDate
           _td ASF::Person[id].nologin?
+          _td ASF::Person[id].asf_banned?
         end
       end
     end
