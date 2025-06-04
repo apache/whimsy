@@ -89,7 +89,7 @@ def parse(id, site, name, podling=false)
     data[:errors] = ioe.message
     return data
   end
-  puts "#{id} #{uri} #{status}"
+  puts "@#{__LINE__}: #{id} #{uri} #{status}"
   # Bail and return if getting the site returns an error code
   if response.respond_to? :code and response.code =~ /^[45]/
     data[:errors] = "cache.get(#{site}) error code #{response.code}"
@@ -120,7 +120,7 @@ def parse(id, site, name, podling=false)
     # Normalize the text and href for our capture purposes
     a_href = a['href'].to_s.strip
     a_text = get_link_text(a) # Not down-cased yet
-    $stderr.puts "#{a_text.inspect} #{a_href}" if $verbose
+    $stderr.puts "@#{__LINE__}: #{a_text.inspect} #{a_href}" if $verbose
 
     # Check the href urls for some patterns
     if a_href =~ SiteStandards::COMMON_CHECKS['foundation'][SiteStandards::CHECK_CAPTURE]
@@ -171,7 +171,7 @@ def parse(id, site, name, podling=false)
         end
       rescue StandardError => e
         if show_anyway or !a_href.include?('fory.apache.org/docs/docs/') # reported, but not yet fixed, so suppress noise
-          $stderr.puts "#{id}: Bad a_href #{a_href} #{e}"
+          $stderr.puts "@#{__LINE__}: #{id}: Bad a_href #{a_href} #{e}"
         end
       end
     end
@@ -210,9 +210,9 @@ def parse(id, site, name, podling=false)
       begin
         uri, response, status = $cache.get(subpage)
         if uri&.to_s == subpage or uri&.to_s == subpage + '/'
-          puts "#{id} #{uri} #{status}"
+          puts "@#{__LINE__}: #{id} #{uri} #{status}"
         else
-          puts "#{id} #{subpage} => #{uri} #{status}"
+          puts "@#{__LINE__}: #{id} #{subpage} => #{uri} #{status}"
         end
         unless status == 'error'
           if response =~ SiteStandards::PODLING_CHECKS['disclaimer'][SiteStandards::CHECK_CAPTURE]
@@ -221,8 +221,8 @@ def parse(id, site, name, podling=false)
             nodisclaimer << subpage
           end
         else
-          unless %w(nlpcraft).include? id # reported, but unresponsive, so suppress noise
-            $stderr.puts "#{id} #{subpage} => #{uri} #{status} '#{anchor.text.strip}'"
+          if show_anyway or !%w(fory).include? id # reported, so suppress multiple reports
+            $stderr.puts "@#{__LINE__}: #{id} #{subpage} => #{uri} #{status} '#{anchor.text.strip}'"
           end
         end
       rescue URI::InvalidURIError
