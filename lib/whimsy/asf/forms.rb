@@ -83,7 +83,7 @@ class Wunderbar::HtmlMarkup
       if args[:rows]
         _textarea! type: args[:type], name: args[:name], id: args[:id], value: args[:value], class: args[:class],
                    aria_describedby: args[:aria_describedby], rows: args[:rows], readonly: readonly do
-          _! args[:value]
+          _ args[:value]
         end
       else
         _input type: args[:type], name: args[:name], id: args[:id], value: args[:value], class: args[:class],
