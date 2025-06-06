@@ -241,6 +241,23 @@ describe ASF::SVN do
     end
   end
 
+  describe 'ASF:SVN.getfile' do
+    it "getfile(public url,'HEADER.html') should return the revision and contents" do
+      repo = File.join(ASF::SVN.svnurl('minutes'),'HEADER.html')
+      revision, content = ASF::SVN.getfile(repo)
+      expect(revision).to match(/\d+/)
+      expect(content.size).to be > 260 # need a better test
+    end
+    it "getfile(public url,'HEADER.html', block) should yield revision, path and contents" do
+      repo = File.join(ASF::SVN.svnurl('minutes'),'HEADER.html')
+      ASF::SVN.getfile(repo) do |revision, filepath, content|
+        expect(revision).to match(/\d+/)
+        expect(filepath).to match(%r{/HEADER.html})
+        expect(content.size).to be > 260 # need a better test
+      end
+    end
+  end
+
   describe 'ASF::SVN.svn' do
     it 'svn(nil,nil) should raise error' do
       expect { ASF::SVN.svn(nil,nil) }.to raise_error(ArgumentError, 'command must not be nil')

@@ -616,6 +616,7 @@ module ASF
 
     # retrieve revision, content for a file in svn
     # N.B. There is a window between fetching the revision and getting the file contents
+    # Returns ['0', nil] if the revision cannot be determined
     def self.get(path, user=nil, password=nil)
       revision, _ = self.getInfoItem(path, 'revision', {user: user, password: password})
       if revision
@@ -677,6 +678,84 @@ module ASF
       end
     end
 
+    # retrieve last-changed-revision (string), content for a file in svn
+    # ensures revision agrees with file content
+    # Params:
+    # url - URL of file in SVN (must exist)
+    # env - user/password from Auth
+    # block - if passed a block, yields revision, filepath, contents
+    # else returns: revision, content
+    def self.getfile(url, env=nil, &block)
+
+      dir, _, basename = url.rpartition('/')
+
+      rc = 0
+      Dir.mktmpdir do |tmpdir|
+        # create an empty checkout
+        self.svn!('checkout', [dir, tmpdir], {depth: 'empty', env: env})
+
+        # retrieve the file to be updated
+        tmpfile = File.join(tmpdir, basename)
+
+        self.svn!('update', tmpfile, {env: env})
+
+        revision, err = self.getInfoItem(tmpfile, 'last-changed-revision')
+        raise Exception.new("getfile:getInfoItem failed with #{err}") unless err.nil?
+        if block
+          yield revision, tmpfile, File.read(tmpfile)
+        else
+          return revision, File.read(tmpfile)
+        end
+      end      
+    end
+
+    # update a file in SVN, working entirely in a temporary directory
+    # Intended for use from GUI code
+    # Must be used with a block, which is passed the temporary directory name
+    # and the current file contents (may be empty string)
+    # The block must return the updated file contents
+    #
+    # Parameters:
+    # url - the SVN url to be used which must exist as a file
+    # msg - commit message
+    # env - environment (queried for user and password)
+    # wunderbar - wunderbar context
+    # expected_revision - revision that is being updated (string)
+    # options - hash of:
+    #  :dryrun - show command (excluding credentials), without executing it
+    #  :diff - show diff before committing
+    def self.updatefile(url, msg, env, wunderbar, expected_revision, options={})
+      rc = 0
+      self.getfile(url, env) do |actual_revision, tmpfile, previous_contents|
+
+        if actual_revision != expected_revision
+          if options[:dryrun]
+            return "svn revision check failed: expected: #{expected_revision} actual: #{actual_revision}"
+          else
+            raise "svn revision check failed: expected: #{expected_revision} actual: #{actual_revision}"
+          end
+        end
+
+        contents = yield previous_contents
+
+        File.write tmpfile, contents
+
+        self.svn_('diff', tmpfile, wunderbar) if options[:diff] or options[:dryrun]
+        return if options[:dryrun]
+
+        # commit the changes
+        rc = self.svn_('commit', tmpfile, wunderbar, {msg: msg, env: env})
+
+        # fail if there are pending changes
+        out, _err = self.svn('status', tmpfile) # Need to use svn rather than svn_ here
+        unless rc == 0 && out && out.empty?
+          raise "svn failure #{rc} #{url.inspect} #{out}"
+        end
+
+      end
+      rc # return last status
+    end
+    
     # update a file or directory in SVN, working entirely in a temporary
     # directory
     # Intended for use from GUI code
