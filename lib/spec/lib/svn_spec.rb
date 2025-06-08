@@ -71,7 +71,7 @@ describe ASF::SVN do
     it "should return URL for #{SAMPLE_ALIAS}" do
       res = ASF::SVN.svnurl(SAMPLE_ALIAS)
       expect(res.class).to equal(String)
-      expect(res).to match(%r{https://.+/Bills})
+      expect(res).to match(%r{https?://.+/Bills})
     end
 
     it "should return nil for #{SAMPLE_MISSING_NAME}" do
@@ -159,7 +159,7 @@ describe ASF::SVN do
     it "getInfo(public url) should return a string at least 30 chars long starting with 'Path: '" do
       pub = ASF::SVN.private_public()[1]
       repo = ASF::SVN.svnurl(pub[1]) # select a public repo url
-      expect(repo).to start_with('https://')
+      expect(repo).to match('https?://')
       out, err = ASF::SVN.getInfo(repo)
       expect(err).to eq(nil)
       expect(out.size).to be > 30
@@ -215,7 +215,9 @@ describe ASF::SVN do
       repo = ASF::SVN.svnurl(pub[1]) # select a public repo URL
       out, err = ASF::SVN.list(repo)
       expect(err).to eq(nil)
-      expect(out.size).to be > 10 # need a better test
+      unless repo.start_with? 'http://localhost' # Skip for Docker testing
+        expect(out.size).to be > 10 # need a better test
+      end
     end
   end
 
@@ -283,7 +285,7 @@ describe ASF::SVN do
       path1 = File.join(ASF::SVN.svnurl('minutes'),'HEADER.html')
       path2 = File.join(ASF::SVN.svnurl('minutes'),'2000','board_minutes_2000_02_28.txt')
       out, _err = ASF::SVN.svn('info',[path1, path2], {item: 'kind'})
-      expect(out).to match(/^file +https:/)
+      expect(out).to match(/^file +https?:/)
     end
 
     it 'svn() should honour :chdir option' do
@@ -409,8 +411,8 @@ describe ASF::SVN do
   end
 
   describe 'ASF::SVN.svnpath!' do
-    it "svnpath!('board', 'committee-info.txt') should be https://svn.apache.org/repos/private/committers/board/committee-info.txt" do
-      exp = 'https://svn.apache.org/repos/private/committers/board/committee-info.txt'
+    it "svnpath!('board', 'committee-info.txt') should be #{svn_base}private/committers/board/committee-info.txt" do
+      exp = "#{svn_base}private/committers/board/committee-info.txt"
       act = ASF::SVN.svnpath!('board', 'committee-info.txt')
       expect(act).to eq(exp)
       act = ASF::SVN.svnpath!('board', '/committee-info.txt')

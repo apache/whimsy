@@ -82,7 +82,7 @@ describe 'ASF::SVN.svn_' do
 
     expect(rc).to be(0)
     expect(out['transcript'].class).to equal(Array)
-    exp = ['svn', 'info', '--non-interactive', '--', 'https://svn.apache.org/repos/asf/infrastructure/site/trunk/content/foundation/records/minutes/HEADER.html']
+    exp = ['svn', 'info', '--non-interactive', '--', "#{svn_base}asf/infrastructure/site/trunk/content/foundation/records/minutes/HEADER.html"]
     expect(out['transcript'][1]).to eq(exp.join(' '))
   end
   it "svn_('info', 'no file') should fail with E200009" do

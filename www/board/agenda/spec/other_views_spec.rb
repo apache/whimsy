@@ -195,7 +195,7 @@ feature 'other reports' do
     visit '/2015-02-18/January-21-2015'
 
     expect(page).to have_selector \
-     'a[href="https://svn.apache.org/repos/private/foundation/board/board_minutes_2015_01_21.txt"]',
+     'a[href="#{svn_base}private/foundation/board/board_minutes_2015_01_21.txt"]',
      text: 'board_minutes_2015_01_21.txt'
   end
 

@@ -23,7 +23,7 @@ require 'whimsy/asf/svn' # must be loaded before updating config
 # Don't load 'whimsy/asf' here as some classes may depend on overrides below
 
 SAMPLE_SVN_NAME = 'minutes' # name of checkout of public SVN dir
-SAMPLE_SVN_URL_RE = %r{https://.+/minutes}
+SAMPLE_SVN_URL_RE = %r{https?://.+/minutes}
 
 # Override with test data if there is no checkout available (allows local use)
 if ENV['RAKE_TEST'] == 'TRUE' or not (File.exist?(File.join(ASF::Config[:puppet_data], 'apmail_bin')) and ASF::SVN.find('board'))
@@ -68,6 +68,10 @@ end
 
 def set_svn(name)
   ASF::SVN[name] = File.expand_path(File.join('..', 'test', 'svn', name), __dir__)
+end
+
+def svn_base
+  ASF::SVN.instance_variable_get(:@base).to_s
 end
 
 if TEST_DATA
