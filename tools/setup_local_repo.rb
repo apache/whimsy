@@ -67,3 +67,29 @@ svnrepos.each do |name, entry|
   # foundation_board/current.txt
   # foundation_board/templates
 end
+
+def svncopy(relpath)
+  filepath = File.join(LOCAL_URL, relpath)
+  revision, _err = ASF::SVN.getRevision(filepath)
+  unless revision
+    infile = File.join(ASF_REPO, relpath)
+    Dir.mktmpdir do |tmpdir|
+      tmpfile = File.join(tmpdir, File.basename(relpath))
+      system 'svn', 'export', infile, tmpfile
+      system 'svnmucc', '--message', 'Initial_create', 'put', tmpfile, filepath
+    end
+  end
+end
+
+def svnmkdir(relpath)
+  filepath = File.join(LOCAL_URL, relpath)
+  revision, _err = ASF::SVN.getRevision(filepath)
+  unless revision
+    system 'svn', '--message', "Initial_create", 'mkdir', filepath
+  end
+end
+
+# Set up some files needed for testing
+svncopy('asf/infrastructure/site/trunk/content/foundation/records/minutes/HEADER.html')
+svnmkdir('asf/infrastructure/site/trunk/content/foundation/records/minutes/2000')
+svncopy('asf/infrastructure/site/trunk/content/foundation/records/minutes/2000/board_minutes_2000_02_28.txt')
