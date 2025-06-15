@@ -399,7 +399,7 @@ get %r{/(\d\d\d\d-\d\d-\d\d).json} do |date|
 
       # Add banner (or nil) to the first entry
       # must always update the entry as they may be cached
-      agenda.first['banner'] = Status.banner
+      agenda.first['banner'] = Status.banner unless agenda.empty?
       agenda
     end
   ensure
