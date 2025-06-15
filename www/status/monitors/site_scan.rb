@@ -19,8 +19,8 @@ def StatusMonitor.site_scan(previous_status)
   logfile = File.join(logdir, 'site-scan')
   log = File.read(logfile)
 
-  # Drop standard cache info
-  log.gsub! /^([-\w]+ )*https?:\S+ (=> \S* )?\w+\n/, ''
+  # Drop standard cache info (may have @nn: prefix)
+  log.gsub! /^(@\d+:)?([-\w]+ )*https?:\S+ (=> \S* )?\w+\n/, ''
   # Drop other info (must agree with scanner script)
   log.gsub! %r{^(Started|Ended|Events):.+\n}, '' # drop 'Events: already have'
 
