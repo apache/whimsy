@@ -778,7 +778,7 @@ def getHTMLbody()
 end
 
 # Combine content produced here with the template fetched previously
-def layout(title = nil)
+def layout(title = nil, info = nil)
   builder = Builder::XmlMarkup.new :indent => 2
   yield builder
   content = Nokogiri::HTML(builder.target!)
@@ -797,6 +797,14 @@ def layout(title = nil)
 
   # Add the replacement first para
   section.add_child getHTMLbody {|x|
+    if info
+      # site information found, link to it
+      x.h1 do
+        x.a info[:name], :href => info[:link], :title => info[:text]
+      end
+    else
+      x.h1 title
+    end
     x.p do
       if title
         x.text! "This was extracted (@ #{STAMP}) from a list of"
@@ -807,13 +815,17 @@ def layout(title = nil)
       x.a 'minutes', :href => 'http://www.apache.org/foundation/records/minutes/'
       x.text! 'which have been approved by the Board.'
       x.br
+      x.br
       x.strong 'Please Note'
       # squiggly heredoc causes problems for Eclipse plugin, but leading spaces don't matter here
       x.text! <<-EOT
       The Board typically approves the minutes of the previous meeting at the
       beginning of every Board meeting; therefore, the list below does not
       normally contain details from the minutes of the most recent Board meeting.
+      ASF Members may have access to a
       EOT
+      x.a 'private draft', :href => 'https://svn.apache.org/repos/private/foundation/board/'
+      x.text 'of these still-unapproved minutes.'
       unless NOWARN_LAYOUT
         x.br
         x.br
@@ -852,16 +864,7 @@ end
 
 # output each individual report by owner
 agenda.sort.each do |title, reports|
-  page = layout(title) do |x|
-    info = site[canonical[title.downcase]]
-    if info
-      # site information found, link to it
-      x.h1 do
-        x.a info[:name], :href => info[:link], :title => info[:text]
-      end
-    else
-      x.h1 title
-    end
+  page = layout(title, site[canonical[title.downcase]]) do |x|
     reports.reverse.each do |report|
       _id = report.meeting.gsub('_', '-')
       x.h2 id: _id do
