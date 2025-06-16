@@ -790,13 +790,7 @@ def layout(title = nil)
 #   $calendar.at('h2').content = "Board Meeting Minutes"
   end
 
-  # Adjust the page header
-
-  # find the intro para; assume it is the first para with a strong tag
-  # then back up to the main container class for the page content
-  section = $calendar.at('.container p strong').parent.parent
-  # Extract all the paragraphs
-  paragraphs = section.search('p')
+  section = $calendar.at('#maincontent .container')
 
   # remove all the existing content
   section.children.each {|child| child.remove}
@@ -830,10 +824,6 @@ def layout(title = nil)
       end
     end
   }
-
-  # and the second para which is assumed to be the list of years
-  section.add_child paragraphs[1]
-  section.add_child "\n" # separator to make it easier to read source
 
   # now add the content provided by the builder block
   content.at('body').children.each {|child| section.add_child child}
