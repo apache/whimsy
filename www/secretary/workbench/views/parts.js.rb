@@ -27,7 +27,6 @@ class Parts < Vue
     @unsigned = false
     @script_font = false
     @upload_sig = false
-    @clarify_intent = false
     @invalid_availid = false
   end
 
