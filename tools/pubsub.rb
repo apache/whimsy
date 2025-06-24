@@ -147,7 +147,7 @@ ps_thread = Thread.new do
   begin
     uri = URI.parse(options.streamURL)
 
-    Net::HTTP.start(uri.host, uri.port) do |http|
+    Net::HTTP.start(uri.host, uri.port, :open_timeout => 30) do |http|
       request = Net::HTTP::Get.new uri.request_uri
 
       http.request request do |response|
@@ -185,6 +185,7 @@ ps_thread = Thread.new do
     STDERR.puts stamp e
     STDERR.puts stamp e.backtrace
   end
+  puts stamp 'Thread ended'
 end
 
 #
@@ -196,6 +197,7 @@ begin
   while ps_thread.alive?
     notification = notification_queue.pop
     next unless notification['project'] == PROJECT
+    puts stamp 'Detected notification for our project'
     notification_queue.clear
 
     if options.puppet
@@ -220,6 +222,7 @@ begin
         sleep 30 * (i+1)
       end
     else
+      puts stamp 'Update git in foreground'
       # update git directories in the foreground
       Dir.chdir(options.local) do
         before = `git log --oneline -1`
@@ -232,10 +235,11 @@ begin
       end
     end
     if mtime != File.mtime(__FILE__) # we have been updated
-      STDERR.puts stamp 'Detected self update'
+      puts stamp 'Detected self update'
       break
     end
   end
+  puts stamp 'Thread ended'
 rescue SignalException => e
   STDERR.puts stamp e.inspect
   restartable = false
