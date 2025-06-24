@@ -11,6 +11,7 @@ info_chairs = ASF::Committee.load_committee_info.group_by(&:chair)
 ldap_chairs = ASF.pmc_chairs
 subscribers, modtime = ASF::MLIST.board_subscribers(false) # excluding archivers
 member_statuses = ASF::Member.member_statuses
+board = ASF::Service['board'].members
 
 _html do
   _body? do
@@ -140,8 +141,8 @@ _html do
         end
       end
 
-      chairs = ( info_chairs.keys + ldap_chairs ).uniq
-      missing = chairs.map(&:id) - ids.map(&:first)
+      expected = ( info_chairs.keys + ldap_chairs  + board).uniq
+      missing = expected.map(&:id) - ids.map(&:first)
       unless missing.empty?
         _h3_.unsub! 'Not subscribed to the list'
         _table.table do
@@ -162,7 +163,9 @@ _html do
                 _td {_a id, href: href}
               end
               _td person.public_name
-              if info_chairs.include? person
+              if board.include? person
+                _td {_strong 'Board' }
+              elsif info_chairs.include? person
                 text = info_chairs[person].uniq.map(&:display_name).join(', ')
                 if ldap_chairs.include? person
                   _td text
