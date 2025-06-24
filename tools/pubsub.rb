@@ -15,7 +15,8 @@ require 'json'
 require 'fileutils'
 
 def stamp(*s)
-  '%s: %s' % [Time.now.gmtime.to_s, s.join(' ')]
+  line = caller[0].split(':')[1]
+  '%s: @%s %s' % [Time.now.gmtime.to_s, line, s.join(' ')]
 end
 
 # extract script name
@@ -135,6 +136,8 @@ end
 
 PROJECT = File.basename(options.remote, '.git')
 
+ALIVE = File.join('/tmp', "#{File.basename(__FILE__)}.alive") # Help detect failures
+
 # prime the pump
 restartable = false
 notification_queue = Queue.new
@@ -155,6 +158,7 @@ ps_thread = Thread.new do
             notification = JSON.parse(body + chunk.chomp("\0"))
             body = ''
 
+            FileUtils.touch(ALIVE)
             if notification['stillalive']
               restartable = true
             elsif notification['push']
@@ -225,15 +229,18 @@ begin
         end
       end
     end
-    break if mtime != File.mtime(__FILE__)
+    if mtime != File.mtime(__FILE__) # we have been updated
+      STDERR.puts stamp 'Detected self update'
+      break
+    end
   end
 rescue SignalException => e
-  STDERR.puts stamp e
+  STDERR.puts stamp e.inspect
   restartable = false
 rescue Exception => e
+  STDERR.puts stamp e
+  STDERR.puts stamp e.backtrace
   if ps_thread.alive?
-    STDERR.puts stamp e
-    STDERR.puts stamp e.backtrace
     restartable = false
   end
 end
@@ -248,4 +255,6 @@ if restartable
   # relaunch script after a one second delay
   sleep 1
   exec RbConfig.ruby, __FILE__, *ARGV
+else
+  STDERR.puts stamp 'not restartable'
 end
