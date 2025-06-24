@@ -59,7 +59,7 @@ _html do
       }
     ) do
       _p! do
-        _ 'PMC chairs apparently not subscribed are '
+        _ 'PMC chairs and Board members apparently not subscribed are '
         _a 'listed in a separate table', href: "#unsub"
         _ '.'
       end
