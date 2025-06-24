@@ -213,7 +213,9 @@ begin
       4.times do |i|
         puts stamp "Starting Puppet"
         system('puppet', 'agent', '-t')
-        break unless $?.exitstatus == 1
+        status = $?.exitstatus
+        puts stamp "Puppet completed with status #{status}"
+        break unless status == 1
         puts stamp "Failed to run Puppet, will try again shortly"
         sleep 30 * (i+1)
       end
