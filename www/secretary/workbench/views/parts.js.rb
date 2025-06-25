@@ -234,6 +234,12 @@ class Parts < Vue
               _span 'upload public key'
             end
 
+            _label do
+              _input type: 'radio', name: 'doctype', value: 'clarify_intent',
+                onClick: self.reject
+              _span 'clarify intent'
+            end
+
             # The reject reason list will grow, so do it last
 
             _h4 'Reject email with message:'
