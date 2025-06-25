@@ -19,8 +19,8 @@ task "email #{message.from}" do
     from: @from,
     cc: [
       'secretary@apache.org',
-      (@pmc.private_mail_list if @pmc), # copy pmc if selected
-      @podling&.private_mail_list # copy podling if selected
+      (@pmc.private_mail_list if @pmc), # copy pmc
+      (@podling.private_mail_list if @podling) # copy podling
     ],
     body: template("#{@doctype}.erb")
   )
