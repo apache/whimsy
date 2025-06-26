@@ -26,6 +26,9 @@ script = File.basename(__FILE__, '.rb')
 ### option parsing
 #
 
+ARGV_COPY = ARGV.dup # the parser removes options from ARGV
+puts stamp "Initial args: #{ARGV}"
+
 options = OpenStruct.new
 options.remote = 'https://gitbox.apache.org/repos/asf/whimsy.git'
 options.local = '/srv/whimsy'
@@ -250,6 +253,7 @@ rescue Exception => e
     restartable = false # why?
   end
 end
+puts stamp 'Preparing to exit'
 
 #
 # restart
@@ -260,7 +264,8 @@ if restartable
 
   # relaunch script after a one second delay
   sleep 1
-  exec RbConfig.ruby, __FILE__, *ARGV
+  puts stamp "Relaunching with args: #{ARGV_COPY}"
+  exec RbConfig.ruby, __FILE__, *ARGV_COPY
 else
   STDERR.puts stamp 'not restartable'
 end
