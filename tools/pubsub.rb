@@ -239,7 +239,7 @@ begin
       break
     end
   end
-  puts stamp 'Thread ended'
+  puts stamp 'Queue processing ended'
 rescue SignalException => e
   STDERR.puts stamp e.inspect
   restartable = false
@@ -247,7 +247,7 @@ rescue Exception => e
   STDERR.puts stamp e
   STDERR.puts stamp e.backtrace
   if ps_thread.alive?
-    restartable = false
+    restartable = false # why?
   end
 end
 
