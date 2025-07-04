@@ -61,10 +61,18 @@ info = {
   roster_counts: nil
 }
 
+nextQuarter = ASF::Board.nextQuarter # {June: date1, July: date2, ...}
+
 roster_counts = {}
 info[:committees] = committees.map {|committee|
   schedule = committee.schedule.to_s.split(/,\s*/)
   schedule.unshift committee.report if committee.report != committee.schedule
+  scfirst = schedule.first
+  if scfirst and ( scfirst.start_with?('Every') or scfirst.start_with?('Next') )
+    nextMeeting = nextQuarter.first[1] # The value
+  else
+    nextMeeting = nextQuarter[schedule.select {|s| nextQuarter[s]}.first]
+  end
   cname = committee.name.gsub(/[^-\w]/, '')
   data = {
     display_name: committee.display_name,
@@ -73,6 +81,7 @@ info[:committees] = committees.map {|committee|
     mail_list: committee.mail_list,
     established: committee.established,
     report: schedule,
+    nextMeeting: nextMeeting,
     # Convert {:name=>"Public Name", :id=>"availid"} to
     # "chair": { "availid": { "name": "Public Name" } }
     chair: committee.chairs.map {|chair| [chair[:id], {:name => chair[:name]}]}.to_h,

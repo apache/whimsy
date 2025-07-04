@@ -59,7 +59,7 @@ module ASF
     def self.nextMeeting
       time = self.calendar.select {|t| t > Time.now.utc}.min
 
-      unless time
+      unless time # If time not found in calendar, then calculate it
         require 'chronic'
         this_month = Time.now.strftime('%B')
 
@@ -73,6 +73,12 @@ module ASF
       end
 
       time
+    end
+
+    # Next 3 meetings as hash, e.g. {July => date1, August => date2, September => date3}
+    # We assume dates don't have to be calculated
+    def self.nextQuarter
+      self.calendar.select {|t| t > Time.now.utc}.sort.first(3).map {|d| [d.strftime('%B'), d]}.to_h
     end
 
     # time of previous meeting
@@ -101,8 +107,9 @@ module ASF
       month = meeting.strftime('%B')
       ASF::Committee.load_committee_info
       ASF::Committee.pmcs.select do |pmc|
-        pmc.report.split(', ').include? month or pmc.report == 'Every month' or
-        pmc.report.start_with? 'Next month'
+        pmc.report == 'Every month' or
+        pmc.report.start_with? 'Next month' or
+        pmc.report.split(', ').include? month
       end
     end
 
