@@ -8,12 +8,13 @@ require 'date'
 calendar = IO.read("#{ASF::SVN['board']}/calendar.txt")
 pattern = /\s*\*\) (.*),/
 
-zones = [
-  TZInfo::Timezone.get('America/Los_Angeles'),
-  TZInfo::Timezone.get('America/New_York'),
-  TZInfo::Timezone.get('Europe/Brussels'),
-  TZInfo::Timezone.get('Asia/Kuala_Lumpur'),
-  TZInfo::Timezone.get('Australia/Sydney')
+zonenames = [
+  'America/Los_Angeles',
+  'America/New_York',
+  'Europe/London',
+  'Europe/Brussels',
+  'Asia/Kuala_Lumpur',
+  'Australia/Sydney'
 ]
 
 
@@ -63,11 +64,9 @@ _html do
      _tr do
        _th
        _th 'UTC'
-       _th 'Los Angeles'
-       _th 'New York'
-       _th 'Brussels'
-       _th 'Kuala Lumpur'
-       _th 'Sydney'
+       zonenames.each do |name|
+        _th name.split('/')[1].gsub('_', ' ')
+       end
      end
     end
 
@@ -85,8 +84,9 @@ _html do
           _a time.strftime('%H:%M'), href: "#{timeurl}#{time.iso8601}"
         end
 
-        zones.each do |zone|
-          if zone.to_s.include? 'Asia' or zone.to_s.include? 'Europe'
+        zonenames.each do |name|
+          zone = TZInfo::Timezone.get(name)
+          if name.include? 'Asia' or name.include? 'Europe'
             local = time.in_time_zone(zone).strftime("%H:%M")
           else
             local = time.in_time_zone(zone).strftime("%-I:%M%P")
