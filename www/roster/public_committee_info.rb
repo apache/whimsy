@@ -2,6 +2,12 @@
 # Creates JSON output from committee-info.txt with the following format:
 #  "last_updated": "2016-03-04 04:50:00 UTC",
 #  "committee_count": 210,
+#  "nextBoardMeetings": {
+#    "July": {
+#      "epoch": 1752699600,
+#      "display": "2025-07-16 21:00:00 UTC",
+#      "iso8601": "2025-07-16T21:00:00Z"
+#    },...
 #  "roster_counts": {
 #    "accumulo": 40,
 #    ...
@@ -20,6 +26,7 @@
 #        "August",
 #        "November"
 #      ],
+#      "nextMeetingEpoch": 1752699600,
 #      "chair": {
 #        "availid": {
 #          "name": "Some One"
@@ -53,26 +60,22 @@ require 'whimsy/asf/board'
 # gather committee info
 committees = ASF::Committee.load_committee_info
 
+nextQuarter = ASF::Board.nextQuarter # {June: date1, July: date2, ...}
+
 # reformat the data
 info = {
   last_updated: ASF::Committee.svn_change,
   committee_count: committees.size,
   pmc_count: 0,
+  nextBoardMeetings: nextQuarter.map {|k,v| [k,{epoch: v.to_i, display: v.to_s, iso8601: v.iso8601}]}.to_h,
   roster_counts: nil
 }
-
-nextQuarter = ASF::Board.nextQuarter # {June: date1, July: date2, ...}
 
 roster_counts = {}
 info[:committees] = committees.map {|committee|
   schedule = committee.schedule.to_s.split(/,\s*/)
   schedule.unshift committee.report if committee.report != committee.schedule
-  scfirst = schedule.first
-  if scfirst and ( scfirst.start_with?('Every') or scfirst.start_with?('Next') )
-    nextMeeting = nextQuarter.first[1] # The value
-  else
-    nextMeeting = nextQuarter[schedule.select {|s| nextQuarter[s]}.first]
-  end
+  nextMeeting = ASF::Board.nextReport(nextQuarter, schedule)
   cname = committee.name.gsub(/[^-\w]/, '')
   data = {
     display_name: committee.display_name,
@@ -81,7 +84,7 @@ info[:committees] = committees.map {|committee|
     mail_list: committee.mail_list,
     established: committee.established,
     report: schedule,
-    nextMeeting: nextMeeting,
+    nextMeetingEpoch: nextMeeting.to_i,
     # Convert {:name=>"Public Name", :id=>"availid"} to
     # "chair": { "availid": { "name": "Public Name" } }
     chair: committee.chairs.map {|chair| [chair[:id], {:name => chair[:name]}]}.to_h,
