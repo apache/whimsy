@@ -75,10 +75,26 @@ module ASF
       time
     end
 
-    # Next 3 meetings as hash, e.g. {July => date1, August => date2, September => date3}
+    # Next 3 meetings as hash, e.g. {July => date1, August => date2, September => date3, Next => date1}
     # We assume dates don't have to be calculated
     def self.nextQuarter
-      self.calendar.select {|t| t > Time.now.utc}.sort.first(3).map {|d| [d.strftime('%B'), d]}.to_h
+      qr = self.calendar.select {|t| t > Time.now.utc}.sort.first(3)
+      h = qr.map {|d| [d.strftime('%B'), d]}.to_h
+      h['Next'] = h.first[1] # Ruby hashes retain insertion order so this will be the next meeting
+      h
+    end
+
+    # Get the next report date for a PMC or other committee
+    # Params:
+    # quarterdates - hash from nextQuarter
+    # schedule - list of report months (e.g. ["February", "May", "August", "November"])
+    #            possibly preceeded by 'Next month: ...'
+    #            or 'Every month' 
+    # Returns: the next date
+    def self.nextReport(quarterdates, schedule)
+      scfirst = schedule.first
+      return quarterdates['Next'] if scfirst and ( scfirst.start_with?('Every') or scfirst.start_with?('Next') )
+      quarterdates[schedule.select {|s| nextQuarter[s]}.first]
     end
 
     # time of previous meeting
