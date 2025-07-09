@@ -45,7 +45,7 @@ RUN gem install passenger --install_dir=/var/lib/gems/3.2.0 && \
     passenger-install-apache2-module --snippet >/etc/apache2/conf-enabled/passenger.conf
 
 # Note: pips are generally maintained by Ubuntu now
-RUN DEBIAN_FRONTEND='noninteractive' apt-get install -y python3-img2pdf
+RUN DEBIAN_FRONTEND='noninteractive' apt-get install -y python3-img2pdf python3-aiosmtpd
 
 RUN \
     a2enmod cgi && \

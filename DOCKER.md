@@ -159,7 +159,7 @@ Testing email
 -------------
 
 The following command can be used to run a dummy smtp server on port 1025:
-`python3 -u -m smtpd -n -c DebuggingServer localhost:1025`
+`python3 -m aiosmtpd -n -l localhost:1025`
 
 It can be tested with:
 `tools/testmail.rb <userid>`
