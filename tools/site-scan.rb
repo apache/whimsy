@@ -170,7 +170,7 @@ def parse(id, site, name, podling=false)
           subpages[site2.to_s] = a
         end
       rescue StandardError => e
-        if show_anyway or !a_href.include?('fory.apache.org/docs/docs/') # reported, but not yet fixed, so suppress noise
+        if show_anyway or !a_href.include?('| prepend: site.baseurl }}') # reported to flagon, but not yet fixed, so suppress noise
           $stderr.puts "@#{__LINE__}: #{id}: Bad a_href #{a_href} #{e}"
         end
       end
