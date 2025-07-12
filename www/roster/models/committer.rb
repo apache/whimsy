@@ -55,6 +55,7 @@ class Committer
 
     unless person.pgp_key_fingerprints.empty?
       response[:pgp] = person.pgp_key_fingerprints
+      response[:pgp_status] = person.pgp_key_status
     end
 
     unless person.ssh_public_keys.empty?
@@ -189,7 +190,12 @@ class Committer
         end
 
         if auth[:secretary]
+          begin
           path, _name, _timestamp, epoch = ASF::WithdrawalRequestFiles.findpath(person.id, env, true)
+          rescue Exception => e
+            Wunderbar.warn e
+            path = nil
+          end
           if path
             response[:forms][:withdrawal_request] = path
             # Calculate the age in days

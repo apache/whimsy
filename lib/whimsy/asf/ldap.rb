@@ -5,6 +5,7 @@ require 'net/http'
 require 'base64'
 require 'securerandom'
 require 'set'
+require 'whimsy/cache'
 
 if __FILE__ == $0
   $LOAD_PATH.unshift '/srv/whimsy/lib'
@@ -722,6 +723,10 @@ module ASF
   class Person < Base
     @base = 'ou=people,dc=apache,dc=org'
 
+    def self.cache
+      @cache ||= Cache.new(dir: 'key-status', minage: 3600, enabled: true) # could be longer
+    end
+
     # Obtain a list of people known to LDAP.  LDAP filters may be used
     # to retrieve only a subset.
     def self.list(filter='uid=*')
@@ -853,6 +858,15 @@ module ASF
     # list all of the PGP key fingerprints
     def pgp_key_fingerprints
       attrs['asf-pgpKeyFingerprint'] || []
+    end
+
+    # list pgp key status as per keys.json from people.apache.org
+    # This is intended for use on committer display pages only; do not include it in public JSON output
+    def pgp_key_status
+      _uri, content, status = Person.cache.get("https://people.apache.org/keys/committer/keys.json")
+      return 'error reading status' if status == 'error'
+      keys = JSON.parse(content, :encoding => 'utf-8')
+      (keys[id] || {}).map {|k,v|[k.gsub(' ', ''), v]}.to_h
     end
 
     # list all of the ssh public keys

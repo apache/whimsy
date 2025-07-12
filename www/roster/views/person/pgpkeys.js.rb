@@ -44,7 +44,10 @@ class PersonPgpKeys < Vue
                   _samp style: 'font-family:Monospace' do
                     _a keynb, href: 'https://keyserver.ubuntu.com/pks/lookup?' +
                       'op=index&fingerprint=on&search=0x' + keysq
-                    unless keysq.length == 40
+                    if keysq.length == 40
+                      _ ' '
+                      _span committer.pgp_status[keysq] || 'status unknown'
+                    else
                       _span.bg_danger ' ?? Expecting exactly 40 hex characters (plus optional spaces)'
                     end
                   end
