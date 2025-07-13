@@ -14,6 +14,8 @@ require 'net/http'
 require 'json'
 require 'fileutils'
 
+$stdout.sync = true # unbuffered output
+
 def stamp(*s)
   line = caller[0].split(':')[1]
   '%s: @%s %s' % [Time.now.gmtime.to_s, line, s.join(' ')]
