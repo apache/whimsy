@@ -198,6 +198,11 @@ module ASF
       @list
     end
 
+    # hash of podlings with status
+    def self.list_with_status
+      self.list.map {|pod| [pod.id, pod.status]}.to_h
+    end
+    
     # list of current podlings
     def self.current
       self._list('current')
@@ -226,6 +231,16 @@ module ASF
     # list of retired podling ids
     def self.retiredids
       self._listids('retired')
+    end
+
+    # list of all podlings
+    def self.all
+      self._list('all')
+    end
+
+    # list of all podling ids
+    def self.allids
+      self._listids('all')
     end
 
     # last modified time of podlings.xml in the local working directory,
@@ -491,11 +506,11 @@ module ASF
     private
 
     def self._list(status)
-      list.select { |podling| podling.status == status }
+      list.select { |podling| status == 'all' or podling.status == status }
     end
 
     def self._listids(status)
-      list.select { |podling| podling.status == status }.map(&:id)
+      self._list(status).map(&:id)
     end
   end
 end
