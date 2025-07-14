@@ -37,7 +37,7 @@ class Person < Vue
     end
     unless pmcs.empty?
       _div.row do
-        _div.name 'PMCs'
+        _div.name 'PMC member'
         _div.value do
           _ul pmcs do |pmc|
             _li {
@@ -139,13 +139,29 @@ class Person < Vue
     end
 
     # Podlings
-    unless @committer.podlings.empty?
+    unless @committer.podling_owner.empty?
       _div.row do
-        _div.name 'Podlings'
+        _div.name 'PPMC member'
         _div.value do
-          _ul @committer.podlings do |podlings|
-            _li {_a podlings, href: "ppmc/#{podlings}"}
+          _ul @committer.podling_owner do |podling|
+            _li {_a podling, href: "ppmc/#{podling}"}
+            unless @committer.podling_member.include?(podling)
+              _b ' (not in LDAP committer group)'
+            end
           end
+        end
+      end
+    end
+    
+    unless @committer.podling_member.empty?
+      _div.row do
+        _div.name 'PPMC committer'
+        _div.value do
+          _ul @committer.podling_member do |podling|
+            next if  @committer.podling_owner.include? podling
+            _li {_a podling, href: "ppmc/#{podling}"}
+          end
+          _ '(excludes PPMCs listed above)' unless @committer.podling_owner.empty?
         end
       end
     end

@@ -78,10 +78,12 @@ class Committer
     response[:groups] = person.services
     response[:committer] = [] # PMC committers
     response[:committees] = [] # PMC owners
-    response[:podlings] = [] # podling owner or committer
+    response[:podlings] = [] # podling owner or committer (deprecated)
+    response[:podling_owner] = [] # PPMC member
+    response[:podling_member] = [] # PPMC committer
     pmcs = ASF::Committee.pmcs
     pmc_names = pmcs.map(&:name) # From CI
-    podlings = ASF::Podling.current.map(&:id)
+    podlings = ASF::Podling.allids
 
     # Add group names unless they are a PMC group
     person.groups.map(&:name).each do |group|
@@ -96,6 +98,7 @@ class Committer
         response[:committees] << project
       elsif podlings.include? project
         response[:podlings] << project
+        response[:podling_owner] << project
       else
         # TODO should this populate anything?
       end
@@ -108,6 +111,7 @@ class Committer
         response[:committer] << project
       elsif podlings.include? project
         response[:podlings] << project
+        response[:podling_member] << project
       else
         # TODO should this populate anything?
       end
@@ -121,14 +125,19 @@ class Committer
       response[:groups] << group if members.include? id
     end
 
-    response[:committees].sort!
-    response[:groups].sort!
-    response[:committer].sort!
-    response[:podlings].sort!
     response[:committees].uniq!
     response[:groups].uniq!
     response[:committer].uniq!
     response[:podlings].uniq!
+    response[:podling_owner].uniq!
+    response[:podling_member].uniq!
+
+    response[:committees].sort!
+    response[:groups].sort!
+    response[:committer].sort!
+    response[:podlings].sort!
+    response[:podling_owner].sort!
+    response[:podling_member].sort!
 
     member = {} # collect member info
 
