@@ -398,6 +398,9 @@ class Message
     mail[:cc] = cc.map(&:format) unless cc.empty?
     mail[:bcc] = bcc.map(&:format) unless bcc.empty?
 
+    # Also handle reply_to
+    mail.reply_to = fields[:reply_to] if fields[:reply_to]
+
     # return the resulting email
     mail
   end
