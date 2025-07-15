@@ -77,6 +77,7 @@ task "email #@email" do
   mail = message.reply(
     subject: @document,
     from: @from,
+    reply_to: 'secretary@apache.org',
     to: "#{@name.inspect} <#{@email}>",
     cc: [
       'secretary@apache.org',

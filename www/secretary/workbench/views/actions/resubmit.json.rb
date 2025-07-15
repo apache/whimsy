@@ -21,6 +21,7 @@ task "email #{message.from}" do
   @cttee = "Apache #{@pmc.display_name} PMC" if @pmc
   mail = message.reply(
     from: @from,
+    reply_to: 'secretary@apache.org',
     cc: [
       'secretary@apache.org',
       (@pmc.private_mail_list if @pmc), # copy pmc

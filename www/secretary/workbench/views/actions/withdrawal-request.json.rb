@@ -61,6 +61,7 @@ task "email #{message.from}" do
   mail = message.reply(
       subject: summary,
       from: @from,
+      reply_to: 'secretary@apache.org',
       to: "#{@name.inspect} <#{message.from}>",
       cc: 'secretary@apache.org',
       body: template('withdrawal-request.erb')

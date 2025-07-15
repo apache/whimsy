@@ -181,6 +181,7 @@ task "email #{@email}" do
   mail = message.reply(
     subject: "ICLA for #{@pubname}",
     from: @from,
+    reply_to: 'secretary@apache.org',
     to: "#{@pubname.inspect} <#{@email}>",
     cc: cc,
     body: template('icla2.erb')

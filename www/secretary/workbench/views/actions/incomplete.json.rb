@@ -51,6 +51,7 @@ task "email #{message.from}" do
   @other_items = other_items.join("\n")
   mail = message.reply(
     from: @from,
+    reply_to: 'secretary@apache.org',
     cc: [
       'secretary@apache.org',
       (@pmc.private_mail_list if @pmc), # copy pmc
