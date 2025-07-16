@@ -211,7 +211,7 @@ module ASF
       'geirm' => ['gmj', 'Geir', 'Geir Magnusson Jr'],
       'gstein' => ['gs', 'Greg', 'Greg Stein'],
       'isabel' => ['idf', 'Isabel', 'Isabel Drost-Fromm'],
-      'jbonofre' => ['jb', 'JB', 'Jean-Baptiste Onofre'],
+      'jbonofre' => ['jbo', 'JB', 'Jean-Baptiste Onofre'],
       'jerenkrantz' => ['je', 'Justin', 'Justin Erenkrantz'],
       'jim' => ['jj', 'Jim', 'Jim Jagielski'],
       'jjirsa' => ['jjr', 'Jeff', 'Jeff Jirsa'],
