@@ -90,6 +90,7 @@ class PubSub
     puts stamp "Thread started #{NAME} #{url} ..."
     ps_thread.join
     subject = "Thread finished #{NAME} %s..." % (@updated ? '(code updated) ' : '')
+    puts stamp subject
     if @restartable
       $stderr.puts stamp 'restarting'
 
