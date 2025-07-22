@@ -34,7 +34,7 @@ class PubSub
 
   require 'fileutils'
   ALIVE = File.join('/tmp', "#{File.basename(__FILE__)}.alive") # TESTING ONLY
-
+  NAME = File.basename(__FILE__)
   @restartable = false
   @updated = false
   def self.listen(url, creds, options={})
@@ -105,9 +105,9 @@ class PubSub
       end
       puts stamp 'Done with thread' if debug
     end # thread
-    puts stamp "Pubsub thread started #{url} ..."
+    puts stamp "Thread started #{NAME} #{url} ..."
     ps_thread.join
-    subject = 'Pubsub thread finished %s...' % (@updated ? '(code updated) ' : '')
+    subject = "Thread finished #{NAME} %s..." % (@updated ? '(code updated) ' : '')
     puts stamp subject
     mail_notify subject, <<~EOD
     Restartable: #{@restartable}
