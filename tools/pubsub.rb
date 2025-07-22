@@ -191,6 +191,7 @@ ps_thread = Thread.new do
     STDERR.puts stamp e.backtrace
   end
   puts stamp 'Thread ended'
+  notification_queue << {} # wake up waiting process
 end
 
 #
