@@ -56,10 +56,10 @@ module SiteStandards
     'events' => { # Custom: a_href.include? 'apache.org/events/' then custom check for img
       CHECK_TEXT => nil,
       CHECK_CAPTURE => %r{(events|x)/current-event|event-images},
-      CHECK_VALIDATE => %r{^https?://((www\.)?apache\.org/events/current-event|events\.apache.org/x/current-event|www\.apachecon\.com/event-images/snippet\.js)},
+      CHECK_VALIDATE => %r{^https?://((www\.)?apache\.org/events/current-event|events\.apache\.org|www\.apachecon\.com/event-images/snippet\.js)},
       CHECK_TYPE => true,
-      CHECK_POLICY => 'https://www.apache.org/events/README.txt',
-      CHECK_DOC => 'Projects SHOULD include a link to any current ApacheCon event, as provided by VP, Conferences.',
+      CHECK_POLICY => 'https://www.apachecon.com/event-images/',
+      CHECK_DOC => 'Projects SHOULD include a link to any current CommunityOverCode event, or to the events.apache.org site, as provided by VP, Conferences.',
     },
     'license' => { # link_check a_text =~ /^license$/ and a_href.include? 'apache.org'
       CHECK_TEXT => /^license$/,
