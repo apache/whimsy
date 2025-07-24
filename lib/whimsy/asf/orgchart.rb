@@ -28,7 +28,7 @@ module ASF # :nodoc:
         data['info'] = YAML.safe_load(data['info'])
         name = @@aliases[name] || name
         # fix up data items available from elsewhere
-        if name =~ %r{^vp-(.+)$} or name =~ %r{^(security)$}
+        if name =~ %r{^vp-(.+)$} or name =~ %r{^(security|infrastructureadministrator)$}
           post = $1
           begin
             data['info']['id'] = ASF::Committee[post].chairs.map {|a| a[:id]}
@@ -44,7 +44,7 @@ module ASF # :nodoc:
           if tmp
             data['info']['id'] = tmp.chairs.map {|a| a[:id]}
           else
-            Wunderbar.info "Cannot find chair for #{name}"
+            Wunderbar.info "Cannot find chair2 for #{name}"
           end
         end
         data['mtime'] = File.mtime(file).to_f
@@ -78,5 +78,14 @@ module ASF # :nodoc:
       self.load
       @@desc
     end
+  end
+end
+if __FILE__ == $0
+  $LOAD_PATH.unshift '/srv/whimsy/lib'
+  require 'whimsy/asf'
+  Wunderbar.log_level = 'DEBUG'
+  org = ASF::OrgChart.load
+  org.each.map do |k, v|
+    p [k, (v['info']['id'] || v['info']['chair'] || '?')]
   end
 end

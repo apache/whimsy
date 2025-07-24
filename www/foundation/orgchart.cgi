@@ -50,7 +50,7 @@ def emit_orgchart(org: {})
               if missingid
                 _em id
               else
-                _ idnam
+                _a idnam, href: "/roster/committer/#{id.first}"
               end
             end
             _td do
