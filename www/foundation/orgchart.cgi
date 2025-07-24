@@ -38,7 +38,8 @@ def emit_orgchart(org: {})
         end
       end
       _tbody do
-        org.sort_by {|key, value| value['info']['role']}.each do |key, value|
+        # ensure V.P. sorts after other roles so Vice Chair is not isolated
+        org.sort_by {|key, value| value['info']['role'].sub('V.P.,', 'zV.P.,')}.each do |key, value|
           _tr_ do
             _td do
               _a value['info']['role'], href: "#{URLROOT}/#{key}"
