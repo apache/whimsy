@@ -33,9 +33,13 @@ class StatusMonitor
   attr_reader :status
   attr_reader :timings # debug timings
 
+  def recorddiff(what, diff)
+    @timings << [what, diff]
+  end
+  
   def timediff(what)
     now = Time.now
-    @timings << [what, now - @prev]
+    recorddiff(what, now - @prev )
     @prev = now
   end
 
@@ -72,6 +76,7 @@ class StatusMonitor
       self.class.singleton_methods.sort.each do |method|
         next if args.length > 0 and not args.include? method.to_s
         threads << Thread.new do
+          startTime = Time.now
           begin
             # invoke method to determine current status
             previous = baseline[:data][method.to_sym] || {mtime: Time.at(0)}
@@ -104,6 +109,7 @@ class StatusMonitor
           # store status in thread local storage
           Thread.current[:name] = method.to_s
           Thread.current[:status] = status
+          Thread.current[:elapsed] = Time.now - startTime
         end
       end
 
@@ -112,7 +118,7 @@ class StatusMonitor
       newstatus = {}
       threads.each do |thread|
         thread.join
-        timediff(thread[:name])
+        recorddiff(thread[:name], (thread[:elapsed] || -1))
         newstatus[thread[:name]] = thread[:status]
       end
 
