@@ -14,9 +14,14 @@ Danger - unexpected text in log file
 =end
 
 require 'fileutils'
+require 'timeout'
 
 # Match revision messages
 REV_RE = %r{^(Checked out|\s*Updated ('[^']+' )?to|At|List updated from \d+ to|List is at) (revision |r)\d+\s*\.$}
+
+# Allow 3 minute timeout waiting for svn update to finish; may need to be adjusted
+# It looks like node ping checks every 5 min
+LOCK_TIMEOUT = 180
 
 def StatusMonitor.svn(previous_status)
   logdir = File.expand_path('../../../logs', __FILE__)
@@ -29,11 +34,27 @@ def StatusMonitor.svn(previous_status)
     fdata = DATA.read
   else
     log = File.expand_path('../../../logs/svn-update', __FILE__)
-    fdata = File.open(log) {|file| file.flock(File::LOCK_EX); file.read}
+    fdata = File.open(log) do |file|
+      begin
+        Timeout::timeout(LOCK_TIMEOUT) do # Apply timeout to lock wait
+          file.flock(File::LOCK_EX)
+          file.read
+        end
+      rescue Timeout::Error => ex
+        ex
+      end
+    end
   end
-  updates = fdata.split(%r{\n(?:/\w+)*/srv/svn/})[1..-1]
 
   status = {}
+
+  if fdata.is_a? Exception
+    status['*'] = {level: 'warning', data: 'Timed out waiting for svn update to complete', href: '../logs/svn-update'}
+    return  {data: status}
+  end
+
+  updates = fdata.split(%r{\n(?:/\w+)*/srv/svn/})[1..-1] || []
+
   seen_level = {}
 
   # extract status for each repository
