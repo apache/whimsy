@@ -156,6 +156,7 @@ namespace :svn do
     if svn.instance_of? String and svn.end_with? '/*'
       mkdir_p? File.dirname(svn)
       Dir.chdir File.dirname(svn) do
+        puts "#{PREFIX} Start #{Time.now}"
         svnrepos.each do |name, description|
           # skip the update unless it matches the parameter (if any) provided
           # 'skip' is special and means update all list files
@@ -265,6 +266,7 @@ namespace :svn do
             puts "Missing: #{path}" unless File.exist? path
           end
         end
+        puts "#{PREFIX} Finish #{Time.now}"
       end
     end
   end
