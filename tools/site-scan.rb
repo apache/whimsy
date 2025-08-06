@@ -170,7 +170,7 @@ def parse(id, site, name, podling=false)
           subpages[site2.to_s] = a
         end
       rescue StandardError => e
-        if show_anyway or !a_href.include?('| prepend: site.baseurl }}') # reported to flagon, but not yet fixed, so suppress noise
+        if show_anyway or !a_href.include?('producthunt.com/products/apache-echarts') # reported but not yet fixed, so limit report frequency
           $stderr.puts "@#{__LINE__}: #{id}: Bad a_href #{a_href} #{e}"
         end
       end
