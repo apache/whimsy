@@ -389,9 +389,10 @@ else
     results[committee.name] = parse(committee.name, committee.site, committee.display_name)
     results[committee.name]['nonpmc'] = committee.nonpmc?
     sites_checked += 1
-    sites_failed += 1 unless results[committee.name][:resources].start_with? 'Found'
+    sites_failed += 1 unless results[committee.name][:resources]&.start_with? 'Found'
     # Don't keep checking unnecessarily
-    $skipresourcecheck = (sites_failed > 10 or (sites_failed > 3 and sites_failed == sites_checked))
+    # (and don't set false if already true)
+    $skipresourcecheck = ($skipresourcecheck or sites_failed > 10 or (sites_failed > 3 and sites_failed == sites_checked))
   end
 
   # Scan podlings that have a website
