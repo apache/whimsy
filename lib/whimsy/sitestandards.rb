@@ -25,11 +25,11 @@ module SiteStandards
   PODLING_CHECKS = {
     'uri' => {
       CHECK_TEXT => nil,
-      CHECK_CAPTURE => %r{https?://[^.]+\.incubator\.apache\.org},
-      CHECK_VALIDATE => %r{https?://[^.]+\.incubator\.apache\.org},
+      CHECK_CAPTURE => %r{https?://[^.]+(\.incubator)?\.apache\.org},
+      CHECK_VALIDATE => %r{https?://[^.]+(\.incubator)?\.apache\.org},
       CHECK_TYPE => true,
-      CHECK_POLICY => 'https://www.apache.org/foundation/marks/pmcs#websites',
-      CHECK_DOC => 'The homepage for any ProjectName must be served from http://ProjectName(.incubator).apache.org',
+      CHECK_POLICY => 'https://incubator.apache.org/guides/sites.html#podling_website_requirements',
+      CHECK_DOC => 'The homepage for any ProjectName must be served from http://ProjectName(.incubator)?.apache.org',
       },
     'disclaimer' => { # textnode_check: txt =~ / Incubation is required of all newly accepted projects /
       CHECK_TEXT => %r{Incubation is required of all newly accepted projects},
