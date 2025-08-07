@@ -8,8 +8,11 @@ module ASF
             list
         end
 
+        # See https://www.apache.org/logos/about.html
+        # Sort is done by JS using the stem only
         def self.find(id)
-            listnames.select{|file| file =~ /^#{id}.*\.(svg|eps|ai|pdf)$/}.first
+            listnames.select{|file| file =~ /^#{id}.*\.(svg|eps|ai|pdf|png)$/}
+                .sort_by{|x| File.basename(x, '.*')}.first
         end
     end
 end
