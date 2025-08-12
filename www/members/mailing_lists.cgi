@@ -74,12 +74,12 @@ _html do
       related: {
         'https://svn.apache.org/repos/infra/infrastructure/apmail/trunk/bin/EZMLM_FLAGS.txt' =>
           'Description of all flags',
-        'https://svn.apache.org/repos/infra/infrastructure/apmail/trunk/.ezmlmrc' =>
+        'https://github.com/apache/infrastructure-p6/blob/production/modules/qmail_asf/templates/ezmlmrc.erb' =>
           '.ezmlmrc file which interprets the flags',
         'http://untroubled.org/ezmlm/man/man1/ezmlm-make.1.html' => 'ezmlm-make(1)',
-        'https://svn.apache.org/repos/infra/infrastructure/apmail/trunk/bin/makelist-apache.sh' =>
-          'makelist-apache.sh - script tp create an ASF list; sets up options for ezmlm-make(1)',
-        'https://svn.apache.org/repos/infra/infrastructure/apmail/trunk/bin' =>
+        'https://github.com/apache/infrastructure-p6/tree/production/modules/qmail_asf/files/apmail/bin/makelist-apache.sh' =>
+          'makelist-apache.sh - script to create an ASF list; sets up options for ezmlm-make(1)',
+        'https://github.com/apache/infrastructure-p6/tree/production/modules/qmail_asf/files/apmail/bin' =>
           'Location of tools',
         },
       helpblock: -> {
