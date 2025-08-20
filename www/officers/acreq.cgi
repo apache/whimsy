@@ -317,6 +317,8 @@ _html do
 
                   mail.subject "[FORM] Account Request - #{requestor}: #{@name}"
 
+                  # TODO: Can this use the template acreq.erb?
+
                   # N.B. The second gsub below drops the Vote reference paragraph if there is no reference
                   mail.body = <<-EOF.gsub(/^ {10}/, '').gsub(/(Vote reference:)?\n\s+\n\s+\(This link is.+\)\n/, "\n\n")
                     Prospective userid: #{@user}
@@ -328,6 +330,8 @@ _html do
                       (This link is for internal use, and is not visible to applicants)
 
                     #{@comments}
+
+                    Please note: it can take up to a week for the request to be processed.
 
                     --#{' '}
                     Submitted by https://#{ENV['HTTP_HOST']}#{ENV['REQUEST_URI'].split('?').first}
