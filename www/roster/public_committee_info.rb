@@ -209,7 +209,8 @@ if ARGV.length >= 2
       Wunderbar.warn "#{key} has no display name" unless value[:name]
       data[key] = {
         display_name: value[:name],
-        retired: retired
+        retired: retired,
+        retired_date: value[:retired_date],
       }
       data[key][:description] = value[:description] if value[:description]
       mlists = public_lists[key]
