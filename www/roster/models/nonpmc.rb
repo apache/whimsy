@@ -10,6 +10,7 @@ class NonPMC
     mail_list = cttee.mail_list.sub(/@apache\.org/,'')
     mail_list = 'legal' if mail_list =~ /^legal-/ && cttee.name != 'dataprivacy'
     mail_list = 'fundraising' if mail_list =~ /^fundraising-/
+    mail_list = 'infra' if id == 'infrastructure'
 
     ASF::Committee.load_committee_info
     # We'll be needing the mail data later
