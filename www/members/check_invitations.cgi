@@ -57,9 +57,11 @@ def setup_data
       next if v[:status] == :deleted
       next unless v[:attachments] and v[:attachments].size > 0
       if (v['Subject'] =~ %r{[Mm]embership}) or (v[:attachments].first[:name] =~ %r{[Mm]embership})
-        applications << v[:from]
-        name = v['From'].sub(%r{<[^>\s]+>}, '').strip
-        applications << name if name
+        if ASF::MeetingUtil.application_valid? v[:envelope_date]
+          applications << v[:from]
+          name = v['From'].sub(%r{<[^>\s]+>}, '').strip
+          applications << name if name
+        end
       end
     end
   end
@@ -282,7 +284,7 @@ _html do
           # _th 'applied?'
           # _th 'members@?'
           # _th 'karma?'
-          _th 'Application seen?'
+          _th 'Application seen in time?'
           _th 'id'
           _th 'name'
           _th 'Nominators'
