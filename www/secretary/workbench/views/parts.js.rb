@@ -161,11 +161,6 @@ class Parts < Vue
                 onClick: -> {@form = MemApp}
               _span 'membership application'
             end
-          else
-            _label do
-              _input type: 'radio', name: 'doctype', disabled: true
-              _span '(membership application arrived after the closing date)'
-            end
           end
 
           _label do
@@ -227,6 +222,14 @@ class Parts < Vue
             # also any new entries must be added to the backend script incomplete.json.rb
 
             # Defer processing (must be part of POST block)
+
+            unless @@meeting
+              _label do
+                _input type: 'radio', name: 'doctype', value: 'memapplate',
+                  onClick: self.memapplate
+                _span 'late membership application'
+              end
+            end
 
             _label do
               _input type: 'radio', name: 'doctype', value: 'pubkey',
@@ -710,6 +713,15 @@ class Parts < Vue
       success: ->(data) { self.extractHeaders(data.headers) },
       complete: -> { event.target.disabled = false }
     )
+  end
+
+  ########################################################################
+  #                         Reject memapp                                #
+  ########################################################################
+  def memapplate(event)
+    form = jQuery(event.target).closest('form')
+    form.attr('action', '../../tasklist/memapplate')
+    form.submit()
   end
 
   ########################################################################
