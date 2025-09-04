@@ -85,21 +85,22 @@ def setup_data
       # Allow for forwarded mail (may not catch original and reply ...)
       if v[:Subject] =~ /^(R[eE]: ?|R[eE]：|AW: )?(?:Fwd: )?Invitation to (?:re-)?join The Apache Software Foundation/
         pfx = $1
-        to = Mail::AddressList.new(v[:To])
-        cc = Mail::AddressList.new(v[:Cc])
-        (to.addresses + cc.addresses).each do |add|
-          addr = add.address
-          next if addr == 'members@apache.org'
-          prev = invites[:emails][addr] || [nil, 365] # so script works long after the meeting
-          if age < prev[1] # Only store later dates
-            invites[:emails][addr] = [link, age] # temp save the timestamp
-            invites[:names][add.display_name] = [link, age] if add.display_name
-          end
-        end
         if pfx # it's a reply
           add = Mail::Address.new(v[:From])
           replies[:emails][add.address] = [link, age]
           replies[:names][add.display_name] = [link, age] if add.display_name
+        else
+          to = Mail::AddressList.new(v[:To])
+          cc = Mail::AddressList.new(v[:Cc])
+          (to.addresses + cc.addresses).each do |add|
+            addr = add.address
+            next if addr == 'members@apache.org'
+            prev = invites[:emails][addr] || [nil, 365] # so script works long after the meeting
+            if age < prev[1] # Only store later dates (why?)
+              invites[:emails][addr] = [link, age] # temp save the timestamp
+              invites[:names][add.display_name] = [link, age] if add.display_name
+            end
+          end
         end
       end
     end
