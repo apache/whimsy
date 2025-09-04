@@ -90,7 +90,7 @@ def setup_data
         (to.addresses + cc.addresses).each do |add|
           addr = add.address
           next if addr == 'members@apache.org'
-          prev = invites[:emails][addr] || [nil, 100]
+          prev = invites[:emails][addr] || [nil, 365] # so script works long after the meeting
           if age < prev[1] # Only store later dates
             invites[:emails][addr] = [link, age] # temp save the timestamp
             invites[:names][add.display_name] = [link, age] if add.display_name
