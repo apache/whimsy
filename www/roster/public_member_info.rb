@@ -5,7 +5,8 @@
 # {
 #  "last_updated": "2015-11-29 23:45:50 UTC", // date of members.txt
 #  "code_version": "2016-02-02 17:20:38 UTC",
-#  "member_count": 123,
+#  "member_count": 123, // active
+#  "total_member_count": 131, // active and emeritus
 #  "Deceased Member": 8,
 #  "Emeritus (Non-voting) Member": 133
 #  "members": [
@@ -33,6 +34,7 @@ info = {
     last_updated: (ASF::Member.svn_change rescue nil),
     code_version: CODEVERSION,
     member_count: 0,      # place-holders so appears at start
+    total_member_count: 0,
     "Deceased Member": 0,
     "Emeritus (Non-voting) Member": 0
 }
@@ -58,6 +60,7 @@ info[:ex_members] = info[:ex_members].sort.to_h
 
 # add counts
 info[:member_count] = info[:members].size
+info[:total_member_count] = info[:members].size + ex_members['Emeritus (Non-voting) Member']
 
 ex_members.each do |k, v|
   s = k.to_sym
