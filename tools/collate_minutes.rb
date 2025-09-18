@@ -790,10 +790,14 @@ def layout(title = nil, info = nil)
 #   $calendar.at('h2').content = "Board Meeting Minutes"
   end
 
-  section = $calendar.at('#maincontent .container')
+  maincontent = $calendar.at('#maincontent')
 
   # remove all the existing content
-  section.children.each {|child| child.remove}
+  maincontent.children.each {|child| child.remove}
+
+  container = Nokogiri::XML::Node.new 'div', $calendar
+  container['class'] = 'container'
+  section = maincontent.add_child(container)
 
   # Add the replacement first para
   section.add_child getHTMLbody {|x|
@@ -802,7 +806,7 @@ def layout(title = nil, info = nil)
       x.h1 do
         x.a info[:name], :href => info[:link], :title => info[:text]
       end
-    else
+    elsif title
       x.h1 title
     end
     x.p do
