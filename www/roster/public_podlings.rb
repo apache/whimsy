@@ -107,6 +107,10 @@ if ARGV.length == 2
   status_counts = Hash.new(0)
   podh = ASF::Podling.list.map {|podling| [podling.name, podling.as_hash]}.to_h
   podh.each do |p,v| # drop empty aliases
+    # ezt cannot easily access nested dicts so we copy the website to top level
+    # use the same name as in https://projects.apache.org/json/foundation/podlings.json
+    # to simplify migration
+    v[:homepage] = v[:podlingStatus][:website]
     v.delete(:resourceAliases) if v[:resourceAliases].length == 0
     v.delete(:duration) # This changes every day ...
     status_counts[v[:status]] += 1
