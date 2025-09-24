@@ -4,12 +4,14 @@
 # * New Business
 # * Announcements
 # * Adjournment
+# Longest title above is 31 chars; allow for 35 below.
+# This is to avoid accidentally matching a line that happens to start with digits.
 
 class ASF::Board::Agenda
   parse do
     pattern = /
       ^(?<attach>(?:\s9|1\d)\.)
-      \s(?<title>.*?)\n
+      \s(?<title>.{,35}?)\n
       (?<text>.*?)
       (?=\n[\s1]\d\.|\n===)
     /mx
