@@ -47,6 +47,13 @@ class Group
       group = ASF::Service.find(id)
     end
 
+    unless group.hasLDAP?
+      if itype == 'unattached_project' # special for unattached project groups
+        type = 'LDAP project'
+        group = ASF::Project.find(id)
+      end
+    end
+
     if group.hasLDAP?
       # LDAP group
 

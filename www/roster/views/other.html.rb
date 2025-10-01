@@ -44,7 +44,7 @@ _html do
       _tbody do
         @others.sort.each do |k,v|
           _tr do
-            _td k
+            _td {_a k, href: "group/#{k}?type=unattached_project"}
             _td v[:type]
             _td v[:date]
           end
