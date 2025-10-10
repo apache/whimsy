@@ -87,6 +87,8 @@ class ASF::Board::Agenda
           "#{whimsy}/roster/committee/#{CGI.escape committee.name}"
         attrs['stats'] = 'https://reporter.apache.org/wizard/statistics?' +
             CGI.escape(committee.name)
+        attrs['mailing_lists'] =
+          "https://lists.apache.org/list.html?private@#{CGI.escape committee.name}.apache.org"
         attrs['prior_reports'] = minutes(committee.display_name)
 
         ids = text.scan(/\((\w[-.\w]+)\)/).flatten
