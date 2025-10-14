@@ -343,6 +343,8 @@ $cache = Cache.new(dir: ENV['SITE_SCAN_CACHE'] || 'site-scan')
 $verbose = ARGV.delete '--verbose'
 $saveparse = ARGV.delete '--saveparse'
 $skipresourcecheck = ARGV.delete '--noresource'
+$podling = ARGV.delete('--podling')
+
 sites_checked = 0
 sites_failed = 0
 
@@ -359,11 +361,10 @@ puts "Started: #{Time.now}"  # must agree with site-scan monitor
 # If additional projname|podlingname are provided, only scans those sites
 if ARGV.first =~ /^https?:\/\/\w/
   # Scan a single URL provided by user
-  podling = ARGV.delete('--podling')
   site = ARGV.shift.dup # needs to be unfrozen
   name = ARGV.shift || site[/\/(\w[^.]*)/, 1].capitalize
   output_projects = ARGV.shift
-  results[name] = parse(name, site, name, podling)
+  results[name] = parse(name, site, name, $podling)
 else
   # Gather output filenames (if any) and scan various projects
   if ARGV.first =~ %r{[./]} # have we a file name?
