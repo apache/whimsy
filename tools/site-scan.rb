@@ -76,23 +76,24 @@ def parse(id, site, name, podling=false)
   end
   data[:display_name] = name
   data[:uri] = site
+  data[:errors] = []
   uri = URI.parse(site)
   begin
     Socket.getaddrinfo(uri.host, uri.scheme)
   rescue SocketError => se
-    data[:errors] = se.message
+    data[:errors] << se.message
     return data
   end
   begin
     uri, response, status = $cache.get(site.to_s)
   rescue IOError => ioe
-    data[:errors] = ioe.message
+    data[:errors] << ioe.message
     return data
   end
   puts "@#{__LINE__}: #{id} #{uri} #{status}"
   # Bail and return if getting the site returns an error code
   if response.respond_to? :code and response.code =~ /^[45]/
-    data[:errors] = "cache.get(#{site}) error code #{response.code}"
+    data[:errors] << "cache.get(#{site}) error code #{response.code}"
     return data
   end
   doc = Nokogiri::HTML(response)
