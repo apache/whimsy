@@ -166,7 +166,8 @@ def parse(id, site, name, podling=false)
         else
           site2 = URI.join(site,a_href.gsub(' ','%20').gsub('|', '%7C')) # HACK
         end
-        if site2.host == uri.host and site2.path.size > 2
+        # podling sites are reachable via two urls
+        if site2.host.sub('.incubator.', '.') == uri.host.sub('.incubator.', '.') and site2.path.size > 2
           subpages[site2.to_s] = a
         end
       rescue StandardError => e
