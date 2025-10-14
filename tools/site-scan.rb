@@ -221,7 +221,7 @@ def parse(id, site, name, podling=false)
             nodisclaimer << subpage
           end
         else
-          if show_anyway or !%w(polaris).include? id # reported, so suppress multiple reports
+          if show_anyway or !%w(gluten).include? id # reported, so suppress multiple reports
             $stderr.puts "@#{__LINE__}: #{id} #{subpage} => #{uri} #{status} '#{anchor.text.strip}'"
           end
         end
