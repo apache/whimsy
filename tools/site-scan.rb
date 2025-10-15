@@ -235,8 +235,10 @@ def parse(id, site, name, podling=false)
   if nodisclaimer.size > 0
     data[:disclaimers] = [hasdisclaimer, nodisclaimer]
   end
-  # Show potential download pages
-  data[:downloads] = subpages.select{|k,_v| k =~ %r{download|release|install|dlcdn\.apache\.org|dyn/closer}i}
+  # Show potential download pages and related text
+  data[:downloads] = subpages.
+    select{|k,_v| k =~ %r{download|release|install|dlcdn\.apache\.org|dyn/closer}i}.
+    map {|k,v| [k,v.text]}.to_h
 
   # THIRD: see if an image has been uploaded
   data[:image] = ASF::SiteImage.find(id)
