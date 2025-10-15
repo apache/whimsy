@@ -160,21 +160,24 @@ def parse(id, site, name, podling=false)
         end
       end
     end
-    unless a_href =~ %r{^(#|mailto:)}
-      begin
-        if a_href =~ %r{^https?://} # no need to rebase this
-          site2 = URI.parse(a_href.gsub(' ','%20').gsub('|', '%7C')) # needs to be a URI
-        else
-          site2 = URI.join(site,a_href.gsub(' ','%20').gsub('|', '%7C')) # HACK
-        end
-        # podling sites are reachable via two urls (allow for nil)
-        if site2.host&.sub('.incubator.', '.') == uri.host&.sub('.incubator.', '.') and site2.path.size > 2
-          subpages[site2.to_s] = a
-        end
-      rescue StandardError => e
-        if show_anyway or !a_href.include?('producthunt.com/products/apache-echarts') # reported but not yet fixed, so limit report frequency
-          $stderr.puts "@#{__LINE__}: #{id}: Bad a_href #{a_href} #{e}"
-        end
+    begin
+      # only want http(s) or relative links
+      href_uri = URI.parse(a_href.gsub(' ','%20').gsub('|', '%7C')) # needs to be a URI
+      scheme = href_uri.scheme
+      if %w(http https).include? scheme # no need to rebase this
+        site2 = href_uri
+      elsif scheme.nil? # relative
+        site2 = URI.join(site, href_uri.path) # HACK
+      else # something else
+        site2 = nil
+      end
+      # podling sites are reachable via two urls (allow for nil)
+      if !site2.nil? and site2.host&.sub('.incubator.', '.') == uri.host&.sub('.incubator.', '.') and site2.path.size > 2
+        subpages[site2.to_s] = a
+      end
+    rescue StandardError => e
+      if show_anyway or !a_href.include?('producthunt.com/products/apache-echarts') # reported but not yet fixed, so limit report frequency
+        $stderr.puts "@#{__LINE__}: #{id}: Bad a_href #{a_href} #{e}"
       end
     end
   end
@@ -208,7 +211,7 @@ def parse(id, site, name, podling=false)
   hasdisclaimer = 0
   nodisclaimer = []
   subpages.each do |subpage, anchor|
-    if podling
+    if podling and not %w{.png .pdf .jpg}.include?File.extname(subpage)
       begin
         uri, response, status = $cache.get(subpage)
         if uri&.to_s == subpage or uri&.to_s == subpage + '/'
