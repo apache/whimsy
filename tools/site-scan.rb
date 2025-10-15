@@ -63,12 +63,28 @@ end
   bits.join(' ')
 end
 
+def report_error(data, site, key, message)
+  if $show_anyway
+    $stderr.puts message
+    data[:error_reports][key] = $time_now
+  else
+    last_reported = ($previous_data[site]||{})[key] || 0
+    if $time_now - last_reported > SECS_PER_DAY
+      $stderr.puts message
+      data[:error_reports][key] = $time_now
+    else
+      data[:error_reports][key] = last_reported
+    end
+  end
+end
+
 # Parse an Apache project website and return text|urls that match our checks
 # @return Hash of symbols: text|url found from a check made
 # @see SiteStandards for definitions of what we should scan for (in general)
 def parse(id, site, name, podling=false)
-  show_anyway = Time.now.gmtime.strftime('%H') == '08' # show suppressed errors once a day
   data = {}
+   # keep track of error reports to suppress unnecessary repeats
+  data[:error_reports] = {} # key = url, value = last reported epoch
   # force https to avoid issue with cache (sites should use https anyway)
   site.sub!(%r{^http:},'https:')
   SiteStandards::COMMON_CHECKS.each_key do |k|
@@ -176,9 +192,7 @@ def parse(id, site, name, podling=false)
         subpages[site2.to_s] = a
       end
     rescue StandardError => e
-      if show_anyway or !a_href.include?('producthunt.com/products/apache-echarts') # reported but not yet fixed, so limit report frequency
-        $stderr.puts "@#{__LINE__}: #{id}: Bad a_href #{a_href} #{e}"
-      end
+      report_error data, id, a_href, "@#{__LINE__}: #{id}: Bad a_href #{a_href} #{e}"
     end
   end
 
@@ -226,9 +240,7 @@ def parse(id, site, name, podling=false)
             nodisclaimer << subpage
           end
         else
-          if show_anyway or !%w(gluten).include? id # reported, so suppress multiple reports
-            $stderr.puts "@#{__LINE__}: #{id} #{subpage} => #{uri} #{status} '#{anchor.text.strip}'"
-          end
+          report_error data, id, subpage, "@#{__LINE__}: #{id} #{subpage} => #{uri} #{status} '#{anchor.text.strip}'"
         end
       rescue URI::InvalidURIError
         # ignore
@@ -345,6 +357,22 @@ ensure
   return stdout, stderr, status
 end
 
+def get_report_data(input)
+    out = {}
+    begin
+      data = JSON.parse(File.read(input, :encoding => 'utf-8')).each do |k,v|
+        er = v['error_reports']
+        if er
+          # Drop stale data
+          out[k] = er.select {|u,t| $time_now - t <= 2 * SECS_PER_DAY}
+        end
+      end
+    rescue StandardError => e
+      $stderr.puts e
+    end
+    out
+end
+
 #########################################################################
 # Main execution begins here
 results = {}
@@ -354,6 +382,9 @@ $verbose = ARGV.delete '--verbose'
 $saveparse = ARGV.delete '--saveparse'
 $skipresourcecheck = ARGV.delete '--noresource'
 $podling = ARGV.delete('--podling')
+$time_now = Time.now.gmtime.to_i
+$show_anyway = Time.now.gmtime.strftime('%H') == '08' # show suppressed errors once a day
+SECS_PER_DAY=24*60*60
 
 sites_checked = 0
 sites_failed = 0
@@ -388,6 +419,11 @@ else
     output_projects = nil
   end
 
+  $previous_data = {}
+  if output_projects
+    $previous_data = get_report_data output_projects
+  end
+
   # Scan committees, including non-pmcs
   ASF::Committee.load_committee_info
   committees = (ASF::Committee.pmcs + ASF::Committee.nonpmcs).uniq
@@ -404,6 +440,11 @@ else
     # Don't keep checking unnecessarily
     # (and don't set false if already true)
     $skipresourcecheck = ($skipresourcecheck or sites_failed > 10 or (sites_failed > 3 and sites_failed == sites_checked))
+  end
+
+  $previous_data = {}
+  if output_podlings
+    $previous_data = get_report_data output_podlings
   end
 
   # Scan podlings that have a website
