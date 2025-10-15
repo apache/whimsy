@@ -233,7 +233,10 @@ def parse(id, site, name, podling=false)
     end
   end
   if nodisclaimer.size > 0
-    data[:disclaimers] = [hasdisclaimer, nodisclaimer]
+    data[:disclaimers] = {
+      seen: hasdisclaimer,
+      notfound: nodisclaimer
+    }
   end
   # Show potential download pages and related text
   data[:downloads] = subpages.
