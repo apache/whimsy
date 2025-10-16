@@ -11,3 +11,5 @@ services:
     # Needed to run puppeteer
     cap_add:
       - SYS_ADMIN
+    # Seems to be needed to run puppeteer on macOS with Apple chips
+    platform: linux/amd64
