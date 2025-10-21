@@ -60,15 +60,19 @@ function getHost(url) {
           console.log(url);
           interceptedRequest.continue();
         } else if (option == 'allref') {
-          ini = interceptedRequest.initiator();
-          let iniurl = ini.url;
-          if (!iniurl && ini.stack) {
-            iniurl = ini.stack.callFrames[0].url;
-          }
-          if (iniurl && inithost != getHost(iniurl)) { // second level
-            console.log(url + ' <= ' + iniurl);
-          } else {
-            console.log(url);
+          let ini = interceptedRequest.initiator();
+          if (ini) {            
+            let iniurl = ini.url;
+            if (!iniurl && ini.stack) {
+              iniurl = ini.stack.callFrames[0].url;
+            }
+            if (iniurl && inithost != getHost(iniurl)) { // second level
+              console.log(url + ' <= ' + iniurl);
+            } else {
+              console.log(url);
+            }
+          } else { // seems to occur with captcha failures
+              console.log(url + ' NAK');            
           }
           interceptedRequest.continue();
         } else {
