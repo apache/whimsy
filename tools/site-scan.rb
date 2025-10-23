@@ -391,7 +391,7 @@ sites_failed = 0
 
 k = ARGV.select {|k| k.start_with? '-'}
 if k.size > 0
-  raise "Unexpected options: #{k} (valid: verbose, saveparse, noresource)"
+  raise "Unexpected options: #{k} (valid: verbose, saveparse, noresource, podling)"
 end
 
 puts "Started: #{Time.now}"  # must agree with site-scan monitor
