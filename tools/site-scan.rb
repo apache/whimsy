@@ -101,7 +101,7 @@ def parse(id, site, name, podling=false)
     return data
   end
   begin
-    uri, response, status = $cache.get(site.to_s)
+    uri, response, status, csp = $cache.get(site.to_s)
   rescue IOError => ioe
     data[:errors] << ioe.message
     return data
@@ -119,6 +119,7 @@ def parse(id, site, name, podling=false)
     $stderr.puts "Wrote parsed input to #{file}"
   end
   data[:uri] = uri.to_s
+  data[:csp] = csp
 
   subpages = Hash.new
   # FIRST: scan each link's a_href to see if we need to capture it
@@ -227,7 +228,7 @@ def parse(id, site, name, podling=false)
   subpages.each do |subpage, anchor|
     if podling and not %w{.png .pdf .jpg}.include?File.extname(subpage)
       begin
-        uri, response, status = $cache.get(subpage)
+        uri, response, status, _csp = $cache.get(subpage)
         if uri&.to_s == subpage or uri&.to_s == subpage + '/'
           puts "@#{__LINE__}: #{id} #{uri} #{status}"
         else
@@ -377,7 +378,7 @@ end
 # Main execution begins here
 results = {}
 podlings = {}
-$cache = Cache.new(dir: ENV['SITE_SCAN_CACHE'] || 'site-scan')
+$cache = Cache.new(dir: ENV['SITE_SCAN_CACHE'] || 'site-scan', save_csp: true)
 $verbose = ARGV.delete '--verbose'
 $saveparse = ARGV.delete '--saveparse'
 $skipresourcecheck = ARGV.delete '--noresource'
