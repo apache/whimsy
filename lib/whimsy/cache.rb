@@ -62,8 +62,11 @@ class Cache
     age, lastmod, uri, etag, data, csp = read_cache(url)
     Wunderbar.debug "#{uri} #{age} LM=#{lastmod} ET=#{etag}"
     if age < minage
-      # if (@save_csp)
-      # return uri, data, 'recent' # we have a recent cache entry
+      if (@save_csp)
+        return uri, data, 'recent', csp # we have a recent cache entry
+      else
+        return uri, data, 'recent' # we have a recent cache entry
+      end
     end
 
     # Try to do a conditional get
