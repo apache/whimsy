@@ -256,8 +256,8 @@ module SiteStandards
     squashed = site&.gsub(/ +/, ' ') # data might be missing
     return true if squashed == NON_PMC
     if squashed =~ DEFAULT_CSP_RE
-      custom = $1
-      $stderr.puts [key, custom].inspect if custom.size > 1
+      # custom = $1
+      # $stderr.puts [key, custom].inspect if custom.size > 1
       return true
     end
     return false
