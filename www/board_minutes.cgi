@@ -92,6 +92,7 @@ def main():
             print("Invalid request")
     except Exception as ex:
         print('Sorry, something went wrong')
+        print(f"Error processing {source}", file=sys.stderr)
         traceback.print_exc()
 
 if __name__ == '__main__':
