@@ -11,6 +11,8 @@ class Cache
   # Is the cache enabled?
   attr_reader :enabled
 
+  CSP_PREFIX = 'CSP: '
+
   # Create the cache
   #
   # Parameters:
@@ -19,7 +21,8 @@ class Cache
   # - enabled - is the cache enabled initially
   def initialize(dir: '/tmp/whimsy-cache',
         minage: 3000, # 50 mins
-        enabled: true)
+        enabled: true,
+        save_csp: false)
     if dir.start_with?('/')
       @dir = dir
     else
@@ -27,6 +30,7 @@ class Cache
     end
     @enabled = enabled
     @minage = minage
+    @save_csp = save_csp
     init_cache(@dir) if enabled
   end
 
@@ -47,14 +51,19 @@ class Cache
   def get(url)
     if not @enabled
       uri, res = fetch(url)
-      return uri, res.body, 'nocache'
+      if @save_csp
+        return uri, res.body, 'nocache', res.header['content-security-policy']
+      else
+        return uri, res.body, 'nocache'
+      end
     end
 
     # Check the cache
-    age, lastmod, uri, etag, data = read_cache(url)
+    age, lastmod, uri, etag, data, csp = read_cache(url)
     Wunderbar.debug "#{uri} #{age} LM=#{lastmod} ET=#{etag}"
     if age < minage
-      return uri, data, 'recent' # we have a recent cache entry
+      # if (@save_csp)
+      # return uri, data, 'recent' # we have a recent cache entry
     end
 
     # Try to do a conditional get
@@ -65,12 +74,20 @@ class Cache
       uri, res = fetch(url, cond)
       if res.is_a?(Net::HTTPSuccess)
         write_cache(url, res)
-        return uri, res.body, 'updated'
+        if @save_csp
+          return uri, res.body, 'updated', res.header['content-security-policy']
+        else
+          return uri, res.body, 'updated'
+        end
       elsif res.is_a?(Net::HTTPNotModified)
         path = makepath(url)
         mtime = Time.now
         File.utime(mtime, mtime, path) # show we checked the page
-        return uri, data, 'unchanged'
+        if @save_csp
+          return uri, data, 'unchanged', csp
+        else
+          return uri, data, 'unchanged'
+        end
       else
         return nil, res, 'error'
       end
@@ -78,7 +95,11 @@ class Cache
       uri, res = fetch(url)
       if res.is_a?(Net::HTTPSuccess)
         write_cache(url, res)
-        return uri, res.body, data ? 'no last mod/etag' : 'cachemiss'
+        if @save_csp
+          return uri, res.body, data ? 'no last mod/etag' : 'cachemiss', res.header['content-security-policy']
+        else
+          return uri, res.body, data ? 'no last mod/etag' : 'cachemiss'
+        end
       else
         return nil, res, 'error'
       end
@@ -135,6 +156,9 @@ class Cache
     open path, 'wb' do |io|
       io.puts res['Last-Modified']
       io.puts uri
+      if @save_csp
+        io.puts "#{CSP_PREFIX}#{res.header['content-security-policy']}"
+      end
       io.puts res['Etag']
       io.write res.body
     end
@@ -148,11 +172,16 @@ class Cache
     data = nil
     uri = nil
     etag = nil
+    csp = nil
     if mtime
       open path, 'rb' do |io|
         last = io.gets.chomp
         uri = URI.parse(io.gets.chomp)
         etag = io.gets.chomp
+        if etag.start_with? CSP_PREFIX
+          csp = etag[CSP_PREFIX.size..]
+          etag = io.gets.chomp
+        end
         data = io.read
 #       Fri, 12 May 2017 14:10:23 GMT
 #       123456789012345678901234567890
@@ -160,7 +189,7 @@ class Cache
       end
     end
 
-    return Time.now - (mtime ? mtime : Time.new(0)), last, uri, etag, data
+    return Time.now - (mtime ? mtime : Time.new(0)), last, uri, etag, data, csp
   end
 
   def makepath(uri)
@@ -168,4 +197,10 @@ class Cache
     File.join @dir, name
   end
 
+end
+
+if __FILE__ == $0
+  cache = Cache.new(dir: '/tmp/cache', enabled: true, save_csp: true)
+  uri, response, status, rest = cache.get(ARGV.shift || 'https://apache.org/')
+  p [uri,status,rest]
 end
