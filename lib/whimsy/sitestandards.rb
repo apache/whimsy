@@ -6,7 +6,7 @@ module SiteStandards
   CHECK_TEXT      = 'text'      # (optional) Regex of <a ...>Text to scan for</a>, of a.text.downcase.strip
   CHECK_CAPTURE   = 'capture'   # a_href minimal regex to capture - for license, we capture the link if it points to apache.org somewhere
   CHECK_VALIDATE  = 'validate'  # a_href detailed regex to expect for compliance; it must point to one of our actual licenses to pass
-  CHECK_TYPE      = 'type'      # true = validation checks href/url; false = checks text node
+  CHECK_TYPE      = 'type'      # 'href', 'text' or 'message'
   CHECK_POLICY    = 'policy'    # URL to policy statement for this check
   CHECK_DOC       = 'doc'       # Explanation of what the check is looking for
 
@@ -16,7 +16,7 @@ module SiteStandards
       CHECK_TEXT => nil,
       CHECK_CAPTURE => nil,
       CHECK_VALIDATE => %r{https?://[^.]+\.apache\.org},
-      CHECK_TYPE => true,
+      CHECK_TYPE => 'href',
       CHECK_POLICY => 'https://www.apache.org/foundation/marks/pmcs#websites',
       CHECK_DOC => 'The homepage for any ProjectName must be served from http://ProjectName.apache.org',
       },
@@ -27,7 +27,7 @@ module SiteStandards
       CHECK_TEXT => nil,
       CHECK_CAPTURE => %r{https?://[^.]+(\.incubator)?\.apache\.org},
       CHECK_VALIDATE => %r{https?://[^.]+(\.incubator)?\.apache\.org},
-      CHECK_TYPE => true,
+      CHECK_TYPE => 'href',
       CHECK_POLICY => 'https://incubator.apache.org/guides/sites.html#podling_website_requirements',
       CHECK_DOC => 'The homepage for any ProjectName must be served from http://ProjectName(.incubator)?.apache.org',
       },
@@ -35,7 +35,7 @@ module SiteStandards
       CHECK_TEXT => %r{Incubation is required of all newly accepted projects},
       CHECK_CAPTURE => %r{Incubation is required of all newly accepted projects},
       CHECK_VALIDATE =>  %r{Apache \S+( \S+)?( \([Ii]ncubating\))? is an effort undergoing [Ii]ncubation at [Tt]he Apache Software Foundation \(ASF\),? sponsored by the (Apache )?\S+( PMC)?. Incubation is required of all newly accepted projects until a further review indicates that the infrastructure, communications, and decision making process have stabilized in a manner consistent with other successful ASF projects. While incubation status is not necessarily a reflection of the completeness or stability of the code, it does indicate that the project has yet to be fully endorsed by the ASF.},
-      CHECK_TYPE => false,
+      CHECK_TYPE => 'text',
       CHECK_POLICY => 'https://incubator.apache.org/guides/branding.html#disclaimers',
       CHECK_DOC => 'All Apache Incubator Podling sites must contain the incubating disclaimer.',
       },
@@ -46,7 +46,7 @@ module SiteStandards
       CHECK_TEXT => %r{apache|asf|foundation}i,
       CHECK_CAPTURE => %r{^(https?:)?//(www\.)?apache\.org/?$},
       CHECK_VALIDATE => %r{apache|asf|foundation}i,
-      CHECK_TYPE => false,
+      CHECK_TYPE => 'text',
       CHECK_POLICY => 'https://www.apache.org/foundation/marks/pmcs#navigation',
       CHECK_DOC => 'All projects must feature some prominent link back to the main ASF homepage at http://www.apache.org/',
     },
@@ -57,7 +57,7 @@ module SiteStandards
       CHECK_TEXT => nil,
       CHECK_CAPTURE => %r{(events|x)/current-event|event-images},
       CHECK_VALIDATE => %r{^https?://((www\.)?apache\.org/events/current-event|events\.apache\.org|www\.apachecon\.com/event-images/snippet\.js)},
-      CHECK_TYPE => true,
+      CHECK_TYPE => 'href',
       CHECK_POLICY => 'https://www.apachecon.com/event-images/',
       CHECK_DOC => 'Projects SHOULD include a link to any current CommunityOverCode event, or to the events.apache.org site, as provided by VP, Conferences.',
     },
@@ -65,7 +65,7 @@ module SiteStandards
       CHECK_TEXT => /^license$/,
       CHECK_CAPTURE => %r{apache\.org},
       CHECK_VALIDATE => %r{^https?://.*apache.org/licenses/?$},
-      CHECK_TYPE => true,
+      CHECK_TYPE => 'href',
       CHECK_POLICY => 'https://www.apache.org/foundation/marks/pmcs#navigation',
       CHECK_DOC => 'There should be a "License" (*not* "Licenses") navigation link which points to: http[s]://www.apache.org/licenses[/]. (Do not link to sub-pages)',
     },
@@ -73,7 +73,7 @@ module SiteStandards
         CHECK_TEXT => /\A(sponsors|thanks!?|thanks to our sponsors)\z/,
         CHECK_CAPTURE => /\A(sponsors|thanks!?|thanks to our sponsors)\z/,
         CHECK_VALIDATE => %r{^https?://.*apache.org/foundation/(thanks|sponsors)},
-        CHECK_TYPE => true,
+        CHECK_TYPE => 'href',
         CHECK_POLICY => 'https://www.apache.org/foundation/marks/pmcs#navigation',
         CHECK_DOC => '"Sponsors", "Thanks" or "Thanks to our Sponsors" should link to: http://www.apache.org/foundation/thanks.html or sponsors.html',
     },
@@ -81,7 +81,7 @@ module SiteStandards
       CHECK_TEXT => /security/,
       CHECK_CAPTURE => /security/,
       CHECK_VALIDATE => %r{^(https?://.*apache.org|[^:]*)/.*[Ss]ecurity},
-      CHECK_TYPE => true,
+      CHECK_TYPE => 'href',
       CHECK_POLICY => 'https://www.apache.org/foundation/marks/pmcs#navigation',
       CHECK_DOC => '"Security" should link to either to a project-specific page [...], or to the main http://www.apache.org/security/ page.',
     },
@@ -89,7 +89,7 @@ module SiteStandards
       CHECK_TEXT => %r{sponsorship|\bdonate\b|sponsor\sapache|sponsoring\sapache|sponsor},
       CHECK_CAPTURE => %r{sponsorship|\bdonate\b|sponsor\sapache|sponsoring\sapache|sponsor},
       CHECK_VALIDATE => %r{^https?://.*apache.org/foundation/sponsorship},
-      CHECK_TYPE => true,
+      CHECK_TYPE => 'href',
       CHECK_POLICY => 'https://www.apache.org/foundation/marks/pmcs#navigation',
       CHECK_DOC => '"Sponsorship", "Sponsor Apache", or "Donate" should link to: http://www.apache.org/foundation/sponsorship.html',
     },
@@ -98,7 +98,7 @@ module SiteStandards
       CHECK_TEXT => %r{\btrademarks\b},
       CHECK_CAPTURE => %r{\btrademarks\b},
       CHECK_VALIDATE => %r{trademarks of [Tt]he Apache Software Foundation},
-      CHECK_TYPE => false,
+      CHECK_TYPE => 'text',
       CHECK_POLICY => 'https://www.apache.org/foundation/marks/pmcs#attributions',
       CHECK_DOC => 'All project or product homepages must feature a prominent trademark attribution of all applicable Apache trademarks.',
     },
@@ -106,7 +106,7 @@ module SiteStandards
       CHECK_TEXT => %r{((Copyright|©).*apache|apache.*(Copyright|©))}i,
       CHECK_CAPTURE => %r{(Copyright|©)}i,
       CHECK_VALIDATE => %r{((Copyright|©).*apache|apache.*(Copyright|©))}i,
-      CHECK_TYPE => false,
+      CHECK_TYPE => 'text',
       CHECK_POLICY => 'https://www.apache.org/legal/src-headers.html#headers',
       CHECK_DOC => 'All website content SHOULD include a copyright notice for the ASF.',
     },
@@ -118,7 +118,7 @@ module SiteStandards
                           |
                           \Ahttps?://(?:www\.)?apache\.org/foundation/policies/privacy\.html\z
                           }ix,
-      CHECK_TYPE => true,
+      CHECK_TYPE => 'href',
       CHECK_POLICY => 'https://www.apache.org/foundation/marks/pmcs.html#navigation',
       CHECK_DOC => 'All websites must link to the Privacy Policy.',
     },
@@ -127,7 +127,7 @@ module SiteStandards
       CHECK_TEXT => %r{Found \d+ external resources},
       CHECK_CAPTURE => %r{Found \d+ external resources},
       CHECK_VALIDATE => %r{Found 0 external resources},
-      CHECK_TYPE => false,
+      CHECK_TYPE => 'text',
       CHECK_POLICY => 'https://privacy.apache.org/faq/committers.html',
       CHECK_DOC => 'Websites must not link to externally hosted resources',
     },
@@ -136,10 +136,20 @@ module SiteStandards
       CHECK_TEXT => nil,
       CHECK_CAPTURE => nil,
       CHECK_VALIDATE => %r{.},
-      CHECK_TYPE => true,
+      CHECK_TYPE => 'href',
       CHECK_POLICY => 'https://www.apache.org/logos/',
       CHECK_DOC => 'Projects SHOULD add a copy of their logo to https://www.apache.org/logos/ to be included in ASF homepage.',
     },
+
+    'csp' => { # Custom: CSP must follow standards
+      CHECK_TEXT => 'Non-standard CSP',
+      CHECK_CAPTURE => nil,
+      CHECK_VALIDATE => :CSP,
+      CHECK_TYPE => 'message',
+      CHECK_POLICY => 'https://infra.apache.org/tools/csp.html',
+      CHECK_DOC => 'Websites must not replace the default Content-Security-Policy',
+    },
+
   }
 
   SITE_PASS       = 'label-success'
@@ -208,6 +218,55 @@ module SiteStandards
     end
     return sites, crawl_time
   end
+  
+  CSP_INFRA_BASE = <<-EOD.strip.gsub(%r{([.*])}, "\\\\\\1")
+    'self' data: blob: 'unsafe-inline' 'unsafe-eval'
+    https://www.apachecon.com/
+    https://www.communityovercode.org/
+    https://*.apache.org/ https://apache.org/
+  EOD
+  CSP_THIRD_PARTY = "https://*.scarf.sh/ ".gsub(%r{([.*])}, "\\\\\\1")
+
+  CSP_PROJECT_DOMAINS = "(.*)" # Allow anything here (capture it)
+  
+  DEFAULT_CSP = <<-EOD.strip.gsub("\n",'').gsub(/ +/, ' ')
+    default-src #{CSP_INFRA_BASE} #{CSP_THIRD_PARTY} #{CSP_PROJECT_DOMAINS};
+    script-src #{CSP_INFRA_BASE} #{CSP_THIRD_PARTY} #{CSP_PROJECT_DOMAINS};
+    style-src #{CSP_INFRA_BASE} #{CSP_THIRD_PARTY} #{CSP_PROJECT_DOMAINS};
+    frame-ancestors 'self';
+    frame-src #{CSP_INFRA_BASE} #{CSP_THIRD_PARTY} #{CSP_PROJECT_DOMAINS};
+    worker-src 'self' data: blob:;
+  EOD
+
+  NON_PMC = <<-EOD.strip.gsub("\n",'').gsub(/ +/, ' ')
+    default-src 'self' data: 'unsafe-inline'
+    https://www.apachecon.com/ https://analytics.apache.org/ http://analytics.apache.org/
+    https://www.youtube-nocookie.com https://www.youtube.com; 
+    script-src 'self' 'unsafe-inline' 'unsafe-eval'
+    https://www.apachecon.com/ https://analytics.apache.org/ http://analytics.apache.org/
+    https://www.youtube-nocookie.com https://www.youtube.com;
+    style-src 'self' 'unsafe-inline';
+    frame-ancestors 'none';
+    img-src 'self' data: https://www.apache.org/ https://www.apachecon.com/;
+  EOD
+
+  DEFAULT_CSP_RE = %r{^#{DEFAULT_CSP}$}
+
+  def CSP(site, key)
+    squashed = site&.gsub(/ +/, ' ') # data might be missing
+    return true if squashed == NON_PMC
+    if squashed =~ DEFAULT_CSP_RE
+      custom = $1
+      $stderr.puts [key, custom].inspect if custom.size > 1
+      return true
+    end
+    return false
+  end
+  
+  def _validate(site, match, key)
+    return method(match).call(site, key) if match.is_a? Symbol
+    return site =~ match
+  end
 
   # Analyze data returned from site-scan.rb by using checks[CHECK_VALIDATE] regex
   #   If value =~ CHECK_VALIDATE, SITE_PASS
@@ -216,11 +275,12 @@ module SiteStandards
   # @param sites hash of site-scan data collected
   # @param checks to apply to sites to determine status
   # @return [overall counts, description of statuses, success listings]
+  # called by site_or_pod.rb
   def analyze(sites, checks)
     success = Hash.new { |h, k| h[k] = Hash.new(&h.default_proc) }
     counts = Hash.new { |h, k| h[k] = Hash.new(&h.default_proc) }
     checks.each do |nam, check_data|
-      success[nam] = sites.select { |_, site| site[nam] =~ check_data[SiteStandards::CHECK_VALIDATE]  }.keys
+      success[nam] = sites.select { |key, site| _validate(site[nam], check_data[SiteStandards::CHECK_VALIDATE], key)  }.keys
       counts[nam][SITE_PASS] = success[nam].count
       counts[nam][SITE_WARN] = 0 # Reorder output
       counts[nam][SITE_FAIL] = sites.select { |_, site| site[nam].nil? }.count

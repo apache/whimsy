@@ -55,12 +55,19 @@ def display_project(project, links, analysis, checks, tlp = true)
             _td do
               if cls != SiteStandards::SITE_PASS
                 if checks.keys.include? col
-                  if checks[col][SiteStandards::CHECK_TYPE]
+                  chktype = checks[col][SiteStandards::CHECK_TYPE]
+                  if chktype == 'href'
                     _ 'URL expected to match regular expression: '
                     _code checks[col][SiteStandards::CHECK_VALIDATE].source
-                  else
+                  elsif chktype == 'text'
                     _ 'Text of a link expected to match regular expression: '
                     _code checks[col][SiteStandards::CHECK_TEXT].source
+                  elsif chktype == 'message'
+                    _ 'Msg:'
+                    _code checks[col][SiteStandards::CHECK_TEXT]
+                  else
+                    _ 'Unknown type:'
+                    _code chktype
                   end
                   _br
                   _a checks[col][SiteStandards::CHECK_DOC], href: checks[col][SiteStandards::CHECK_POLICY]
@@ -91,12 +98,19 @@ def display_check(col, sites, analysis, checks, tlp = true)
       end
       _span.glyphicon.glyphicon_menu_right
       if checks.keys.include? col
-        if checks[col][SiteStandards::CHECK_TYPE]
+        chktype = checks[col][SiteStandards::CHECK_TYPE]
+        if chktype == 'href'
           _ 'Check Results URL expected to match regular expression: '
           _code checks[col][SiteStandards::CHECK_VALIDATE].source
-        else
+        elsif chktype == 'text'
           _ 'Check Results Text of a link expected to match regular expression: '
           _code checks[col][SiteStandards::CHECK_TEXT].source
+        elsif chktype == 'message'
+          _ 'Msg:'
+          _code checks[col][SiteStandards::CHECK_TEXT]
+        else
+          _ 'Unknown type:'
+          _code chktype
         end
         if checks.include? col
           _br
