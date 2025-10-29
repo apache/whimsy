@@ -72,6 +72,11 @@ _html do
           _ ' appear on a project homepage, along with an "image" check if project logo files are in apache.org/img'
         end
         _p 'The script also checks for 3rd party resource references that might be in conflict with our privacy policy.'
+        _p.bg_danger %{
+            The Content-Security-Policy (Csp) check is a work in progress:
+            it only checks that the default settings have not been over-ridden.
+            It does not check if the host exceptions have been approved.
+          }
         _p! do
           _a 'View the crawler code', href: 'https://github.com/apache/whimsy/blob/master/tools/site-scan.rb'
           _ ', '
