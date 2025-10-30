@@ -141,10 +141,10 @@ module SiteStandards
       CHECK_DOC => 'Projects SHOULD add a copy of their logo to https://www.apache.org/logos/ to be included in ASF homepage.',
     },
 
-    'csp' => { # Custom: CSP must follow standards
-      CHECK_TEXT => 'Non-standard CSP',
+    'csp_check' => { # Custom: CSP must follow standards
+      CHECK_TEXT => 'Non-default CSP',
       CHECK_CAPTURE => nil,
-      CHECK_VALIDATE => :CSP,
+      CHECK_VALIDATE => %r{OK},
       CHECK_TYPE => 'message',
       CHECK_POLICY => 'https://infra.apache.org/tools/csp.html',
       CHECK_DOC => 'Websites must not replace the default Content-Security-Policy',
@@ -238,7 +238,8 @@ module SiteStandards
     worker-src 'self' data: blob:;
   EOD
 
-  NON_PMC = <<-EOD.strip.gsub("\n",'').gsub(/ +/, ' ')
+  # CSP for main website
+  WWW_CSP = <<-EOD.strip.gsub("\n",'').gsub(/ +/, ' ')
     default-src 'self' data: 'unsafe-inline'
     https://www.apachecon.com/ https://analytics.apache.org/ http://analytics.apache.org/
     https://www.youtube-nocookie.com https://www.youtube.com; 
@@ -252,22 +253,51 @@ module SiteStandards
 
   DEFAULT_CSP_RE = %r{^#{DEFAULT_CSP}$}
 
-  def CSP(site, key)
-    squashed = site&.gsub(/ +/, ' ') # data might be missing
-    return true if squashed == NON_PMC
-    if squashed =~ DEFAULT_CSP_RE
-      # custom = $1
-      # $stderr.puts [key, custom].inspect if custom.size > 1
-      return true
-    end
-    return false
-  end
-  
   def _validate(site, match, key)
-    return method(match).call(site, key) if match.is_a? Symbol
+    # return method(match).call(site, key) if match.is_a? Symbol
     return site =~ match
   end
 
+  # For possible later use:
+  # def parse_csp(csp)
+  #   ret={}
+  #   csp.chomp(';').split(';').each do |part|
+  #     words = part.strip.split
+  #     key = words.shift
+  #     ret[key] = Set.new(words)
+  #   end
+  #   return ret
+  # end
+
+  # process csp entries to return
+  # - exact match
+  # - has overrides
+  # - invalid
+  def process_csp(sites)
+    sites.each do |site, data|
+      csp = data.fetch('csp', '')
+      squashed = csp.gsub(/ +/, ' ')
+      m = DEFAULT_CSP_RE.match(squashed)
+      if m # the syntax of the CSP appears to be OK
+        extras = m.captures.uniq
+        if extras.size == 1
+          extra1 = extras.first
+          if extra1 == ''
+            data['csp_check'] = 'OK'
+          else
+            data['csp_check'] = "Extras: #{extra1}"
+          end
+        else
+            data['csp_check'] = "Mixed Extras - should not happen: #{extras}"
+        end
+      elsif data['nonpmc'] and data['uri'] =~ %r{^https://(www\.)?apache\.org/} and squashed == WWW_CSP
+        data['csp_check'] = 'OK'
+      else # did not match
+        data['csp_check'] = "Invalid: #{squashed}"
+      end
+    end
+  end
+  
   # Analyze data returned from site-scan.rb by using checks[CHECK_VALIDATE] regex
   #   If value =~ CHECK_VALIDATE, SITE_PASS
   #   If value is present (presumably from CHECK_TEXT|CAPTURE), then SITE_WARN
@@ -277,6 +307,7 @@ module SiteStandards
   # @return [overall counts, description of statuses, success listings]
   # called by site_or_pod.rb
   def analyze(sites, checks)
+    process_csp sites
     success = Hash.new { |h, k| h[k] = Hash.new(&h.default_proc) }
     counts = Hash.new { |h, k| h[k] = Hash.new(&h.default_proc) }
     checks.each do |nam, check_data|
