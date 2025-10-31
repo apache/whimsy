@@ -275,7 +275,7 @@ module SiteStandards
   # - invalid
   def process_csp(sites)
     sites.each do |site, data|
-      csp = data.fetch('csp', '')
+      csp = data.fetch('csp', nil)
       squashed = csp&.gsub(/ +/, ' ') # might be null
       m = DEFAULT_CSP_RE.match(squashed)
       if m # the syntax of the CSP appears to be OK
@@ -292,12 +292,10 @@ module SiteStandards
         end
       elsif csp == nil
         data['csp_check'] = 'OK - no website yet'        
-        $stderr.puts [site, csp].inspect # Temp debug
       elsif data['nonpmc'] and data['uri'] =~ %r{^https://(www\.)?apache\.org/} and squashed == WWW_CSP
         data['csp_check'] = 'OK'
       else # did not match
         data['csp_check'] = "Invalid: #{squashed}"
-        $stderr.puts [site, csp].inspect # Temp debug
       end
     end
   end
