@@ -144,7 +144,7 @@ module SiteStandards
     'csp_check' => { # Custom: CSP must follow standards
       CHECK_TEXT => 'Non-default CSP',
       CHECK_CAPTURE => nil,
-      CHECK_VALIDATE => %r{OK},
+      CHECK_VALIDATE => %r{^OK},
       CHECK_TYPE => 'message',
       CHECK_POLICY => 'https://infra.apache.org/tools/csp.html',
       CHECK_DOC => 'Websites must not replace the default Content-Security-Policy',
@@ -276,7 +276,7 @@ module SiteStandards
   def process_csp(sites)
     sites.each do |site, data|
       csp = data.fetch('csp', '')
-      squashed = csp.gsub(/ +/, ' ')
+      squashed = csp&.gsub(/ +/, ' ') # might be null
       m = DEFAULT_CSP_RE.match(squashed)
       if m # the syntax of the CSP appears to be OK
         extras = m.captures.uniq
@@ -290,6 +290,8 @@ module SiteStandards
         else
             data['csp_check'] = "Mixed Extras - should not happen: #{extras}"
         end
+      elsif csp == nil
+        data['csp_check'] = 'OK - no website yet'        
       elsif data['nonpmc'] and data['uri'] =~ %r{^https://(www\.)?apache\.org/} and squashed == WWW_CSP
         data['csp_check'] = 'OK'
       else # did not match
