@@ -292,10 +292,12 @@ module SiteStandards
         end
       elsif csp == nil
         data['csp_check'] = 'OK - no website yet'        
+        $stderr.puts [site, csp].inspect # Temp debug
       elsif data['nonpmc'] and data['uri'] =~ %r{^https://(www\.)?apache\.org/} and squashed == WWW_CSP
         data['csp_check'] = 'OK'
       else # did not match
         data['csp_check'] = "Invalid: #{squashed}"
+        $stderr.puts [site, csp].inspect # Temp debug
       end
     end
   end
