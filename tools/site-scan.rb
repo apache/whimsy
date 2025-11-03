@@ -52,7 +52,7 @@ def save_events(data, value)
   end
 end
 
-# Extract link text, skipping invisible stuff (assumed to be a class ending with 'sr-only')
+# Extract link text, skipping invisible stuff (assumed to be a class ending with 'sr-only'); squash
 def get_link_text(anode)
   bits = []
   anode.traverse do |node|
@@ -60,7 +60,7 @@ def get_link_text(anode)
       bits << node.text unless node.parent.name == 'span' and  node.parent.attribute('class')&.value&.end_with? 'sr-only'
     end
 end
-  bits.join(' ')
+  squash(bits.join(' '))
 end
 
 def report_error(data, site, key, message)
@@ -128,6 +128,7 @@ def parse(id, site, name, podling=false)
 
     if a.name == 'script'
       a_src = a['src'].to_s.strip
+      $stderr.puts "@#{__LINE__}: #{id} #{uri} + #{a_src}" if $verbose
       if a_src =~ SiteStandards::COMMON_CHECKS['events'][SiteStandards::CHECK_CAPTURE]
         save_events data, uri + a_src
       end
@@ -138,7 +139,7 @@ def parse(id, site, name, podling=false)
     # Normalize the text and href for our capture purposes
     a_href = a['href'].to_s.strip
     a_text = get_link_text(a) # Not down-cased yet
-    $stderr.puts "@#{__LINE__}: #{a_text.inspect} #{a_href}" if $verbose
+    $stderr.puts "@#{__LINE__}: #{id} #{a_text.inspect} #{a_href}" if $verbose
 
     # Check the href urls for some patterns
     if a_href =~ SiteStandards::COMMON_CHECKS['foundation'][SiteStandards::CHECK_CAPTURE]
@@ -147,7 +148,7 @@ def parse(id, site, name, podling=false)
         # use the title (hover text) in preference to the source
         data[:foundation] = img['title'] ? squash(img['title']) : uri + img['src'].strip
       else
-        data[:foundation] = squash(a_text)
+        data[:foundation] = a_text
       end
     end
 
@@ -379,6 +380,10 @@ end
 results = {}
 podlings = {}
 $cache = Cache.new(dir: ENV['SITE_SCAN_CACHE'] || 'site-scan', save_csp: true)
+minage = ENV['SITE_SCAN_MINAGE_HOURS']
+unless minage.nil?
+  $cache.minage = minage.to_i * 3600
+end
 $verbose = ARGV.delete '--verbose'
 $saveparse = ARGV.delete '--saveparse'
 $skipresourcecheck = ARGV.delete '--noresource'
