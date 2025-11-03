@@ -51,11 +51,11 @@ module SiteStandards
       CHECK_DOC => 'All projects must feature some prominent link back to the main ASF homepage at http://www.apache.org/',
     },
     # <script src="https://www.apachecon.com/event-images/snippet.js">
-    # https://events.apache.org/x/current-event[.html]
-    # https://[www.]apache.org/events/current-event[.html]
+    # https://events.apache.org/
+    # https://[www.]apache.org/events/current-event[.html] => https://events.apache.org/
     'events' => { # Custom: a_href.include? 'apache.org/events/' then custom check for img
       CHECK_TEXT => nil,
-      CHECK_CAPTURE => %r{(events|x)/current-event|event-images},
+      CHECK_CAPTURE => %r{apachecon\.com/event-images|events\.apache\.org|apache\.org/events/current-event},
       CHECK_VALIDATE => %r{^https?://((www\.)?apache\.org/events/current-event|events\.apache\.org|www\.apachecon\.com/event-images/snippet\.js)},
       CHECK_TYPE => 'href',
       CHECK_POLICY => 'https://www.apachecon.com/event-images/',
