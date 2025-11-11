@@ -133,7 +133,11 @@ def emit_role(role: {}, oversees: {}, desc: {})
               _td do
                 _a value, href: "mailto:#{value}"
               end
-            elsif %w(resolution website resolution-policy resolution-other reports-board).include? key
+            elsif %w(wiki).include? key
+              _td do
+                _a value, href: "https://cwiki.apache.org/confluence/display/#{value}"
+              end
+            elsif %w(resolution website resolution-policy resolution-other reports-board runbook).include? key
               _td do
                 _a value, href: value
               end

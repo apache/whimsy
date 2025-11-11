@@ -73,7 +73,15 @@ _html do
                       _a value, href: "https://lists.apache.org/list.html?#{value}"
                     end
                   end
-                elsif %w(roster resolution).include? key
+                elsif %w(wiki).include? key
+                  _td do
+                    _a "Wiki: #{value}", href: "https://cwiki.apache.org/confluence/display/#{value}"
+                  end
+                elsif %w(jira).include? key
+                  _td do
+                    _a "JIRA: #{value}", href: "https://issues.apache.org/jira/projects/#{value}"
+                  end
+                elsif %w(resolution website resolution-policy resolution-other reports-board runbook).include? key
                   _td class: pvt do
                     _a value, href: value
                   end
