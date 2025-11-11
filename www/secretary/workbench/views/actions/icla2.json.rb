@@ -109,7 +109,7 @@ task "svn commit documents/iclas/#@filename/icla#{count}#{fileext}" do
     message.write_svn(dir, @filename, files)
 
     # Show files to be added
-    svn! 'status', dir
+    svn! 'status', workdir
 
     # commit changes
     svn! 'commit', workdir, {msg: "additional ICLA from #{@pubname}"}
