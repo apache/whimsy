@@ -98,8 +98,12 @@ _html do
         _p %{
           Update a file in SVN using a temporary checkout.
           The revision of the source is checked to ensure that the file has not been changed in the meantime.
-          Note that no checks are performed, so please be careful to only update your data.
         }
+        _p do
+          _b 'Note that no checks are performed, so please be careful to only update your data.'
+          _br
+          _ 'Please use the Diff button to check the changes that will be applied.'
+        end
       },
       breadcrumbs: {
         update_file: ENV['SCRIPT_NAME']
