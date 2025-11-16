@@ -29,22 +29,22 @@ def emit_form(url, revision, original, updated, diff, env)
       _whimsy_forms_input(label: 'Revision', name: field, id: field,
         value: revision, readonly: true
       )
-      field = 'updated'
-      _whimsy_forms_input(label: 'Content', name: field, id: field, rows: 15,
-        value: updated || original
-      )
-      if diff
-        field = 'difference'
-        rows = nil
-        rows = 5 if diff.size > 0
-        _whimsy_forms_input(label: 'Difference', name: field, id: field, rows: rows, readonly: true, 
-          value: diff.size > 0 ? diff : '[No differences found]'
-        )
-      end
       _div.col_sm_offset_3.col_sm_9 do
         _input.btn.btn_default type: 'submit', label: 'Diff', name: 'Submit', value: 'Diff', helptext: 'Show diff'
         _input.btn.btn_default type: 'submit', label: 'Commit', name: 'Submit', value: 'Commit', helptext: 'Commit diff'
       end
+      if diff
+        field = 'difference'
+        rows = nil
+        rows = 1 + diff.split("\n").size if diff.size > 0
+        _whimsy_forms_input(label: 'Difference', name: field, id: field, rows: rows, readonly: true, 
+          value: diff.size > 0 ? diff : '[No differences found]'
+        )
+      end
+      field = 'updated'
+      _whimsy_forms_input(label: 'Content', name: field, id: field, rows: 15,
+        value: updated || original
+      )
     end
   end
 end
