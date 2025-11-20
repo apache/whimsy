@@ -26,7 +26,7 @@ class Wunderbar::HtmlMarkup
         _ ' | '
         _a 'Privacy Policy', href: 'https://www.apache.org/foundation/policies/privacy.html'
         _br
-        _{"Apache\u00AE, the names of Apache projects, and the multicolor feather logo are "}
+        _{"Apache\u00AE, the names of Apache projects, and the logo are "}
         _a 'registered trademarks or trademarks', href: 'https://www.apache.org/foundation/marks/list/'
         _ ' of the Apache Software Foundation in the United States and/or other countries.'
       end
@@ -99,7 +99,7 @@ class Wunderbar::HtmlMarkup
           _ul.nav.navbar_nav.navbar_right do
             _li.dropdown do
               _a.dropdown_toggle href: '#', data_toggle: 'dropdown', role: 'button', aria_haspopup: 'true', aria_expanded: 'false' do
-                _img title: 'Apache Home', alt: 'Apache feather logo', src: 'https://www.apache.org/img/feather_glyph_notm.png', height: 30
+                _img title: 'The Apache Software Foundation', alt: 'ASF logo', src: 'https://www.apache.org/img/feather_glyph_notm.png', height: 30
                 _ ' Apache'
                 _span.caret
               end
