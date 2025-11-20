@@ -361,8 +361,9 @@ _html lang: 'en', _width: '80' do
               _ '.'
             end
 
-            _p.text_center 'Apache and the Apache feather logo are ' +
-              'trademarks of The Apache Software Foundation.'
+            _p.text_center 'Apache®, the names of Apache projects, and the logo are ' +
+              'either registered trademarks or trademarks of The Apache Software Foundation ' +
+              'in the United States and/or other countries.'
           end
         end
       end
