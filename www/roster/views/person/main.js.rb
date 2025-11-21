@@ -213,6 +213,7 @@ class Person < Vue
       _div.row do
         _div.name 'Moderates'
         _div.value do
+          _b "(last checked #{@committer.modtime})"
           _ul @committer.moderates.keys() do |list_name|
             _li do
               _a list_name, href: 'https://lists.apache.org/list.html?' +
@@ -221,7 +222,6 @@ class Person < Vue
               _span @committer.moderates[list_name].join(', ')
             end
           end
-          _ "(last checked #{@committer.modtime})"
         end
       end
     end
@@ -231,6 +231,7 @@ class Person < Vue
       _div.row do
         _div.name 'Subscriptions'
         _div.value do
+          _b "(last checked #{@committer.subtime})"
           _ul @committer.subscriptions do |list_email|
             _li do
               _a list_email[0],
@@ -239,7 +240,6 @@ class Person < Vue
               _span list_email[1]
             end
           end
-          _ "(last checked #{@committer.subtime})"
         end
       end
     end
@@ -249,6 +249,7 @@ class Person < Vue
       _div.row do
         _div.name 'Digest Subscriptions'
         _div.value do
+          _b "(last checked #{@committer.digtime})"
           _ul @committer.digests do |list_email|
             _li do
               _a list_email[0],
@@ -257,7 +258,6 @@ class Person < Vue
               _span list_email[1]
             end
           end
-          _ "(last checked #{@committer.digtime})"
         end
       end
     end
