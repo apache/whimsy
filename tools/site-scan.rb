@@ -185,7 +185,12 @@ def parse(id, site, name, podling=false)
       if %w(http https).include? scheme # no need to rebase this
         site2 = href_uri
       elsif scheme.nil? # relative
-        site2 = URI.join(site, href_uri.path) # HACK
+        if a_href.start_with? '//' # protocol-relative
+          href_uri.scheme = uri.scheme # copy the parent scheme
+          site2 = href_uri
+        else # assume site-relative
+          site2 = URI.join(site, href_uri.path) # HACK
+        end
       else # something else
         site2 = nil
       end
