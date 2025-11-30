@@ -25,10 +25,12 @@ class Header < Vue
       if @@banner # is there a banner?
         if @@banner['href'] # is there a link?
           _div.navbar_brand {
-            _a @@banner['msg'], href: @@banner['href']
+            _a.notes @@banner['msg'], href: @@banner['href']
           }
         else # just show the text
-          _div.navbar_brand @@banner['msg']
+          _div.navbar_brand {
+            _span.notes @@banner['msg']
+          }
         end
       end
 
