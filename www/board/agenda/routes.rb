@@ -399,7 +399,7 @@ get %r{/(\d\d\d\d-\d\d-\d\d).json} do |date|
 
       # Add banner (or nil) to the first entry
       # must always update the entry as they may be cached
-      agenda.first['banner'] = Status.banner unless agenda.empty?
+      agenda.first['banner'] = {msg: 'Deprecated - please use agenda.apache.org instead', href: 'https://agenda.apache.org'} unless agenda.empty?
       agenda
     end
   ensure
