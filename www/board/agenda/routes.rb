@@ -107,22 +107,6 @@ get '/session.json' do
   end
 end
 
-# for debugging purposes
-get '/env' do
-  content_type 'text/plain'
-
-  asset = {
-    path: Wunderbar::Asset.path,
-    root: Wunderbar::Asset.root,
-    virtual: Wunderbar::Asset.virtual,
-    scripts: Wunderbar::Asset.scripts.map do |script|
-      {path: script.path}
-    end
-  }
-
-  JSON.pretty_generate(env: env, ENV: ENV.to_h, asset: asset)
-end
-
 # enable debugging of the agenda cache
 get '/cache.json' do
   _json Agenda.cache
