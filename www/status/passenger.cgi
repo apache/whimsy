@@ -17,7 +17,7 @@ end
 
 unless user
   print "Status: 401 Unauthorized\r\n"
-  print "WWW-Authenticate: Basic realm=\"ASF Members and Officers\"\r\n\r\n"
+  print "WWW-Authenticate: Basic realm=\"ASF Committers\"\r\n\r\n"
   exit
 end
 
