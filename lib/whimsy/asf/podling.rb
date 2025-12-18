@@ -377,7 +377,7 @@ module ASF
         end
         hash
       else
-        {news: [], website: "http://#{self.resource}.incubator.apache.org"}
+        {news: [], website: "http://#{self.resource}.apache.org"}
       end
     end
 
