@@ -5,7 +5,7 @@ class ASF::Person
   # On the 7th July 2004, a common format for account creation notifications to
   # PMCs (Subject: [NOTICE] Account created: First Last (uid)) was introduced.
   # By grepping the private mail archives for these, creation dates between
-  # 20040707 and 20090519 have be found.
+  # 20040707 and 20090519 have been found.
   #
   # In 2002 and 2003, many but not all creation requests were sent to root or
   # the pmc with a format "Preferred userid: (uid)" or "Username: (uid)", these
