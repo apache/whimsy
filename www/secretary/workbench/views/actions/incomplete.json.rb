@@ -31,7 +31,7 @@ REASONS = {
 # These aren't reasons for rejection, but need to be fixed
 OTHERS = {
   '@upload_sig' => 'please also upload your signature to keyserver.ubuntu.com. (see the link below for details)',
-  '@invalid_availid' => 'please also provide a valid id',
+  '@invalid_availid' => 'please also provide a preferred user id',
 }
 
 # send rejection email
