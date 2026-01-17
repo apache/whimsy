@@ -55,7 +55,7 @@ class Parts < Vue
     end
 
     _p '(Use [ctrl|meta] + [delete|backspace] to delete this email)'
-    _p 'Submitter: ' + @@headers.name + ' ' + @@headers.from
+    _p 'Submitter: ' + @headers.name + ' ' + @headers.from
 
     # locate corresponding signature file (if any)
     signature = CheckSignature.find(decodeURIComponent(@selected), @attachments)
