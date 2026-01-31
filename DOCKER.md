@@ -170,14 +170,15 @@ Known not to work (ToDos)
 * Board agenda web socket (used to communicate updates from the server to
   browsers)
 * Automatic restarting of passenger based tools when source code changes are
-  made. Just restart the server instead: `apachectl restart`.
+  made. Just restart the server instead: `apachectl restart`. (This must be done
+  from a shell in the container.)
 
 Uninstallation procedures
 -------------------------
 
 * Exit out of any running containers
-* Remove the entire directory structure created as step 1 of the installation
-  instructions.
+* `docker container prune -f`
 * `docker image rm whimsy-web`
 * `docker image prune -f`
-* `docker container prune -f`
+* Remove the entire directory structure created as step 1 of the installation
+  instructions.
