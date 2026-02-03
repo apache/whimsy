@@ -117,9 +117,8 @@ _html do
               _ " #{meeting_start_time.strftime(DTFORMAT)} "
             end
             _ 'as an online meeting in the'
-            _strong ' NEW '
             _a 'ASFMM.apache.org chat tool', href: 'https://asfmm.apache.org'
-            _ ' for less than an hour. Most activity happens in the weeks before the meeting.  Please review the meeting timeline, and some NEW PROCESS steps, or '
+            _ ' for less than an hour. Most activity happens in the weeks before the meeting.  Please review the meeting timeline, or '
             _a 'see detailed FAQ about meeting files.', href: "#{svn_mtg_dir}/README.txt"
             if /test/i =~ meeting_type
               _br
@@ -200,7 +199,7 @@ _html do
           end
           _ 'During this period, Members may add Seconds Statements of their own personal recommendations to various nominees.'
           _ 'Director Nominees should decide to accept the nomination, and then '
-          _a 'add a Candidate Statement to their ballot', href: "#{svn_mtg_dir}/runbook/director_ballot_email.txt"
+          _a 'add a Candidate Statement to their ballot', href: "#{svn_mtg_dir}/runbook/email_07_nominated_directors.txt"
           _br
           _strong "Nominations close at: #{mtg_timeline['nominations_close_date']}!"
         end
@@ -214,7 +213,7 @@ _html do
         _p do
           _ '10 days before the meeting, per bylaws 3.7 the official list of eligible Members is fixed, and the NOTICE of any candidates nominated for Membership will be sent out to members-notify@.'
           _ 'No further names may be added to nominations, and director candidates should have '
-          _a 'added their Candidate Statement to their ballot', href: "#{svn_mtg_dir}/runbook/director_ballot_email.txt"
+          _a 'added their Candidate Statement to their ballot', href: "#{svn_mtg_dir}/runbook/email_07_nominated_directors.txt"
           _ ' before the official ballots are frozen.'
           _ul do
             ['agenda.txt',
@@ -234,7 +233,6 @@ _html do
       _div id: 'recess'
       _whimsy_panel("Timeline: Voting By Email (until 24 hours before meeting)", style: 'panel-info') do
         _p do
-          _strong 'NEW PROCESS simplified vote.apache.org process!'
           _ "Polls will open #{mtg_timeline['vote_open_date']}, and the vote monitors will send eligible voters an email "
           _code 'From: voter@apache.org'
           _ ' with updated instructions on voting.'
