@@ -11,7 +11,7 @@ applications, Node.js applications, tools, and cron jobs.  Note: features access
 ASF data are restricted to committers, Members, or Officers of the ASF.
 
 Every commit pushed to master is deployed within minutes to https://whimsy.apache.org/ using
-[GitPubSub](https://www.apache.org/dev/gitpubsub.html).
+[GitPubSub](https://infra.apache.org/pypubsub.html).
 
 How Tos and Get The Code
 ===============
