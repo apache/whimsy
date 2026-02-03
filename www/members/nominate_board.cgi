@@ -179,7 +179,8 @@ _html do
           _strong "send an email to the #{MAILING_LIST} list"
           _ ' from you with the nomination, '
           _a 'as is tradition.', href: 'https://lists.apache.org/list?members@apache.org:2023-2:%22BOARD%20NOMINATION%22'
-          _ 'This form only supports adding new nominations; to add seconds or comments, please use SVN.'
+          _ 'This form only supports adding new nominations; to add seconds or comments to an existing nomination, use SVN and '
+          _a 'edit the board_nominations.txt file carefully.', href: "#{ASF::MeetingUtil.latest_meeting(ASF::MeetingUtil::NOMINATED_BOARD)}"
         end
       }
     ) do
