@@ -62,7 +62,7 @@ mailing list is active.  Note that many Whimsy tools access committer- or
 member-private data, so some tools are access restricted.
 
 **Historical note:** The live production whimsy.apache.org server was used for
-the board agenda tool and more before we became the Apache Whimsy top level
+the previous board agenda tool and more before we became the Apache Whimsy top level
 project.  That's why [whimsy.apache.org](https://whimsy.apache.org/) is
 the production server, and mailing lists and a homepage are hosted
 on the [whimsical.apache.org](https://whimsical.apache.org/) domain.
@@ -76,7 +76,7 @@ that directly interface with various parts of Apache organizational records.
 Details for each type of deployed tool or script:
 
  * **Static content**  Changes pushed to GitHub master will be
-   automatically deployed - every commit triggers the puppet agent to
+   automatically deployed - every commit triggers pygitpubsub to
    do an update, which may take a few minutes.  Note that this includes the
    contents of scripts and applications too.
 
@@ -114,8 +114,6 @@ Details for each type of deployed tool or script:
 
  * **Cron jobs** are managed by puppet.  See [deployment](./DEPLOYMENT.md) for more
    information.
-
- * **NEW!** Node.js is being prototyped to improve the Board Agenda tool, stay tuned.
 
  * **Generated JSON data** files are automatically generated into
    the [`/public`](https://whimsy.apache.org/public/) directory, to
