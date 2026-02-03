@@ -180,7 +180,7 @@ _html do
           _ ' from you with the nomination, '
           _a 'as is tradition.', href: 'https://lists.apache.org/list?members@apache.org:2023-2:%22BOARD%20NOMINATION%22'
           _ 'This form only supports adding new nominations; to add seconds or comments to an existing nomination, use SVN and '
-          _a 'edit the board_nominations.txt file carefully.', href: "#{File.join(ASF::MeetingUtil.get_latest(MEETINGS), ASF::MemberFiles::NOMINATED_BOARD)}"
+          _a 'edit the board_nominations.txt file carefully.', href: "#{File.join(ASF::MeetingUtil.get_latest(ASF::SVN['Meetings']), ASF::MemberFiles::NOMINATED_BOARD)}"
         end
       }
     ) do
