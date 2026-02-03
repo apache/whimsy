@@ -1,5 +1,5 @@
 Apache Whimsy Project Overview
-================== 
+==================
 
 Apache Whimsy is a collection of useful organizational tools used by
 the ASF and Apache committers to access and manipulate data about
