@@ -161,7 +161,9 @@ _html do
           _strong "send an email to the #{MAILING_LIST} list"
           _ ' from you with the nomination, '
           _a 'as is tradition.', href: 'https://lists.apache.org/list?members@apache.org:2023-2:%22MEMBER%20NOMINATION%22'
-          _ ' This form only supports adding new nominations of existing committers; to add seconds or comments, please use SVN.  To nominate a non-committer, add them manually and use use n/a for the id. '
+          _ ' This form only supports adding new nominations of existing committers; to add seconds or comments, please carefully edit nominated-members.txt in SVN.'
+          _strong ' To nominate a non-committer, '
+          _ 'add them manually to nominated-members.txt and use exactly n/a for the id, and include both their name and Nominee email:'
           _a 'Lookup committer availIDs', href: '/roster/committer/'
         end
       }
