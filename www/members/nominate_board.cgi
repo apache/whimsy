@@ -180,8 +180,8 @@ _html do
           _ ' from you with the nomination, '
           _a 'as is tradition.', href: 'https://lists.apache.org/list?members@apache.org:2023-2:%22BOARD%20NOMINATION%22'
           _ 'This form only supports adding new nominations; to add seconds or comments to an existing nomination, use SVN and '
-          # FIXME: Hardcoded SVN path here - since we're likely moving to python anyway
-          _a 'edit the board_nominations.txt file carefully.', href: 'https://svn.apache.org/repos/private/foundation/Meetings/20260305/board_nominations.txt'
+          _a 'edit the board_nominations.txt file carefully.', 
+             href: File.join(ASF::SVN.svnurl!('Meetings'),File.basename(latest_meeting_dir), 'board_nominations.txt')
         end
       }
     ) do
