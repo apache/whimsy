@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
-PAGETITLE = "Update board-nominations.txt" # Wvisible:members
+PAGETITLE = "Update board_nominations.txt" # Wvisible:members
 # Note: PAGETITLE must be double quoted
 
-# Page to allow arbitrary updates to board-nominations.txt, without needing to install or know SVN
+# Page to allow arbitrary updates to board_nominations.txt, without needing to install or know SVN
 
 $LOAD_PATH.unshift '/srv/whimsy/lib'
 require 'wunderbar'
@@ -14,7 +14,7 @@ require 'whimsy/asf/meeting-util'
 
 user = ASF::Auth.decode(env = {})
 
-FILE = 'board-nominations.txt'
+FILE = 'board_nominations.txt'
 latest_meeting_dir = ASF::MeetingUtil.latest_meeting_dir
 
 source = File.join(ASF::SVN.svnurl!('Meetings'), File.basename(latest_meeting_dir), FILE)
