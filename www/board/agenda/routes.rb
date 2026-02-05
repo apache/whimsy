@@ -332,7 +332,7 @@ get '/json/podlingnamesearch' do
   _json ASF::Podling.namesearch
 end
 
-# podling name searches
+# unposted drafts
 get '/json/reporter' do
   _json Reporter.drafts(env)
 end
