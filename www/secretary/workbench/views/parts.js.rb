@@ -17,6 +17,8 @@ class Parts < Vue
     @wrong_email = false
     @corporate_postal = false
     @invalid_public = false
+    @invalid_language = false
+    @invalid_form = false
     @separate_signature = false
     @unauthorized_signature = false
     @empty_form = false
@@ -208,6 +210,8 @@ class Parts < Vue
             _input type: 'hidden', name: 'wrong_email', value: @wrong_email
             _input type: 'hidden', name: 'corporate_postal', value: @corporate_postal
             _input type: 'hidden', name: 'invalid_public', value: @invalid_public
+            _input type: 'hidden', name: 'invalid_language', value: @invalid_language
+            _input type: 'hidden', name: 'invalid_form', value: @invalid_form
             _input type: 'hidden', name: 'separate_signature', value: @separate_signature
             _input type: 'hidden', name: 'unauthorized_signature', value: @unauthorized_signature
             _input type: 'hidden', name: 'empty_form', value: @empty_form
@@ -299,6 +303,20 @@ class Parts < Vue
                   _input type: 'checkbox', checked: @invalid_public,
                   onClick: -> {@invalid_public = !@invalid_public}
                   _span ' invalid public name'
+                end
+              end
+              _li do
+                _label do
+                  _input type: 'checkbox', checked: @invalid_language,
+                  onClick: -> {@invalid_public = !@invalid_language}
+                  _span ' invalid language'
+                end
+              end
+              _li do
+                _label do
+                  _input type: 'checkbox', checked: @invalid_form,
+                  onClick: -> {@invalid_public = !@invalid_form}
+                  _span ' invalid form filler'
                 end
               end
               _li do
