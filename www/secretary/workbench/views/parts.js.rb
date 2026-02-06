@@ -17,6 +17,7 @@ class Parts < Vue
     @wrong_email = false
     @corporate_postal = false
     @invalid_public = false
+    @invalid_name = false
     @invalid_language = false
     @invalid_form = false
     @employee_or_grant = false
@@ -211,6 +212,7 @@ class Parts < Vue
             _input type: 'hidden', name: 'wrong_email', value: @wrong_email
             _input type: 'hidden', name: 'corporate_postal', value: @corporate_postal
             _input type: 'hidden', name: 'invalid_public', value: @invalid_public
+            _input type: 'hidden', name: 'invalid_name', value: @invalid_name
             _input type: 'hidden', name: 'invalid_language', value: @invalid_language
             _input type: 'hidden', name: 'invalid_form', value: @invalid_form
             _input type: 'hidden', name: 'employee_or_grant', value: @employee_or_grant
@@ -305,6 +307,13 @@ class Parts < Vue
                   _input type: 'checkbox', checked: @invalid_public,
                   onClick: -> {@invalid_public = !@invalid_public}
                   _span ' invalid public name'
+                end
+              end
+              _li do
+                _label do
+                  _input type: 'checkbox', checked: @invalid_name,
+                  onClick: -> {@invalid_name = !@invalid_name}
+                  _span ' invalid legal name'
                 end
               end
               _li do
