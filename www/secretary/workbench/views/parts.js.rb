@@ -19,6 +19,7 @@ class Parts < Vue
     @invalid_public = false
     @invalid_language = false
     @invalid_form = false
+    @employee_or_grant = false
     @separate_signature = false
     @unauthorized_signature = false
     @empty_form = false
@@ -212,6 +213,7 @@ class Parts < Vue
             _input type: 'hidden', name: 'invalid_public', value: @invalid_public
             _input type: 'hidden', name: 'invalid_language', value: @invalid_language
             _input type: 'hidden', name: 'invalid_form', value: @invalid_form
+            _input type: 'hidden', name: 'employee_or_grant', value: @employee_or_grant
             _input type: 'hidden', name: 'separate_signature', value: @separate_signature
             _input type: 'hidden', name: 'unauthorized_signature', value: @unauthorized_signature
             _input type: 'hidden', name: 'empty_form', value: @empty_form
@@ -317,6 +319,13 @@ class Parts < Vue
                   _input type: 'checkbox', checked: @invalid_form,
                   onClick: -> {@invalid_form = !@invalid_form}
                   _span ' invalid form filler'
+                end
+              end
+              _li do
+                _label do
+                  _input type: 'checkbox', checked: @employee_or_grant,
+                  onClick: -> {@employee_or_grant = !@employee_or_grant}
+                  _span ' employee or grant is needed'
                 end
               end
               _li do
