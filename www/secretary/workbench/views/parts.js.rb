@@ -308,14 +308,14 @@ class Parts < Vue
               _li do
                 _label do
                   _input type: 'checkbox', checked: @invalid_language,
-                  onClick: -> {@invalid_public = !@invalid_language}
+                  onClick: -> {@invalid_language = !@invalid_language}
                   _span ' invalid language'
                 end
               end
               _li do
                 _label do
                   _input type: 'checkbox', checked: @invalid_form,
-                  onClick: -> {@invalid_public = !@invalid_form}
+                  onClick: -> {@invalid_form = !@invalid_form}
                   _span ' invalid form filler'
                 end
               end
