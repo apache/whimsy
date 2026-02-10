@@ -199,7 +199,9 @@ def parse(id, site, name, podling=false)
         subpages[site2.to_s] = a
       end
     rescue StandardError => e
-      report_error data, id, a_href, "@#{__LINE__}: #{id}: Bad a_href #{a_href} #{e}"
+      unless a_href.start_with? 'javascript:' # Not parsed currently
+        report_error data, id, a_href, "@#{__LINE__}: #{id}: Bad a_href #{a_href} #{e}"
+      end
     end
   end
 
