@@ -43,7 +43,7 @@ class PMC < Vue
         _a @@committee.chairname, href: "committer/#{@@committee.chair}"
       end
       if @committee.image
-        _img src: "https://www.apache.org/logos/res/#{@committee.id}/default.png", style: 'max-width: 320px; max-height: 160px;'
+        _img src: "https://www.apache.org/logos/res/#{@committee.id}/default.png", style: 'max-height: 50px; max-width: 160px'
       end
     end
 
