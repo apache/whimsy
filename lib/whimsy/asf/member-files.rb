@@ -121,6 +121,24 @@ module ASF
       end
     end
 
+    # return nomination entry headers
+    def self.nomination_headers()
+      noms = []
+      self.parse_file(NOMINATED_MEMBERS) do |x, _y|
+        noms << x
+      end
+      noms
+    end
+
+    # return board entry headers
+    def self.board_headers()
+      noms = []
+      self.parse_file(NOMINATED_BOARD) do |x, _y|
+        noms << x
+      end
+      noms
+    end
+
     # create a member nomination entry in the standard format
     #
     def self.make_member_nomination(fields = {})
@@ -222,6 +240,44 @@ module ASF
       opt[:diff] = true unless opt.include? :diff # default to true
       ASF::SVN.update(nomfile, msg || 'Updating nominated members', env, wunderbar, opt) do |_tmpdir, contents|
         sort_member_nominees(contents, entries)
+      end
+    end
+
+    # Add member second to file contents
+    def self.add_member_second(contents, entry)
+      nominee = entry[:nominee]
+      secby = entry[:secby]
+      statement = entry[:statement]
+      output = []
+      foundSection = false # In nomineed section
+      contents.split("\n").each do |l|
+        if foundSection
+            if l.start_with?('---------------------------') # end of section, post second
+              output << ASFString.reflow("(#{secby}) #{statement}", 4, 80)
+              output << ''
+              foundSection = false
+            elsif l =~ %r{^\s+Seconded by:\s*(\S)?} # may have trailing space
+              if $1 # already have a second
+                l += ",#{secby}@apache.org"
+              else
+                l += " #{secby}@apache.org"
+              end
+            end
+        else
+          if l.strip == nominee
+            foundSection = true
+          end
+        end
+        output << l
+      end
+      output.join("\n")
+    end
+
+    # Add a second for a member nominee
+    def self.commit_member_second(env, wunderbar, entry, msg)
+      nomfile = latest_meeting(NOMINATED_MEMBERS)
+      ASF::SVN.update(nomfile, msg, env, wunderbar) do |_tmpdir, contents|
+        add_member_second(contents, entry)
       end
     end
 
