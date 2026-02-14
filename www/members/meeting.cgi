@@ -198,7 +198,7 @@ _html do
             end
           end
           _ 'During this period, Members may add Seconds Statements of their own personal recommendations to various nominees.'
-          _ 'Director Nominees should decide to accept the nomination, and then '
+          _ 'Director Nominees should decide whether to accept the nomination, and then '
           _a 'add a Candidate Statement to their ballot', href: "#{svn_mtg_dir}/runbook/email_07_nominated_directors.txt"
           _br
           _strong "Nominations close at: #{mtg_timeline['nominations_close_date']}!"
