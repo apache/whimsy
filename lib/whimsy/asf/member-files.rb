@@ -270,7 +270,7 @@ module ASF
         end
         output << l
       end
-      output.join("\n")
+      output.join("\n") + "\n"
     end
 
     # Add a second for a member nominee
