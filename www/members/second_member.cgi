@@ -53,16 +53,16 @@ def process_form(formdata: {}, wunderbar: {})
     secby: formdata['secby'], # add to seconds
     statement: formdata['statement'] # the data
   }
-  environ = Struct.new(:user, :password).new($USER, $PASSWORD)
-  x = ASF::MemberFiles.commit_member_second(environ, wunderbar, entry, "+= second for #{formdata['nominee'].downcase}")
-  _pre x
   return true
 end
 
 # Send email to members@ with this second's data
 # Reports status to user in a _div
 def send_confirmation_mail(formdata: {})
-  nominee = formdata['nominee'].downcase
+  nominee = formdata['nominee'].strip # e.g. uid <Public Name>
+  uid, public_name = nominee.split(' ', 2) # single space means any whitespace
+  uid.downcase! # just in case
+  public_name.delete_prefix!('<').delete_suffix!('>') # trim the markers
   secby = formdata.fetch('secby', nil)
   mail_body = <<-MAILBODY
 Added second by #{secby} for #{nominee} as a New Member:
@@ -75,7 +75,11 @@ Added second by #{secby} for #{nominee} as a New Member:
 
 MAILBODY
 # See check_membernoms.cgi which parses this in list archives
-mailsubject = "[MEMBER SECOND] #{nominee}"
+if uid == 'n/a'
+  mailsubject = "Re: [MEMBER NOMINATION] #{public_name}"
+else
+  mailsubject = "Re: [MEMBER NOMINATION] #{public_name} (#{uid})"
+end
 
   ASF::Mail.configure
   mail = Mail.new do
