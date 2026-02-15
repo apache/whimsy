@@ -21,6 +21,7 @@ _html do
       related: {
         '/members/memberless-pmcs.cgi' => 'PMCs with no/few ASF Members',
         '/members/nominate_member.cgi' => 'Nominate someone for ASF Member',
+        '/members/second_member.cgi' => 'Second a nomination for ASF Member',
         '/members/check_membernoms.cgi' => 'Cross-check existing New Member Nominations',
         ASF::SVN.svnpath!('Meetings') => 'Official Meeting Agenda Directory'
       },

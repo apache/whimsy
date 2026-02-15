@@ -13,6 +13,7 @@ MEETING = {
   'watch.cgi' => 'Potential Member Watch List - tracking candidates for future nominations',
   'memberless-pmcs.cgi' => 'Crosscheck PMCs with few/no ASF Members, for future nominations',
   'nominate_member.cgi' => 'Nominate someone for ASF Member',
+  'second_member.cgi' => 'Second a nomination for ASF Member',
   'check_membernoms.cgi' => 'Cross-check existing New Member nominations',
   'nominate_board.cgi' => 'Nominate someone for the Board',
   'check_boardnoms.cgi' => 'Cross-check existing Board nominations',

@@ -189,6 +189,7 @@ _html do
          _ul do
             ['/members/nominate_board.cgi',
             '/members/nominate_member.cgi',
+            '/members/second_member.cgi',
             '/members/proxy.cgi',
             '/members/check_boardnoms.cgi',
             '/members/check_membernoms.cgi'].each do |f|

@@ -29,6 +29,7 @@ module ASF
       '/members/nominate_board.cgi' => 'Nominate someone for the Board',
       'runbook/email_02_nomination_of_members.txt' => 'How To Nominate A New Member',
       '/members/nominate_member.cgi' => 'Nominate someone for ASF Member',
+      '/members/second_member.cgi' => 'Second a nomination for ASF Member',
       '/members/proxy.cgi' => 'Submit A Proxy/Check Your Proxies',
       'agenda.txt' => 'Official Meeting Agenda',
       '/members/check_boardnoms.cgi' => 'Cross-check existing Board nominations',
