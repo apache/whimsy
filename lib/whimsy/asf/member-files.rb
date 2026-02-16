@@ -281,6 +281,14 @@ module ASF
       end
     end
 
+    # Add a second for a board nominee
+    def self.commit_board_second(env, wunderbar, entry, msg)
+      nomfile = latest_meeting(NOMINATED_BOARD)
+      ASF::SVN.update(nomfile, msg, env, wunderbar) do |_tmpdir, contents|
+        add_member_second(contents, entry) # same logic works here
+      end
+    end
+
     # create a single director ballot statement (if not present)
     # @param availid of director nominee
     def self.add_board_ballot(env, wunderbar, availid, msg=nil, opt={})
