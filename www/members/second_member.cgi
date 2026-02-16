@@ -79,6 +79,8 @@ def process_form(formdata: {}, wunderbar: {})
     secby: formdata['secby'], # add to seconds
     statement: formdata['statement'] # the data
   }
+  environ = Struct.new(:user, :password).new($USER, $PASSWORD)
+  ASF::MemberFiles.commit_member_second(environ, wunderbar, entry, "+= second for #{formdata['nominee'].downcase}")
   return true
 end
 
