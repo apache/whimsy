@@ -179,12 +179,16 @@ _html do
           _strong "send an email to the #{MAILING_LIST} list"
           _ ' from you with the nomination, '
           _a 'as is tradition.', href: 'https://lists.apache.org/list?members@apache.org:2023-2:%22BOARD%20NOMINATION%22'
-          _ 'This form only supports adding new nominations; to add seconds or comments to an existing nomination, use SVN and '
-          _a 'edit the board_nominations.txt file carefully.', 
-             href: File.join(ASF::SVN.svnurl!('Meetings'),File.basename(latest_meeting_dir), 'board_nominations.txt')
+          _p do
+            _ 'This form only supports adding new nominations of existing committers; '
+            _ 'there is now a form to '
+            _a 'add seconds to board nominations', href: '/members/second_board.cgi'
+            _ 'Alternatively, please carefully edit board_nominations.txt in SVN.'
+          end
         end
       }
     ) do
+
       if nomclosed
         _h1 'Nominations are now closed!'
         _p 'Sorry, no further nominations will be accepted for ballots at this meeting.'

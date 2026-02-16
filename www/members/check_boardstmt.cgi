@@ -16,6 +16,7 @@ _html do
       related: {
         'meeting.cgi' => 'Member Meeting FAQ and info',
         'nominate_board.cgi' => 'Nominate someone for the Board',
+        'second_board.cgi' => 'Second a nomination for ASF Board',
         'check_membernoms.cgi' => 'Cross-check existing New Member nominations',
         ASF::SVN.svnpath!('Meetings') => 'Official Meeting Agenda Directory'
       },

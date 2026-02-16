@@ -16,6 +16,7 @@ MEETING = {
   'second_member.cgi' => 'Second a nomination for ASF Member',
   'check_membernoms.cgi' => 'Cross-check existing New Member nominations',
   'nominate_board.cgi' => 'Nominate someone for the Board',
+  'second_board.cgi' => 'Second a nomination for ASF Board',
   'check_boardnoms.cgi' => 'Cross-check existing Board nominations',
   'check_invitations.cgi' => 'Cross-check new Member invitations / applications',
   'attendance-xcheck.cgi' => 'Member Meeting Attendance cross-check - who attended when',

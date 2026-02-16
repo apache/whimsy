@@ -27,6 +27,7 @@ module ASF
       'README.txt' => 'README For Meeting Process And Roll Call',
       'runbook/email_03_nomination_of_board.txt' => 'How To Nominate Someone For Board',
       '/members/nominate_board.cgi' => 'Nominate someone for the Board',
+      '/members/second_board.cgi' => 'Second a nomination for ASF Board',
       'runbook/email_02_nomination_of_members.txt' => 'How To Nominate A New Member',
       '/members/nominate_member.cgi' => 'Nominate someone for ASF Member',
       '/members/second_member.cgi' => 'Second a nomination for ASF Member',

@@ -188,6 +188,7 @@ _html do
           _ 'Before an Annual meeting, Members may nominate candidates for the Board election, or as New Member Candidates.  Nominations are only official if placed in the correct files; although much discussion also happens on members@.'
          _ul do
             ['/members/nominate_board.cgi',
+            '/members/second_board.cgi',
             '/members/nominate_member.cgi',
             '/members/second_member.cgi',
             '/members/proxy.cgi',

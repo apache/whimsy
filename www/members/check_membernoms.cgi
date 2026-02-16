@@ -123,6 +123,7 @@ _html do
         'second_member.cgi' => 'Second a nomination for ASF Member',
         'check_boardnoms.cgi' => 'Cross-check existing Board nominations',
         'nominate_board.cgi' => 'Nominate someone for the Board',
+        'second_board.cgi' => 'Second a nomination for ASF Board',
         ASF::SVN.svnpath!('Meetings') => 'Official Meeting Agenda Directory'
       },
       helpblock: -> {
