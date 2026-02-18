@@ -40,14 +40,17 @@ def find_mesgid(subject)
   nil
 end
 
-def emit_form(title, prev_data)
+def emit_form(title, prev_data, nominees)
   _whimsy_panel(title, style: 'panel-success') do
     _form.form_horizontal method: 'post' do
       field = 'nominee'
       _whimsy_forms_select(label: 'Nominee', name: field,
         multiple: false,
-        options: ASF::MemberFiles.nomination_headers,
+        options: nominees,
+        selectExtra: {onChange: 'show_seconds()'},
         helptext: 'Select the nominee you are seconding for ASF Membership'
+      )
+      _whimsy_forms_input(label: 'Existing Seconds', name: 'seconds', readonly: true, value: ''
       )
       _whimsy_forms_input(label: 'Seconded by', name: 'secby', readonly: true, value: $USER
       )
@@ -151,6 +154,7 @@ end
 
 # Produce HTML
 _html do
+  nominations = ASF::MemberFiles.nominated_members
   _body? do
     # Countdown until nominations for current meeting close
     latest_meeting_dir = ASF::MeetingUtil.latest_meeting_dir
@@ -233,10 +237,24 @@ _html do
               # _a 'See existing nominations.', href: '/members/check_membernoms.cgi'
             end
           else
-            emit_form('Enter your New Member second', {})
+            emit_form('Enter your New Member second', {}, nominations.keys)
           end
         end
       end
     end
+    # '_' does not work in _script blocks when wunderbar/bootstrap (i.e. wunderbar/jquery is included)
+    # so create the JS code as a string
+    jscode = []
+    jscode << 'let map = new Map();'
+    nominations.each do |k,v|
+      jscode << "map.set(#{k.inspect}, #{v.inspect});"
+    end
+    jscode.push <<~'EOJSCODE'
+    function show_seconds() {
+      let nominee = document.getElementById('nominee').value;
+      document.getElementById('seconds').value = map.get(nominee);
+    }
+    EOJSCODE
+    _script jscode.join("\n")
   end
 end

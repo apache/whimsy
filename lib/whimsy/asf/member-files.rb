@@ -113,7 +113,8 @@ module ASF
           else
             outkey = NAME2OUTPUTKEY[k]
             raise ArgumentError.new "Unexpected regex capture name: #{k}" if outkey.nil?
-            v = v.split("\n") if k == 'statement' or k == 'seconds'
+            v = v.split("\n") if k == 'statement'
+            v = v.split(%r{ *[,\n] *}) if k == 'seconds' # split by comma and newline, stripping spaces
             nominee[outkey] = v
           end
         end
@@ -121,20 +122,20 @@ module ASF
       end
     end
 
-    # return nomination entry headers
-    def self.nomination_headers()
-      noms = []
-      self.parse_file(NOMINATED_MEMBERS) do |x, _y|
-        noms << x
+    # return member nomination entry headers as hash of nominees and seconds
+    def self.nominated_members()
+      noms = {}
+      self.parse_file(NOMINATED_MEMBERS) do |x, y|
+        noms[x] = y['Seconded by']
       end
       noms
     end
 
-    # return board entry headers
-    def self.board_headers()
-      noms = []
-      self.parse_file(NOMINATED_BOARD) do |x, _y|
-        noms << x
+    # return board nomination entry headers as hash of nominees and seconds
+    def self.nominated_board()
+      noms = {}
+      self.parse_file(NOMINATED_BOARD) do |x, y|
+        noms[x] = y['Seconded by']
       end
       noms
     end
