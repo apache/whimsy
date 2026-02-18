@@ -172,7 +172,7 @@ _html do
         _p do
           _br
           _ %Q{
-            Use this form to add a second to an existing nomination for teh ASF Board.
+            Use this form to add a second to an existing nomination for the ASF Board.
             It automatically adds a properly formatted entry to the #{ASF::MemberFiles::NOMINATED_BOARD} file,
             and will then
           }
