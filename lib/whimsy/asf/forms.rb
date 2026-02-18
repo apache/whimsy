@@ -97,6 +97,7 @@ class Wunderbar::HtmlMarkup
   # @param options required ['value'] or {"value" => 'Label for value'} of all selectable values
   # @param values 'value' or ['value'] or {"value" => 'Label for value'} of all selected values
   # @param placeholder Currently displayed text if passed (not selectable)
+  # @param (optional) selectExtra - hash of extra options, e.g. {onChange: 'changefunc()'}
   def _whimsy_forms_select(**args)
     return unless args[:name]
     return unless args[:options]
@@ -108,8 +109,12 @@ class Wunderbar::HtmlMarkup
       if args[:multiple]
         args[:multiple] = 'true'
       end
-      _select.form_control type: args[:type], name: args[:name], id: args[:id], value: args[:value],
-                           aria_describedby: args[:aria_describedby], multiple: args[:multiple] do
+      select_options = { type: args[:type], name: args[:name], id: args[:id], value: args[:value],
+                           aria_describedby: args[:aria_describedby], multiple: args[:multiple] }
+      if args[:selectExtra]
+        select_options.merge! args[:selectExtra]
+      end
+      _select.form_control **select_options do
         if ''.eql?(args[:placeholder])
           _option '', value: '', selected: 'selected'
         else
