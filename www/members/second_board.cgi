@@ -160,8 +160,8 @@ _html do
     latest_meeting_dir = ASF::MeetingUtil.latest_meeting_dir
     timelines = ASF::MeetingUtil.get_timeline(latest_meeting_dir)
     t_now = Time.now.to_i
-    t_end = Time.parse(timelines['nominations_close_iso']).to_i
-    nomclosed = t_now > t_end
+    t_end = Time.parse(timelines['vote_create_date']).to_i
+    secclosed = t_now > t_end
     _whimsy_body(
       title: PAGETITLE,
       subtitle: 'About This Script',
@@ -186,11 +186,24 @@ _html do
       }
     ) do
 
+      if secclosed
+        _h1 'Seconds are now closed!'
+        _p 'Sorry, no further seconds will be accepted for ballots at this meeting.'
+      else
+        _h3 "Seconds close in #{ASFTime.secs2text(t_end - t_now)} at #{Time.at(t_end).utc} for Meeting: #{timelines['meeting_iso']}"
+      end
+
       _div id: 'second-form' do
         if _.post?
-          submission = _whimsy_params2formdata(params)
-          valid = validate_form(formdata: submission)
-          if valid == 'OK'
+          unless secclosed
+            submission = _whimsy_params2formdata(params)
+            valid = validate_form(formdata: submission)
+          end
+          if secclosed
+            _div.alert.alert_warning role: 'alert' do
+              _p "Seconds have closed"
+            end
+          elsif valid == 'OK'
             if process_form(formdata: submission, wunderbar: _)
               _div.alert.alert_success role: 'alert' do
                 _p "Your second was submitted to svn; now sending email to #{MAILING_LIST}."
@@ -215,7 +228,13 @@ _html do
             end
           end
         else # if _.post?
-          emit_form('Enter your New Board second', {}, nominations.keys)
+          if secclosed
+            _p do
+              _ 'Sorry, no further seconds will be accepted for ballots at this meeting.'
+            end
+          else
+            emit_form('Enter your New Board second', {}, nominations.keys)
+          end
         end
       end
     end
