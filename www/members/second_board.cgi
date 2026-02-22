@@ -186,24 +186,11 @@ _html do
       }
     ) do
 
-      if nomclosed
-        _h1 'Nominations are now closed!'
-        _p 'Sorry, no further seconds will be accepted for ballots at this meeting.'
-      else
-        _h3 "Nominations close in #{ASFTime.secs2text(t_end - t_now)} at #{Time.at(t_end).utc} for Meeting: #{timelines['meeting_iso']}"
-      end
-
       _div id: 'second-form' do
         if _.post?
-          unless nomclosed
-            submission = _whimsy_params2formdata(params)
-            valid = validate_form(formdata: submission)
-          end
-          if nomclosed
-            _div.alert.alert_warning role: 'alert' do
-              _p "Nominations have closed"
-            end
-          elsif valid == 'OK'
+          submission = _whimsy_params2formdata(params)
+          valid = validate_form(formdata: submission)
+          if valid == 'OK'
             if process_form(formdata: submission, wunderbar: _)
               _div.alert.alert_success role: 'alert' do
                 _p "Your second was submitted to svn; now sending email to #{MAILING_LIST}."
@@ -228,13 +215,7 @@ _html do
             end
           end
         else # if _.post?
-          if nomclosed
-            _p do
-              _ 'Sorry, no further seconds will be accepted for ballots at this meeting.'
-            end
-          else
-            emit_form('Enter your New Board second', {}, nominations.keys)
-          end
+          emit_form('Enter your New Board second', {}, nominations.keys)
         end
       end
     end
