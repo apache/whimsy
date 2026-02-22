@@ -11,13 +11,11 @@ require 'whimsy/asf'
 require 'whimsy/asf/rack'
 require 'whimsy/asf/forms'
 require 'whimsy/asf/meeting-util'
+require 'whimsy/asf/member-files'
 
 user = ASF::Auth.decode(env = {})
 
-FILE = 'board_nominations.txt'
-latest_meeting_dir = ASF::MeetingUtil.latest_meeting_dir
-
-source = File.join(ASF::SVN.svnurl!('Meetings'), File.basename(latest_meeting_dir), FILE)
+source = ASF::MeetingUtil.get_latest_svnpath(ASF::MemberFiles::NOMINATED_BOARD)
 
 def emit_form(url, revision, original, updated, diff, env)
   

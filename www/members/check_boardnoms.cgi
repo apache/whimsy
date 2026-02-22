@@ -118,7 +118,7 @@ _html do
         _p 'Nominations must no longer be added to the nominations file'
       else
         _h3 "Nominations close in #{ASFTime.secs2text(t_end - t_now)} at #{Time.at(t_end).utc} for Meeting: #{timelines['meeting_iso']}"
-        _p 'Please ensure all posted nominations are added to board_nominations.txt before then.'
+        _p "Please ensure all posted nominations are added to #{ASF::MemberFiles::NOMINATED_BOARD} before then."
       end
       nominations, emails = setup_data
       _div.flexbox do
