@@ -15,7 +15,6 @@ MBOX = 'https://mail-search.apache.org/members/private-arch/members/'
 
 # link to roster page
 ROSTER = '/roster/committer'
-MEETINGS = ASF::SVN['Meetings']
 MAIL_ROOT = '/srv/mail' # TODO: this should be config item
 # Only need these items
 Email = Struct.new(:subject, :date, :message_id, :from, :asciiname, :id)
