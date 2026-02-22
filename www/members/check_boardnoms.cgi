@@ -121,13 +121,12 @@ _html do
         _h3 "Nominations close in #{ASFTime.secs2text(t_end - t_now)} at #{Time.at(t_end).utc} for Meeting: #{timelines['meeting_iso']}"
         _p 'Please ensure all posted nominations are added to board_nominations.txt before then.'
       end
-      cur_mtg_dir = File.basename(ASF::MeetingUtil.get_latest(MEETINGS))
       nominations, emails = setup_data
       _div.flexbox do
         _div.flexitem do
           _h1_! do
             _ 'Nominees in '
-            _a 'svn', href: ASF::SVN.svnpath!('Meetings', cur_mtg_dir, 'board_nominations.txt')
+            _a 'svn', href: ASF::MeetingUtil.get_latest_svnpath(ASF::MemberFiles::NOMINATED_BOARD)
           end
 
           _p.count "Count: #{nominations.count}"

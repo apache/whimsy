@@ -166,6 +166,17 @@ module ASF
       return Dir[File.join(mtg_root, '2*')].max
     end
 
+    # Get the latest available Meetings date (yyyymmdd)
+    def self.get_latest_date
+      return File.basename(get_latest(MEETINGS_DIR))
+    end
+
+    # Get the latest available Meetings SVN path
+    # args - optional relative path components to be added to the base
+    def self.get_latest_svnpath(*args)
+      ASF::SVN.svnpath!('Meetings', get_latest_date, *args)
+    end
+
     # Get the second latest available Meetings dir
     def self.get_previous(mtg_root)
       return Dir[File.join(mtg_root, '2*')].sort[-2]
