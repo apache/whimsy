@@ -73,7 +73,8 @@ class PPMC
         member: person.asf_member?,
         icommit: incubator_committers.include?(person),
         role: 'Committer',
-        githubUsername: (person.attrs['githubUsername'] || []).join(', ')
+        githubUsername: (person.attrs['githubUsername'] || []).join(', '),
+        asf_githubStringID: person.attrs['asf-githubStringID']&.first || ''
       }]
     }.to_h
 
@@ -84,7 +85,8 @@ class PPMC
         member: person.asf_member?,
         icommit: incubator_committers.include?(person),
         role: 'PPMC Member',
-        githubUsername: (person.attrs['githubUsername'] || []).join(', ')
+        githubUsername: (person.attrs['githubUsername'] || []).join(', '),
+        asf_githubStringID: person.attrs['asf-githubStringID']&.first || ''
       }
       if analysePrivateSubs or isOwner
         allMail = person.all_mail.map{|m| ASF::Mail.to_canonical(m.downcase)}
@@ -104,7 +106,8 @@ class PPMC
         ipmc: ipmc.include?(person),
         icommit: incubator_committers.include?(person),
         role: 'Mentor',
-        githubUsername: (person.attrs['githubUsername'] || []).join(', ')
+        githubUsername: (person.attrs['githubUsername'] || []).join(', '),
+        asf_githubStringID: person.attrs['asf-githubStringID']&.first || ''
       }
       if analysePrivateSubs or isOwner
         allMail = person.all_mail.map{|m| ASF::Mail.to_canonical(m.downcase)}

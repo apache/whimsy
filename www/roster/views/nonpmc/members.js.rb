@@ -19,6 +19,7 @@ class NonPMCMembers < Vue
         _tr do
           _th if @@auth
           _th 'id', data_sort: 'string'
+          _th 'asf-githubStringID', data_sort: 'string'
           _th 'githubUsername', data_sort: 'string'
           _th.sorting_asc 'public name', data_sort: 'string-ins'
           _th 'starting date', data_sort: 'string'
@@ -73,10 +74,12 @@ class NonPMCMember < Vue
 
       if @@person.member == true # full member
         _td { _b { _a @@person.id, href: "committer/#{@@person.id}"} }
+        _td @@person.asf_githubStringID
         _td @@person.githubUsername
         _td { _b @@person.name }
       elsif @@person.member
         _td { _i { _a @@person.id, href: "committer/#{@@person.id}"} }
+        _td @@person.asf_githubStringID
         _td @@person.githubUsername
         _td { _i @@person.name
           _ ' ('
@@ -85,6 +88,7 @@ class NonPMCMember < Vue
         }
       else
         _td { _a @@person.id, href: "committer/#{@@person.id}" }
+        _td @@person.asf_githubStringID
         _td @@person.githubUsername
         _td @@person.name
       end

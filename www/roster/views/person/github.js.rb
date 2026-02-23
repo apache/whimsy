@@ -6,13 +6,24 @@ class PersonGitHub < Vue
   def render
     committer = @@person.state.committer
 
+    _div.row do
+      _div.name do
+        _ 'ASF-linked GitHub username'
+      end
+      _div.value do
+        if committer.asf_githubStringID.empty?
+          _ '(not defined)'
+          _br
+          _a 'Link a GitHub username to your ASF id', href: 'https://gitbox.apache.org/boxer/'
+        else
+          _a committer.asf_githubStringID, href: "https://github.com/#{committer.asf_githubStringID}"
+        end
+      end
+    end
+
     _div.row data_edit: 'github' do
       _div.name do
-        _ 'GitHub username(s)'
-        _br
-        _b 'N.B. not synched with the ASF-linked id'
-        _br
-        _a 'Link GitHub username to ASF id', href: 'https://gitbox.apache.org/boxer/'
+        _ 'User-provided GitHub username(s)'
       end
 
       _div.value do

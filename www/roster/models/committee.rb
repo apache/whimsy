@@ -10,7 +10,7 @@ class Committee
     # These may be empty if there is no matching LDAP group, e.g. during initial setup
     ASF::Committee.load_committee_info
     # We'll be needing the mail data later
-    ASF::Person.preload(['cn', 'mail', 'asf-altEmail', 'githubUsername'], (owners + committers).uniq)
+    ASF::Person.preload(['cn', 'mail', 'asf-altEmail', 'githubUsername', 'asf-githubStringID'], (owners + committers).uniq)
 
     comdev = ASF::SVN['comdev-foundation']
     info = JSON.parse(File.read(File.join(comdev, 'projects.json')))[id]
@@ -84,6 +84,7 @@ class Committee
         unMatchedSecSubs.delete_if {|k| allMail.include? ASF::Mail.to_canonical(k.downcase)}
       end
       roster[key]['githubUsername'] = (person.attrs['githubUsername'] || []).join(', ')
+      roster[key]['asf_githubStringID'] = person.attrs['asf-githubStringID']&.first || ''
     end
 
     owners.each do |person| # process the owners
@@ -104,6 +105,7 @@ class Committee
       end
       roster[person.id]['ldap'] = true
       roster[person.id]['githubUsername'] = (person.attrs['githubUsername'] || []).join(', ')
+      roster[person.id]['asf_githubStringID'] = person.attrs['asf-githubStringID']&.first || ''
     end
 
     committers.each do |person|
@@ -112,6 +114,7 @@ class Committee
         role: 'Committer'
       }
       roster[person.id]['githubUsername'] = (person.attrs['githubUsername'] || []).join(', ')
+      roster[person.id]['asf_githubStringID'] = person.attrs['asf-githubStringID']&.first || ''
     end
 
     roster.each {|k, v| v[:member] = ASF::Person.find(k).asf_member?}

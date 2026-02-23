@@ -14,6 +14,7 @@ class PPMCMentors < Vue
         _tr do
           _th if @@auth.ipmc
           _th 'id'
+          _th 'asf-githubStringID'
           _th 'githubUsername'
           _th 'public name'
           _th 'notes'
@@ -61,12 +62,14 @@ class PPMCMentor < Vue
         _td { _b { _a @@person.id, href: "committer/#{@@person.id}" }
               _a ' (*)', href: "ppmc/#{@@ppmc.id}#crosscheck" if @@person.notSubbed
             }
+        _td @@person.asf_githubStringID
         _td @@person.githubUsername
         _td { _b @@person.name }
       elsif @@person.member
         _td { _i { _a @@person.id, href: "committer/#{@@person.id}" }
               _a ' (*)', href: "ppmc/#{@@ppmc.id}#crosscheck" if @@person.notSubbed
             }
+        _td @@person.asf_githubStringID
         _td @@person.githubUsername
         _td { _i @@person.name
               _ ' ('
@@ -77,10 +80,12 @@ class PPMCMentor < Vue
         _td { _a @@person.id, href: "committer/#{@@person.id}"
               _a ' (*)', href: "ppmc/#{@@ppmc.id}#crosscheck" if @@person.notSubbed
             }
+        _td @@person.asf_githubStringID
         _td @@person.githubUsername
         _td @@person.name
       else
         _td @@person.id
+        _td @@person.asf_githubStringID
         _td @@person.githubUsername
         _td @@person.name
       end

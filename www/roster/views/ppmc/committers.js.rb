@@ -26,6 +26,7 @@ class PPMCCommitters < Vue
           _tr do
             _th if @@auth.ppmc
             _th 'id', data_sort: 'string'
+            _th 'asf-githubStringID', data_sort: 'string'
             _th 'githubUsername', data_sort: 'string'
             _th.sorting_asc 'public name', data_sort: 'string-ins'
             _th 'notes'
@@ -99,10 +100,12 @@ class PPMCCommitter < Vue
 
       if @@person.member == true # full member
         _td { _b { _a @@person.id, href: "committer/#{@@person.id}"} }
+        _td @@person.asf_githubStringID
         _td @@person.githubUsername
         _td { _b @@person.name }
       elsif @@person.member
         _td { _i { _a @@person.id, href: "committer/#{@@person.id}"} }
+        _td @@person.asf_githubStringID
         _td @@person.githubUsername
         _td { _i @@person.name
           _ ' ('
@@ -111,6 +114,7 @@ class PPMCCommitter < Vue
         }
       else
         _td { _a @@person.id, href: "committer/#{@@person.id}" }
+        _td @@person.asf_githubStringID
         _td @@person.githubUsername
         _td @@person.name
       end

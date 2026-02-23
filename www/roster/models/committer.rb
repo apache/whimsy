@@ -69,6 +69,7 @@ class Committer
       response[:sascore] = person.attrs['asf-sascore'].first # should only be one, but is returned as array
     end
 
+    response[:asf_githubStringID] = person.attrs['asf-githubStringID']&.first || ''
     if person.attrs['githubUsername']
       response[:githubUsername] = person.attrs['githubUsername'] # always return array
     end

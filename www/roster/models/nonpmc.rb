@@ -14,7 +14,7 @@ class NonPMC
 
     ASF::Committee.load_committee_info
     # We'll be needing the mail data later
-    ASF::Person.preload(['cn', 'mail', 'asf-altEmail', 'githubUsername'], (members + committers).uniq)
+    ASF::Person.preload(['cn', 'mail', 'asf-altEmail', 'githubUsername', 'asf-githubStringID'], (members + committers).uniq)
 
     image = ASF::SiteImage.find(id)
 
@@ -96,6 +96,7 @@ class NonPMC
       person = ASF::Person.find(k)
       v[:member] = person.asf_member?
       v['githubUsername'] = (person.attrs['githubUsername'] || []).join(', ')
+      v['asf_githubStringID'] = person.attrs['asf-githubStringID']&.first || ''
     end
 
     if cttee.chair and roster[cttee.chair.id]

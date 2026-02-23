@@ -137,11 +137,13 @@ get '/committer/index.json' do
     mail = Hash[ASF::Mail.list.group_by(&:last).
       map {|person, list| [person, list.map(&:first)]}]
 
-    ASF::Person.preload(['id','name','mail','githubUsername'])
+    ASF::Person.preload(['id','name','mail','githubUsername','asf-githubStringID'])
     member_statuses = ASF::Member.member_statuses
     # build a list of people, their public-names, and email addresses
     index = ASF::Person.list.sort_by(&:id).map {|person|
-      result = {id: person.id, name: person.public_name, mail: mail[person], githubUsername: person.attrs['githubUsername'] || []}
+      result = {id: person.id, name: person.public_name, mail: mail[person],
+        githubUsername: person.attrs['githubUsername'] || [],
+        asf_githubStringID: person.attrs['asf-githubStringID']&.first || ''}
       result[:asf_member_status] = member_statuses[person.id]
       result
     }.to_json
@@ -185,10 +187,12 @@ get '/committer2/index.json' do
     mail = Hash[ASF::Mail.list.group_by(&:last).
       map {|person, list| [person, list.map(&:first)]}]
 
-    ASF::Person.preload(['id','name','mail','githubUsername'])
+    ASF::Person.preload(['id','name','mail','githubUsername', 'asf-githubStringID'])
     # build a list of people, their public-names, and email addresses
     tmp = ASF::Person.list.sort_by(&:id).map {|person|
-      result = {id: person.id, name: person.public_name, mail: mail[person], githubUsername: person.attrs['githubUsername'] || []}
+      result = {id: person.id, name: person.public_name, mail: mail[person],
+        githubUsername: person.attrs['githubUsername'] || [],
+        asf_githubStringID: person.attrs['asf-githubStringID']&.first || ''}
       result[:member] = true if person.asf_member?
       result
     }

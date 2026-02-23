@@ -944,6 +944,8 @@ module ASF
     VALID_ATTRS = %w[
       asf-altEmail
       asf-committer-email
+      asf-githubNumericID
+      asf-githubStringID
       asf-member-activeprojects
       asf-member-status
       asf-pgpKeyFingerprint

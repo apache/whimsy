@@ -51,6 +51,7 @@ class CommitterSearch < Vue
             person.id.include? part or
             person.name.downcase().include? part or
             person.mail.any? {|mail| mail.include? part} or
+            person.asf_githubStringID.downcase().include? part or
             person.githubUsername.any? {|ghun| ghun.downcase().include? part}
           else
             person.name.downcase().include? part or
@@ -101,6 +102,7 @@ class CommitterSearch < Vue
                 _th 'id'
                 _th 'public name'
                 _th 'email'
+                _th 'asf-githubStringID'
                 _th 'githubUsername'
                 if @@notinavail
                   _th 'ICLA'
@@ -133,6 +135,7 @@ class CommitterSearch < Vue
                     _td person.mail
                   end
 
+                  _td person.asf_githubStringID
                   if person.githubUsername
                     _td person.githubUsername.join(', ')
                   else
