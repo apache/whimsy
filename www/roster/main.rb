@@ -188,6 +188,7 @@ get '/committer2/index.json' do
       map {|person, list| [person, list.map(&:first)]}]
 
     ASF::Person.preload(['id','name','mail','githubUsername', 'asf-githubStringID'])
+    member_statuses = ASF::Member.member_statuses
     # build a list of people, their public-names, and email addresses
     tmp = ASF::Person.list.sort_by(&:id).map {|person|
       result = {id: person.id, name: person.public_name, mail: mail[person],
