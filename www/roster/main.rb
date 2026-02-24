@@ -193,7 +193,7 @@ get '/committer2/index.json' do
       result = {id: person.id, name: person.public_name, mail: mail[person],
         githubUsername: person.attrs['githubUsername'] || [],
         asf_githubStringID: person.attrs['asf-githubStringID']&.first || ''}
-      result[:member] = true if person.asf_member?
+      result[:asf_member_status] = member_statuses[person.id]
       result
     }
 
