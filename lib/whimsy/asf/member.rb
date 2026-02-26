@@ -103,7 +103,7 @@ module ASF
       begin
         @status = nil if @mtime != @@mtime
         @mtime = @@mtime
-        return Hash[@status.to_a] if @status
+        return Hash[@status.to_a] if @status # Looks like Hash[h.to_a] is used to generate a copy of the weak ref
       rescue
       end
 
