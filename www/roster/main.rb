@@ -133,20 +133,7 @@ get '/committer/index.json' do
   index = nil if not index_time or Time.now-index_time >= 300
 
   if not index
-    # bulk loading the mail information makes things go faster
-    mail = Hash[ASF::Mail.list.group_by(&:last).
-      map {|person, list| [person, list.map(&:first)]}]
-
-    ASF::Person.preload(['id','name','mail','githubUsername','asf-githubStringID'])
-    member_statuses = ASF::Member.member_statuses
-    # build a list of people, their public-names, and email addresses
-    index = ASF::Person.list.sort_by(&:id).map {|person|
-      result = {id: person.id, name: person.public_name, mail: mail[person],
-        githubUsername: person.attrs['githubUsername'] || [],
-        asf_githubStringID: person.attrs['asf-githubStringID']&.first || ''}
-      result[:asf_member_status] = member_statuses[person.id]
-      result
-    }.to_json
+    index = ASF::Mail.people_mails_github({}).to_json
 
     # cache
     index_time = Time.now
@@ -183,21 +170,21 @@ get '/committer2/index.json' do
   index2 = nil if not index2_time or Time.now-index2_time >= 300
 
   if not index2
-    # bulk loading the mail information makes things go faster
-    mail = Hash[ASF::Mail.list.group_by(&:last).
-      map {|person, list| [person, list.map(&:first)]}]
+    extra_mails = Hash.new{|h,k| h[k] = Array.new}
+    ASF::Member.list_entries([:email]).each do |status, _name, id, _lines, keys|
+      unless id.nil?
+        extra_mails[id] = keys[:email]
+      end
+    end
 
-    ASF::Person.preload(['id','name','mail','githubUsername', 'asf-githubStringID'])
-    member_statuses = ASF::Member.member_statuses
-    # build a list of people, their public-names, and email addresses
-    tmp = ASF::Person.list.sort_by(&:id).map {|person|
-      result = {id: person.id, name: person.public_name, mail: mail[person],
-        githubUsername: person.attrs['githubUsername'] || [],
-        asf_githubStringID: person.attrs['asf-githubStringID']&.first || ''}
-      result[:asf_member_status] = member_statuses[person.id]
-      result
-    }
+    # load all ICLA emails in one pass
+    ASF::ICLA.each do |icla|
+      extra_mails[icla.id].concat icla.emails
+    end
 
+    tmp = ASF::Mail.people_mails_github(extra_mails)
+    
+    # Add ICLA details
     ASF::ICLA.each {|icla|
       if icla.noId?
         if @auth[:secretary]

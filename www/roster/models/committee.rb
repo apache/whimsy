@@ -224,15 +224,9 @@ class Committee
     @people = nil if not @people_time or Time.now-@people_time >= 300
 
     unless @people
-      # bulk loading the mail information makes things go faster
-      mail = ASF::Mail.list.group_by(&:last).transform_values {|list| list.map(&:first)}
 
       # build a list of people, their public-names, and email addresses
-      @people = ASF::Person.list.map {|person|
-        result = {id: person.id, name: person.public_name, mail: mail[person]}
-        result[:member] = true if person.asf_member?
-        result
-      }
+      @people = ASF::Mail.people_mails
 
       # cache
       @people_time = Time.now

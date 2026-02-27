@@ -3,44 +3,44 @@ require 'weakref'
 module ASF
   # Convenience functions related to emails or mailing lists.
   class Mail
-    # return a Hash containing complete list of all known emails, and the
-    # ASF::Person that is associated with that email.
-    def self.list
-      begin
-        return @list.to_h if @list
-      rescue NoMethodError, WeakRef::RefError
+
+    # return a list of people ids, their public-name, whether they are an ASF member, and email addresses
+    def self.people_mails
+      member_statuses = ASF::Member.member_statuses # cache the statuses. TODO: should be done in ASF.Member
+      people = ASF::Person.preload(['cn', 'mail','asf-altEmail'])
+      result = people.sort_by(&:id).map do |person|
+        id = person.id
+        mails = person.mail + person.alt_email + ["#{id}@apache.org"]
+        entry = {
+          id: id,
+          name: person.public_name,
+          mail: mails.map{|m| m.downcase}.uniq,
+        }
+        entry[:member] = true if member_statuses[id]
+        entry
       end
+      result
+    end
 
-      list = {}
-
-      # load info from LDAP
-      people = ASF::Person.preload(['mail', 'asf-altEmail'])
-      people.each do |person|
-        (person.mail + person.alt_email).each do |mail|
-          list[mail.downcase] = person
-        end
+    # return a list of people ids, their public-name, whether they are an ASF member, and email addresses
+    # Also return GH settings
+    # @param extra_mails additional emails derived from members and iclas
+    def self.people_mails_github(extra_mails)
+      member_statuses = ASF::Member.member_statuses # cache the statuses. TODO: should be done in ASF.Member
+      people = ASF::Person.preload(['cn', 'mail','asf-altEmail','githubUsername', 'asf-githubStringID'])
+      result = people.sort_by(&:id).map do |person|
+        id = person.id
+        mails = person.mail + person.alt_email + extra_mails.fetch(id, []) + ["#{id}@apache.org"]
+        {
+          id: id,
+          name: person.public_name,
+          mail: mails.map{|m| m.downcase}.uniq,
+          githubUsername: person.attrs['githubUsername'] || [],
+          asf_githubStringID: person.attrs['asf-githubStringID']&.first || '',
+          asf_member_status: member_statuses[person.id],
+        }
       end
-
-      # load all member emails in one pass
-      ASF::Member.each do |id, text|
-        Member.emails(text).each do |mail|
-          list[mail.downcase] ||= Person.find(id)
-        end
-      end
-
-      # load all ICLA emails in one pass
-      ASF::ICLA.each do |icla|
-        person = Person.find(icla.id)
-        icla.emails.each do |email|
-          list[email.downcase] ||= person
-        end
-        next if icla.noId?
-
-        list["#{icla.id.downcase}@apache.org"] ||= person
-      end
-
-      @list = WeakRef.new(list)
-      list
+      result
     end
 
     # list of mailing lists that aren't actively seeking new subscribers
