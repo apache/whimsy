@@ -171,12 +171,14 @@ get %r{/(\d\d\d\d-\d\d-\d\d)/feedback.json} do |date|
 end
 
 post %r{/(\d\d\d\d-\d\d-\d\d)/feedback.json} do |date|
-  unavailable = Status.updates_disallowed_reason # are updates disallowed?
-  return [503, unavailable] if unavailable
+  return [503, "Service has been withdrawn - use BAT instead"]
 
-  @agenda = "board_agenda_#{date.gsub('-', '_')}.txt"
-  @dryrun = false
-  _json :'actions/feedback'
+  # unavailable = Status.updates_disallowed_reason # are updates disallowed?
+  # return [503, unavailable] if unavailable
+
+  # @agenda = "board_agenda_#{date.gsub('-', '_')}.txt"
+  # @dryrun = false
+  # _json :'actions/feedback'
 end
 
 def server
@@ -321,10 +323,12 @@ get '/json/posted-reports' do
 end
 
 post '/json/posted-reports' do
-  unavailable = Status.updates_disallowed_reason # are updates disallowed?
-  return [503, unavailable] if unavailable
+  return [503, "Service has been withdrawn - use BAT instead"]
 
-  _json :"actions/posted-reports"
+  # unavailable = Status.updates_disallowed_reason # are updates disallowed?
+  # return [503, unavailable] if unavailable
+
+  # _json :"actions/posted-reports"
 end
 
 # podling name searches
@@ -339,10 +343,12 @@ end
 
 # posted actions
 post '/json/:file' do
-  unavailable = Status.updates_disallowed_reason # are updates disallowed?
-  return [503, unavailable] if unavailable
+  return [503, "Service has been withdrawn - use BAT instead"]
+  
+  # unavailable = Status.updates_disallowed_reason # are updates disallowed?
+  # return [503, unavailable] if unavailable
 
-  _json :"actions/#{params[:file]}"
+  # _json :"actions/#{params[:file]}"
 end
 
 # Raw minutes
@@ -448,10 +454,12 @@ get '/json/secretary-todos/:date' do
 end
 
 post '/json/secretary-todos/:date' do
-  unavailable = Status.updates_disallowed_reason # are updates disallowed?
-  return [503, unavailable] if unavailable
+  return [503, "Service has been withdrawn - use BAT instead"]
 
-  _json :'actions/todos'
+  # unavailable = Status.updates_disallowed_reason # are updates disallowed?
+  # return [503, unavailable] if unavailable
+
+  # _json :'actions/todos'
 end
 
 # potential actions
@@ -577,41 +585,43 @@ end
 
 # post a new agenda
 post %r{/(\d\d\d\d-\d\d-\d\d)/} do |date|
-  unavailable = Status.updates_disallowed_reason # are updates disallowed?
-  return [503, unavailable] if unavailable
+  return [503, "Service has been withdrawn - use BAT instead"]
 
-  boardurl = ASF::SVN.svnurl('foundation_board')
-  agenda = "board_agenda_#{date.gsub('-', '_')}.txt"
+  # unavailable = Status.updates_disallowed_reason # are updates disallowed?
+  # return [503, unavailable] if unavailable
 
-  contents = params[:agenda].gsub("\r\n", "\n")
+  # boardurl = ASF::SVN.svnurl('foundation_board')
+  # agenda = "board_agenda_#{date.gsub('-', '_')}.txt"
 
-  Dir.mktmpdir do |dir|
+  # contents = params[:agenda].gsub("\r\n", "\n")
 
-    ASF::SVN.svn!('checkout', [boardurl, dir], {depth: 'empty', env: env})
+  # Dir.mktmpdir do |dir|
 
-    agendapath = File.join(dir, agenda)
-    File.write agendapath, contents
-    ASF::SVN.svn!('add', agendapath)
+  #   ASF::SVN.svn!('checkout', [boardurl, dir], {depth: 'empty', env: env})
 
-    currentpath = File.join(dir, 'current.txt')
-    ASF::SVN.svn!('update', currentpath, {env: env})
+  #   agendapath = File.join(dir, agenda)
+  #   File.write agendapath, contents
+  #   ASF::SVN.svn!('add', agendapath)
 
-    if File.symlink? currentpath # Does the symlink exist?
-      File.unlink currentpath
-      File.symlink agenda, currentpath
-    else
-      Wunderbar.warn 'current.txt link does not exist, creating it'
-      File.symlink agenda, currentpath
-      ASF::SVN.svn!('add', currentpath)
-    end
+  #   currentpath = File.join(dir, 'current.txt')
+  #   ASF::SVN.svn!('update', currentpath, {env: env})
 
-    ASF::SVN.svn!('commit', [agendapath, currentpath], {msg: "Post #{date} agenda", env: env})
-    Agenda.update_cache agenda, agendapath, contents, false
-  end
+  #   if File.symlink? currentpath # Does the symlink exist?
+  #     File.unlink currentpath
+  #     File.symlink agenda, currentpath
+  #   else
+  #     Wunderbar.warn 'current.txt link does not exist, creating it'
+  #     File.symlink agenda, currentpath
+  #     ASF::SVN.svn!('add', currentpath)
+  #   end
 
-  auto_remind(date, agenda)
+  #   ASF::SVN.svn!('commit', [agendapath, currentpath], {msg: "Post #{date} agenda", env: env})
+  #   Agenda.update_cache agenda, agendapath, contents, false
+  # end
 
-  redirect to("/#{date}/")
+  # auto_remind(date, agenda)
+
+  # redirect to("/#{date}/")
 end
 
 get %r{/testautoremind/(\d\d\d\d-\d\d-\d\d)/} do |date|
