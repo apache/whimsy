@@ -146,7 +146,6 @@ module ASF
         return help
       else
         (help ||= '') << "During the meeting, to mark your proxies' attendance, AFTER logging into the ASFMM tool, click the top left Hamburger menu, Proxies button, and copy/paste the below lines to mark your proxies attendance."
-        copypasta.unshift("#{user.id.ljust(max_uid_len)} | #{user.cn}")
         return help, copypasta
       end
     end
