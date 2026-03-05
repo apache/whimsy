@@ -10,6 +10,10 @@ require 'date'
 require 'tmpdir'
 require 'whimsy/asf/meeting-util'
 
+# Fetch members.txt
+$members_txt = ASF::Member.list
+
+
 # Emit basic instructions and details on quorum
 def emit_instructions(today, cur_mtg_dir, meeting)
   meeting_display = meeting.gsub(%r{\A(\d\d\d\d)(\d\d)(\d\d)\z}, "\\1-\\2-\\3")
@@ -118,9 +122,6 @@ def emit_form(cur_mtg_dir, meeting, volunteers, disabled)
             ldap_members = ASF.members
             ASF::Person.preload('cn', ldap_members)
 
-            # Fetch members.txt
-            members_txt = ASF::Member.list
-
             # get a list of members who have submitted proxies
             exclude = Dir[File.join(cur_mtg_dir,'proxies-received', '*')].
               map {|name| name[/(\w+)\.\w+$/, 1]}
@@ -133,8 +134,8 @@ def emit_form(cur_mtg_dir, meeting, volunteers, disabled)
               ldap_members.sort_by{|m| m.public_name || '_'}.each do |member|
                 next if member.id == $USER               # No self proxies
                 next if exclude.include? member.id       # Not attending
-                next unless members_txt[member.id]       # Non-members
-                next if members_txt[member.id]['status'] # Emeritus/Deceased
+                next unless $members_txt[member.id]       # Non-members
+                next if $members_txt[member.id]['status'] # Emeritus/Deceased
                 # Display the availid to users to match volunteers array above
                 _option "#{member.public_name || '?No public name?'} (#{member.id})",
                   selected: (member.id == secretary_id)
@@ -314,14 +315,18 @@ _html do
         emit_instructions(today, cur_mtg_dir, meeting)
       }
     ) do
-      if _.get?
-        emit_form(cur_mtg_dir, meeting, ASF::MeetingUtil::getVolunteers(cur_mtg_dir), today > meeting)
-      else # POST
-        # WHIMSY-409: improve UI
-        begin
-          emit_post(cur_mtg_dir, meeting, _)
-        rescue ArgumentError => e
-          _h2_.text_danger {_span.label.label_danger e}
+      if $members_txt[$USER]['status'] # i.e. not Active
+        _h2_.text_danger {_span.label.label_danger 'Sorry, but only active members can submit proxies'}
+      else
+        if _.get?
+          emit_form(cur_mtg_dir, meeting, ASF::MeetingUtil::getVolunteers(cur_mtg_dir), today > meeting)
+        else # POST
+          # WHIMSY-409: improve UI
+          begin
+            emit_post(cur_mtg_dir, meeting, _)
+          rescue ArgumentError => e
+            _h2_.text_danger {_span.label.label_danger e}
+          end
         end
       end
     end
