@@ -274,6 +274,7 @@ _html do
         _ 'Nor is there a way to record replies that do not match the list search criteria.'
         _br
         _ 'Some replies may be incorrectly recorded as missing'
+        _ ' (e.g. those without availids)'
         _ 'and some applications will never be received.'
       end
       _table.table.table_striped do
