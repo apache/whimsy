@@ -187,7 +187,7 @@ end
 ########################################################################
 
 # send confirmation email
-task "email #@email" do
+task "email #{@email}" do
   # build mail from template
   mail = message.reply(
     subject: @document,

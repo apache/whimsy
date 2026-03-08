@@ -11,6 +11,7 @@ class MemApp < Vue
     _form method: 'post', action: '../../tasklist/memapp', target: 'content' do
       _input type: 'hidden', name: 'message'
       _input type: 'hidden', name: 'selected'
+      _input type: 'hidden', name: 'email', value: @email # needed for json
       _input type: 'hidden', name: 'signature', value: @@signature
 
       _table.form do
