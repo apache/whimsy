@@ -37,6 +37,7 @@ unless signerfileslist
   Wunderbar.warn err
   print "Status: 404 Not found\r\n\r\n" # TODO better status
   print "Sorry, cannot access COI documents\r\n"
+  print "Did anyone create the directory: #{COI_CURRENT_URL}?\r\n"
   exit
 end
 signerfiles = signerfileslist.split("\n")
