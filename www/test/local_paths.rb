@@ -23,7 +23,7 @@ end
 
 RECEIVED = File.absolute_path('work/svn/received')
 
-# define pending yaml files
+# define pending YAML files
 PENDING_YML = File.join(RECEIVED, 'pending.yml')
 COMPLETED_YML = File.join(RECEIVED, 'completed.yml')
 

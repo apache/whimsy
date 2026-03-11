@@ -158,7 +158,7 @@ class Mailbox
   end
 
   #
-  # name of associated yaml file
+  # name of associated YAML file
   #
   def yaml_file
     File.join ARCHIVE, "#{@name}.yml"

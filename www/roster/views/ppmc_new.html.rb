@@ -21,7 +21,7 @@ _html do
     _script src: "app.js?#{appmtime}"
     _.render '#main', timeout: 1 do
       _PPMCNew auth: @auth, pmcsAndBoard: @pmcsAndBoard,
-        officersAndMemers: @officersAndMembers, ipmc: @ipmc
+        officersAndMembers: @officersAndMembers, ipmc: @ipmc
     end
   end
 end

@@ -63,7 +63,7 @@ task :server => :bundle do
   require 'wunderbar/listen'
 end
 
-desc 'remove all parsed yaml files'
+desc 'remove all parsed YAML files'
 task :clean do
   rm_rf Dir["#{ARCHIVE}/*.yml"]
 end
