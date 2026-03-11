@@ -46,7 +46,7 @@ module ParseMail
       ytime = Time.at(0)
     end
     dtime = File.mtime(maildir) # must exist
-    if ytime > dtime + 60 # Allow for yaml update window
+    if ytime > dtime + 60 # Allow for YAML update window
       log :INFO, "No change to #{maildir} (#{dtime}) since #{yamlfile} (#{ytime}), skipping"
       return
     else

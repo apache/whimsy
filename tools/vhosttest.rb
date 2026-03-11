@@ -10,7 +10,7 @@ require 'whimsy/asf'
 
 # Allow override of local repo
 IP = ARGV.shift or raise RuntimeError.new 'Need path to infrastructure puppet checkout'
-# Allow override of yaml name
+# Allow override of YAML name
 base = ARGV.shift || 'whimsy-vm*'
 yaml =  Dir["#{IP}/data/nodes/#{base}.apache.org.yaml"].
   max_by {|path| path[/-vm(\d+)/, 1].to_i}
