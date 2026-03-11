@@ -36,7 +36,7 @@ class StatusMonitor
   def recorddiff(what, diff)
     @timings << [what, diff]
   end
-  
+
   def timediff(what)
     now = Time.now
     recorddiff(what, now - @prev )

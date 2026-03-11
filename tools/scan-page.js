@@ -41,7 +41,7 @@ function getHost(url) {
   page.on('console', message => {
       let type = message.type().toUpperCase();
       if (type != 'LOG') { // don't want logs
-        console.log(`${type} ${message.text()}`);      
+        console.log(`${type} ${message.text()}`);
       }
   });
   page.on('request', (interceptedRequest) => {
@@ -61,7 +61,7 @@ function getHost(url) {
           interceptedRequest.continue();
         } else if (option == 'allref') {
           let ini = interceptedRequest.initiator();
-          if (ini) {            
+          if (ini) {
             let iniurl = ini.url;
             if (!iniurl && ini.stack) {
               iniurl = ini.stack.callFrames[0].url;
@@ -72,7 +72,7 @@ function getHost(url) {
               console.log(url);
             }
           } else { // seems to occur with captcha failures
-              console.log(url + ' NAK');            
+              console.log(url + ' NAK');
           }
           interceptedRequest.continue();
         } else {

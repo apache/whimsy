@@ -202,7 +202,7 @@ module ASF
     def self.list_with_status
       self.list.map {|pod| [pod.id, pod.status]}.to_h
     end
-    
+
     # list of current podlings
     def self.current
       self._list('current')

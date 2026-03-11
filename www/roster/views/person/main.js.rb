@@ -152,7 +152,7 @@ class Person < Vue
         end
       end
     end
-    
+
     unless @committer.podling_member.empty?
       _div.row do
         _div.name 'PPMC committer'
