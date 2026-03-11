@@ -183,7 +183,7 @@ get '/committer2/index.json' do
     end
 
     tmp = ASF::Mail.people_mails_github(extra_mails)
-    
+
     # Add ICLA details
     ASF::ICLA.each {|icla|
       if icla.noId?

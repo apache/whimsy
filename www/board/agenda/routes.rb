@@ -344,7 +344,7 @@ end
 # posted actions
 post '/json/:file' do
   return [503, "Service has been withdrawn - use BAT instead"]
-  
+
   # unavailable = Status.updates_disallowed_reason # are updates disallowed?
   # return [503, unavailable] if unavailable
 

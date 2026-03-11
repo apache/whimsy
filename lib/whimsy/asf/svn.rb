@@ -706,7 +706,7 @@ module ASF
         else
           return revision, File.read(tmpfile)
         end
-      end      
+      end
     end
 
     # update a file in SVN, working entirely in a temporary directory
@@ -755,7 +755,7 @@ module ASF
       end
       rc # return last status
     end
-    
+
     # update a file or directory in SVN, working entirely in a temporary
     # directory
     # Intended for use from GUI code

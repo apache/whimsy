@@ -218,7 +218,7 @@ module SiteStandards
     end
     return sites, crawl_time
   end
-  
+
   CSP_INFRA_BASE = <<-EOD.strip.gsub(%r{([.*])}, "\\\\\\1")
     'self' data: blob: 'unsafe-inline' 'unsafe-eval'
     https://www.apachecon.com/
@@ -228,7 +228,7 @@ module SiteStandards
   CSP_THIRD_PARTY = "https://*.scarf.sh/ ".gsub(%r{([.*])}, "\\\\\\1")
 
   CSP_PROJECT_DOMAINS = "(.*)" # Allow anything here (capture it)
-  
+
   DEFAULT_CSP = <<-EOD.strip.gsub("\n",'').gsub(/ +/, ' ')
     default-src #{CSP_INFRA_BASE} #{CSP_THIRD_PARTY} #{CSP_PROJECT_DOMAINS};
     script-src #{CSP_INFRA_BASE} #{CSP_THIRD_PARTY} #{CSP_PROJECT_DOMAINS};
@@ -242,7 +242,7 @@ module SiteStandards
   WWW_CSP = <<-EOD.strip.gsub("\n",'').gsub(/ +/, ' ')
     default-src 'self' data: 'unsafe-inline'
     https://www.apachecon.com/ https://analytics.apache.org/ http://analytics.apache.org/
-    https://www.youtube-nocookie.com https://www.youtube.com; 
+    https://www.youtube-nocookie.com https://www.youtube.com;
     script-src 'self' 'unsafe-inline' 'unsafe-eval'
     https://www.apachecon.com/ https://analytics.apache.org/ http://analytics.apache.org/
     https://www.youtube-nocookie.com https://www.youtube.com;
@@ -298,7 +298,7 @@ module SiteStandards
       end
     end
   end
-  
+
   # Analyze data returned from site-scan.rb by using checks[CHECK_VALIDATE] regex
   #   If value =~ CHECK_VALIDATE, SITE_PASS
   #   If value is present (presumably from CHECK_TEXT|CAPTURE), then SITE_WARN
