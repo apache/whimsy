@@ -3,6 +3,45 @@ require 'weakref'
 module ASF
   # Convenience functions related to emails or mailing lists.
   class Mail
+    # return a Hash containing complete list of all known emails, and the
+    # ASF::Person that is associated with that email.
+    def self.list
+      begin
+        return @list.to_h if @list
+      rescue NoMethodError, WeakRef::RefError
+      end
+
+      list = {}
+
+      # load info from LDAP
+      people = ASF::Person.preload(['mail', 'asf-altEmail'])
+      people.each do |person|
+        (person.mail + person.alt_email).each do |mail|
+          list[mail.downcase] = person
+        end
+      end
+
+      # load all member emails in one pass
+      ASF::Member.each do |id, text|
+        Member.emails(text).each do |mail|
+          list[mail.downcase] ||= Person.find(id)
+        end
+      end
+
+      # load all ICLA emails in one pass
+      ASF::ICLA.each do |icla|
+        person = Person.find(icla.id)
+        icla.emails.each do |email|
+          list[email.downcase] ||= person
+        end
+        next if icla.noId?
+
+        list["#{icla.id.downcase}@apache.org"] ||= person
+      end
+
+      @list = WeakRef.new(list)
+      list
+    end
 
     # return a list of people ids, their public-name, whether they are an ASF member, and email addresses
     def self.people_mails
