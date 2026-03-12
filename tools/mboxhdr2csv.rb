@@ -186,7 +186,9 @@ module MailUtils
       next if email.end_with? '/index'
       message = IO.read(email, mode: 'rb')
       data = {}
-      data[DATE] = Time.parse(message[/^Date: (.*)/, 1]).iso8601
+      date = message[/^Date: (.*)/, 1]
+      date = message[/^From \S+ +(.+)/,1] unless date # Use envelope date if necessary
+      data[DATE] = Time.parse(date).iso8601
       data[FROM] = message[/^From: (.*)/, 1]
       # Originally (before 2265343) the local method #find_who_from expected an email address and returned who, committer
       # Emulate this with the version from MailUtils which expects and updates a hash
