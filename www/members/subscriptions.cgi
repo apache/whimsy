@@ -62,20 +62,22 @@ _html do
 
     members = ASF::Member.new.map {|id, text| ASF::Person.find(id)}
     ASF::Person.preload('cn', members)
-    maillist = ASF::Mail.list
-
+    maillist = ASF::Mail.listall
     subscriptions = []
-    subscribers.each do |line|
-      person = maillist[line.downcase]
-      person ||= maillist[line.downcase.sub(/[-+]\w+@/,'@')] # allow for trailing +- suffix
-      if person
-        id = person.id
-        id = '*notinavail*' if id == 'notinavail'
+    subscribers.each do |email|
+      people = maillist[email.downcase]
+      people ||= maillist[ASF::Mail.remove_email_suffix(email)]
+      if people
+        people.each do |person|  # email may match more than one person
+          id = person.id
+          id = '*notinavail*' if id == 'notinavail'
+          subscriptions << [id, person, email]
+        end
       else
         person = ASF::Person.find('notinavail')
         id = '*missing*'
+        subscriptions << [id, person, email]
       end
-      subscriptions << [id, person, line]
     end
 
     _table.table do

@@ -34,17 +34,14 @@ _html do
         _h2 'DRAFT - List moderators whose email addresses are not recognised'
         _p 'If the domain is @apache.org, the email is most likely a typo'
         _p 'In other cases, perhaps the email is not registered'
-        _p do
-          _b 'Emails are matched exactly - case is treated significant, even for domains'
-        end
       }
     ) do
       lists, _time = ASF::MLIST.list_moderators(nil)
-      emails = ASF::Mail.list
+      emails = ASF::Mail.listall
       unknown = Hash.new { |h, k| h[k] = []}
       lists.each do |lid, mods|
         mods.each do |mod|
-          unknown[mod] << lid unless MODERATORS.include? mod or emails[mod] or private_mod(lid, mod)
+          unknown[mod] << lid unless MODERATORS.include? mod or emails[mod.downcase] or private_mod(lid, mod)
         end
       end
 

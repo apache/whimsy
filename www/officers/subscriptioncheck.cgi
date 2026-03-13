@@ -19,7 +19,7 @@ MEMBER_ANNOUNCE_OK = %w(board-chair@apache.org secretary@apache.org)
 
 DEFAULT_LISTS = 'board,markpub,members,members-announce,members-notify,operations,press,trademarks,private@infra.apache.org'
 listnames = ENV['QUERY_STRING']
-listnames = DEFAULT_LISTS if listnames == ''
+listnames = DEFAULT_LISTS if listnames == '' or listnames.nil?
 
 info_chairs = ASF::Committee.load_committee_info.group_by(&:chair)
 ldap_chairs = ASF.pmc_chairs
@@ -93,19 +93,22 @@ _html do
           _ "(updated #{modtime})"
         end
         subscribers -= MEMBER_ANNOUNCE_OK if listid == 'members-announce@apache.org'
-        subscribers -= ['trademarks@gsuite.cloud.apache.org'] if listid = 'trademarks@apache.org'
-        maillist = ASF::Mail.list
-        subscribers.each do |line|
-          person = maillist[line.downcase]
-          person ||= maillist[line.downcase.sub(/\+\w+@/,'@')]
-          if person
-            id = person.id
-            id = '*notinavail*' if id == 'notinavail'
+        subscribers -= ['trademarks@gsuite.cloud.apache.org'] if listid == 'trademarks@apache.org'
+        maillist = ASF::Mail.listall
+        subscribers.each do |email|
+          people = maillist[email.downcase]
+          people ||= maillist[ASF::Mail.remove_email_suffix(email)]
+          if people
+            people.each do |person|
+              id = person.id
+              id = '*notinavail*' if id == 'notinavail'
+              ids << [id, person, email]
+            end
           else
             person = ASF::Person.find('notinavail')
             id = '*missing*'
+            ids << [id, person, email]
           end
-          ids << [id, person, line]
         end
       end
 

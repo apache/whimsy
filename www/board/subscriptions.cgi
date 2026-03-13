@@ -65,18 +65,21 @@ _html do
       end
 
       ids = []
-      maillist = ASF::Mail.list
-      subscribers.each do |line|
-        person = maillist[line.downcase]
-        person ||= maillist[line.downcase.sub(/\+\w+@/,'@')]
-        if person
-          id = person.id
-          id = '*notinavail*' if id == 'notinavail'
+      maillist = ASF::Mail.listall
+      subscribers.each do |email|
+        people = maillist[email.downcase] # email may match more than one person
+        people ||= maillist[ASF::Mail.remove_email_suffix(email)]
+        if people
+          people.each do |person|
+            id = person.id
+            id = '*notinavail*' if id == 'notinavail'
+            ids << [id, person, email]
+          end
         else
           person = ASF::Person.find('notinavail')
           id = '*missing*'
+          ids << [id, person, email]
         end
-        ids << [id, person, line]
       end
 
       _table_.table do

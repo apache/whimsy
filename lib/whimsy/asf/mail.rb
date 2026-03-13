@@ -3,28 +3,26 @@ require 'weakref'
 module ASF
   # Convenience functions related to emails or mailing lists.
   class Mail
-    # return a Hash containing complete list of all known emails, and the
-    # ASF::Person that is associated with that email.
-    def self.list
-      begin
-        return @list.to_h if @list
-      rescue NoMethodError, WeakRef::RefError
-      end
+    # return a hash containing down-cased email names, together with a Set of people with whom
+    # they are associated. In almost all cases there is only a single associated person.
+    # The emails are sourced from LDAP, and optionally members.txt and iclas.txt
+    def self.listall
+      # Note: no point currently caching the list in memory, as this method is only used by cgi scripts
 
-      list = {}
+      list = Hash.new{|h,k| h[k] = Set.new} # this creates a default Proc, which we remove later
 
       # load info from LDAP
-      people = ASF::Person.preload(['mail', 'asf-altEmail'])
+      people = ASF::Person.preload(['mail', 'asf-altEmail', 'cn'])
       people.each do |person|
         (person.mail + person.alt_email).each do |mail|
-          list[mail.downcase] = person
+          list[mail.downcase] << person # there may be more that one person associated with a single email
         end
       end
 
       # load all member emails in one pass
       ASF::Member.each do |id, text|
         Member.emails(text).each do |mail|
-          list[mail.downcase] ||= Person.find(id)
+          list[mail.downcase] << Person.find(id) # this should find one of the pre-loads
         end
       end
 
@@ -32,15 +30,25 @@ module ASF
       ASF::ICLA.each do |icla|
         person = Person.find(icla.id)
         icla.emails.each do |email|
-          list[email.downcase] ||= person
+          list[email.downcase] << person
         end
         next if icla.noId?
 
-        list["#{icla.id.downcase}@apache.org"] ||= person
+        list["#{icla.id.downcase}@apache.org"] << person # is this needed?
       end
 
-      @list = WeakRef.new(list)
+      list.default_proc = nil # no longer create an empty set when a key is missing
       list
+    end
+
+    # Allow for trailing +- suffix in emails.
+    # e.g.
+    # username-test@apache.org => username@apache.org
+    # username+test@gmail.com => username@gmail.com
+    def self.remove_email_suffix(email)
+      # TODO: may need to tighten this to avoid ambiguities
+      # e.g. selectively apply '-xxx' or '+xxx' removal, depending on domain
+      email.downcase.sub(/[-+]\w+@/,'@') # drop suffix
     end
 
     # return a list of people ids, their public-name, whether they are an ASF member, and email addresses
