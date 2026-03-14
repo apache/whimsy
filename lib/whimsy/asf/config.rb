@@ -74,7 +74,7 @@ module ASF
     # for example: podlings.xml
     # www/roster/views/actions/ppmc.json.rb (write)
     # lib/whimsy/asf/podlings.rb (read)
-    # see: http://mail-archives.apache.org/mod_mbox/whimsical-dev/201705.mbox/%3CCAFG6u8FJwvWvnd29O-cUZyQnCXrRvWSRDc11zaPx6_Y4ihnsfg%40mail.gmail.com%3E
+    # see: https://lists.apache.org/thread/wv1rp8kjtcnwd3bpvslhmmjpr0gnc6v2
     @config[:cache] ||= "#{@root}/cache"
 
     # Contains the data files from the ezmlm mail server, e.g.
