@@ -78,7 +78,8 @@ module LogParser
   # @param f filename of whimsy_access.log or .gz
   # @return array of reduced, scrubbed entries as hashes
   def parse_whimsy_access(f)
-    access = read_logz(f).scan(/<%JSON:apache_access%> (\{.*\})/).flatten
+    # HACK: gsub work round invalid JSON for NBSP in log files
+    access = read_logz(f).gsub('\xc2\xa0',' ').scan(/<%JSON:apache_access%> (\{.*\})/).flatten
     logs = JSON.parse('[' + access.join(',') + ']').reject do |i|
       (i['useragent'] =~ /Ping My Box/) || (i['uri'] =~ Regexp.union(IGNORED_URIS)) || (i['status'] == 304)
     end
