@@ -1,0 +1,22 @@
+repos:
+- repo: meta
+  hooks:
+    - id: check-hooks-apply
+      name: check that hooks apply
+      description: check that all the hooks apply to the repository
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v6.0.0
+  hooks:
+    - id: check-ast
+    - id: check-case-conflict
+    - id: check-illegal-windows-names
+    - id: check-json
+    - id: check-merge-conflict
+    - id: check-yaml
+    - id: detect-private-key
+    # - id: end-of-file-fixer
+    # - id: fix-byte-order-marker
+    - id: forbid-submodules
+    - id: mixed-line-ending
+    - id: trailing-whitespace
+      files: \.(cgi|rdf|rb)$
