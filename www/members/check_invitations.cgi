@@ -132,7 +132,7 @@ def setup_data
   end
 
   notinvited.each do |id, v|
-    # na_emails entries only exist for non-commiters
+    # na_emails entries only exist for non-committers
     mails = na_emails[id] || ASF::Person.new(id).all_mail
     v[:invited] = match_person(invites, id, v[:name], mails)
     v[:replied] = match_person(replies, id, v[:name], mails)
@@ -141,7 +141,7 @@ def setup_data
   notapplied.each do |record|
     id = record[:id]
     name = record[:name]
-    # na_emails entries only exist for non-commiters
+    # na_emails entries only exist for non-committers
     mails = na_emails[id] || ASF::Person.new(id).all_mail
     record[:replied] = match_person(replies, id, name, mails)
     record[:invited] = match_person(invites, id, name, mails)
