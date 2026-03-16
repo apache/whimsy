@@ -174,7 +174,7 @@ _html do
           _ %Q{
             Use this form to nominate any Member for the ASF Board of Director election.
             It automatically adds a properly formatted nomination to the #{ASF::MemberFiles::NOMINATED_BOARD} file,
-            and will then 
+            and will then
           }
           _strong "send an email to the #{MAILING_LIST} list"
           _ ' from you with the nomination, '

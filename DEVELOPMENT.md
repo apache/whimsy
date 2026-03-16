@@ -202,7 +202,7 @@ If there is a `Gemfile` in the directory containing the script or application
 you wish to run, dependencies needed for execution can be installed using the
 command `bundle install`.  Similarly, if starting from scratch you
 may need `gem install rake`.  Periodically if underlying gems like
-wunderbar are updated, you may need `bundle update`.  
+wunderbar are updated, you may need `bundle update`.
 See also [How To: Keep Your Local Environment Updated](#how-to-keep-your-local-environment-updated)
 
 1. CGI applications can be run from a command line, and produce output to
@@ -446,7 +446,7 @@ script to return _json to curl.
 Whimsy On Windows
 =================
 
-While some tools may work on Microsoft Windows, many don't currently.  
+While some tools may work on Microsoft Windows, many don't currently.
 Alternatives for Windows include a Docker image, a custom Vagrant VM, and a Kitchen/Puppet
 managed Vagrant VM (as the [live instance](DEPLOYMENT.md) does).  The primary advantage
 of using an image or a VM is isolation.  The primary disadvantage is that
