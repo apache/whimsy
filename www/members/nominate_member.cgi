@@ -156,12 +156,12 @@ _html do
           _ %Q{
             Use this form to nominate any Committer the new ASF Membership election.
             It automatically adds a properly formatted nomination to the #{ASF::MemberFiles::NOMINATED_MEMBERS} file,
-            and will then 
+            and will then
           }
           _strong "send an email to the #{MAILING_LIST} list"
           _ ' from you with the nomination, '
           _a 'as is tradition.', href: 'https://lists.apache.org/list?members@apache.org:2023-2:%22MEMBER%20NOMINATION%22'
-          _p 
+          _p
           _p do
             _ 'This form only supports adding new nominations of existing committers; '
             _ 'there is now a form to '

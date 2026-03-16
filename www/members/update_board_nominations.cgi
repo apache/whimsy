@@ -18,7 +18,7 @@ user = ASF::Auth.decode(env = {})
 source = ASF::MeetingUtil.get_latest_svnpath(ASF::MemberFiles::NOMINATED_BOARD)
 
 def emit_form(url, revision, original, updated, diff, env)
-  
+
   _whimsy_panel(url, style: 'panel-success') do
     _form.form_horizontal method: 'post' do
       _input type: 'hidden', name: 'original', value: original
@@ -34,7 +34,7 @@ def emit_form(url, revision, original, updated, diff, env)
         field = 'difference'
         rows = nil
         rows = 1 + diff.split("\n").size if diff.size > 0
-        _whimsy_forms_input(label: 'Difference', name: field, id: field, rows: rows, readonly: true, 
+        _whimsy_forms_input(label: 'Difference', name: field, id: field, rows: rows, readonly: true,
           value: diff.size > 0 ? diff : '[No differences found]'
         )
       end

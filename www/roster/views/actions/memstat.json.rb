@@ -136,9 +136,9 @@ elsif @action == 'withdraw' # process withdrawal request (secretary only)
         The membership withdrawal request that was registered for you has now been actioned.
         Your details have been removed from the membership roster.
         You have also been unsubscribed from members-only private email lists.
-        
+
         Warm Regards,
-        
+
         Secretary, Apache Software Foundation
         secretary@apache.org
         EOD
@@ -161,9 +161,9 @@ elsif @action == 'rescind_withdrawal' # Secretary only
         body <<~EOD
         This acknowledges receipt of your request to rescind your membership withdrawal request.
         The request has been deleted, and your membership status will be unaffected.
-        
+
         Warm Regards,
-        
+
         Secretary, Apache Software Foundation
         secretary@apache.org
         EOD
