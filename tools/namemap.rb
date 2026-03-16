@@ -21,7 +21,7 @@ puts 'DANGER, WILL ROBINSON! THIS IS NOT READY FOR PRODUCTION USE!'
 #       Note: emails may not be unique across accounts on either side
 #       Need to manually investigate, since may involve multiple people/accounts
 #     DIFF: an email address matched, but the IDs did not
-#       Manually invesigate to see why
+#       Manually investigate to see why
 # NOTE: You *must* manually evaluate the results!
 module NameMap
   extend self

@@ -88,7 +88,7 @@ module ASF
     # Params:
     # quarterdates - hash from nextQuarter
     # schedule - list of report months (e.g. ["February", "May", "August", "November"])
-    #            possibly preceeded by 'Next month: ...'
+    #            possibly preceded by 'Next month: ...'
     #            or 'Every month'
     # Returns: the next date
     def self.nextReport(quarterdates, schedule)
