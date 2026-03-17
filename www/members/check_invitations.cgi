@@ -275,7 +275,7 @@ _html do
         _br
         _ 'Some replies may be incorrectly recorded as missing'
         _ ' (e.g. those without availids)'
-        _ 'and some applications will never be received.'
+        _ 'and some replies and applications will never be sent.'
       end
       _table.table.table_striped do
         _tr do
