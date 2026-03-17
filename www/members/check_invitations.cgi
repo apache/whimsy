@@ -164,7 +164,7 @@ end
 
 meeting_end = ASF::MeetingUtil.meeting_end
 remain = ASF::MeetingUtil.application_time_remaining
-apps_end = ASF::MeetingUtil.applications_end
+apps_end = Time.at(ASF::MeetingUtil.applications_end).getutc.strftime('%Y-%m-%d %H:%M %Z')
 
 # produce HTML output of reports, highlighting ones that have not (yet)
 # been posted
@@ -208,7 +208,7 @@ _html do
         }
         _p do
           if remain[:hoursremain] > 0
-            _b "Applications close in #{remain[:days]} days and #{remain[:hours]} hours at #{Time.at(apps_end)}"
+            _b "Applications close in #{remain[:days]} days and #{remain[:hours]} hours at #{apps_end}"
           else
             _b "Applications can no longer be accepted, sorry."
               _ "The meeting ended at #{Time.at(meeting_end).getutc.strftime('%Y-%m-%d %H:%M %Z')}."
