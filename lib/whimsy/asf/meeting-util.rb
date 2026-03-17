@@ -463,15 +463,19 @@ module ASF
       self.get_invite_times[:meeting_end]
     end
 
+    # Time is measured from scheduled end of the meeting in which the votes were declared
+    def self.applications_end
+      self.get_invite_times[:meeting_end] + APPLICATION_EXPIRY_POST_VOTE_SECS
+    end
+
     # How long remains before applications close?
     # (Time is measured from scheduled end of the meeting in which the votes were declared)
     # Returned as hash, e.g. {:hoursremain=>605, :days=>25, :hours=>5}
     # If applications have expired, :hoursremain is negative
     # and :days/:hours are elapsed time since expiry
     def self.application_time_remaining
-      meetingend = self.meeting_end # this is in seconds
       now = DateTime.now.to_time.to_i
-      remain = (meetingend + APPLICATION_EXPIRY_POST_VOTE_SECS - now) / 3600
+      remain = (self.applications_end - now) / 3600
       {hoursremain: remain, days: remain.abs/24, hours: remain.abs%24}
     end
 
