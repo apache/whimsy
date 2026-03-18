@@ -137,7 +137,7 @@ _html do
         end
       end
 
-      if not active
+      if not active or ENV['QUERY_STRING'] == 'pretend_inactive'
         _p.alert.alert_warning "Dear #{name}, You have missed the last " +
           tracker[@user]['missed'].to_s + " meetings."
 
