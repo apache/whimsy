@@ -89,7 +89,8 @@ _html do
         '/members/non-participants' => 'Members Not Participating Recently',
         '/members/inactive' => 'Inactive Member Feedback Form',
         RECORDS_DIR => 'Official Past Meeting Records',
-        'https://lists.apache.org/list.html?members@apache.org' => 'Read the members@ List Archives'
+        'https://lists.apache.org/list.html?members@apache.org' => 'Read the members@ List Archives',
+        'https://cwiki.apache.org/confluence/display/ASFP/Members+Meeting+FAQ' => 'Members Meeting FAQ'
       },
       helpblock: -> {
         if Time.now > meeting_start_time
