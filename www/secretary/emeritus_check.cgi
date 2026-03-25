@@ -12,23 +12,23 @@ require 'whimsy/asf/memapps'
 require 'wunderbar'
 require 'yaml'
 
-file = File.join(ASF::SVN.find!('emeritus-involuntary'),'emeritus-involuntary.yml')
-forced = Set.new
-YAML.load_file(file).each {|_k, v| v.each {|w| forced.add w}}
+# get array of emeritus members: [name, availid, first line]
+emeritus = ASF::Member.list_entries.select{|x,_y| x == :emeritus}.map{|_,_x,y,z| [y,z[0]]}
 
-exmembers = ASF::Member.emeritus.map {|id| ASF::Person.find(id)}
+exmembers = emeritus.map {|id,_l0| ASF::Person.find(id)}
 ASF::Person.preload(['cn'], exmembers) # speed up
 files = Hash[ASF::EmeritusFiles::listnames.map{|i| [i,'NAK']}]
 nofiles = Hash.new()
 
 ASF::ICLAFiles.update_cache({})
 
+involuntary = emeritus.select{|_id,l0| l0.include?('/* involuntary')}.map{|id,l0| id}
 exmembers.each { |m|
   ma = ASF::EmeritusFiles.find(m)
   if ma
     files[ma] = 'OK'
   else
-    nofiles[m.name] = m
+    nofiles[m.name] = m unless involuntary.include?(m.id)
   end
 }
 _html do
@@ -57,48 +57,35 @@ _html do
     end
   end
 
-_h2 'Emeritus entries in members.txt which do not appear to have a matching emeritus file'
-_table_ do
-  _tr do
-    _th 'Availid'
-    _th 'ICLA'
-    _th 'Public Name'
-    _th 'Legal Name'
-    _th 'Member.txt Name'
-  end
-  nofiles.sort_by { |_k, v| v.member_name}.each do |k, v|
-    person = v
-    if forced.delete? person.member_name
-      next
-    end
+  _h2 'Emeritus entries in members.txt which do not appear to have a matching emeritus file'
+  _table_ do
     _tr do
-      _td do
-        _a k, href: "https://whimsy.apache.org/roster/committer/#{k}", target: '_blank'
-      end
-      _td do
-        if person.icla&.claRef
-          file = ASF::ICLAFiles.match_claRef(person.icla.claRef)
-          if file
-            _a person.icla.claRef, href: ASF::SVN.svnpath!('iclas', file), target: '_blank'
+      _th 'Availid'
+      _th 'ICLA'
+      _th 'Public Name'
+      _th 'Legal Name'
+      _th 'Member.txt Name'
+    end
+    nofiles.sort_by { |_k, v| v.member_name}.each do |k, person|
+      _tr do
+        _td do
+          _a k, href: "https://whimsy.apache.org/roster/committer/#{k}", target: '_blank'
+        end
+        _td do
+          if person.icla&.claRef
+            file = ASF::ICLAFiles.match_claRef(person.icla.claRef)
+            if file
+              _a person.icla.claRef, href: ASF::SVN.svnpath!('iclas', file), target: '_blank'
+            else
+              _ ''
+            end
           else
             _ ''
           end
-        else
-          _ ''
         end
-      end
-      _td (person.icla.name rescue '')
-      _td (person.icla.legal_name rescue '')
-      _td person.member_name
-    end
-  end
-end
-
-  if forced.size > 0
-    _h2 'Files in emeritus-involuntary.yml that do not match any ASF emeritus member names'
-    _ul do
-      forced.each do |n|
-        _li n
+        _td (person.icla.name rescue '')
+        _td (person.icla.legal_name rescue '')
+        _td person.member_name
       end
     end
   end
