@@ -74,12 +74,6 @@
     depth: delete
     list: true
 
-  emeritus-involuntary:
-    url: private/documents
-    depth: empty
-    files:
-      - emeritus-involuntary.yml
-
   emeritus-reinstated:
     url: private/documents/emeritus-reinstated
     depth: delete
