@@ -192,51 +192,38 @@ _html do
       if nomclosed
         _h1 'Nominations are now closed!'
         _p 'Sorry, no further nominations will be accepted for ballots at this meeting.'
+        _a 'See existing nominations.', href: '/members/check_boardnoms.cgi'
       else
         _h3 "Nominations close in #{ASFTime.secs2text(t_end - t_now)} at #{Time.at(t_end).utc} for Meeting: #{timelines['meeting_iso']}"
-      end
 
-      _div id: 'nomination-form' do
-        if _.post?
-          unless nomclosed
+        _div id: 'nomination-form' do
+          if _.post?
             submission = _whimsy_params2formdata(params)
             valid = validate_form(formdata: submission)
-          end
-          if nomclosed
-            _div.alert.alert_warning role: 'alert' do
-              _p "Nominations have closed"
-            end
-          elsif valid == 'OK'
-            if process_form(formdata: submission, wunderbar: _)
-              _div.alert.alert_success role: 'alert' do
-                _p "Your nomination was submitted to svn; now sending email to #{MAILING_LIST}."
+            if valid == 'OK'
+              if process_form(formdata: submission, wunderbar: _)
+                _div.alert.alert_success role: 'alert' do
+                  _p "Your nomination was submitted to svn; now sending email to #{MAILING_LIST}."
+                end
+                mailval = send_nomination_mail(formdata: submission)
+                _pre mailval
+              else
+                _div.alert.alert_danger role: 'alert' do
+                  _p do
+                    _span.strong "ERROR: Form data invalid in process_form(), update was NOT submitted!"
+                    _br
+                    _ "#{submission}"
+                  end
+                end
               end
-              mailval = send_nomination_mail(formdata: submission)
-              _pre mailval
             else
               _div.alert.alert_danger role: 'alert' do
                 _p do
-                  _span.strong "ERROR: Form data invalid in process_form(), update was NOT submitted!"
+                  _span.strong "ERROR: Form data invalid in validate_form(), update was NOT submitted!"
                   _br
-                  _ "#{submission}"
+                  _p valid
                 end
               end
-            end
-          else
-            _div.alert.alert_danger role: 'alert' do
-              _p do
-                _span.strong "ERROR: Form data invalid in validate_form(), update was NOT submitted!"
-                _br
-                _p valid
-              end
-            end
-          end
-        else # if _.post?
-          if nomclosed
-            _p do
-              _ 'Sorry, no further nominations will be accepted for ballots at this meeting.'
-              _br
-              _a 'See existing nominations.', href: '/members/check_boardnoms.cgi'
             end
           else
             emit_form('Enter your nomination for a Director Nominee', {})
