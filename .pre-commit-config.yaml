@@ -19,4 +19,4 @@ repos:
     - id: forbid-submodules
     - id: mixed-line-ending
     - id: trailing-whitespace
-      files: \.(cgi|rdf|rb)$
+      files: \.(cgi|html|json|py|rb|rdf|sh|svg)$
