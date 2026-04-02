@@ -54,7 +54,7 @@ _html do
     _whimsy_body(
       title: PAGETITLE,
       related: {
-        "/board/agenda" => "Current Month Board Agenda",
+        "https://agenda.apache.org/meetings/current" => "Current Month Board Agenda",
         "/board/minutes" => "Past Minutes, Categorized",
         "https://www.apache.org/foundation/board/calendar.html" => "Past Minutes, Dated",
         "https://github.com/apache/whimsy/blob/master/www#{ENV['SCRIPT_NAME']}" => "See This Source Code"
@@ -79,7 +79,7 @@ _html do
       end
       _h1 "Reports On board@"
       _p do
-        _a 'Current board agenda', href: '/board/agenda/' +
+        _a 'Current board agenda', href: 'https://agenda.apache.org/meetings/current' +
           agenda[/\d+_\d+_\d+/].gsub('_', '-') + '/'
       end
       _table.table.table_hover.table_striped do

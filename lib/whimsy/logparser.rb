@@ -183,7 +183,6 @@ module LogParser
   #   "timestamp" => "AH01215: undefined method `map' for #<String:0x0000000240e1e0> (NoMethodError): /x1/srv/whimsy/www/status/errors.cgi"
   # [..date..] [cgi:error] [pid ...] [client ...] End of script output before headers: site.cgi
   # [..date..] [cgi:error] [pid ...] [client ...] AH01215: /var/lib/g...
-  # [..date..] [proxy:error] [pid ...] [client ...] AH00898: Error during SSL Handshake with remote server returned by /board/agenda/websocket/
   # [..date..] [proxy:error] [pid ...] (20014)Internal error (specific information not available): [client ...] AH01084: pass request body failed to 127.0.0.1:34234 (localhost)
   def parse_whimsy_error(f, logs = {})
     r = Regexp.new('\[(?<errdate>[^\]]*)\] \[[\w_]+:error\] \[.+?\] (.+: )?\[client .+?\] (?<errline>.+)')

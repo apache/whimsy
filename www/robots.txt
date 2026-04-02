@@ -1,5 +1,4 @@
 User-agent: *
-Disallow /board/agenda/
 Disallow /board/draft-minutes/
 Disallow /board/subscriptions/
 Disallow /fundraising/

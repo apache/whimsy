@@ -117,7 +117,7 @@ _html do
     _whimsy_body(
       title: PAGETITLE,
       related: {
-        "/board/agenda" => "Current Month Board Agenda",
+        "https://agenda.apache.org/meetings/current" => "Current Month Board Agenda",
         "/board/minutes" => "Past Minutes, Categorized",
         "https://www.apache.org/foundation/board/calendar.html" => "Past Minutes, Dated",
         ENV['SCRIPT_NAME'] => "List Traffic By Month",

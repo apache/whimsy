@@ -593,48 +593,6 @@ unless $root and force[:toucher] != nil
   end
 end
 
-### Board Agenda websocket
-
-if force[:ws] != nil
-  sudo do
-    plist = '/Library/LaunchDaemons/board-agenda-websocket.plist'
-
-    if force[:ws]
-      contents = File.read("#{__dir__}/board-agenda-websocket.plist")
-      contents[/>(.*ruby.*)</, 1] = RbConfig.ruby
-       contents[/<key>UserName<\/key>\s*<string>(.*?)<\/string>/, 1] = user
-       contents[/<key>GroupName<\/key>\s*<string>(.*?)<\/string>/, 1] = group
-
-      unless Dir.exist? File.dirname(plist)
-        run "mkdir -p #{File.dirname(plist)}"
-      end
-
-      unless File.exist?(plist) or File.read(plist) != contents
-        unless $dry_run
-          color "$ sudo edit #{plist}"
-          File.write plist, contents
-        end
-
-        if `launchctl list`.include? 'org.apache.whimsy/board/agenda'
-          run "launchctl unload #{plist}"
-        end
-      end
-
-      unless `launchctl list`.include? 'org.apache.whimsy/board/agenda'
-        run "launchctl load #{plist}"
-      end
-    else
-      if `launchctl list`.include? 'org.apache.whimsy/board/agenda'
-        run "launchctl unload #{plist}"
-      end
-
-      if File.exist?(plist)
-        run "rm #{plist}"
-      end
-    end
-  end
-end
-
 ### Start Apache httpd
 
 if $root and not $apache_would_have_been_restarted

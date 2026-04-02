@@ -9,10 +9,6 @@ require 'wunderbar/bootstrap'
 require '../../tools/wwwdocs.rb'
 
 NONCGIS = {
-  '/board/agenda/' =>
-    [ 'Board Agenda Tool',
-      ['board', 'meeting'],
-    'text-primary'],
   '/roster/' =>
     [ 'ASF Roster Tool',
       ['orgchart'],

@@ -584,13 +584,7 @@ launchctl load ~/Library/LaunchAgents/toucher.plist
 make this change after you have loaded the script, unload then reload it.
 
 To verify that it is working, touch a file in an application, and verify
-that `tmp/restart.txt` has been updated.  Example:
-
-```
-$ ls -l whimsy/www/board/agenda/tmp/restart.txt
-$ touch whimsy/www/board/agenda/README.md
-$ ls -l whimsy/www/board/agenda/tmp/restart.txt
-```
+that `tmp/restart.txt` has been updated.
 
 
 Additional (application specific) configuration
@@ -598,7 +592,6 @@ Additional (application specific) configuration
 
 A number of individual tools require additional configuration:
 
-* [config/board-agenda.md](config/board-agenda.md)
 * [config/secretary-workbench.md](config/secretary-workbench.md)
 * [config/officers-acreq.md](config/officers-acreq.md)
 

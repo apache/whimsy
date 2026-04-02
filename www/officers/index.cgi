@@ -8,7 +8,6 @@ require 'wunderbar'
 require 'wunderbar/bootstrap'
 
 OFFICERS = {
-  '/board/agenda' => "Monthly Board Agenda Tool",
   'acreq.cgi' => "New Account Request Helper",
   'unlistedclas.cgi' => "Unlisted CLAs (prospective committers)",
   'https://selfserve.apache.org/mailinglist-new.html' => "New Mailing List Request Form",
