@@ -93,7 +93,7 @@ _html do
             _tr do
               _td do
               # ERB::Util.url_encode changes space to %20 as required in the path component
-              href = THREAD + ERB::Util.url_encode('<' + mail.message_id + '>')
+              href = THREAD + ERB::Util.url_encode('<' + mail.message_id + '>') + "?<board.apache.org>"
                 if missing.any? {|title| mail.subject.downcase =~ /\b#{Regexp.escape(title)}\b/}
                   _td do
                     _a.missing mail.subject, href: href
