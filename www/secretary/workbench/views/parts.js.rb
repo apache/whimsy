@@ -102,6 +102,7 @@ class Parts < Vue
     # context menu that displays when you 'right click' an attachment
     _ul.contextMenu do
       _li "\u2704 burst", onMousedown: self.burst
+      _li "\u2704 join", onMousedown: self.join
       _li.divider
       _li "\u21B7 right", onMousedown: self.rotate_attachment
       _li "\u21c5 flip", onMousedown: self.rotate_attachment
@@ -431,6 +432,7 @@ class Parts < Vue
 
         _ul.editPart! do
           _li "\u2704 burst", onMousedown: self.burst
+          _li "\u2704 join", onMousedown: self.join
           _li.divider
           _li "\u21B7 right", onMousedown: self.rotate_attachment
           _li "\u21c5 flip", onMousedown: self.rotate_attachment
@@ -591,6 +593,25 @@ class Parts < Vue
 
     @busy = true
     HTTP.post('../../actions/burst', data).then {|response|
+      @attachments = response.attachments
+      self.selectPart response.selected
+      self.hideMenu()
+      window.parent.frames.content.location.href=response.selected
+    }.catch {|error|
+      alert error
+      self.hideMenu()
+    }
+  end
+
+# join a PDF from individual pages
+  def join(_event)
+    data = {
+      selected: @menu || decodeURI(@selected),
+      message: window.parent.location.pathname
+    }
+
+    @busy = true
+    HTTP.post('../../actions/join', data).then {|response|
       @attachments = response.attachments
       self.selectPart response.selected
       self.hideMenu()

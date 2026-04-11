@@ -158,6 +158,11 @@ class Message
     end
   end
 
+  def replace_all_attachments(value)
+    @headers[:attachments] = [value]
+    write_headers
+  end
+
   def delete_attachment(name)
     attachment = find(name)
     if attachment
