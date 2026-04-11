@@ -31,7 +31,7 @@ class Index < Vue
       _table.table do
         _thead do
           _tr do
-            _th 'Date'
+            _th 'Timestamp'
             _th 'From'
             _th 'Subject'
           end
@@ -51,12 +51,13 @@ class Index < Vue
               on: {click: self.selectRow, doubleClick: self.nav}
             }
 
+            stamp = message.time.replace('T',' ').replace('Z', ' UTC')
             _tr row_options do
               _td do
                 if %i[emeritusReady emeritusPending withdrawalReady withdrawalPending].include? message.status
-                  _a message.date, href: message.href, title: message.time, target: '_blank'
+                  _a stamp, href: message.href, title: message.date, target: '_blank'
                 else
-                  _a message.date, href: message.href, title: message.time
+                  _a stamp, href: message.href, title: message.date
                 end
               end
               _td _crop(message.from, 40)
