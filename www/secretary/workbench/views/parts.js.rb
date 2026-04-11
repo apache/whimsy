@@ -587,7 +587,7 @@ class Parts < Vue
   # burst a PDF into individual pages
   def burst(_event)
     data = {
-      selected: @menu || decodeURI(@selected),
+      selected: @menu || decodeURIComponent(@selected),
       message: window.parent.location.pathname
     }
 
@@ -606,7 +606,7 @@ class Parts < Vue
 # join a PDF from individual pages
   def join(_event)
     data = {
-      selected: @menu || decodeURI(@selected),
+      selected: @menu || decodeURIComponent(@selected),
       message: window.parent.location.pathname
     }
 
@@ -650,7 +650,7 @@ class Parts < Vue
   # delete an attachment
   def delete_attachment(event)
     data = {
-      selected: @menu || decodeURI(@selected),
+      selected: @menu || decodeURIComponent(@selected),
       message: window.parent.location.pathname
     }
 
@@ -678,7 +678,7 @@ class Parts < Vue
   # revert to the original
   def revert(_event)
     data = {
-      selected: @menu || decodeURI(@selected),
+      selected: @menu || decodeURIComponent(@selected),
       message: window.parent.location.pathname
     }
 
@@ -702,7 +702,7 @@ class Parts < Vue
     message = window.parent.location.pathname
 
     data = {
-      selected: @menu || decodeURI(@selected),
+      selected: @menu || decodeURIComponent(@selected),
       message: message,
       direction: event.currentTarget.textContent
     }
@@ -726,7 +726,7 @@ class Parts < Vue
     message = window.parent.location.pathname
 
     data = {
-      selected: @menu || decodeURI(@selected),
+      selected: @menu || decodeURIComponent(@selected),
       message: message
     }
 
@@ -747,7 +747,7 @@ class Parts < Vue
   # parse pdf and display extracted data
   def pdfparse(_event)
     message = window.parent.location.pathname
-    attachment = @menu || decodeURI(@selected)
+    attachment = @menu || decodeURIComponent(@selected)
     url = message.sub('/workbench/','/icla-parse/') + attachment
     window.parent.frames.content.location.href = url
   end
@@ -906,8 +906,8 @@ class Parts < Vue
     event.preventDefault()
 
     data = {
-      source: decodeURI(@drag.split('/').pop()),
-      target: decodeURI(href.split('/').pop()),
+      source: decodeURIComponent(@drag.split('/').pop()),
+      target: decodeURIComponent(href.split('/').pop()),
       message: window.parent.location.pathname
     }
 
