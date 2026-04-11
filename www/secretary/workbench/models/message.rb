@@ -474,12 +474,17 @@ class Message
     end
 
     # start an entry for this mail
+    # Ensure envelope_date is valid:
+    # - convert to string if it exists
+    # - if not, use today's date
+    # Also ensure time (i.e. Date header) is valid
+    envelope_date = mail.envelope_date&.to_s || Time.now.gmtime.iso8601
     headers = {
       envelope_from: mail.envelope_from,
-      envelope_date: mail.envelope_date.to_s, # effectively the delivery date to secretary@
+      envelope_date: envelope_date, # effectively the delivery date to secretary@
       from: mail.from_addrs.first,
       name: from,
-      time: (mail.date.to_time.gmtime.iso8601 rescue mail.envelope_date.to_s),
+      time: (mail.date.to_time.gmtime.iso8601 rescue envelope_date),
       cc: cc
     }
 
