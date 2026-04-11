@@ -6,7 +6,7 @@ begin
   outputname = 'pages.pdf'
   message = Mailbox.find(@message)
   attachments = message.attachments
-  
+
   Dir.mktmpdir do |dir|
     pages = []
     attachments.each do |attach|
@@ -22,7 +22,7 @@ begin
       content: File.binread(outputpath), # must use binary read
       mime: 'application/pdf'
     }
-      
+
     message.replace_all_attachments attachment
   end
 
