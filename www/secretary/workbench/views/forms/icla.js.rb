@@ -261,8 +261,6 @@ class ICLA < Vue
     project = document.querySelector('select[name=project]')
     votelink = document.querySelector('input[name=votelink]')
 
-    valid &&= project.validity.valid
-
     # project votelink are only required with valid users; only validate
     # votelink if the user is valid
     if user.validity.valid and user.value.length > 0
