@@ -117,6 +117,8 @@ module SiteStandards
       CHECK_VALIDATE => %r{\Ahttps://privacy\.apache\.org/policies/privacy-policy-public\.html\z
                           |
                           \Ahttps?://(?:www\.)?apache\.org/foundation/policies/privacy\.html\z
+                          |
+                          \Ahttps?://[a-z0-9.-]*\.?apache\.org/.*privac[yie]
                           }ix,
       CHECK_TYPE => 'href',
       CHECK_POLICY => 'https://www.apache.org/foundation/marks/pmcs.html#navigation',

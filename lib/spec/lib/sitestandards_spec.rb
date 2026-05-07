@@ -42,4 +42,28 @@ describe SiteStandards do
       expect("/downloads.html").not_to match(valid)
     end
   end
+
+  describe 'check for links to a privacy policy' do
+    valid = SiteStandards::COMMON_CHECKS['privacy'][SiteStandards::CHECK_VALIDATE]
+    it "should recognize the canonical privacy policy URL" do
+      expect("https://privacy.apache.org/policies/privacy-policy-public.html").to match(valid)
+    end
+    it "should recognize the legacy foundation privacy URL" do
+      expect("https://www.apache.org/foundation/policies/privacy.html").to match(valid)
+      expect("https://apache.org/foundation/policies/privacy.html").to match(valid)
+    end
+    it "should recognize project-level privacy pages on *.apache.org" do
+      expect("https://beam.apache.org/privacy_policy").to match(valid)
+      expect("https://karaf.apache.org/privacy.html").to match(valid)
+      expect("https://pig.apache.org/privacypolicy.html").to match(valid)
+      expect("https://systemds.apache.org/privacy-policy").to match(valid)
+      expect("https://hudi.apache.org/asf/privacy").to match(valid)
+      expect("https://cwiki.apache.org/confluence/display/KNOX/Privacy+Policy").to match(valid)
+    end
+    it "should reject non-ASF privacy pages" do
+      expect("https://policies.google.com/privacy").not_to match(valid)
+      expect("https://github.com/apache/privacy-website").not_to match(valid)
+      expect("https://example.com/privacy-policy.html").not_to match(valid)
+    end
+  end
 end
