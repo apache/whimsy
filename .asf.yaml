@@ -1,6 +1,20 @@
 notifications:
-    commits:      commits@whimsical.apache.org
-    issues:       dev@whimsical.apache.org
-    pullrequests: dev@whimsical.apache.org
-    jobs:         notifications@whimsical.apache.org
-    jira_options: link label
+  commits: commits@whimsical.apache.org
+  issues: dev@whimsical.apache.org
+  pullrequests: dev@whimsical.apache.org
+  jobs: notifications@whimsical.apache.org
+  jira_options: link label
+github:
+  rulesets:
+    - name: "Default Branch Protection"
+      type: branch
+      branches:
+        includes:
+          - "~DEFAULT_BRANCH"
+          - "release/*"
+          - "rel/*"
+        excludes: []
+      bypass_teams:
+        - root
+      restrict_deletion: true
+      restrict_force_push: true
