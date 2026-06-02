@@ -1144,10 +1144,11 @@ module ASF
     # fetch <tt>dn</tt>, <tt>member</tt>, <tt>modifyTimestamp</tt>, and
     # <tt>createTimestamp</tt> for all groups in LDAP.
     def self.preload
-      Hash[ASF.search_one(base, 'cn=*', %w(dn memberUid modifyTimestamp createTimestamp)).map do |results|
+      Hash[ASF.search_one(base, 'cn=*', %w(dn memberUid modifyTimestamp modifiersName createTimestamp)).map do |results|
         cn = results['dn'].first[/^cn=(.*?),/, 1]
         group = ASF::Group.find(cn)
         group.modifyTimestamp = results['modifyTimestamp'].first # it is returned as an array of 1 entry
+        group.modifiersName = results['modifiersName'].first # it is returned as an array of 1 entry
         group.createTimestamp = results['createTimestamp'].first # it is returned as an array of 1 entry
         members = results['memberUid'] || []
         group.members = members
@@ -1157,6 +1158,9 @@ module ASF
 
     # Date this committee was last modified in LDAP.
     attr_accessor :modifyTimestamp
+
+    # Who made the last change
+    attr_accessor :modifiersName
 
     # Date this committee was initially created in LDAP.
     attr_accessor :createTimestamp
@@ -1259,10 +1263,11 @@ module ASF
     # fetch <tt>dn</tt>, <tt>member</tt>, <tt>modifyTimestamp</tt>, and
     # <tt>createTimestamp</tt> for all projects in LDAP.
     def self.preload
-      Hash[ASF.search_one(base, 'cn=*', %w(dn member owner modifyTimestamp createTimestamp)).map do |results|
+      Hash[ASF.search_one(base, 'cn=*', %w(dn member owner modifyTimestamp modifiersName createTimestamp)).map do |results|
         cn = results['dn'].first[/^cn=(.*?),/, 1]
         project = self.find(cn)
         project.modifyTimestamp = results['modifyTimestamp'].first # it is returned as an array of 1 entry
+        project.modifiersName = results['modifiersName'].first # it is returned as an array of 1 entry
         project.createTimestamp = results['createTimestamp'].first # it is returned as an array of 1 entry
         members = results['member'] || []
         owners = results['owner'] || []
@@ -1275,6 +1280,9 @@ module ASF
 
     # Date this committee was last modified in LDAP.
     attr_accessor :modifyTimestamp
+
+    # Who made the last change
+    attr_accessor :modifiersName
 
     # Date this committee was initially created in LDAP.
     attr_accessor :createTimestamp
@@ -1513,10 +1521,11 @@ module ASF
     # <tt>createTimestamp</tt> for all services in LDAP.
     # N.B. some services have memberUid rather than member entries
     def self.preload
-      Hash[ASF.search_one(base, 'cn=*', %w(dn member memberUid modifyTimestamp createTimestamp)).map do |results|
+      Hash[ASF.search_one(base, 'cn=*', %w(dn member memberUid modifyTimestamp modifiersName createTimestamp)).map do |results|
         cn = results['dn'].first[/^cn=(.*?),/, 1]
         service = self.find(cn)
         service.modifyTimestamp = results['modifyTimestamp'].first # it is returned as an array of 1 entry
+        service.modifiersName = results['modifiersName'].first # it is returned as an array of 1 entry
         service.createTimestamp = results['createTimestamp'].first # it is returned as an array of 1 entry
         members = results['member'] || results['memberUid'].map {|k| ASF::Person.dn(k)} || []
         service.members = members
@@ -1526,6 +1535,9 @@ module ASF
 
     # Date this committee was last modified in LDAP.
     attr_accessor :modifyTimestamp
+
+    # Who made the last change
+    attr_accessor :modifiersName
 
     # Date this committee was initially created in LDAP.
     attr_accessor :createTimestamp

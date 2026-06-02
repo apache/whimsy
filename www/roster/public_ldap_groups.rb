@@ -46,6 +46,7 @@ groups.sort_by {|g, _| g.name}.each do |group, _|
   entries[group.name] = {
     createTimestamp: createTimestamp,
     modifyTimestamp: modifyTimestamp,
+    modifiersName: group.modifiersName,
     roster_count: m.size,
     roster: m
   }

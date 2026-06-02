@@ -80,6 +80,7 @@ projects.keys.sort_by(&:name).each do |entry|
   entries[entry.name] = {
     createTimestamp: entry.createTimestamp,
     modifyTimestamp: entry.modifyTimestamp,
+    modifiersName: entry.modifiersName,
     member_count: m.size,
     owner_count: o.size,
     members: m,

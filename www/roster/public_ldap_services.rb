@@ -45,6 +45,7 @@ groups.keys.sort_by(&:name).each do |entry|
   entries[entry.name] = {
     createTimestamp: entry.createTimestamp,
     modifyTimestamp: entry.modifyTimestamp,
+    modifiersName: entry.modifiersName,
     roster_count: m.size,
     roster: m
   }
