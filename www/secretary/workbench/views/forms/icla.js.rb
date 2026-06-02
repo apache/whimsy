@@ -187,7 +187,8 @@ class ICLA < Vue
     email = document.querySelector('input[name=email]')
     email.style.borderColor = email.style.backgroundColor = ''
     if pdfdata.EMail
-      if pdfdata.EMail != @@headers.from
+      if pdfdata.EMail.downcase != @@headers.from.downcase
+        # Most mail systems ignore case differences in the local part
         email.style.borderColor = 'red'
         email.style.backgroundColor = 'yellow'
         @errmsg = "Submitter email does not match PDF email"
