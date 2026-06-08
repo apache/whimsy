@@ -15,7 +15,7 @@ repos:
     - id: check-yaml
     - id: detect-private-key
     # - id: end-of-file-fixer
-    # - id: fix-byte-order-marker
+    - id: fix-byte-order-marker
     - id: forbid-submodules
     - id: mixed-line-ending
     - id: trailing-whitespace
