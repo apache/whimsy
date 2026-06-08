@@ -5,6 +5,7 @@ notifications:
   jobs: notifications@whimsical.apache.org
   jira_options: link label
 github:
+  description: "Apache Whimsy is a collection of useful organizational tools used by the ASF and Apache committers"
   rulesets:
     - name: "Default Branch Protection"
       type: branch
