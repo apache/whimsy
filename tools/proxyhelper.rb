@@ -41,4 +41,3 @@ end
 puts 'START: reminder_lines()'
 p = reminder_lines
 puts p
-

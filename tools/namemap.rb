@@ -262,4 +262,3 @@ puts JSON.pretty_generate(crossmatches)
 # dups, histogram = NameMap.committer_dups(File.read('committerlist-from-whimsy.json'))
 # puts JSON.pretty_generate(dups)
 # puts JSON.pretty_generate(histogram)
-

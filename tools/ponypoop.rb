@@ -209,4 +209,3 @@ if __FILE__ == $PROGRAM_NAME
   end
   puts "END: Thanks for running ponypoop - see results in #{options[:dir]}"
 end
-

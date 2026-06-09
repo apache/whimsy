@@ -106,4 +106,3 @@ describe ASF::Member do
     expect(res).to eq('Charlie Ryman')
   end
 end
-

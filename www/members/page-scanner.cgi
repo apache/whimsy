@@ -83,4 +83,3 @@ if url
 else
   print "Expecting: ?url=http://.../[&showurl] (or ?host=abcd => ?url=https://abcd.apache.org/\n"
 end
-

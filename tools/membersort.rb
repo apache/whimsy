@@ -19,4 +19,3 @@ else
   File.write(members, sorted)
   system 'svn', 'diff', members
 end
-

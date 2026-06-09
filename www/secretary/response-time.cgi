@@ -48,4 +48,3 @@ _json do
   _result `#{CMD.sub(/\bofficers\b/, ASF::SVN['officers'])}`
   _server Time.now - startTime
 end
-

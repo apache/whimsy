@@ -69,4 +69,3 @@ class PersonGitHub < Vue
     end
   end
 end
-
