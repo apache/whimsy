@@ -54,4 +54,3 @@ like the following:
     sudo systemctl restart apache2
 
 Visit [http://whimsy.local/](http://whimsy.local/)
-

@@ -25,4 +25,3 @@ Install pdftk
 -------------
 
 Download from [pdflabs](https://www.pdflabs.com/tools/pdftk-server/).
-
