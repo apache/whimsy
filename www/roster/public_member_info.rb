@@ -100,4 +100,3 @@ if check_now?
   end
 
 end
-

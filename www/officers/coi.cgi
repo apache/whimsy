@@ -232,4 +232,3 @@ Regards,\n
     _p {_ "Reload ";_a "this page",href: "coi.cgi";_span " to see the results."}
   end
 end
-

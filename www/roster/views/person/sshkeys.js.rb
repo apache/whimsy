@@ -47,4 +47,3 @@ class PersonSshKeys < Vue
     end
   end
 end
-
