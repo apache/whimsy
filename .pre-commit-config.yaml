@@ -22,3 +22,9 @@ repos:
     - id: trailing-whitespace
       files: \.(cgi|html|json|md|plist|py|rb|rdf|service|sh|template|ya?ml)$
       args: [--markdown-linebreak-ext=md]
+- repo: https://github.com/gitleaks/gitleaks
+  rev: v8.30.1
+  hooks:
+    - id: gitleaks
+      name: run gitleaks
+      description: check for secrets with gitleaks
