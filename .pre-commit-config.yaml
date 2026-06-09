@@ -19,4 +19,5 @@ repos:
     - id: forbid-submodules
     - id: mixed-line-ending
     - id: trailing-whitespace
-      files: \.(cgi|html|json|py|rb|rdf|sh|ya?ml)$
+      files: \.(cgi|html|json|md|plist|py|rb|rdf|service|sh|template|ya?ml)$
+      args: [--markdown-linebreak-ext=md]
