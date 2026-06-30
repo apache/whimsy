@@ -189,6 +189,10 @@ def display_overview(sites, analysis, checks, tlp = true)
               end
             end
           end
+          # 'downloads' is collected by the crawler rather than via the
+          # standard checks. We only care whether any were found, so it is
+          # treated as a pass/fail column (no downloads -> flagged red).
+          _th! 'Downloads', data_sort: 'string'
         end
       end
       sort_order = {
@@ -205,6 +209,17 @@ def display_overview(sites, analysis, checks, tlp = true)
             checks.each_key do |c|
               cls = SiteStandards.label(analysis, links, c, n)
               _td '', class: cls, data_sort_value: sort_order[cls]
+            end
+            downloads = links['downloads'] || {}
+            if downloads.empty?
+              # No downloads discovered: flag red like other failing cells
+              cls = SiteStandards::SITE_FAIL
+              _td '', class: cls, data_sort_value: sort_order[cls]
+            else
+              cls = SiteStandards::SITE_PASS
+              # Expose the discovered download URLs in a hover tooltip
+              _td '', class: cls, data_sort_value: sort_order[cls],
+                  title: downloads.keys.join("\n")
             end
           end
         end
