@@ -232,10 +232,10 @@ def display_overview(sites, analysis, checks, tlp = true)
               cls = SiteStandards::SITE_FAIL
               _td '', class: cls, data_sort_value: sort_order[cls]
             else
-              # Not expected to publish downloads: warn (amber), not a failure
+              # Not expected to publish downloads: warn (amber), not a
+              # failure. See the amber data key above the table.
               cls = SiteStandards::SITE_WARN
-              _td '', class: cls, data_sort_value: sort_order[cls],
-                  title: 'Not expected to publish downloads'
+              _td '', class: cls, data_sort_value: sort_order[cls]
             end
           end
         end
