@@ -4,6 +4,14 @@ require 'wunderbar'
 require 'wunderbar/bootstrap'
 require_relative '../whimsy/asf/themes'
 
+# Full PMCs that intentionally don't publish releases, so an empty downloads
+# list is expected rather than a failure. Non-PMC committees (Brand
+# Management, Data Privacy, Diversity, etc.) are detected automatically via
+# the 'nonpmc' flag recorded by site-scan.rb. This small list is needed
+# because "makes releases" is not a field in committee_info; revisit if that
+# data becomes available.
+NO_RELEASES = %w(attic comdev gump whimsy).freeze
+
 # Display data for a single project's checks
 # @param project id of project
 # @param links site data for that specific project
@@ -211,15 +219,23 @@ def display_overview(sites, analysis, checks, tlp = true)
               _td '', class: cls, data_sort_value: sort_order[cls]
             end
             downloads = links['downloads'] || {}
-            if downloads.empty?
-              # No downloads discovered: flag red like other failing cells
-              cls = SiteStandards::SITE_FAIL
-              _td '', class: cls, data_sort_value: sort_order[cls]
-            else
+            # A project is expected to publish downloads unless it is a
+            # non-PMC committee or one of the few PMCs that don't release.
+            expected = !links['nonpmc'] && !NO_RELEASES.include?(n.downcase)
+            if !downloads.empty?
               cls = SiteStandards::SITE_PASS
               # Expose the discovered download URLs in a hover tooltip
               _td '', class: cls, data_sort_value: sort_order[cls],
                   title: downloads.keys.join("\n")
+            elsif expected
+              # Expected downloads but none found: flag red like other fails
+              cls = SiteStandards::SITE_FAIL
+              _td '', class: cls, data_sort_value: sort_order[cls]
+            else
+              # Not expected to publish downloads: warn (amber), not a failure
+              cls = SiteStandards::SITE_WARN
+              _td '', class: cls, data_sort_value: sort_order[cls],
+                  title: 'Not expected to publish downloads'
             end
           end
         end
