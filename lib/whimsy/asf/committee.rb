@@ -192,6 +192,7 @@ module ASF
     # update next month section.  Remove entries that have reported or
     # or expired; add (or update) entries that are missing; add entries
     # for new committees.
+    # TODO: No longer needed, now that agenda has moved to tooling
     def self.update_next_month(contents, date, missing, rejected, todos)
       # extract next month section; and then extract the lines containing
       # '#' signs from within that section
@@ -262,6 +263,7 @@ module ASF
     end
 
     # update chairs
+    # TODO: No longer needed, now that agenda has moved to tooling
     def self.update_chairs(contents, todos)
       # extract committee section; and then extract the lines containing
       # committee names and chairs
@@ -364,6 +366,7 @@ module ASF
     # - pmc: the pmc name
     # - yyyymmdd: YYYY-MM-DD retirement date
     #  Returns: the updated contents
+    # TODO: No longer needed, now that agenda has moved to tooling
     def self.record_termination(input, pmc, yyyymmdd)
       yyyymm = yyyymmdd[0, 7] # keep only yyyy-mm
       YamlFile.replace_section(input, :tlps) do |section, _yaml|
@@ -380,6 +383,7 @@ module ASF
     end
 
     # remove committee from committee-info.txt
+    # TODO: No longer needed, now that agenda has moved to tooling
     def self.terminate(contents, pmc)
       ########################################################################
       #         remove from assigned quarterly reporting periods             #
@@ -409,6 +413,7 @@ module ASF
     end
 
     # insert (replacing if necessary) a new committee into committee-info.txt
+    # TODO: No longer needed, now that agenda has moved to tooling
     def self.establish(contents, pmc, date, people)
       ########################################################################
       #         insert into assigned quarterly reporting periods             #
@@ -777,6 +782,7 @@ module ASF
 
     # append the description for a new tlp committee.
     # this is intended to be called from todos.json.rb in the block for ASF::SVN.update
+    # TODO: No longer needed, now that agenda has moved to tooling
     def self.appendtlpmetadata(input, committee, description, date_established)
       YamlFile.replace_section(input, :tlps) do |section, yaml|
         output = section # default no change
