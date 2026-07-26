@@ -212,6 +212,7 @@ if ARGV.length >= 2
         retired: retired,
         retired_date: value[:retired_date],
       }
+      data[key][:established] = value[:established] if value[:established]
       data[key][:description] = value[:description] if value[:description]
       mlists = public_lists[key]
       if mlists.size > 0
