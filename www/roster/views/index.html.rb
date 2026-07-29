@@ -125,18 +125,6 @@ _html do
 
         end
 
-        _tr do
-          _td do
-            _a @petri.length, href: 'petri'
-          end
-
-          _td do
-            _a 'Petri', href: 'petri'
-          end
-
-          _td 'Petri cultures'
-        end
-
         # LDAP project groups without a PMC or active podling etc
         _tr do
           _td do

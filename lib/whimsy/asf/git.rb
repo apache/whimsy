@@ -13,7 +13,7 @@ module ASF
     # at GitHub.
     GITHUB_HOST = 'raw.githubusercontent.com'
 
-    # get a file live from github, e.g. '/apache/petri/master/info.yaml'
+    # get a file live from github, e.g. '/apache/whimsy/master/repository.yml'
     # returns body, status
     def self.github(file, _etag = nil)
       http = Net::HTTP.new(GITHUB_HOST, 443)
@@ -103,10 +103,10 @@ end
 
 if $0 == __FILE__
   require 'net/http'
-  c, b = ASF::Git.github('/apache/petri/master/info.yaml')
+  c, b = ASF::Git.github('/apache/whimsy/master/repository.yml')
   p c
   puts b[0..60]
-  c, b = ASF::Git.github('/apache/petri/master/missing.invalid')
+  c, b = ASF::Git.github('/apache/whimsy/master/missing.invalid')
   p c
-  puts b
+  puts b[0..60]
 end
