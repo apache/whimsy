@@ -45,8 +45,9 @@ _html do
         _thead_ do
           _tr do
             _th 'PMC', data_sort: 'string-ins'
+            _th 'PMC size', data_sort: 'int'
             _th 'Established', data_sort: 'string'
-            _th 'Count', data_sort: 'int' if count > 1
+            _th 'ASF Member Count', data_sort: 'int' if count > 1
             _th 'Chair', data_sort: 'string'
           end
         end
@@ -58,6 +59,7 @@ _html do
               _td! do
                 _a pmc.display_name, href: "../roster/committee/#{pmc.id}"
               end
+              _td pmc.roster.keys.length
               _td Date.parse(pmc.established).strftime('%Y/%m')
               _td (pmc.roster.keys & members).length if count > 1
               _td pmc.chair.cn
