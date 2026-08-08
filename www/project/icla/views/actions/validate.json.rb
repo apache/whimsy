@@ -98,72 +98,55 @@ end
 if @votelink and not @votelink.empty?
 
 # verify that the link refers to lists.apache.org message on the project list
-  if not @votelink=~ /.*lists\.apache\.org.*/
-    _error 'Please link to a message via lists.apache.org'
+  if not @votelink.start_with? 'https://lists.apache.org/'
+    _error 'Please link to a message via https://lists.apache.org/'
     return # no point in continuing
   end
-  if not @votelink=~ /.*#{pmc.mail_list}(\.incubator)?\.apache\.org.*/
+  if not @votelink=~ /#{pmc.mail_list}(\.incubator)?\.apache\.org/
     _error 'Please link to the [RESULT][VOTE] message sent to the private list.'
     return # no point in continuing
   end
 
   # attempt to fetch the page
-  if @votelink =~ /^https?:/i
-    uri = URI.parse(@votelink)
-    http = Net::HTTP.new(uri.host, uri.port)
-    if uri.scheme == 'https'
-      http.use_ssl = true
-      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-    end
-    request = Net::HTTP::Head.new(uri.request_uri)
-    response = http.request(request)
-    unless response.code.to_i < 400
-      _error "HTTP status #{response.code} for #{@votelink}"
-      _focus :votelink
-      return # no point in continuing
-    end
-  else
-    _error 'Only http(s) links are accepted for vote links'
+  uri = URI.parse(@votelink)
+  http = Net::HTTP.new(uri.host, uri.port)
+  http.use_ssl = true
+  http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+  request = Net::HTTP::Head.new(uri.request_uri)
+  response = http.request(request)
+  unless response.code.to_i < 400
+    _error "HTTP status #{response.code} for #{@votelink}"
     _focus :votelink
     return # no point in continuing
   end
-
 end
 
 # validate notice link
 if @noticelink and not @noticelink.empty?
 
   # verify that the link refers to lists.apache.org message on the proper list
-  if not @noticelink=~ /.*lists\.apache\.org.*/
-    _error 'Please link to a message via lists.apache.org'
+  if not @noticelink.start_with? 'https://lists.apache.org/'
+    _error 'Please link to a message via https://lists.apache.org/'
     return # no point in continuing
   end
-  if pmc_type == 'PMC' and not @noticelink=~ /.*board@apache\.org.*/
+  if pmc_type == 'PMC' and not @noticelink.include? 'board@apache.org'
     _error 'Please link to the NOTICE message sent to the board list.'
     return # no point in continuing
   end
-  if pmc_type == 'PPMC' and not @noticelink=~ /.*private@incubator\.apache\.org.*/
+  if pmc_type == 'PPMC' and not @noticelink.include? 'private@incubator.apache.org'
     _error 'Please link to the NOTICE message sent to the incubator private list.'
     return # no point in continuing
   end
 
   # attempt to fetch the page
-  if @noticelink =~ /^https?:/i
-    uri = URI.parse(@noticelink)
-    http = Net::HTTP.new(uri.host, uri.port)
-    if uri.scheme == 'https'
-      http.use_ssl = true
-      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-    end
-    request = Net::HTTP::Head.new(uri.request_uri)
-    response = http.request(request)
-    unless response.code.to_i < 400
-      _error "HTTP status #{response.code} for #{@noticelink}"
-      _focus :noticelink
-      return # no point in continuing
-    end
-  else
-    _error 'Only http(s) links are accepted for notice links'
+  uri = URI.parse(@noticelink)
+  http = Net::HTTP.new(uri.host, uri.port)
+  http.use_ssl = true
+  http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+  request = Net::HTTP::Head.new(uri.request_uri)
+  response = http.request(request)
+  unless response.code.to_i < 400
+    _error "HTTP status #{response.code} for #{@noticelink}"
     _focus :noticelink
     return # no point in continuing
   end
