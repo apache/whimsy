@@ -51,6 +51,7 @@
 MEETINGS  = File.expand_path('../Meetings') unless defined? MEETINGS
 WHATIF = './whatif.py' unless defined? WHATIF
 
+require 'open3'
 require 'wunderbar'
 require 'tempfile'
 
@@ -69,9 +70,7 @@ def ini(vote)
 end
 
 def filtered_election(votes, seats, candidates)
-  list = candidates.join(' ')
-
-  output = `#{WHATIF} #{votes} #{seats} #{list}`
+  output, _stderr, _rc = Open3.capture3(WHATIF, votes, seats, *candidates)
   output.scan(/.*elected$/).inject(Hash.new('none')) do |results, line|
     name, status = line.scan(/^(.*?)\s+(n?o?t?\s?elected)$/).flatten
     results.merge({name.gsub(/[^[[:alnum:]]]/,'') => status.gsub(/\s/, '-')})
