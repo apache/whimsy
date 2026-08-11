@@ -99,14 +99,18 @@ _html do
         });
 
         // allow selected fields to be set based on parameters passed
-        if (#{@user.to_s.inspect} != '')
-          $('#user').val(#{@user.to_s.inspect});
-        $('#email').val(#{@email.to_s.inspect}).trigger('change');
-        var project = #{(@project || @podling || @pmc).to_s.inspect};
+        const urlParams = new URLSearchParams(window.location.search);
+        const user = urlParams.get('user');
+        if (user != '')
+          $('#user').val(user);
+        const email = urlParams.get('email');
+        $('#email').val(email).trigger('change');
+        const project = urlParams.get('project', urlParams.get('podling', urlParams.get('pmc')));
         $('#project').val(project).trigger('change').
           attr('required', 'required');
-        if (#{@votelink.to_s.inspect} != '')
-          $('#votelink').val(#{@votelink.to_s.inspect});
+        const votelink = urlParams.get('votelink');
+        if (votelink != '')
+          $('#votelink').val(votelink);
       });
       function validateForm(){
         const votelink = document.getElementById("votelink").value;
