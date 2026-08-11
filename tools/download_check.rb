@@ -165,6 +165,7 @@ end
 def fetch_url(url, method=:head, depth=0, followRedirects=true) # string input
   uri = URI.parse(url)
   begin
+    raise ArgumentError.new("Unexpected host: #{uri.host}") unless uri.host.end_with? '.apache.org'
     Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |https|
       case method
       when :head
@@ -207,7 +208,7 @@ def check_head_3(path, severity = :E, log=true)
     uri, code, response = HEAD(path)
   end
   unless code == '200'
-    test(severity, "HEAD #{path} - HTTP status: #{code}") unless severity.nil?
+    test(severity, "HEAD #{path} - HTTP status: #{code||response}") unless severity.nil?
     return uri, code, nil
   end
   I "Checked HEAD #{path} - OK (#{code})" if log
@@ -224,7 +225,7 @@ def check_page(path, severity=:E, log=true, returnRes=false, followRedirects=tru
   response = GET(path, followRedirects)
   code = response.code || '?'
   unless code == '200' or (!followRedirects and code =~ /^3\d\d/)
-    test(severity, "GET #{path} - HTTP status: #{code}") unless severity.nil?
+    test(severity, "GET #{path} - HTTP status: #{code||response}") unless severity.nil?
     return nil
   end
   I "Checked GET #{path} - OK (#{code})" if log
