@@ -797,10 +797,14 @@ def doPost(options)
   $ARCHIVE_CHECK = options[:archivecheck]
   init
   url = options[:url]
-  tlp = options[:tlp]
-  tlp = getTLP(url) if tlp == ''
-  if tlp
-    checkDownloadPage(url, tlp, options[:version])
+  if url =~ %r{\Ahttps://[\w.]+\.apache\.org/\S+\z}
+    tlp = options[:tlp]
+    tlp = getTLP(url) if tlp == ''
+    if tlp
+      checkDownloadPage(url, tlp, options[:version])
+    end
+  else
+    F "Invalid URL: #{url}"
   end
   displayHTML
 end
