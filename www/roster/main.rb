@@ -37,6 +37,9 @@ helpers do
   end
 end
 
+# fail fast basic validation for existing project and user names
+NAME_RE = %r{\A[\w.-]+\z}
+
 get '/' do
   if env['REQUEST_URI'].end_with? '/'
     @committers = ASF::Person.preload(['asf-banned','loginShell']) # so can get inactive count
@@ -63,12 +66,14 @@ get '/committee/' do
 end
 
 get '/committee/:name.json' do |name|
+  pass unless name =~ NAME_RE
   data = Committee.serialize(name, env)
   pass unless data
   _json data
 end
 
 get '/committee/:name' do |name|
+  pass unless name =~ NAME_RE
   @auth = Auth.info(env)
   @committee = Committee.serialize(name, env)
   pass unless @committee
@@ -211,6 +216,7 @@ end
 
 
 get '/committer/:name.json' do |name|
+  pass unless name =~ NAME_RE
   data =  Committer.serialize(name, env)
   pass unless data
   _json data
@@ -222,6 +228,7 @@ get '/committer/__self__' do
 end
 
 get '/committer/:name' do |name|
+  pass unless name =~ NAME_RE
   @auth = Auth.info(env)
   @committer = Committer.serialize(name, env)
   pass unless @committer
@@ -229,6 +236,7 @@ get '/committer/:name' do |name|
 end
 
 post '/committer/:userid/:file' do |name, file|
+  pass unless name =~ NAME_RE
   # Workaround for handling arrays
   # if the key :array_prefix is defined, the value is assumed to be the prefix for
   # a list of values with the names: prefix1, prefix2 etc
@@ -247,7 +255,7 @@ post '/committer/:userid/:file' do |name, file|
     end
     params[prefix] = array
   end
-  _json :"actions/#{params[:file]}"
+  _json :"actions/#{file}"
 end
 
 get '/icla/' do
@@ -291,12 +299,14 @@ get '/nonpmc/' do
 end
 
 get '/nonpmc/:name.json' do |name|
+  pass unless name =~ NAME_RE
   data = NonPMC.serialize(name, env)
   pass unless data
   _json data
 end
 
 get '/nonpmc/:name' do |name|
+  pass unless name =~ NAME_RE
   @auth = Auth.info(env)
   @nonpmc = NonPMC.serialize(name, env)
   pass unless @nonpmc
@@ -305,10 +315,12 @@ end
 
 # Handle groups: other kinds of auth/ldap/etc. groupings
 get '/group/:name.json' do |name|
+  pass unless name =~ NAME_RE
   _json Group.serialize(name)
 end
 
 get '/group/:name' do |name|
+  pass unless name =~ NAME_RE
   @auth = Auth.info(env)
   @group = Group.serialize(name, params['type'])
   pass unless @group and not @group.empty?
@@ -346,10 +358,12 @@ end
 
 # individual podling info
 get '/ppmc/:name.json' do |name|
+  pass unless name =~ NAME_RE
   _json PPMC.serialize(name, env)
 end
 
 post '/ppmc/:name/establish' do |name|
+  pass unless name =~ NAME_RE
   @name = name
   @chair = params[:chair] || env.user
   @description = params[:description]
@@ -357,6 +371,7 @@ post '/ppmc/:name/establish' do |name|
 end
 
 get '/ppmc/:name' do |name|
+  pass unless name =~ NAME_RE
   @auth = Auth.info(env)
 
   user = ASF::Person.find(env.user)
@@ -377,8 +392,8 @@ get '/podlings' do
 end
 
 # posted actions
-post '/actions/:file' do
-  _json :"actions/#{params[:file]}"
+post '/actions/:file' do |file|
+  _json :"actions/#{file}"
 end
 
 # attic issues
@@ -394,6 +409,7 @@ end
 
 # Orgchart individual duties
 get '/orgchart/:name' do |name|
+  pass unless name =~ NAME_RE
   person = ASF::Person.find(env.user)
 
   unless person.asf_chair_or_member?
