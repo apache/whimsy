@@ -327,7 +327,7 @@ namespace :git do
       mkdir_p? File.dirname(git)
       Dir.chdir File.dirname(git) do
         require 'uri'
-        base = URI.parse('git://git.apache.org/')
+        base = URI.parse('https://gitbox.apache.org/repos/')
         gitrepos.each do |name, description|
           unless description
             puts "Skipping git:pull of #{name} because no details were found"
