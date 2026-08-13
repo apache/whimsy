@@ -11,15 +11,60 @@ const inithost = new URL(target).host;
 
 const option = process.argv[3] || '';
 
-// TODO: this list is not complete
+// TODO: derive from the list at:
+// https://raw.githubusercontent.com/apache/privacy-website/main/policies/asf-domains.md
+
+const asfdomains = [
+    "any23.com",
+    "any23.org",
+    "apache-extras.org",
+    "apache.org",
+    "apachecon.com",
+    "apachecon.org",
+    "apacheextras.org",
+    "apachextras.org",
+    "cloudstack.com",
+    "cloudstack.org",
+    "codehaus.org",
+    "communityovercode.org",
+    "couchapp.com",
+    "couchapp.org",
+    "couchhack.org",
+    "deltaspike.org",
+    "feathercast.org",
+    "freemarker.org",
+    "gremlint.com",
+    "groovy-lang.org",
+    "ignite.run",
+    "jclouds.com",
+    "jclouds.net",
+    "jclouds.org",
+    "jspwiki.org",
+    "libcloud.com",
+    "libcloud.net",
+    "libcloud.org",
+    "modssl.com",
+    "modssl.net",
+    "myfaces.org",
+    "netbeans.org",
+    "ofbiz.org",
+    "openoffice.org",
+    "openwhisk.com",
+    "openwhisk.net",
+    "openwhisk.org",
+    "projectgeode.org",
+    "qi4j.org",
+    "spamassassin.org",
+    "subversion.com",
+    "subversion.net",
+    "subversion.org",
+    "tinkerpop.com"
+];
+
 function isASFhost(host) {
   return host == '' ||
-         host == 'apache.org' ||
-         host == 'apachecon.com' ||
-         host == 'openoffice.org' ||
-         host.endsWith('.apache.org') ||
-         host.endsWith('.openoffice.org') ||
-         host.endsWith('.apachecon.com');
+         asfdomains.includes(host) ||
+         asfdomains.includes(host.split('.').slice(-2).join('.')) // last two segments
 }
 if (!isASFhost(inithost)) {
   throw new Error("Only ASF hosts are supported - saw " + inithost);
