@@ -2,6 +2,7 @@ require 'fileutils'
 require 'digest'
 require 'net/http'
 require 'wunderbar'
+require_relative '../../tools/asf-site-check'
 
 # Simple cache for HTTP(S) text files
 class Cache
@@ -129,7 +130,9 @@ class Cache
       raise IOError.new("Too many redirects (#{depth}) detected at #{uri}")
     end
     uri = URI.parse(uri)
-    Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
+    host = uri.host
+    raise ArgumentError.new("Not an ASF host: #{host}") unless ASFDOMAIN.asfhost?(host)
+    Net::HTTP.start(host, uri.port, use_ssl: uri.scheme == 'https') do |http|
       request = Net::HTTP::Get.new(uri.request_uri)
       options.each do |k,v|
         request[k] = v

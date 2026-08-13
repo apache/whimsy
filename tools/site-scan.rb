@@ -94,15 +94,20 @@ def parse(id, site, name, podling=false)
   data[:uri] = site
   data[:errors] = []
   uri = URI.parse(site)
+  host = uri.host
+  unless ASFDOMAIN.asfhost?(host)
+    data[:errors] << "Not an ASF host: #{host}"
+    return data
+  end
   begin
-    Socket.getaddrinfo(uri.host, uri.scheme)
+    Socket.getaddrinfo(host, uri.scheme)
   rescue SocketError => se
     data[:errors] << se.message
     return data
   end
   begin
     uri, response, status, csp = $cache.get(site.to_s)
-  rescue IOError => ioe
+  rescue IOError, ArgumentError => ioe
     data[:errors] << ioe.message
     return data
   end
