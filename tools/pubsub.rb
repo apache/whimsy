@@ -64,7 +64,7 @@ optionparser = OptionParser.new do |opts|
   end
 
   opts.on '-r', '--remote', 'Git Clone URL' do |url|
-    options.streamURL = url
+    options.remote = url
   end
 
   opts.on '-c', '--clone', 'Git Clone Directory' do |path|
