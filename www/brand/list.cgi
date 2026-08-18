@@ -188,7 +188,8 @@ _html do
         end
       end
       _h3 'The ASF holds the following unregistered trademarks:'
-      allproj = projects.group_by { |k, v| /Apache\s+(.)/.match(v['name'])[1].downcase }
+      # Allow for missing Apache prefix
+      allproj = projects.group_by { |k, v| /(?:Apache\s+)?(.)/.match(v['name']).captures.first.downcase }
       allproj.sort.each do |ltr, parr|
         parent = "#{UNREG_ID}#{ltr}"
         _div.panel_group id: parent, role: "tablist", aria_multiselectable: "true" do
