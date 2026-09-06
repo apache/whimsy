@@ -18,8 +18,8 @@ class Forward < Vue
 
       _label do
         _input type: 'radio', name: 'destination',
-          onClick: self.forward, value: 'chairman@apache.org'
-        _span 'chairman'
+          onClick: self.forward, value: 'board-chair@apache.org'
+        _span 'board-chair'
       end
 
       _label do
