@@ -31,6 +31,7 @@ REASONS = {
   '@signature_not_armored' => 'gpg signature must be detached and ascii-armored',
   '@unsigned' => 'the document appears to be unsigned',
   '@script_font' => 'a name typed in a script font is not a signature',
+  '@undated' => 'the document must have a date next to the signature',
 }
 # These aren't reasons for rejection, but need to be fixed
 OTHERS = {
