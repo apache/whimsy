@@ -33,6 +33,7 @@ class Parts < Vue
     @upload_sig = false
     @invalid_availid = false
     @undated = false
+    @grant_missing = false
   end
 
   ########################################################################
@@ -228,6 +229,7 @@ class Parts < Vue
             _input type: 'hidden', name: 'unsigned', value: @unsigned
             _input type: 'hidden', name: 'script_font', value: @script_font
             _input type: 'hidden', name: 'undated', value: @undated
+            _input type: 'hidden', name: 'grant_missing', value: @grant_missing
             _input type: 'hidden', name: 'upload_sig', value: @upload_sig
             _input type: 'hidden', name: 'invalid_availid', value: @invalid_availid
             # the above entries must agree with the checked: entries below
@@ -408,6 +410,13 @@ class Parts < Vue
                   _input type: 'checkbox', checked: @undated,
                   onClick: -> {@undated = !@undated}
                   _span ' undated'
+                end
+              end
+              _li do
+                _label do
+                  _input type: 'checkbox', checked: @grant_missing,
+                  onClick: -> {@grant_missing = !@grant_missing}
+                  _span ' grant missing'
                 end
               end
               _li do

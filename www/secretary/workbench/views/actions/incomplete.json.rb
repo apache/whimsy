@@ -32,6 +32,7 @@ REASONS = {
   '@unsigned' => 'the document appears to be unsigned',
   '@script_font' => 'a name typed in a script font is not a signature',
   '@undated' => 'the document must have a date next to the signature',
+  '@grant_missing' => 'a Software Grant Agreement must have Exhibit A filled',
 }
 # These aren't reasons for rejection, but need to be fixed
 OTHERS = {
