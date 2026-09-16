@@ -865,7 +865,7 @@ module ASF
     def pgp_key_status
       _uri, content, status = Person.cache.get("https://people.apache.org/keys/committer/keys.json")
       return 'error reading status' if status == 'error'
-      keys = JSON.parse(content, :encoding => 'utf-8')
+      keys = JSON.parse(content)
       (keys[id] || {}).map {|k,v|[k.gsub(' ', ''), v]}.to_h
     end
 
