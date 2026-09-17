@@ -15,7 +15,7 @@ class Parts < Vue
     @missing_address = false
     @missing_email = false
     @wrong_email = false
-    @corporate_postal = false
+    @corporate_residence = false
     @invalid_public = false
     @invalid_name = false
     @invalid_language = false
@@ -213,7 +213,7 @@ class Parts < Vue
             _input type: 'hidden', name: 'missing_address', value: @missing_address
             _input type: 'hidden', name: 'missing_email', value: @missing_email
             _input type: 'hidden', name: 'wrong_email', value: @wrong_email
-            _input type: 'hidden', name: 'corporate_postal', value: @corporate_postal
+            _input type: 'hidden', name: 'corporate_residence', value: @corporate_residence
             _input type: 'hidden', name: 'invalid_public', value: @invalid_public
             _input type: 'hidden', name: 'invalid_name', value: @invalid_name
             _input type: 'hidden', name: 'invalid_language', value: @invalid_language
@@ -302,9 +302,9 @@ class Parts < Vue
               end
               _li do
                 _label do
-                  _input type: 'checkbox', checked: @corporate_postal,
-                  onClick: -> {@corporate_postal = !@corporate_postal}
-                  _span ' corporate postal address'
+                  _input type: 'checkbox', checked: @corporate_residence,
+                  onClick: -> {@corporate_residence = !@corporate_residence}
+                  _span ' corporate residence address'
                 end
               end
               _li do
