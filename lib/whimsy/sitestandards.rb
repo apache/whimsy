@@ -322,7 +322,7 @@ module SiteStandards
     return [
       counts, {
       SITE_PASS => '# Sites with links to primary ASF page',
-      SITE_WARN => '# Sites with link, but not an expected ASF one',
+      SITE_WARN => '# Sites with link, but not an expected ASF one, or not expected to publish downloads',
       SITE_FAIL => '# Sites with no link for this topic'
       }, success
     ]
