@@ -85,8 +85,7 @@ get '/other/' do
   otherids = ASF::Project.list.map(&:name) -
                 ASF::Committee.pmcs.map(&:name) -
                 ASF::Committee.nonpmcs.map{|x| ASF::Project.ldapname x.name} -
-                ASF::Podling.currentids -
-                ASF::Petri.list.map(&:id)
+                ASF::Podling.currentids
   attics = ASF::Committee.load_committee_metadata[:tlps].filter {|k,v| v[:retired]}
   @others = {}
   otherids.each do |id|

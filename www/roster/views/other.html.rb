@@ -19,7 +19,6 @@ _html do
         _li 'Current PMCs'
         _li 'ASF committees (non-PMCs)'
         _li 'Current podlings'
-        _li 'Petri cultures'
       end
       _ 'Any that remain are then checked against:'
       _ul do
