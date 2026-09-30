@@ -87,9 +87,13 @@ get '/other/' do
                 ASF::Committee.nonpmcs.map{|x| ASF::Project.ldapname x.name} -
                 ASF::Podling.currentids
   attics = ASF::Committee.load_committee_metadata[:tlps].filter {|k,v| v[:retired]}
+  merged = ASF::Committee.load_committee_metadata[:tlps].filter {|k,v| v[:merged_into]}
   @others = {}
   otherids.each do |id|
-    if attics.include? id
+    if merged.include? id # must be done before attic
+      type = "Merged into #{merged[id][:merged_into]}"
+      date = merged[id][:retired]
+    elsif attics.include? id
       type = 'Attic'
       date = attics[id][:retired]
     else

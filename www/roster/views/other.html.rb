@@ -26,6 +26,7 @@ _html do
         _li 'Retired podlings'
         _li 'Podling aliases'
         _li 'Podling graduated as part of another TLP'
+        _li 'Project merged into another TLP'
       end
       _p 'None of the above normally have an LDAP project group'
     end
