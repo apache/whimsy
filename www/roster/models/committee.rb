@@ -120,7 +120,7 @@ class Committee
     roster.each {|k, v| v[:member] = ASF::Person.find(k).asf_member?}
 
     if pmc.chair and roster[pmc.chair.id]
-      roster[pmc.chair.id]['role'] = 'PMC chair'
+      roster[pmc.chair.id][:role] = 'PMC chair'
     end
 
     # separate out the known ASF members and extract any matching committer details

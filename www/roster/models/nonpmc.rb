@@ -100,7 +100,7 @@ class NonPMC
     end
 
     if cttee.chair and roster[cttee.chair.id]
-      roster[cttee.chair.id]['role'] = 'Committee chair'
+      roster[cttee.chair.id][:role] = 'Committee chair'
     end
 
     # separate out the known ASF members and extract any matching committer details
