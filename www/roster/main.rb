@@ -48,9 +48,10 @@ get '/' do
     @members = ASF::Member.list.keys - ASF::Member.status.keys # i.e. active member ids
     @groups = Group.list
     @podlings = ASF::Podling.to_h.values
+    # needs to agree with otherids in '/other' route
     @otherids = ASF::Project.list.map(&:name) -
                 @committees.map(&:name) -
-                @nonpmcs.map(&:name) -
+                @nonpmcs.map{|x| ASF::Project.ldapname x.name} -
                 ASF::Podling.currentids
     _html :index
   else
@@ -82,6 +83,7 @@ end
 
 # Handle projects without apparent connections
 get '/other/' do
+  # needs to agree with otherids in '/' route
   otherids = ASF::Project.list.map(&:name) -
                 ASF::Committee.pmcs.map(&:name) -
                 ASF::Committee.nonpmcs.map{|x| ASF::Project.ldapname x.name} -
