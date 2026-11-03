@@ -22,6 +22,12 @@ def squash(text)
   return text.scrub.gsub(/[[:space:]]+/, ' ').strip
 end
 
+# skip parse errors for these hrefs
+def ignore_href(href)
+  return true if href.start_with? 'javascript:' # not parsed correctly
+  return href.include? '/#/#' # Ruby is too strict here
+end
+
 # Get text from a node; use parent if text does not appear to be complete
 # This is used when scanning for some links that may
 #   be in an image or other commonly related node on websites
@@ -204,7 +210,7 @@ def parse(id, site, name, podling=false)
         subpages[site2.to_s] = a
       end
     rescue StandardError => e
-      unless a_href.start_with? 'javascript:' # Not parsed currently
+      unless ignore_href(a_href)
         report_error data, id, a_href, "@#{__LINE__}: #{id}: Bad a_href #{a_href} #{e}"
       end
     end
