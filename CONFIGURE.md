@@ -8,7 +8,7 @@ run either in a local environment or with a webserver.
 ## Dependencies
 
 - Compilers & Servers
-  - Ruby 2.x.x (Production version: 2.3.)
+  - Ruby 3.x.x (Production version: 3.2.)
   - Apache HTTP Web Server 2.x
   - Rack
   - Phusion Passenger
