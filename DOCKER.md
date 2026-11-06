@@ -155,15 +155,6 @@ The repositories can then be found at the following locations in Docker:
 
 Note: these will be checked out under `/srv/svn` in Docker.
 
-Testing email
--------------
-
-The following command can be used to run a dummy smtp server on port 1025:
-`python3 -m aiosmtpd -n -l localhost:1025`
-
-It can be tested with:
-`tools/testmail.rb <userid>`
-
 Known not to work (ToDos)
 -------------------------
 

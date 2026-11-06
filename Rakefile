@@ -556,6 +556,7 @@ namespace :docker do
 
   # This is the entrypoint in the Dockerfile so runs in the container
   task :entrypoint => [:scaffold] do
-    sh 'apache2ctl -DFOREGROUND'
+    sh 'apache2ctl start'
+    sh 'python3 -u -m aiosmtpd -n -l localhost:1025'
   end
 end
