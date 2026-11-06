@@ -287,7 +287,7 @@ class Message
     # write out any remaining attachments
     attachments.each do |name|
       att = find(name)
-      path = File.join(tmpdir, name)
+      path = File.join(tmpdir, File.basename(name))
       att.write_path(path)
       files << [name, path, att.content_type]
     end
