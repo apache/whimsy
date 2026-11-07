@@ -238,6 +238,11 @@ class Person < Vue
                 href: 'https://lists.apache.org/list.html?' + list_email[0]
               _span ' as '
               _span list_email[1]
+              _span ' '
+              _button 'Unsubscribe',
+                onClick: lambda {
+                  self.clipboard(list_email);
+                }
             end
           end
         end
@@ -469,5 +474,15 @@ class Person < Vue
 
     # disable input
     jQuery('input, button', form).prop('disabled', true)
+  end
+  def clipboard(list_email)
+    list, ldom = list_email[0].split('@')
+    user, mdom = list_email[1].split('@')
+    text = "#{list}-unsubscribe-#{user}=#{mdom}@#{ldom}"
+    navigator.clipboard.writeText(text)
+    alert(
+      "Unsubscribe address added to clipboard." +
+      "\nSend an email to that address, and reply to the confirmation response."
+    )
   end
 end
