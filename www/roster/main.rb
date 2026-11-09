@@ -433,44 +433,6 @@ get '/orgchart/:name' do |name|
   _html :duties
 end
 
-# for debugging purposes
-get '/env' do
-  Wunderbar.info 'Info'
-  Wunderbar.warn 'Warn'
-  Wunderbar.error 'Error'
-  Wunderbar.fatal 'Fatal'
-  content_type 'text/plain'
-
-  asset = {
-    path: Wunderbar::Asset.path,
-    root: Wunderbar::Asset.root,
-    virtual: Wunderbar::Asset.virtual,
-    scripts: Wunderbar::Asset.scripts.map {|script|
-      source = script.options[:file]
-      {
-        path: script.path,
-        source: source,
-        mtime: source && File.mtime(source),
-        size: source && File.size(source),
-      }
-    },
-    stylesheets: Wunderbar::Asset.stylesheets.map {|stylesheet|
-      source = stylesheet.options[:file]
-      {
-        path: stylesheet.path,
-        source: source,
-        mtime: source && File.mtime(source),
-        size: source && File.size(source),
-      }
-    },
-    params: params,
-    line: __LINE__ # temp
-  }
-
-  $stderr.puts 'Stderr' # debug
-  JSON.pretty_generate(env: env, ENV: ENV.to_h, asset: asset)
-end
-
 # Handle error and other conditions
 not_found do
   @errors = env
