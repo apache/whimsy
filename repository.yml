@@ -15,11 +15,6 @@
 
 :svn:
 
-  Bills:
-    url: private/financials/Bills
-    depth: skip
-
-
   Meetings:
     url: private/foundation/Meetings
 
@@ -149,11 +144,6 @@
   personnel-duties:
     url: private/foundation/officers/personnel-duties
     depth: files
-
-  # for Treasurer access to financial records
-  records:
-    url: asf/infrastructure/site/trunk/content/foundation/records
-    depth: skip
 
   site-board: # calendar.md(text) only; N.B. this is fetched during web-site build
     url: asf/infrastructure/site/trunk/content/foundation/board
