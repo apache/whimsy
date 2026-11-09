@@ -15,7 +15,6 @@ OFFICERS = {
   '/board/subscriptions' => "PMC Chair board@ Subscription Crosscheck",
   'list-traffic.cgi' => "Statistics About The board@ Mailing List",
   'board-stats.cgi' => "Statistics About Board Meetings",
-  '/treasurer/bill-upload' => "Treasurer's Bill Upload Helper",
   'http://treasurer.apache.org' => "Treasurer's Office Payment Processing Overview",
   'https://www.apache.org/foundation/governance/orgchart' => "Apache Corporate Organization Chart",
   'coi.cgi' => "Conflict of Interest Affirmation / Lookup Tool"
