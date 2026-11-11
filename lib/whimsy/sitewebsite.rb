@@ -4,6 +4,14 @@ require 'wunderbar'
 require 'wunderbar/bootstrap'
 require_relative '../whimsy/asf/themes'
 
+# Full PMCs that intentionally don't publish releases, so an empty downloads
+# list is expected rather than a failure. Non-PMC committees (Brand
+# Management, Data Privacy, Diversity, etc.) are detected automatically via
+# the 'nonpmc' flag recorded by site-scan.rb. This small list is needed
+# because "makes releases" is not a field in committee_info; revisit if that
+# data becomes available.
+NO_RELEASES = %w(attic comdev gump whimsy).freeze
+
 # Display data for a single project's checks
 # @param project id of project
 # @param links site data for that specific project
@@ -189,6 +197,10 @@ def display_overview(sites, analysis, checks, tlp = true)
               end
             end
           end
+          # 'downloads' is collected by the crawler rather than via the
+          # standard checks. We only care whether any were found, so it is
+          # treated as a pass/fail column (no downloads -> flagged red).
+          _th! 'Downloads', data_sort: 'string'
         end
       end
       sort_order = {
@@ -204,6 +216,25 @@ def display_overview(sites, analysis, checks, tlp = true)
             end
             checks.each_key do |c|
               cls = SiteStandards.label(analysis, links, c, n)
+              _td '', class: cls, data_sort_value: sort_order[cls]
+            end
+            downloads = links['downloads'] || {}
+            # A project is expected to publish downloads unless it is a
+            # non-PMC committee or one of the few PMCs that don't release.
+            expected = !links['nonpmc'] && !NO_RELEASES.include?(n.downcase)
+            if !downloads.empty?
+              cls = SiteStandards::SITE_PASS
+              # Expose the discovered download URLs in a hover tooltip
+              _td '', class: cls, data_sort_value: sort_order[cls],
+                  title: downloads.keys.join("\n")
+            elsif expected
+              # Expected downloads but none found: flag red like other fails
+              cls = SiteStandards::SITE_FAIL
+              _td '', class: cls, data_sort_value: sort_order[cls]
+            else
+              # Not expected to publish downloads: warn (amber), not a
+              # failure. See the amber data key above the table.
+              cls = SiteStandards::SITE_WARN
               _td '', class: cls, data_sort_value: sort_order[cls]
             end
           end
