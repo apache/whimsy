@@ -36,12 +36,6 @@
       - committee-info.txt
       - committee-info.yaml
 
-  brandlist:
-    url: private/foundation/Brand
-    depth: empty
-    files:
-      - docket.json
-
   cclas:
     url: private/documents/cclas
     depth: skip

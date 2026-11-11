@@ -418,9 +418,6 @@ data that is generated from various other sources.  It's handy to have
 one script both create the JSON (to checkin to /public, perhaps) as well
 as display the data.
 
-One example of this is the [trademark listing script](www/brand/list.cgi),
-which explicitly checks the query string to determine which output to send.
-
 ```ruby
 # return output in JSON format if the query string includes 'json'
 ENV['HTTP_ACCEPT'] = 'application/json' if ENV['QUERY_STRING'].include? 'json'
