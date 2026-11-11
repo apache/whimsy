@@ -14,9 +14,10 @@ permissions:  # added using https://github.com/step-security/secure-workflows
 jobs:
   test:
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
-        os: [macos-latest, ubuntu-latest]
+        # drop macOS for the time being to reduce CI load
+        os: [ubuntu-slim]
         ruby: [3.2, 3.3]
     runs-on: ${{ matrix.os }}
     steps:
