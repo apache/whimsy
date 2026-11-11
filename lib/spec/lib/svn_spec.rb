@@ -21,7 +21,7 @@ require 'whimsy/asf'
 require 'wunderbar'
 
 SAMPLE_MISSING_NAME = '__templates' # no such entry
-SAMPLE_ALIAS = 'Bills' # depth: 'skip'
+SAMPLE_ALIAS = 'acreq' # depth: 'skip'
 
 describe ASF::SVN do
 
@@ -71,7 +71,7 @@ describe ASF::SVN do
     it "should return URL for #{SAMPLE_ALIAS}" do
       res = ASF::SVN.svnurl(SAMPLE_ALIAS)
       expect(res.class).to equal(String)
-      expect(res).to match(%r{https?://.+/Bills})
+      expect(res).to match(%r{https?://.+/acreq})
     end
 
     it "should return nil for #{SAMPLE_MISSING_NAME}" do
@@ -132,7 +132,7 @@ describe ASF::SVN do
     it 'should return an array of size 2' do
       res = ASF::SVN.private_public
       expect(res.size()).to eq(2)
-      expect(res[0].size).to eq(12) # will need to be adjusted from time to time
+      expect(res[0].size).to eq(11) # will need to be adjusted from time to time
       expect(res[1].size).to eq(6) # ditto.
     end
   end
