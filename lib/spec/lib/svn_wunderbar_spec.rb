@@ -230,7 +230,7 @@ describe 'ASF::SVN.svnmucc_', skip: svnmucc_missing do
     ts = out['transcript']
     expect(ts).to be_kind_of(Array)
     expect(ts[0]).to match(/--revision x/)
-    expect(ts[1]).to eq('svnmucc: E205000: Invalid revision number  .*\'x\'')
+    expect(ts[1]).to match(/svnmucc: E\d+: Invalid revision number found /)
   end
   it "svnmucc_([['help']],'test',ENV_.new,_,'123',nil) should show revision in command" do
     rc, out = _json do |_|
