@@ -297,7 +297,7 @@ end
 get %r{/(\d{6})/(\w+)/_raw_} do |month, hash|
   message = Mailbox.new(month).find(hash)
   pass unless message
-  [200, {'Content-Type' => 'text/plain'}, message.raw]
+  [200, {'Content-Type' => 'text/plain; charset=UTF-8'}, message.raw]
 end
 
 # reparse an existing message
@@ -312,7 +312,7 @@ get %r{/(\d{6})/(\w+)/_reparse_} do |month, hash|
   headers = Message.parse(email)
   message = Message.new(mailbox, hash, headers, email)
   message.write_headers
-  [200, {'Content-Type' => 'text/plain'}, 'Done, reselect to show contents']
+  [200, {'Content-Type' => 'text/plain; charset=UTF-8'}, 'Done, reselect to show contents']
 end
 
 # intercede for potentially dangerous message attachments

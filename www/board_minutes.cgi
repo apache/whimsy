@@ -62,7 +62,7 @@ def top_index():
 def main():
     """Handle HTTP requests"""
 
-    print("Content-type: text/html\n\n")
+    print("Content-type: text/html; charset=UTF-8\n\n")
 
     try:
         info = os.environ.get('PATH_INFO', '')
