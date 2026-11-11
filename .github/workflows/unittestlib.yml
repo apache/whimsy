@@ -17,7 +17,7 @@ jobs:
       fail-fast: true
       matrix:
         # drop macOS for the time being to reduce CI load
-        os: [ubuntu-slim]
+        os: [ubuntu-latest]
         ruby: [3.2, 3.3]
     runs-on: ${{ matrix.os }}
     steps:
