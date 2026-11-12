@@ -184,7 +184,7 @@ module MailUtils
     emails[TOOLS] = []
     files.each do |email|
       next if email.end_with? '/index'
-      message = IO.read(email, mode: 'rb')
+      message = IO.read(email, mode: 'r') # This seems to work better than 'rb' with non-ASCII headers
       data = {}
       date = message[/^Date: (.*)/, 1]
       date = message[/^From \S+ +(.+)/,1] unless date # Use envelope date if necessary
