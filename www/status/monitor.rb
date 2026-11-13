@@ -56,7 +56,7 @@ class StatusMonitor
 
       # fetch previous status (using symbolic keys)
       begin
-        baseline = JSON.parse(file.read, {symbolize_names: true})
+        baseline = JSON.parse(file.read, symbolize_names: true)
       rescue Exception => e
         $stderr.puts "monitor: Failed to read status.json: #{e}"
         baseline = {}
