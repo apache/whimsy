@@ -79,7 +79,10 @@ def add_anchor(current_s, line, links, info):
         # drop link to CR section if there is an attachment
         crsect = info.get('crsection')
         if crsect:
-            links.pop(f'section-{crsect}{sect}')
+            try:
+                links.pop(f'section-{crsect}{sect}')
+            except KeyError:
+                pass # ignore missing links
         return current_s, line
 
     # board minutes
