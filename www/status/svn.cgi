@@ -8,6 +8,7 @@ $LOAD_PATH.unshift '/srv/whimsy/lib'
 
 require 'wunderbar/bootstrap'
 require 'whimsy/asf'
+require 'open3'
 
 # Allow override of user in test mode
 if ENV['RACK_ENV'] == 'test'
@@ -168,8 +169,10 @@ _json do
   local_path = ASF::SVN.find(@name)
   if local_path
     if @action == 'update'
-      log = `svn cleanup #{local_path} 2>&1`
-      log = log + `svn update #{local_path} 2>&1`
+      out, err, _ = Open3.capture3('svn', 'cleanup', local_path)
+      log = out + err
+      out, err, _ = Open3.capture3('svn', 'update', local_path)
+      log = log + out + err
     end
 
     info, err = ASF::SVN.getInfo(local_path)
@@ -186,7 +189,8 @@ _json do
         repository_url = ASF::SVN.svnpath!(repository_url)
       end
 
-      log = `svn checkout #{repository_url} #{local_path} 2>&1`
+      out, err, _ = Open3.capture3('svn', 'checkout', repository_url, local_path)
+      log = out + err
     end
   end
 
