@@ -70,7 +70,7 @@ get '/' do
   redirect to('/') if env['REQUEST_URI'] == env['SCRIPT_NAME']
 
   # determine latest month for which there are messages
-  current = Date.today.strftime('%Y%m') # exclude future-dated entries
+  current = Time.now.utc.strftime('%Y%m') # exclude future-dated entries
   archives = Dir[File.join(ARCHIVE, '*.yml')].select {|name| name =~ %r{/\d{6}\.yml$} && File.basename(name,'.yml') <= current}
   @mbox = archives.empty? ? nil : File.basename(archives.max, '.yml')
   if @mbox
