@@ -54,15 +54,16 @@ disable :logging # suppress log of requests to stderr/error.log
 
 require 'whimsy/asf/status'
 
+set :show_exceptions, false
+
 error do
   err = env['sinatra.error']
-  <<~EOD
-  <pre>
-  Error detected, please see web server error log for full details:
+  stamp = Time.now.utc.iso8601
+  $stderr.puts "[ERROR] #{stamp} #{err.class}: #{err.message}"
+  $stderr.puts err.backtrace.join("\n")
 
-  #{Time.now.gmtime.to_s}: #{err.detailed_message}
-  </pre>
-  EOD
+  content_type 'text/plain'
+  "#{stamp}: An unexpected error occurred. Please try again later. If it recurs, please report with the timestamp."
 end
 
 # list of messages
