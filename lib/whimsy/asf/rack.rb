@@ -50,6 +50,7 @@ module ASF
         if authorized
           @app.call(env)
         else
+          Wunderbar.warn "Unauthorized access attempt by #{env.user}"
           unauthorized
         end
       end
@@ -80,6 +81,7 @@ module ASF
         if authorized
           @app.call(env)
         else
+          Wunderbar.warn "Unauthorized access attempt by #{env.user}"
           unauthorized
         end
       end

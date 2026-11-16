@@ -79,7 +79,7 @@ module ASF
           return ldap
         rescue ::LDAP::ResultError => re
           Wunderbar.warn "[#{host}] - Error connecting to LDAP server: " +
-            re.message + ' (continuing)'
+            re.inspect + ' (continuing)'
         end
 
       end
@@ -113,7 +113,7 @@ module ASF
       self.rwhosts.each do |rwhost|
         begin
           ldap = ASF._init_ldap(true, [rwhost])
-          Wunderbar.debug("#{ldap.object_id}: bind as #{dn} as #{ldap}")
+          Wunderbar.debug("#{ldap.object_id}: bind as #{user} as #{ldap}")
           if block
             ASF.flush_weakrefs
             ldap.bind(dn, password, &block)
@@ -121,11 +121,13 @@ module ASF
           else
             ldap.bind(dn, password)
           end
+          Wunderbar.info "Successfully bound as #{dn}"
           break
         rescue ::LDAP::ResultError => e
           if e.message == "Can't contact LDAP server" # Any others worth a retry?
             Wunderbar.warn "#{rwhost}: #{e.inspect}, continuing"
           else
+            Wunderbar.warn "LDAP bind failed for #{dn}: #{e.message}"
             raise
           end
         end
@@ -147,7 +149,8 @@ module ASF
         begin
           ASF::LDAP.bind(user, password) {}
           return ASF::Person.new(user)
-        rescue ::LDAP::ResultError
+        rescue ::LDAP::ResultError => e
+          Wunderbar.warn "HTTP auth failed for user #{user}"
           return nil
         end
       end
