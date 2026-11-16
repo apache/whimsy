@@ -17,6 +17,7 @@ end
 
 module ASF
   @@weakrefs = Set.new
+  @@weakrefs_lock = Mutex.new
   #
   # Encapsulate access to LDAP, caching results for performance.  For best
   # performance in applications that access large number of objects, make use
@@ -402,15 +403,17 @@ module ASF
     end
 
     # keep track of which weak references are saved
-    @@weakrefs << attr if object == self
+    @@weakrefs_lock.synchronize { @@weakrefs << attr } if object == self
   end
 
   def self.flush_weakrefs
-    @@weakrefs.each do |attr|
-      self.remove_instance_variable(attr)
-    end
+    @@weakrefs_lock.synchronize do
+      @@weakrefs.each do |attr|
+        self.remove_instance_variable(attr)
+      end
 
-    @@weakrefs.clear
+      @@weakrefs.clear
+    end
 
     # run garbage collection
     GC.start
