@@ -1027,6 +1027,7 @@ module ASF
     end
 
     MINIMUM_USER_UID = 6000 # from asfpy/ldap
+    VALID_UID = /\A[a-z][a-z_0-9-]{1,30}\z/
     # Return the next free value for use as uidNumber/gidNumber
     # Optionally return several free values as an array
     def self.next_uidNumber(count=1)
@@ -1071,6 +1072,9 @@ module ASF
       end
 
       availid = attrs['uid']
+      unless availid =~ VALID_UID
+        raise ArgumentError.new("invalid uid format: #{availid.inspect}")
+      end
 
       # determine next uid and group, unless provided
       nextuid = attrs['uidNumber']
