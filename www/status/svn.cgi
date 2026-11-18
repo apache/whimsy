@@ -127,11 +127,11 @@ _html do
         var tds = $('td', tr);
         var name = tds[0].textContent;
         event.currentTarget.disabled = true;
-        $.getJSON('?action=' + action + '&name=' + name, function(response) {
+        $.post('#', {action: action, name: name }, function(response) {
           updateStatus(tr, response);
           event.currentTarget.disabled = false;
           updateAll();
-        });
+        },'json');
       }
 
       // add checkout buttons
@@ -168,7 +168,7 @@ end
 _json do
   local_path = ASF::SVN.find(@name)
   if local_path
-    if @action == 'update'
+    if @action == 'update' && _.post?
       out, err, _ = Open3.capture3('svn', 'cleanup', local_path)
       log = out + err
       out, err, _ = Open3.capture3('svn', 'update', local_path)
@@ -179,7 +179,7 @@ _json do
     repository_url = info[/^URL: (.*)/, 1] if info
 
   else
-    if @action == 'checkout'
+    if @action == 'checkout' && _.post?
 
       repo = repository.find {|name, value| value['url'] == @name}
       local_path = svnrepos.first.chomp('*') + repo.first
