@@ -468,6 +468,9 @@ module ASF
   # This class also contains a number of helper classes that will construct
   # various LDAP <tt>mod</tt> objects.
   class Base
+    # Mutex protecting the collection check-then-create in self.new
+    COLLECTION_LOCK = Mutex.new
+
     # Simple name for the LDAP object, generally the value of <tt>uid</tt>
     # for people, and the value of <tt>cn</tt> for all of the rest.
     attr_reader :name
@@ -508,13 +511,15 @@ module ASF
     # Create an instance of this class, given a name.  Note: if an instance
     # already exists, it will return a handle to the existing object.
     def self.new(name)
-      begin
-        object = collection[name]
-        return object.reference if object&.weakref_alive?
-      rescue
-      end
+      COLLECTION_LOCK.synchronize do
+        begin
+          object = collection[name]
+          return object.reference if object&.weakref_alive?
+        rescue
+        end
 
-      super
+        super
+      end
     end
 
     # create an instance of this class, returning a weak reference to the
