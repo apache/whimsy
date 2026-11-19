@@ -174,6 +174,20 @@ get %r{/(\d{6})/all} do |mbox|
   _html :all
 end
 
+get '/noattach' do
+  current = Mailbox.allmailboxes.last
+  return [404, 'Not found'] unless current
+  redirect to("/#{current}/noattach")
+end
+
+# display all messages with no attachments
+get %r{/(\d{6})/noattach} do |mbox|
+  @mbox = mbox
+  @prv, @nxt = Mailbox.prev_next(mbox)
+  @messages = Mailbox.new(@mbox).client_headers(listall: true, noattach: true)
+  _html :noattach
+end
+
 # retrieve a single message
 get %r{/(\d{6})/(\w+)/} do |month, hash|
   @message = Mailbox.new(month).headers[hash]

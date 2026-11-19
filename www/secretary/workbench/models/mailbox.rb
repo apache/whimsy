@@ -185,12 +185,20 @@ class Mailbox
   #
   # return headers (client view; only shows messages with attachments)
   # If :listall is true, then include all entries with an attachments key (even if empty)
+  # If :noattach is also true, show only messages with no attachments
   # (these are messages that originally had attachments)
-  def client_headers(listall: false)
+  def client_headers(listall: false, noattach: false)
     if listall
-      # get all headers which ever had attachments
-      headers = self.headers.to_a.reject do |_id, message|
-        message[:attachments].nil?
+      if noattach
+        # get all headers which never had attachments
+        headers = self.headers.to_a.select do |_id, message|
+          message[:attachments].nil?
+        end
+      else
+        # get all headers which ever had attachments
+        headers = self.headers.to_a.reject do |_id, message|
+          message[:attachments].nil?
+        end
       end
     else
       # want all active headers

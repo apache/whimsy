@@ -30,6 +30,8 @@ _html do
     _a 'All messages', href: 'all'
     _ '-'
     _a 'Pending messages', href: 'pending'
+    _ '-'
+    _a 'Messages with no attachments', href: 'noattach'
   end
 
   _div_.index!
