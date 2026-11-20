@@ -27,7 +27,7 @@ end
 require 'yaml'
 require "#{IP}/modules/vhosts_whimsy/lib/puppet/functions/preprocess_vhosts.rb"
 
-facts = YAML.load_file(yaml)['vhosts_whimsy::vhosts::vhosts']['whimsy-vm-443']
+facts = YAML.safe_load_file(yaml, permitted_classes: [Symbol])['vhosts_whimsy::vhosts::vhosts']['whimsy-vm-443']
 ldap = 'ldap-us.apache.org:636' # No longer defined in whimsy
 
 macros = ApacheVHostMacros.new(facts, ldap)

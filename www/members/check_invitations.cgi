@@ -121,7 +121,7 @@ def setup_data
 
   # Load extra emails from override file if it exists
   begin
-    extras = YAML.load_file(File.join(File.dirname(memappfile),'notinavail.yml'))
+    extras = YAML.safe_load_file(File.join(File.dirname(memappfile),'notinavail.yml'), permitted_classes: [Symbol])
     extras[:emails].each do |name, email|
       k = 'n/a_' + name
       na_emails[k] ||= []

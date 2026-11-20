@@ -754,7 +754,7 @@ module ASF
       return @committee_metadata if @committee_metadata and @committee_metadata_mtime and File.mtime(file) <= @committee_metadata_mtime
 
       @committee_metadata_mtime = File.mtime(file)
-      @committee_metadata = YAML.load_file file
+      @committee_metadata = YAML.safe_load_file(file, permitted_classes: [Symbol])
     end
 
     # get the changed date for the meta data

@@ -52,7 +52,7 @@ module ASF
 
     # read the config file - extract the [explicit] section
     def read_conf
-      YAML.safe_load(File.read(File.join(@auth, 'svnauthz.yaml')))['explicit']
+      YAML.safe_load_file(File.join(@auth, 'svnauthz.yaml'))['explicit']
     end
 
     # read the auth template; extract [groups]

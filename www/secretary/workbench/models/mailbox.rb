@@ -80,7 +80,7 @@ class Mailbox
   def update
     File.open(yaml_file, File::RDWR|File::CREAT, 0644) do |file|
       file.flock(File::LOCK_EX)
-      mbox = YAML.load(file.read) || {} rescue {}
+      mbox = YAML.safe_load(file.read, permitted_classes: [Symbol]) || {} rescue {}
       yield mbox
       file.rewind
       file.write YAML.dump(mbox)
@@ -139,7 +139,7 @@ class Mailbox
   # Find a message
   #
   def find(hash)
-    headers = YAML.load_file(yaml_file) rescue {}
+    headers = YAML.safe_load_file(yaml_file, permitted_classes: [Symbol]) rescue {}
 
     if Dir.exist? dir and File.exist? File.join(dir, hash)
       email = File.read(File.join(dir, hash), encoding: Encoding::BINARY)
@@ -175,7 +175,7 @@ class Mailbox
   # return headers (server view)
   #
   def headers
-    messages = YAML.load_file(yaml_file) || {} rescue {}
+    messages = YAML.safe_load_file(yaml_file, permitted_classes: [Symbol]) || {} rescue {}
     messages.delete :mtime # TODO: is this needed?
     messages.each do |_key, value|
       value[:source] = @name
@@ -267,7 +267,7 @@ class Mailbox
   #
   def parse
     return unless @mbox
-    mbox = YAML.load_file(yaml_file) || {} rescue {}
+    mbox = YAML.safe_load_file(yaml_file, permitted_classes: [Symbol]) || {} rescue {}
     return if mbox[:mtime] == File.mtime(@mbox)
 
     # open the YAML file for real (locking it this time)

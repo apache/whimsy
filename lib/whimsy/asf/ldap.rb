@@ -169,7 +169,7 @@ module ASF
       if rwhosts.empty?
         if File.exist? LDAP_MISC
           begin
-            ldap_misc = YAML.safe_load(File.read(LDAP_MISC))
+            ldap_misc = YAML.safe_load_file(LDAP_MISC)
             rwhosts = Array(ldap_misc['ldapclient_asf']['write_uri'])
           rescue StandardError => e
             Wunderbar.warn "Could not parse write_uri: #{e.inspect}"

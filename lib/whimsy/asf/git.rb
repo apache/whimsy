@@ -43,7 +43,7 @@ module ASF
 
         unless @repos
           @@repository_mtime = File.exist?(REPOSITORY) && File.mtime(REPOSITORY)
-          @@repository_entries = YAML.load_file(REPOSITORY)
+          @@repository_entries = YAML.safe_load_file(REPOSITORY, permitted_classes: [Symbol])
           repo_override = ASF::Config.get(:repository)
           if repo_override
             git_over = repo_override[:git]

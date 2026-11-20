@@ -317,7 +317,7 @@ module ASF
       auto_file = File.join(apmail_bin, 'mail_list_autosub.yml')
       auto_mtime = File.mtime(auto_file) # fetch this up front in case file updated during loading
       if not @auto or auto_mtime != @auto_mtime
-        @auto = YAML.load_file(auto_file)
+        @auto = YAML.safe_load_file(auto_file, permitted_classes: [Symbol])
         @auto_mtime = auto_mtime
       end
     end

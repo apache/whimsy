@@ -29,7 +29,9 @@ module ASF
 
     @config = {}
     home_config = "#{@home}/.whimsy"
-    @config.merge!(YAML.load_file(home_config) || {}) if File.exist? home_config
+    if File.exist? home_config
+      @config.merge!(YAML.safe_load_file(home_config, permitted_classes: [Symbol]) || {})
+    end
 
     # Search up the directory path for a .whimsy file containing overrides.
     # Default @root to /srv if no such file is found.
@@ -44,7 +46,7 @@ module ASF
 
     root_config = "#{@root}/.whimsy"
     if File.exist? root_config
-      @config.merge! YAML.load_file(root_config) || {}
+      @config.merge! YAML.safe_load_file(root_config, permitted_classes: [Symbol]) || {}
       @root = '/srv' unless Dir.exist? File.join(@root, 'whimsy')
     end
 
