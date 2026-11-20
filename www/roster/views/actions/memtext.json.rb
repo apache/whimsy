@@ -2,13 +2,13 @@
 new_entry = @entry.strip
 #ensure required entries are present as separate lines
 unless new_entry =~ %r{^\s*Forms on File: ASF Membership Application$} and
-       new_entry =~ %r{^\s*Avail ID: #{@userid}$}
+       new_entry =~ %r{^\s*Avail ID: #{Regexp.escape(@userid)}$}
   raise Exception.new('Missing required item: Avail ID and/or Forms, or Avail ID does not match')
 end
 
 # get existing entry for @userid
 old_entry = ASF::Person.find(@userid).members_txt(true)
-raise Exception.new("unable to find member entry for #{userid}") unless old_entry
+raise Exception.new("unable to find member entry for #{@userid}") unless old_entry
 
 # identify file to be updated
 members_txt = File.join(ASF::SVN['foundation'], 'members.txt')

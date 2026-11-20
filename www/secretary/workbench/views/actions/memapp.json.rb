@@ -164,7 +164,7 @@ end
 task 'svn commit memapp-received.text' do
   file = ASF::MeetingUtil.get_latest_file('memapp-received.txt')
   received = File.read(file)
-  original = received[/.*\s#{@availid}\s.*/]
+  original = received[/.*\s#{Regexp.escape(@availid)}\s.*/]
   @line = original.gsub('no ','yes')
 
   form do
