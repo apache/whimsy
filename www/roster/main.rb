@@ -442,12 +442,12 @@ end
 
 # Handle error and other conditions
 not_found do
-  @errors = env
+  @errors = { 'REQUEST_URI' => env['REQUEST_URI'], 'REQUEST_METHOD' => env['REQUEST_METHOD'] }
   _html :not_found
 end
 
 error do
-  @errors = env
+  @errors = { 'REQUEST_URI' => env['REQUEST_URI'], 'REQUEST_METHOD' => env['REQUEST_METHOD'] }
   _html :errors
 end
 

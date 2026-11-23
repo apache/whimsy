@@ -21,7 +21,7 @@ _html do
               _p '"Hey, Rocky! Watch me pull a rabbit out of my hat."'
               _p 'Oh, snap!  Something went wrong.  Error details follow:'
               _ul do
-                %w( sinatra.route REQUEST_URI ).each do |k|
+                %w( REQUEST_URI REQUEST_METHOD ).each do |k|
                   _li "#{k} = #{@errors[k]}"
                 end
               end

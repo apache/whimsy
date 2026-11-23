@@ -24,7 +24,7 @@ _html do
               }
               _a 'magic link.', href: '/roster/'
               _ul do
-                %w( sinatra.route REQUEST_URI ).each do |k|
+                %w( REQUEST_URI REQUEST_METHOD ).each do |k|
                   _li "#{k} = #{@errors[k]}"
                 end
               end
