@@ -26,7 +26,7 @@ LOCK_TIMEOUT = 180
 def StatusMonitor.svn(previous_status)
   logdir = File.expand_path('../../../logs', __FILE__)
   archive = File.join(logdir,'archive')
-  FileUtils.mkdir(archive) unless File.directory?(archive)
+  FileUtils.mkdir_p(archive)
 
   # read cron log
   if $0 == __FILE__ and ARGV.first == '__DATA__'

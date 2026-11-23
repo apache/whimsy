@@ -21,7 +21,7 @@ def StatusMonitor.git(previous_status)
   log = File.join(logdir, 'git-pull')
 
   archive = File.join(logdir, 'archive')
-  FileUtils.mkdir(archive) unless File.directory?(archive)
+  FileUtils.mkdir_p(archive)
 
   # read cron log
   if __FILE__ == $0 # unit test
