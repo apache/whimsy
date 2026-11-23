@@ -242,12 +242,13 @@ end
 patch %r{/(\d{6})/(\w+)/} do |month, hash|
   unavailable = Status.updates_disallowed_reason # are updates disallowed?
   return [503, unavailable] if unavailable
+  updates = JSON.parse(request.env['rack.input'].read)
+  return [400, 'Expected JSON object'] unless updates.is_a?(Hash)
 
   success = false
 
   Mailbox.update(month) do |headers|
     if headers[hash]
-      updates = JSON.parse(request.env['rack.input'].read)
       # undelete attachments if requested
       attStatus = updates.delete('attachment_status')
       if attStatus
