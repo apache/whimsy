@@ -40,6 +40,9 @@ end
 # fail fast basic validation for existing project and user names
 NAME_RE = %r{\A[\w.-]+\z}
 
+# array_prefix values the person forms send (views/person/*.js.rb)
+ARRAY_PREFIXES = %w(email_alt email_forward githubuser pgpkeys sshkeys urls).freeze
+
 get '/' do
   if env['REQUEST_URI'].end_with? '/'
     @committers = ASF::Person.preload(['asf-banned','loginShell']) # so can get inactive count
@@ -249,6 +252,10 @@ post '/committer/:userid/:file' do |name, file|
   # params with the key prefix
   prefix = params.delete(:array_prefix)
   if prefix
+    # validate the prefix
+    unless ARRAY_PREFIXES.include? prefix
+      return _json({error: "Unknown array_prefix '#{prefix}'"})
+    end
     array = []
     count = 1
     loop do
