@@ -18,6 +18,7 @@ module ASF
     def self.github(file, _etag = nil)
       http = Net::HTTP.new(GITHUB_HOST, 443)
       http.use_ssl = true
+      http.min_version = OpenSSL::SSL::TLS1_2_VERSION
       req = http.request(Net::HTTP::Get.new(file))
       return req.code, req.body
     end
