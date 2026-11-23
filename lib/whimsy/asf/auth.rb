@@ -57,7 +57,11 @@ module ASF
 
     # read the auth template; extract [groups]
     def read_auth
-      File.read(File.join(@auth, "#{@file}-authorization-template")).scan(/^\[groups\].*^\[/m).first rescue ''
+      File.read(File.join(@auth, "#{@file}-authorization-template")).scan(/^\[groups\].*^\[/m).first
+    rescue => e
+      require 'wunderbar'
+      Wunderbar.warn "Failed to read authorization template: #{e}"
+      ''
     end
   end
 
